@@ -1,0 +1,8 @@
+{
+  "type": "beansbackpacks:crafting",
+  "material":  "minecraft:iron_ingot",
+  "binder": "minecraft:phantom_membrane",
+  "name": "Iron Backpack",
+  "key": "iron",
+  "kind": "METAL"
+}

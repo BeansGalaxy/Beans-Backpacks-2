@@ -1,0 +1,8 @@
+{
+  "type": "beansbackpacks:crafting",
+  "material":  "minecraft:leather",
+  "binder": "minecraft:string",
+  "name": "Backpack",
+  "key": "leather",
+  "kind": "LEATHER"
+}
