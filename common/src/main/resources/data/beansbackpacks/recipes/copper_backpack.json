@@ -4,5 +4,6 @@
   "binder": "minecraft:phantom_membrane",
   "name": "Copper Backpack",
   "key": "copper",
-  "kind": "METAL"
+  "kind": "METAL",
+  "max_stacks": 9
 }

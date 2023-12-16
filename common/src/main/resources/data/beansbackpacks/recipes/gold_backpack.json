@@ -4,5 +4,6 @@
   "binder": "minecraft:phantom_membrane",
   "name": "Gold Backpack",
   "key": "gold",
-  "kind": "METAL"
+  "kind": "METAL",
+  "max_stacks": 9
 }

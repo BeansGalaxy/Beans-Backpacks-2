@@ -25,7 +25,7 @@ public class ForgeMain {
 
         bus.addListener(this::addCreative);
 
-        Constants.LOG.info("Hello Forge world!");
+        Constants.LOG.info("Initializing Beans' Backpacks Forge");
         CommonClass.init();
     }
 

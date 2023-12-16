@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import java.util.Map;
 
 @Mixin(ModelBakery.class)
-public abstract class BakeItemModels {
+public abstract class ItemModelBaker {
 
       @Redirect(method = "<init>", at = @At(value = "INVOKE", ordinal = 3, target = "Lnet/minecraft/client/resources/model/ModelBakery;loadTopLevel(Lnet/minecraft/client/resources/model/ModelResourceLocation;)V"))
       private void init(ModelBakery instance, ModelResourceLocation $$0) {

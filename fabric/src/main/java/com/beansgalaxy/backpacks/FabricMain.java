@@ -21,7 +21,7 @@ public class FabricMain implements ModInitializer {
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(Constants.MOD_ID, BackpackRecipe.Serializer.ID),
                     BackpackRecipe.Serializer.INSTANCE);
 
-        Constants.LOG.info("Hello Fabric world!");
+        Constants.LOG.info("Initializing Beans' Backpacks Fabric");
         CommonClass.init();
     }
 

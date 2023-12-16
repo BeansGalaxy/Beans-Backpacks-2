@@ -4,5 +4,6 @@
   "binder": "minecraft:string",
   "name": "Backpack",
   "key": "leather",
-  "kind": "LEATHER"
+  "kind": "LEATHER",
+  "max_stacks": 4
 }

@@ -20,14 +20,16 @@ public class BackpackRecipe extends CustomRecipe {
       final String name;
       final String kind;
       final String key;
+      final int maxStacks;
 
-      public BackpackRecipe(Item material, Item binder, String name, String kind, String key) {
+      public BackpackRecipe(Item material, Item binder, String name, String kind, String key, int maxStacks) {
             super(CraftingBookCategory.MISC);
             this.material = material;
             this.binder = binder;
             this.name = name;
             this.kind = kind;
             this.key = key;
+            this.maxStacks = maxStacks;
       }
 
       public Item getMaterial() {
@@ -64,9 +66,8 @@ public class BackpackRecipe extends CustomRecipe {
             CompoundTag display = new CompoundTag();
             display.putString("key", key);
             display.putString("name", name);
+            display.putInt("max_stacks", maxStacks);
             stack.getOrCreateTag().put("display", display);
-
-            backpackItem.setBackpackData(key, name);
             return stack;
       }
 
@@ -95,7 +96,8 @@ public class BackpackRecipe extends CustomRecipe {
                                                 BuiltInRegistries.ITEM.byNameCodec().fieldOf("binder").forGetter(BackpackRecipe::getBinder),
                                                 PrimitiveCodec.STRING.fieldOf("name").forGetter(BackpackRecipe::getName),
                                                 PrimitiveCodec.STRING.fieldOf("kind").forGetter(BackpackRecipe::getKind),
-                                                PrimitiveCodec.STRING.fieldOf("key").forGetter(BackpackRecipe::getKey)
+                                                PrimitiveCodec.STRING.fieldOf("key").forGetter(BackpackRecipe::getKey),
+                                                PrimitiveCodec.INT.fieldOf("max_stacks").forGetter(BackpackRecipe::getMaxStacks)
                                     )
                                     .apply(in, BackpackRecipe::new)
             );
@@ -112,8 +114,9 @@ public class BackpackRecipe extends CustomRecipe {
                   String name = buf.readUtf();
                   String kind = buf.readUtf();
                   String key = buf.readUtf();
+                  int maxStacks = buf.readInt();
 
-                  return new BackpackRecipe(material, binder, name, kind, key);
+                  return new BackpackRecipe(material, binder, name, kind, key, maxStacks);
             }
 
             @Override
@@ -123,6 +126,7 @@ public class BackpackRecipe extends CustomRecipe {
                   buf.writeUtf(var2.getName());
                   buf.writeUtf(var2.getKind());
                   buf.writeUtf(var2.getKey());
+                  buf.writeInt(var2.getMaxStacks());
             }
       }
 
@@ -132,5 +136,9 @@ public class BackpackRecipe extends CustomRecipe {
 
       private String getKey() {
             return key;
+      }
+
+      private int getMaxStacks() {
+            return maxStacks;
       }
 }

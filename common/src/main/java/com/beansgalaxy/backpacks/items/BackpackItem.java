@@ -1,6 +1,5 @@
 package com.beansgalaxy.backpacks.items;
 
-import com.beansgalaxy.backpacks.general.BackpackData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
@@ -10,15 +9,9 @@ import net.minecraft.world.item.context.UseOnContext;
 
 public class BackpackItem extends Item {
       public final static int DEFAULT_COLOR = 10511680;
-      private BackpackData data = new BackpackData("");
 
       public BackpackItem() {
             super(new Item.Properties().stacksTo(1));
-      }
-
-      public void setBackpackData(String dataKey, String displayName) {
-            this.data.setKey(dataKey);
-            this.data.setName(displayName);
       }
 
       @Override
@@ -30,7 +23,6 @@ public class BackpackItem extends Item {
             CompoundTag display = tag.getCompound("display");
             String key = display.getString("key");
             String name = display.getString("name");
-            this.setBackpackData(key, name);
       }
 
       @Override
