@@ -6,13 +6,15 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "InventoryMenuMixin",
-    "InventoryMixin"
+    "InventoryMixin",
+    "ServerPlayMixin"
   ],
   "client": [
-    "UpdateSprintKey",
     "InventoryScreenMixin",
     "ItemModelBaker",
-    "ItemRendererMixin"
+    "ItemRendererMixin",
+    "RenderBackpackLayer",
+    "UpdateSprintKey"
   ],
   "server": [
   ],

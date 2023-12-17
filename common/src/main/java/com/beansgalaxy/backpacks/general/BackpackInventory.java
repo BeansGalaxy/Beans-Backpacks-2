@@ -14,41 +14,60 @@ import java.util.List;
 
 public interface BackpackInventory extends Container {
 
-      NonNullList<Player> getPlayersViewing();
+      Viewable getViewable();
 
-      Data data = new Data();
+      Kind getKind();
+
+      int getMaxStacks();
 
       class Data {
             public String key;
             public int maxStacks;
             public String name;
             public Kind kind;
-            public float headPitch = 0;
-            public byte viewers = 0;
+            public int color;
+            public CompoundTag trim;
 
-            public Data copy() {
-                  Data data = new Data();
-                  data.update(this.key, this.name, this.kind, this.maxStacks);
-                  data.headPitch = this.headPitch;
-                  this.viewers = 0;
-                  return data;
-            }
+            public Data() {}
 
-            public void update(Data data) {
-                  this.update(data.key, data.name, data.kind, data.maxStacks);
-            }
-
-            public void update(String key, String name, Kind kind, int maxStacks) {
+            public Data(String key, String name, Kind kind, int maxStacks, Integer color, CompoundTag trim) {
                   this.key = key;
                   this.name = name;
                   this.kind = kind;
                   this.maxStacks = maxStacks;
+                  this.color = color;
+                  this.trim = trim != null ? trim : new CompoundTag();
             }
       }
 
+      class Viewable {
+            public float headPitch = 0;
+            public byte viewers = 0;
+
+            boolean isOpen() {
+                  return viewers > 0;
+            }
+
+            public void updateOpen() {
+                  float newPitch = headPitch;
+                  boolean isOpen = isOpen();
+
+                  float speed = Math.max((-Math.abs(newPitch + .4F) + .6F) / 5, isOpen ? 0 : 0.1F);
+                  if (isOpen) speed /= -2;
+                  newPitch += speed;
+                  if (newPitch > 0) newPitch = 0;
+                  if (newPitch < -1) newPitch = -1;
+
+                  //newPitch = -1f; // HOLDS TOP OPEN FOR TEXTURING
+                  headPitch = newPitch;
+            }
+      }
+
+      NonNullList<Player> getPlayersViewing();
+
       default void clearViewers() {
             getPlayersViewing().clear();
-            data.viewers = 0;
+            getViewable().viewers = 0;
       }
 
       default void addViewer(Player viewer) {
@@ -64,7 +83,7 @@ public interface BackpackInventory extends Container {
 
       default void updateViewers() {
             NonNullList<Player> playersViewing = getPlayersViewing();
-            data.viewers = (byte) Math.min(playersViewing.size(), Byte.MAX_VALUE);
+            getViewable().viewers = (byte) Math.min(playersViewing.size(), Byte.MAX_VALUE);
             //if (!getOwner().level().isClientSide) TODO: IMPLEMENT NETWORKING
                   //Services.NETWORK.SyncBackpackViewersPacket(getOwner(), newViewers);
       }
@@ -72,24 +91,6 @@ public interface BackpackInventory extends Container {
       static boolean yawMatches(float viewerYaw, float ownerYaw, double acceptableYaw) {
             double yaw = Math.abs(viewerYaw - ownerYaw) % 360 - 180;
             return Math.abs(yaw) > 180 - acceptableYaw;
-      }
-
-      default boolean isOpen() {
-            return data.viewers > 0;
-      }
-
-      default void updateOpen() {
-            float newPitch = data.headPitch;
-            boolean isOpen = isOpen();
-
-            float speed = Math.max((-Math.abs(newPitch + .4F) + .6F) / 5, isOpen ? 0 : 0.1F);
-            if (isOpen) speed /= -2;
-            newPitch += speed;
-            if (newPitch > 0) newPitch = 0;
-            if (newPitch < -1) newPitch = -1;
-
-            //newPitch = -1f; // HOLDS TOP OPEN FOR TEXTURING
-            this.data.headPitch = newPitch;
       }
 
       /**
@@ -189,7 +190,7 @@ public interface BackpackInventory extends Container {
       default int spaceLeft() {
             int totalWeight = this.getItemStacks().stream().mapToInt(
                         itemStacks -> weightByItem(itemStacks) * itemStacks.getCount()).sum();
-            return data.kind == null ? 0 : (data.maxStacks * 64) - totalWeight;
+            return getKind() == null ? 0 : (getMaxStacks() * 64) - totalWeight;
       }
 
       default int weightByItem(ItemStack stack) {
@@ -202,7 +203,7 @@ public interface BackpackInventory extends Container {
                   ItemStack lookSlot = getItem(i);
                   if (!stack.isEmpty() && ItemStack.isSameItemSameTags(stack, lookSlot)) {
                         int count = stack.getCount() + lookSlot.getCount();
-                        int maxCount = data.kind == Kind.POT ? Integer.MAX_VALUE : stack.getMaxStackSize();
+                        int maxCount = getKind() == Kind.POT ? Integer.MAX_VALUE : stack.getMaxStackSize();
                         if (count > maxCount) {
                               lookSlot.setCount(maxCount);
                               count -= maxCount;
@@ -260,7 +261,7 @@ public interface BackpackInventory extends Container {
             boolean isEmpty = getItemStacks().isEmpty();
             ItemStack stack1 = isEmpty ? ItemStack.EMPTY : getItemStacks().get(0);
             boolean sameStack = !stack.is(stack1.getItem());
-            boolean isPot = data.kind == Kind.POT;
+            boolean isPot = getKind() == Kind.POT;
             boolean isFull = spaceLeft() < 1;
             if (!isEmpty && isPot && sameStack || isFull)
                   return false;

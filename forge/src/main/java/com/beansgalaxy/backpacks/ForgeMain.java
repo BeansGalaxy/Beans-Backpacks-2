@@ -1,8 +1,12 @@
 package com.beansgalaxy.backpacks;
 
-import com.beansgalaxy.backpacks.items.BackpackRecipe;
+import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.items.BackpackItem;
+import com.beansgalaxy.backpacks.items.BackpackRecipe;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -22,6 +26,7 @@ public class ForgeMain {
 
         ITEMS.register(bus);
         RECIPES.register(bus);
+        ENTITIES.register(bus);
 
         bus.addListener(this::addCreative);
 
@@ -36,6 +41,12 @@ public class ForgeMain {
             event.accept(UPGRADED_BACKPACK);
         }
     }
+
+    // REGISTER ENTITIES
+    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, Constants.MOD_ID);
+    public static final RegistryObject<EntityType<BackpackEntity>> ENTITY = ENTITIES.register("backpack",
+                () -> EntityType.Builder.<BackpackEntity>of(BackpackEntity::new, MobCategory.MISC).build(new ResourceLocation(Constants.MOD_ID, "backpack").toString()));
+
 
     public static final DeferredRegister<RecipeSerializer<?>> RECIPES =
                 DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Constants.MOD_ID);

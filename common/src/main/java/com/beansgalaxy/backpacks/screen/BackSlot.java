@@ -1,8 +1,11 @@
 package com.beansgalaxy.backpacks.screen;
 
+import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.general.BackpackInventory;
 import com.beansgalaxy.backpacks.general.Kind;
 import com.beansgalaxy.backpacks.general.PlaySound;
+import com.beansgalaxy.backpacks.items.BackpackItem;
+import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.AdvancementTree;
 import net.minecraft.client.Minecraft;
@@ -26,13 +29,35 @@ import java.util.List;
 public class BackSlot extends Slot {
       private static final ResourceLocation SLOT_BACKPACK = new ResourceLocation("sprites/empty_slot_backpack");
       private static final ResourceLocation SLOT_ELYTRA = new ResourceLocation("sprites/empty_slot_elytra");
-
       public static final ResourceLocation BACKPACK_ATLAS = new ResourceLocation("textures/atlas/blocks.png");
+      public final BackpackInventory.Data data = new BackpackInventory.Data();
+      public final BackpackInventory.Viewable viewable = new BackpackInventory.Viewable();
+
       public static int SLOT_INDEX;
       private final Player owner;
       public boolean sprintKeyIsPressed = false;
 
       public final BackpackInventory backpackInventory = new BackpackInventory() {
+
+            @Override
+            public Viewable getViewable() {
+                  return BackSlot.this.viewable;
+            }
+
+            @Override
+            public Kind getKind() {
+                  return Kind.fromStack(BackSlot.this.getItem());
+            }
+
+            @Override
+            public int getMaxStacks() {
+                  ItemStack stack = BackSlot.this.getItem();
+                  CompoundTag display = stack.getTagElement("display");
+                  if (display == null)
+                        return 0;
+                  else
+                        return display.getInt("max_stacks");
+            }
 
             NonNullList<Player> playersViewing = NonNullList.create();
 
@@ -66,6 +91,26 @@ public class BackSlot extends Slot {
 
       public static BackSlot get(Player player) {
             return (BackSlot) player.inventoryMenu.slots.get(SLOT_INDEX);
+      }
+
+      public BackpackInventory.Data getData() {
+            ItemStack stack = this.getItem();
+            if (!Kind.isBackpack(stack))
+                  return null;
+
+            CompoundTag display = stack.getOrCreateTagElement("display");
+
+            String key = display.getString("key");
+            String name = display.getString("name");
+            Kind kind = Kind.fromStack(stack);
+            int maxStacks = display.getInt("max_stacks");
+            int itemColor = stack.getItem() instanceof DyableBackpack dyableBackpack ? dyableBackpack.getColor(stack) : 0xFFFFFF;
+            int color = itemColor == BackpackItem.DEFAULT_COLOR ? Backpack.DEFAULT_COLOR : itemColor;
+
+            CompoundTag trim = stack.getTagElement("Trim");
+
+            BackpackInventory.Data data = new BackpackInventory.Data(key, name, kind, maxStacks, color, trim);
+            return data;
       }
 
       public static InteractionResult openPlayerBackpackMenu(Player viewer, Player owner) {
@@ -180,14 +225,6 @@ public class BackSlot extends Slot {
             ItemStack stack = this.getItem();
             if (stack.isEmpty())
                   backpackInventory.clearViewers();
-            else if (Kind.isBackpack(stack)) {
-                  CompoundTag display = stack.getOrCreateTagElement("display");
-                  String key = display.getString("key");
-                  String name = display.getString("name");
-                  Kind kind = Kind.fromStack(stack);
-                  int maxStacks = display.getInt("max_stacks");
-                  this.backpackInventory.data.update(key, name, kind, maxStacks);
-            }
 //            if (owner instanceof ServerPlayer serverPlayer) { TODO: IMPLEMENT NETWORK
 //                  Services.NETWORK.SyncBackSlot(serverPlayer);
 //                  Services.NETWORK.SyncBackpackInventory(serverPlayer);
@@ -365,7 +402,7 @@ public class BackSlot extends Slot {
             BackSlot backSlot = BackSlot.get(player);
             BackpackInventory backpackInventory = BackSlot.getInventory(player);
 
-            if (backpackInventory.data.kind == null || !Kind.isStorage(backSlot.getItem()))
+            if (Kind.fromStack(getItem()) == null || !Kind.isStorage(backSlot.getItem()))
                   return instance.add(-1, stack);
 
             if (backpackInventory.canPlaceItem(stack)) {

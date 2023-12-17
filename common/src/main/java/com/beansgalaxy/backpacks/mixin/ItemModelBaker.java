@@ -30,7 +30,6 @@ public abstract class ItemModelBaker {
 
             for(ResourceLocation resourceLocation: resourceLocationResourceMap.keySet()) {
                   String key = resourceLocation.getPath().replaceAll("models/item/backpack/", "").replaceAll(".json", "");
-                  System.out.println(key);
                   Constants.BACKPACK_KEYS.add(key);
             }
 

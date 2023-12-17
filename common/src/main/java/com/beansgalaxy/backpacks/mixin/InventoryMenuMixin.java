@@ -113,7 +113,6 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
       @Unique
       @Override
       public void clicked(int slotIndex, int button, ClickType actionType, Player player) {
-            System.out.println("CLICKED");
             if (BackSlot.continueSlotClick(slotIndex, button, actionType, player))
                   super.clicked(slotIndex, button, actionType, player);
       }

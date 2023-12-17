@@ -1,8 +1,9 @@
 package com.beansgalaxy.backpacks.platform;
 
 import com.beansgalaxy.backpacks.FabricMain;
-import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.platform.services.RegistryHelper;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 
 public class FabricRegistryHelper implements RegistryHelper {
@@ -20,5 +21,10 @@ public class FabricRegistryHelper implements RegistryHelper {
       @Override
       public Item getUpgraded() {
             return FabricMain.UPGRADED_BACKPACK.asItem();
+      }
+
+      @Override
+      public EntityType<? extends Entity> getEntity() {
+            return FabricMain.ENTITY;
       }
 }

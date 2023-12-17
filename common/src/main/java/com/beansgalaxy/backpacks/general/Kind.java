@@ -21,7 +21,7 @@ public enum Kind {
       }
 
       public static boolean isBackpack(ItemStack backpackStack) {
-            Item item = backpackStack.getItem();;
+            Item item = backpackStack.getItem();
             return item instanceof BackpackItem;
       }
 
@@ -37,6 +37,11 @@ public enum Kind {
             return tag != null && tag.getCompound("display").getInt("max_stacks") > 0;
       }
 
+      public boolean isTrimmable() {
+            return this == Kind.METAL || this == Kind.UPGRADED;
+      }
+
+
       public static Kind fromStack(ItemStack stack) {
             for(Kind kind: Kind.values())
                   if (kind.is(stack))
@@ -49,10 +54,18 @@ public enum Kind {
       }
 
       public static Kind fromName(String string) {
-            return Kind.valueOf(string);
+            for(Kind kind: Kind.values())
+                  if (kind.name().equals(string))
+                        return kind;
+
+            return null;
       }
 
       public boolean is(ItemStack backStack) {
             return backStack.is(item);
+      }
+
+      public boolean is(Kind kind) {
+            return this == kind;
       }
 }

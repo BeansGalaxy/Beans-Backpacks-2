@@ -67,6 +67,7 @@ public class BackpackRecipe extends CustomRecipe {
             display.putString("key", key);
             display.putString("name", name);
             display.putInt("max_stacks", maxStacks);
+            //display.putInt("color", BackpackItem.DEFAULT_COLOR);
             stack.getOrCreateTag().put("display", display);
             return stack;
       }

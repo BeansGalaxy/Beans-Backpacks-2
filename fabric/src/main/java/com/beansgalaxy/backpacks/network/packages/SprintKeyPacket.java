@@ -21,6 +21,5 @@ public class SprintKeyPacket {
                                          FriendlyByteBuf buf, PacketSender responseSender) {
             boolean sprintKeyPressed = buf.readBoolean();
             BackSlot.get(serverPlayer).sprintKeyIsPressed = sprintKeyPressed;
-            System.out.println(sprintKeyPressed);
       }
 }
