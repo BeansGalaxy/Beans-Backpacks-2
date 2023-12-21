@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.mixin;
 
 import com.beansgalaxy.backpacks.client.renderer.BackpackFeature;
+import com.beansgalaxy.backpacks.client.renderer.PotFeature;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -20,6 +21,7 @@ public abstract class RenderBackpackLayer extends LivingEntityRenderer<AbstractC
       @Inject(method = "<init>", at = @At("TAIL"))
       public void appendBackpackLayer(EntityRendererProvider.Context ctx, boolean $$1, CallbackInfo ci) {
             this.addLayer(new BackpackFeature<>(this, ctx.getModelSet(), ctx.getModelManager()));
+            this.addLayer(new PotFeature<>(this, ctx.getModelSet()));
       }
 
 }

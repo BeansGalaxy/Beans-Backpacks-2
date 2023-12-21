@@ -14,6 +14,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
@@ -21,6 +22,7 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.Vec3;
 
@@ -30,7 +32,6 @@ public class BackSlot extends Slot {
       private static final ResourceLocation SLOT_BACKPACK = new ResourceLocation("sprites/empty_slot_backpack");
       private static final ResourceLocation SLOT_ELYTRA = new ResourceLocation("sprites/empty_slot_elytra");
       public static final ResourceLocation BACKPACK_ATLAS = new ResourceLocation("textures/atlas/blocks.png");
-      public final BackpackInventory.Data data = new BackpackInventory.Data();
       public final BackpackInventory.Viewable viewable = new BackpackInventory.Viewable();
 
       public static int SLOT_INDEX;
@@ -38,6 +39,12 @@ public class BackSlot extends Slot {
       public boolean sprintKeyIsPressed = false;
 
       public final BackpackInventory backpackInventory = new BackpackInventory() {
+
+            @Override
+            public Entity getOwner() {
+                  return BackSlot.this.owner;
+            }
+
 
             @Override
             public Viewable getViewable() {
@@ -52,6 +59,9 @@ public class BackSlot extends Slot {
             @Override
             public int getMaxStacks() {
                   ItemStack stack = BackSlot.this.getItem();
+                  if (stack.is(Items.DECORATED_POT))
+                        return 999;
+
                   CompoundTag display = stack.getTagElement("display");
                   if (display == null)
                         return 0;
@@ -73,11 +83,25 @@ public class BackSlot extends Slot {
                   return this.itemStacks;
             }
 
-            @Override
-            public void playSound(PlaySound sound) {
-                  sound.at(owner);
-            }
+            public BackpackInventory.Data getData() {
+                  ItemStack stack = BackSlot.this.getItem();
+                  if (!Kind.isBackpack(stack))
+                        return null;
 
+                  CompoundTag display = stack.getOrCreateTagElement("display");
+
+                  String key = display.getString("key");
+                  String name = display.getString("name");
+                  Kind kind = Kind.fromStack(stack);
+                  int maxStacks = display.getInt("max_stacks");
+                  int itemColor = stack.getItem() instanceof DyableBackpack dyableBackpack ? dyableBackpack.getColor(stack) : 0xFFFFFF;
+                  int color = itemColor == BackpackItem.DEFAULT_COLOR ? Backpack.DEFAULT_COLOR : itemColor;
+
+                  CompoundTag trim = stack.getTagElement("Trim");
+
+                  BackpackInventory.Data data = new BackpackInventory.Data(key, name, kind, maxStacks, color, trim);
+                  return data;
+            }
       };
 
       public BackSlot(int index, int x, int y, Player player) {
@@ -91,26 +115,6 @@ public class BackSlot extends Slot {
 
       public static BackSlot get(Player player) {
             return (BackSlot) player.inventoryMenu.slots.get(SLOT_INDEX);
-      }
-
-      public BackpackInventory.Data getData() {
-            ItemStack stack = this.getItem();
-            if (!Kind.isBackpack(stack))
-                  return null;
-
-            CompoundTag display = stack.getOrCreateTagElement("display");
-
-            String key = display.getString("key");
-            String name = display.getString("name");
-            Kind kind = Kind.fromStack(stack);
-            int maxStacks = display.getInt("max_stacks");
-            int itemColor = stack.getItem() instanceof DyableBackpack dyableBackpack ? dyableBackpack.getColor(stack) : 0xFFFFFF;
-            int color = itemColor == BackpackItem.DEFAULT_COLOR ? Backpack.DEFAULT_COLOR : itemColor;
-
-            CompoundTag trim = stack.getTagElement("Trim");
-
-            BackpackInventory.Data data = new BackpackInventory.Data(key, name, kind, maxStacks, color, trim);
-            return data;
       }
 
       public static InteractionResult openPlayerBackpackMenu(Player viewer, Player owner) {
@@ -278,7 +282,7 @@ public class BackSlot extends Slot {
                                           return false;
                                     }
                               playerInventory.setItem(button, backpackInventory.removeItemNoUpdate(0));
-                              backpackInventory.insertItem(itemStack, itemStack.getCount());
+                              backpackInventory.insertItem(itemStack);
                         }
                         return false;
                   }
@@ -339,7 +343,7 @@ public class BackSlot extends Slot {
                         if (slotIndex < SLOT_INDEX) {
                               if (actionType == ClickType.PICKUP_ALL)
                                     moveAll(backpackInventory, inventoryMenu);
-                              else slot.set(backpackInventory.insertItem(stack, stack.getCount()));
+                              else slot.set(backpackInventory.insertItem(stack));
                         } else {
                               playerInventory.add(-1, stack);
                         }

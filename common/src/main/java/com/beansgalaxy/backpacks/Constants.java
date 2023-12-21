@@ -15,6 +15,11 @@ public class Constants {
 
 	public static HashSet<String> BACKPACK_KEYS = new HashSet<>();
 
-	public static final ModelLayerLocation BACKPACK_MODEL = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "backpack_model"), "main");
+	public static final ModelLayerLocation BACKPACK_MODEL =
+			new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "backpack_model"), "main");
+
+	public static final ModelLayerLocation POT_MODEL =
+			new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "pot_player"), "main");
+
 
 }

@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.network;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.network.packages.SprintKeyPacketC2S;
+import com.beansgalaxy.backpacks.network.packages.SyncViewersPacketS2All;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.ChannelBuilder;
@@ -22,6 +23,11 @@ public class NetworkPackages {
                         .encoder(SprintKeyPacketC2S::encode)
                         .decoder(SprintKeyPacketC2S::new)
                         .consumerMainThread(SprintKeyPacketC2S::handle)
+                        .add();
+            INSTANCE.messageBuilder(SyncViewersPacketS2All.class, NetworkDirection.PLAY_TO_CLIENT)
+                        .encoder(SyncViewersPacketS2All::encode)
+                        .decoder(SyncViewersPacketS2All::new)
+                        .consumerMainThread(SyncViewersPacketS2All::handle)
                         .add();
       }
 

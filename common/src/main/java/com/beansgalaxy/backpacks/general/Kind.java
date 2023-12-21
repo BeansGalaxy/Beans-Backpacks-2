@@ -33,6 +33,9 @@ public enum Kind {
       }
 
       public static boolean isStorage(ItemStack stack) {
+            if (stack.is(Items.DECORATED_POT))
+                  return true;
+
             CompoundTag tag = stack.getTag();
             return tag != null && tag.getCompound("display").getInt("max_stacks") > 0;
       }

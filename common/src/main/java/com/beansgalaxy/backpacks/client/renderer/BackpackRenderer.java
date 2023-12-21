@@ -27,10 +27,10 @@ import net.minecraft.world.phys.HitResult;
 
 import java.awt.*;
 
-import static com.beansgalaxy.backpacks.client.RendererHelper.TEXTURE;
 import static com.beansgalaxy.backpacks.client.RendererHelper.renderOverlays;
 
 public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
+      ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/entity/backpack/null.png");
       private final BackpackModel model;
       private final TextureAtlas trimAtlas;
 
@@ -51,8 +51,8 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
       public void render(T entity, float yaw, float tickDelta, PoseStack pose, MultiBufferSource mbs, int light) {
             super.render(entity, yaw += renderWobble(entity, yaw), tickDelta, pose, mbs, light);
             Backpack bEntity = ((Backpack) entity);
-            BackpackInventory.Data data = ((Backpack) entity).getData();
-            BackpackInventory.Viewable viewable = ((Backpack) entity).backpackInventory.getViewable();
+            BackpackInventory.Data data = ((Backpack) entity).getBackpackInventory().getData();
+            BackpackInventory.Viewable viewable = ((Backpack) entity).getBackpackInventory().getViewable();
             Kind kind = data.kind;
 
             if (kind == null)
@@ -67,8 +67,8 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
 
             ModelPart mask = this.model.mask;
             mask.xScale = 0.99f;
-            mask.yScale = 1.0005f;
-            mask.zScale = 0.94f;
+            mask.yScale = 1f;
+            mask.zScale = 0.96f;
             mask.z = 0.2f;
 
             if (!bEntity.isMirror())

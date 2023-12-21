@@ -344,7 +344,7 @@ public class BackpackEntity extends Backpack {
             if (!sprintKeyPressed) {
                   if (viewable.viewers < 1)
                         PlaySound.OPEN.at(this);
-                  //player.openMenu(this);
+                  Services.NETWORK.openBackpackMenu(player, this);
                   return InteractionResult.SUCCESS;
             }
 

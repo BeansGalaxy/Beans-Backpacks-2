@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.general;
 
+import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -7,6 +8,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -19,6 +21,10 @@ public interface BackpackInventory extends Container {
       Kind getKind();
 
       int getMaxStacks();
+
+      Entity getOwner();
+
+      Data getData();
 
       class Data {
             public String key;
@@ -49,14 +55,19 @@ public interface BackpackInventory extends Container {
             }
 
             public void updateOpen() {
+                  float opened = 0.55f;
                   float newPitch = headPitch;
-                  boolean isOpen = isOpen();
+                  float speed = 8f;
 
-                  float speed = Math.max((-Math.abs(newPitch + .4F) + .6F) / 5, isOpen ? 0 : 0.1F);
-                  if (isOpen) speed /= -2;
-                  newPitch += speed;
-                  if (newPitch > 0) newPitch = 0;
-                  if (newPitch < -1) newPitch = -1;
+                  int j = isOpen() ? -1 : 3;
+                  float i = (newPitch + opened + (Math.abs(j) / 10f)) * .1f;
+                  i *= i;
+                  newPitch += i * speed * j;
+
+                  if (newPitch < -opened)
+                        newPitch = -opened;
+                  if (newPitch > 0)
+                        newPitch = 0;
 
                   //newPitch = -1f; // HOLDS TOP OPEN FOR TEXTURING
                   headPitch = newPitch;
@@ -84,8 +95,8 @@ public interface BackpackInventory extends Container {
       default void updateViewers() {
             NonNullList<Player> playersViewing = getPlayersViewing();
             getViewable().viewers = (byte) Math.min(playersViewing.size(), Byte.MAX_VALUE);
-            //if (!getOwner().level().isClientSide) TODO: IMPLEMENT NETWORKING
-                  //Services.NETWORK.SyncBackpackViewersPacket(getOwner(), newViewers);
+            if (!getOwner().level().isClientSide)
+                  Services.NETWORK.SyncViewers(getOwner(), getViewable().viewers);
       }
 
       static boolean yawMatches(float viewerYaw, float ownerYaw, double acceptableYaw) {
@@ -100,7 +111,9 @@ public interface BackpackInventory extends Container {
 
       NonNullList<ItemStack> getItemStacks();
 
-      void playSound(PlaySound sound);
+      default void playSound(PlaySound sound) {
+            sound.at(getOwner());
+      }
 
       @Override
       default int getContainerSize() {
@@ -166,8 +179,12 @@ public interface BackpackInventory extends Container {
 
       default ItemStack returnItem(int slot, ItemStack stack) {
             if (!stack.isEmpty()) {
-                  return insertItem(stack, stack.getCount());
+                  return insertItem(stack);
             } else return removeItemNoUpdate(slot);
+      }
+
+      default ItemStack insertItem(ItemStack stack) {
+            return insertItem(stack, stack.getCount());
       }
 
       default ItemStack insertItem(ItemStack stack, int amount) {
@@ -179,10 +196,15 @@ public interface BackpackInventory extends Container {
       }
 
       default ItemStack insertItemSilent(ItemStack stack, int amount) {
-            int count = Math.min(amount, spaceLeft());
-            if (!stack.isEmpty() && count > 0 && canPlaceItem(stack)) {
-                  this.getItemStacks().add(0, mergeItem(stack.copyWithCount(count)));
-                  stack.setCount(stack.getCount() - count);
+            if (!stack.isEmpty() && canPlaceItem(stack)) {
+                  int space = spaceLeft();
+                  int weight = weightByItem(stack);
+                  int weightedSpace = space / weight;
+                  int count = Math.min(weightedSpace, amount);
+                  if (count > 0) {
+                        this.getItemStacks().add(0, mergeItem(stack.copyWithCount(count)));
+                        stack.setCount(stack.getCount() - count);
+                  }
             }
             return stack;
       }
@@ -190,7 +212,9 @@ public interface BackpackInventory extends Container {
       default int spaceLeft() {
             int totalWeight = this.getItemStacks().stream().mapToInt(
                         itemStacks -> weightByItem(itemStacks) * itemStacks.getCount()).sum();
-            return getKind() == null ? 0 : (getMaxStacks() * 64) - totalWeight;
+
+            int maxWeight = getMaxStacks() * 64;
+            return getKind() == null ? 0 : maxWeight - totalWeight;
       }
 
       default int weightByItem(ItemStack stack) {
@@ -274,7 +298,13 @@ public interface BackpackInventory extends Container {
 
 
       @Override
-      default boolean stillValid(Player player) {
-            return false;
+      default boolean stillValid(Player viewer) {
+            Entity owner = getOwner();
+            return !owner.isRemoved() && viewer.distanceTo(owner) < 5f;
+      }
+
+      @Override
+      default void stopOpen(Player player) {
+            removeViewer(player);
       }
 }

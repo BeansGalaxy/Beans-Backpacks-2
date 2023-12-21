@@ -4,6 +4,7 @@ import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.renderer.BackpackModel;
 import com.beansgalaxy.backpacks.general.BackpackInventory;
 import com.beansgalaxy.backpacks.general.Kind;
+import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -27,7 +28,6 @@ import java.awt.*;
 import java.util.Map;
 
 public interface RendererHelper {
-    ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/entity/backpack/null.png");
     ResourceLocation OVERLAY_LEATHER = new ResourceLocation(Constants.MOD_ID, "textures/entity/leather_overlay.png");
     Map<String, ResourceLocation> ButtonIdentifiers = ImmutableMap.of(
                 "gold", new ResourceLocation(Constants.MOD_ID, "textures/entity/overlay/gold.png"),
@@ -70,15 +70,12 @@ public interface RendererHelper {
     static void renderTrim(EntityModel<Entity> model, PoseStack pose, int light, MultiBufferSource mbs, TextureAtlasSprite sprite) {
         VertexConsumer vc = sprite.wrap(mbs.getBuffer(Sheets.armorTrimsSheet(false)));
         if (inBackpackScreen()) {
-            for (int j = 1; j < 4; j++) {
-                VertexConsumer vc1 = sprite.wrap(mbs.getBuffer(Sheets.armorTrimsSheet(false)));
-                float scale = (0.0015F * j);
-                pose.scale(1 + scale, 1 + scale / 2, 1 + scale);
-                pose.translate(0, -scale / 1.1, 0);
-                model.renderToBuffer(pose, vc1, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+            pose.scale(1.002f, 0.995f, 1);
+            for (int i = 0; i < 8; i++) {
+                pose.scale(1, 1.001f, 1.001f);
+                model.renderToBuffer(pose, vc, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
             }
-        } else
-            model.renderToBuffer(pose, vc, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+        } else model.renderToBuffer(pose, vc, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
     }
 
     static void renderButton(Kind b$kind, Color tint, EntityModel<Entity> model, PoseStack pose, int light, MultiBufferSource mbs) {
@@ -113,8 +110,7 @@ public interface RendererHelper {
 
     private static boolean inBackpackScreen() {
         Screen currentScreen = Minecraft.getInstance().screen;
-        return false;
-        //return currentScreen instanceof BackpackScreen || currentScreen instanceof SmithingScreen;
+        return currentScreen instanceof BackpackScreen;
     }
 
     private static boolean isYellow(Color tint) {

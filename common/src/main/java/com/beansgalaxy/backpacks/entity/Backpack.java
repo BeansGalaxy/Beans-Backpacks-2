@@ -2,7 +2,6 @@ package com.beansgalaxy.backpacks.entity;
 
 import com.beansgalaxy.backpacks.general.BackpackInventory;
 import com.beansgalaxy.backpacks.general.Kind;
-import com.beansgalaxy.backpacks.general.PlaySound;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.NonNullList;
@@ -10,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -27,6 +27,10 @@ public class Backpack extends Entity {
 
       public final BackpackInventory.Viewable viewable = new BackpackInventory.Viewable();
       public final BackpackInventory backpackInventory = new BackpackInventory() {
+
+            public Entity getOwner() {
+                  return Backpack.this;
+            }
 
             NonNullList<Player> playersViewing = NonNullList.create();
 
@@ -56,10 +60,12 @@ public class Backpack extends Entity {
             }
 
             @Override
-            public void playSound(PlaySound sound) {
-                  sound.at(Backpack.this.getOwner());
+            public BackpackInventory.Data getData() {
+                  return Backpack.this.getData();
             }
       };
+
+      public final MenuProvider menuProvider = Services.NETWORK.getMenuProvider(this);
 
       public Backpack(Level $$1, NonNullList<ItemStack> stacks) {
             super(Services.REGISTRY.getEntity() , $$1);
@@ -74,25 +80,25 @@ public class Backpack extends Entity {
             super(type, level);
       }
 
-      public boolean isMirror() {
-            boolean notMirror = this instanceof BackpackEntity;
-            return !notMirror;
-      }
-
       public BackpackInventory.Data getData() {
             String name = Backpack.this.entityData.get(NAME);
             int maxStacks = Backpack.this.entityData.get(MAX_STACKS);
             return new BackpackInventory.Data(getKey(), name, getKind(), maxStacks, getColor(), getTrim());
       }
 
+      public boolean isMirror() {
+            boolean notMirror = this instanceof BackpackEntity;
+            return !notMirror;
+      }
+
+      public BackpackInventory getBackpackInventory() {
+            return backpackInventory;
+      }
+
       private final NonNullList<ItemStack> itemStacks = NonNullList.create();
 
       protected NonNullList<ItemStack> getItemStacks() {
             return this.itemStacks;
-      }
-
-      private Entity getOwner() {
-            return this;
       }
 
       public int getColor() {

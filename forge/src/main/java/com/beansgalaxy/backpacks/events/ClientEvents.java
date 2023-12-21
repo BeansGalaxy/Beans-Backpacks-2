@@ -2,21 +2,32 @@ package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.ForgeMain;
-import com.beansgalaxy.backpacks.client.renderer.BackpackRenderer;
 import com.beansgalaxy.backpacks.client.renderer.BackpackModel;
+import com.beansgalaxy.backpacks.client.renderer.BackpackRenderer;
+import com.beansgalaxy.backpacks.client.renderer.PotModel;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
+import com.beansgalaxy.backpacks.screen.BackpackScreen;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientEvents {
+      @SubscribeEvent
+      public static void clientSetup(FMLClientSetupEvent event) {
+            event.enqueueWork(() -> {
+                  MenuScreens.register(ForgeMain.MENU.get(), BackpackScreen::new);
+            });
+      }
 
       @SubscribeEvent
       public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
             event.registerLayerDefinition(Constants.BACKPACK_MODEL, BackpackModel::getTexturedModelData);
+            event.registerLayerDefinition(Constants.POT_MODEL, PotModel::getTexturedModelData);
       }
 
       @SubscribeEvent
