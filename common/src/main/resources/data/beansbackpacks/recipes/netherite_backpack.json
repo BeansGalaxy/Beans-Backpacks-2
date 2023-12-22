@@ -1,0 +1,10 @@
+{
+  "type": "beansbackpacks:smithing",
+  "template": "minecraft:netherite_upgrade_smithing_template",
+  "base": "beansbackpacks:metal_backpack",
+  "material": "minecraft:netherite_ingot",
+  "name": "Netherite Backpack",
+  "key": "netherite",
+  "kind": "UPGRADED",
+  "max_stacks": 12
+}

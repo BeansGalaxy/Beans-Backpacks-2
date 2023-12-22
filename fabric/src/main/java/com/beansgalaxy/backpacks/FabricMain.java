@@ -2,8 +2,9 @@ package com.beansgalaxy.backpacks;
 
 import com.beansgalaxy.backpacks.events.PlayerInteractEvent;
 import com.beansgalaxy.backpacks.items.BackpackItem;
-import com.beansgalaxy.backpacks.items.BackpackRecipe;
+import com.beansgalaxy.backpacks.items.RecipeCrafting;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
+import com.beansgalaxy.backpacks.items.RecipieSmithing;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
@@ -22,8 +23,10 @@ public class FabricMain implements ModInitializer {
         registerItems();
         NetworkPackages.registerS2CPackets();
 
-        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(Constants.MOD_ID, BackpackRecipe.Serializer.ID),
-                    BackpackRecipe.Serializer.INSTANCE);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(Constants.MOD_ID, RecipeCrafting.Serializer.ID),
+                    RecipeCrafting.Serializer.INSTANCE);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(Constants.MOD_ID, RecipieSmithing.Serializer.ID),
+                    RecipieSmithing.Serializer.INSTANCE);
 
         UseBlockCallback.EVENT.register(new PlayerInteractEvent());
         Constants.LOG.info("Initializing Beans' Backpacks Fabric");

@@ -71,24 +71,7 @@ public class BackpackMenu extends AbstractContainerMenu {
 
 
       private void createBackpackSlots(Container inventory) {
-//            this.addSlot(new Slot(inventory, 0, 80, 57) {
-//                  @Override
-//                  public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-//                        return Pair.of(BACKPACK_ATLAS, INPUT);
-//                  }
-//
-//                  @Override
-//                  public void set(ItemStack stack) {
-//                        this.container.setItem(0, stack);
-//                        this.setChanged();
-//                  }
-//
-//                  @Override
-//                  public boolean mayPlace(ItemStack stack) {
-//                        return backpackInventory.canPlaceItem(stack);
-//                  }
-//            });
-            final int columns = 5 + (max_stacks / 4);
+            final int columns = Math.min(5 + (max_stacks / 4), 10);
             final int rows = 4;
             final int spacing = 17;
             int bpCenter = (columns / 2) * spacing;

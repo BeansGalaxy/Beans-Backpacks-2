@@ -2,8 +2,9 @@ package com.beansgalaxy.backpacks;
 
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.items.BackpackItem;
-import com.beansgalaxy.backpacks.items.BackpackRecipe;
+import com.beansgalaxy.backpacks.items.RecipeCrafting;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
+import com.beansgalaxy.backpacks.items.RecipieSmithing;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
@@ -62,8 +63,11 @@ public class ForgeMain {
     public static final DeferredRegister<RecipeSerializer<?>> RECIPES =
                 DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Constants.MOD_ID);
 
-    public static final RegistryObject<RecipeSerializer<BackpackRecipe>> BACKPACK_RECIPE =
-                RECIPES.register(BackpackRecipe.Serializer.ID, () -> BackpackRecipe.Serializer.INSTANCE);
+    public static final RegistryObject<RecipeSerializer<RecipeCrafting>> BACKPACK_RECIPE =
+                RECIPES.register(RecipeCrafting.Serializer.ID, () -> RecipeCrafting.Serializer.INSTANCE);
+
+    public static final RegistryObject<RecipeSerializer<RecipieSmithing>> BACKPACK_SMITHING_RECIPE =
+                RECIPES.register(RecipieSmithing.Serializer.ID, () -> RecipieSmithing.Serializer.INSTANCE);
 
     // REGISTER ITEMS
     public static final DeferredRegister<Item> ITEMS =

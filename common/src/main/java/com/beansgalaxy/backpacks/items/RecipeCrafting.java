@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 
-public class BackpackRecipe extends CustomRecipe {
+public class RecipeCrafting extends CustomRecipe {
       final Item material;
       final Item binder;
       final String name;
@@ -22,7 +22,7 @@ public class BackpackRecipe extends CustomRecipe {
       final String key;
       final int maxStacks;
 
-      public BackpackRecipe(Item material, Item binder, String name, String kind, String key, int maxStacks) {
+      public RecipeCrafting(Item material, Item binder, String name, String kind, String key, int maxStacks) {
             super(CraftingBookCategory.MISC);
             this.material = material;
             this.binder = binder;
@@ -61,7 +61,6 @@ public class BackpackRecipe extends CustomRecipe {
             Kind kind = Kind.fromName(this.kind);
             Item item = kind.getItem();
             ItemStack stack = item.getDefaultInstance();
-            BackpackItem backpackItem = (BackpackItem) stack.getItem();
 
             CompoundTag display = new CompoundTag();
             display.putString("key", key);
@@ -86,29 +85,29 @@ public class BackpackRecipe extends CustomRecipe {
             return Serializer.INSTANCE;
       }
 
-      public static class Serializer implements RecipeSerializer<BackpackRecipe> {
+      public static class Serializer implements RecipeSerializer<RecipeCrafting> {
             public static final Serializer INSTANCE = new Serializer();
             public static final String ID = "crafting";
 
-            public static final Codec<BackpackRecipe> CODEC = RecordCodecBuilder.create(
+            public static final Codec<RecipeCrafting> CODEC = RecordCodecBuilder.create(
                         in -> in.group(
-                                                BuiltInRegistries.ITEM.byNameCodec().fieldOf("material").forGetter(BackpackRecipe::getMaterial),
-                                                BuiltInRegistries.ITEM.byNameCodec().fieldOf("binder").forGetter(BackpackRecipe::getBinder),
-                                                PrimitiveCodec.STRING.fieldOf("name").forGetter(BackpackRecipe::getName),
-                                                PrimitiveCodec.STRING.fieldOf("kind").forGetter(BackpackRecipe::getKind),
-                                                PrimitiveCodec.STRING.fieldOf("key").forGetter(BackpackRecipe::getKey),
-                                                PrimitiveCodec.INT.fieldOf("max_stacks").forGetter(BackpackRecipe::getMaxStacks)
+                                                BuiltInRegistries.ITEM.byNameCodec().fieldOf("material").forGetter(RecipeCrafting::getMaterial),
+                                                BuiltInRegistries.ITEM.byNameCodec().fieldOf("binder").forGetter(RecipeCrafting::getBinder),
+                                                PrimitiveCodec.STRING.fieldOf("name").forGetter(RecipeCrafting::getName),
+                                                PrimitiveCodec.STRING.fieldOf("kind").forGetter(RecipeCrafting::getKind),
+                                                PrimitiveCodec.STRING.fieldOf("key").forGetter(RecipeCrafting::getKey),
+                                                PrimitiveCodec.INT.fieldOf("max_stacks").forGetter(RecipeCrafting::getMaxStacks)
                                     )
-                                    .apply(in, BackpackRecipe::new)
+                                    .apply(in, RecipeCrafting::new)
             );
 
             @Override
-            public Codec<BackpackRecipe> codec() {
+            public Codec<RecipeCrafting> codec() {
                   return CODEC;
             }
 
             @Override
-            public BackpackRecipe fromNetwork(FriendlyByteBuf buf) {
+            public RecipeCrafting fromNetwork(FriendlyByteBuf buf) {
                   Item material = buf.readItem().getItem();
                   Item binder = buf.readItem().getItem();
                   String name = buf.readUtf();
@@ -116,11 +115,11 @@ public class BackpackRecipe extends CustomRecipe {
                   String key = buf.readUtf();
                   int maxStacks = buf.readInt();
 
-                  return new BackpackRecipe(material, binder, name, kind, key, maxStacks);
+                  return new RecipeCrafting(material, binder, name, kind, key, maxStacks);
             }
 
             @Override
-            public void toNetwork(FriendlyByteBuf buf, BackpackRecipe var2) {
+            public void toNetwork(FriendlyByteBuf buf, RecipeCrafting var2) {
                   buf.writeItem(var2.getMaterial().getDefaultInstance());
                   buf.writeItem(var2.getBinder().getDefaultInstance());
                   buf.writeUtf(var2.getName());
