@@ -1,6 +1,5 @@
 package com.beansgalaxy.backpacks.platform;
 
-import com.beansgalaxy.backpacks.FabricClient;
 import com.beansgalaxy.backpacks.FabricMain;
 import com.beansgalaxy.backpacks.platform.services.RegistryHelper;
 import net.minecraft.world.entity.Entity;
@@ -27,11 +26,11 @@ public class FabricRegistryHelper implements RegistryHelper {
 
       @Override
       public EntityType<? extends Entity> getEntity() {
-            return FabricClient.ENTITY;
+            return FabricMain.ENTITY;
       }
 
       @Override
       public MenuType<?> getMenu() {
-            return FabricClient.BACKPACK_MENU;
+            return FabricMain.BACKPACK_MENU;
       }
 }

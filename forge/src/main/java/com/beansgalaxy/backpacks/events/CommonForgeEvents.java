@@ -23,8 +23,8 @@ public class CommonForgeEvents {
             if (direction == null)
                   direction = Direction.UP;
 
-            BlockPos blockPos = event.getPos().relative(direction);
-            InteractionResult interact = PlaceBackpackEvent.interact(player, hand, direction, blockPos);
+            BlockPos clickedPos = event.getPos();
+            InteractionResult interact = PlaceBackpackEvent.interact(player, hand, direction, clickedPos);
 
             boolean consumesAction = interact.consumesAction();
             Event.Result result = consumesAction || denyQue ? Event.Result.DENY : Event.Result.ALLOW;
@@ -32,6 +32,6 @@ public class CommonForgeEvents {
             event.setUseBlock(result);
             event.setUseItem(result);
 
-            CommonForgeEvents.denyQue = consumesAction && hand == InteractionHand.MAIN_HAND;
+            denyQue = consumesAction && hand == InteractionHand.MAIN_HAND;
       }
 }

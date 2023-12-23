@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.client.renderer;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.general.BackpackInventory;
@@ -36,7 +37,7 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
 
       public BackpackRenderer(EntityRendererProvider.Context ctx) {
             super(ctx);
-            this.model = new BackpackModel(ctx.bakeLayer(Constants.BACKPACK_MODEL));
+            this.model = new BackpackModel(ctx.bakeLayer(RendererHelper.BACKPACK_MODEL));
             this.trimAtlas = ctx.getModelManager().getAtlas(Sheets.ARMOR_TRIMS_SHEET);
       }
 

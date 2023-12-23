@@ -15,17 +15,17 @@ import net.minecraft.world.entity.player.Player;
 public class PlaceBackpackEvent {
     private static NonNullList<CoyoteClick> coyoteList = NonNullList.create();
 
-    public static InteractionResult interact(Player player, InteractionHand hand, Direction direction, BlockPos blockPos) {
+    public static InteractionResult interact(Player player, InteractionHand hand, Direction direction, BlockPos clickedPos) {
         if (player.isSpectator())
             return InteractionResult.PASS;
 
         if (BackSlot.get(player).sprintKeyIsPressed && Kind.isBackpack(BackSlot.get(player).getItem())) {
             if (!player.isSprinting() && !player.isSwimming()) {
-                return BackpackItem.hotkeyOnBlock(player, direction, blockPos);
+                return BackpackItem.hotkeyOnBlock(player, direction, clickedPos);
             }
             else if (player.level() instanceof ServerLevel serverLevel && player instanceof ServerPlayer serverPlayer) {
                 if (coyoteList.stream().noneMatch(clicks -> clicks.player.equals(player)))
-                    coyoteList.add(new CoyoteClick(player, direction, blockPos, hand));
+                    coyoteList.add(new CoyoteClick(player, direction, clickedPos, hand));
             }
         }
         return InteractionResult.PASS;

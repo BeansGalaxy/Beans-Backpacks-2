@@ -44,7 +44,7 @@ public class BackpackMenu extends AbstractContainerMenu {
       }
 
       private Backpack createMirror(Level level) {
-            Backpack backpack = new Backpack(level, null) {
+            Backpack backpack = new Backpack(level) {
 
                   @Override
                   public BackpackInventory.Data getData() {
@@ -65,13 +65,13 @@ public class BackpackMenu extends AbstractContainerMenu {
       }
 
       public static BackpackInventory getBackpackInventory(int entityId, Level level) {
-            Backpack backpack = (Backpack) level.getEntity(entityId);
-            return backpack.getBackpackInventory();
+            Entity entity = level.getEntity(entityId);
+            return BackpackInventory.get(entity);
       }
 
 
       private void createBackpackSlots(Container inventory) {
-            final int columns = Math.min(5 + (max_stacks / 4), 10);
+            final int columns = Math.min(5 + (max_stacks / 4), 11);
             final int rows = 4;
             final int spacing = 17;
             int bpCenter = (columns / 2) * spacing;

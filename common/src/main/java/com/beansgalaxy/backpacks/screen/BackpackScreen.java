@@ -52,6 +52,10 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
 
       @Override
       public void render(GuiGraphics ctx, int mouseX, int mouseY, float delta) {
+            if (handler.backpackInventory.getData() == null || handler.owner.isRemoved()) {
+                  onClose();
+                  return;
+            }
             renderBackground(ctx, mouseX, mouseY, delta);
             super.render(ctx, mouseX, mouseY, delta);
             renderTooltip(ctx, mouseX, mouseY);
@@ -97,18 +101,18 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
                                     || mouseY < (double)(top + 100)
                                     || mouseX >= (double)(left + this.imageWidth)
                                     || mouseY >= (double)(top + this.imageHeight);
-//            boolean backpackSlots = // BOUNDS OF BACKPACK SLOTS
-//                        mouseX < (double)(left - 40)
-//                                    || mouseY < (double)(top + handler.invOffset - 35)
-//                                    || mouseX >= (double)(left + this.imageWidth + 40)
-//                                    || mouseY >= (double)(top + handler.invOffset + 37);
+            boolean backpackSlots = // BOUNDS OF BACKPACK SLOTS
+                        mouseX < (double)(left - 10)
+                                    || mouseY < (double)(top + handler.invOffset - 35)
+                                    || mouseX >= (double)(left + this.imageWidth + 10)
+                                    || mouseY >= (double)(top + handler.invOffset + 37);
             boolean backpackRender = // BOUNDS OF BACKPACK RENDER --- INSET 5 FOR EASIER DROPPING
                         mouseX < (double)(left + 45)
                                     || mouseY < (double)(top + 15)
                                     || mouseX >= (double)(left + this.imageWidth - 45)
                                     || mouseY >= (double)(top + this.imageHeight);
 
-            return inventory && backpackRender;// && backpackSlots;
+            return inventory && backpackRender && backpackSlots;
       }
 
       @Override

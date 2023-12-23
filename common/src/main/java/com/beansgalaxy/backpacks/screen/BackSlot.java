@@ -1,17 +1,24 @@
 package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.entity.Backpack;
+import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.general.BackpackInventory;
 import com.beansgalaxy.backpacks.general.Kind;
 import com.beansgalaxy.backpacks.general.PlaySound;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
+import com.beansgalaxy.backpacks.platform.Services;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.AdvancementTree;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.Entity;
@@ -40,24 +47,19 @@ public class BackSlot extends Slot {
 
       public final BackpackInventory backpackInventory = new BackpackInventory() {
 
-            @Override
-            public Entity getOwner() {
+            @Override public Entity getOwner() {
                   return BackSlot.this.owner;
             }
 
-
-            @Override
-            public Viewable getViewable() {
+            @Override public Viewable getViewable() {
                   return BackSlot.this.viewable;
             }
 
-            @Override
-            public Kind getKind() {
+            @Override public Kind getKind() {
                   return Kind.fromStack(BackSlot.this.getItem());
             }
 
-            @Override
-            public int getMaxStacks() {
+            @Override public int getMaxStacks() {
                   ItemStack stack = BackSlot.this.getItem();
                   if (stack.is(Items.DECORATED_POT))
                         return 999;
@@ -71,19 +73,17 @@ public class BackSlot extends Slot {
 
             NonNullList<Player> playersViewing = NonNullList.create();
 
-            @Override
-            public NonNullList<Player> getPlayersViewing() {
+            @Override public NonNullList<Player> getPlayersViewing() {
                   return playersViewing;
             }
 
             private final NonNullList<ItemStack> itemStacks = NonNullList.create();
 
-            @Override
-            public NonNullList<ItemStack> getItemStacks() {
+            @Override public NonNullList<ItemStack> getItemStacks() {
                   return this.itemStacks;
             }
 
-            public BackpackInventory.Data getData() {
+            @Override public BackpackInventory.Data getData() {
                   ItemStack stack = BackSlot.this.getItem();
                   if (!Kind.isBackpack(stack))
                         return null;
@@ -146,51 +146,15 @@ public class BackSlot extends Slot {
             double radius = (d * d * d * d) / 625;
             boolean looking = e > 1.0 - radius * maxRadius && viewer.hasLineOfSight(owner);
 
-//          TODO: IMPLEMENT BACKPACK
+            if (yawMatches && looking) { // INTERACT WITH BACKPACK CODE GOES HERE
+                  viewer.openMenu(backSlot.backpackInventory.getMenuProvider());
 
-//            if (yawMatches && looking) { // INTERACT WITH BACKPACK CODE GOES HERE
-//                  Backpack backpack = new Backpack(viewer.level()) {
-//                        public Entity getOwner() {
-//                              return owner;
-//                        }
-//
-//                        public void setChanged() {
-//                              if (owner instanceof ServerPlayer serverPlayer)
-//                                    Services.NETWORK.SyncBackpackInventory(serverPlayer);
-//                        }
-//
-//                        public void stopOpen(Player player) {
-//                              BackSlot backSlot = get(owner);
-//                              backSlot.removeViewer(viewer);
-//                              if (backSlot.getViewers() < 1)
-//                                    PlaySound.CLOSE.at(owner);
-//                        }
-//
-//                        public void updateViewers() {
-//                        }
-//
-//                        public void playSound(PlaySound sound) {
-//                              sound.at(owner, 0.3f);
-//                        }
-//                  };
-//                  NonNullList<ItemStack> itemStacks = getInventory(owner).getItemStacks();
-//                  backpack.initDisplay(backpackStack);
-//                  backpack.itemStacks = itemStacks;
-//                  if (viewer.level() instanceof ServerLevel serverLevel)
-//                        serverLevel.addWithUUID(backpack);
-//                  viewer.openMenu(backpack);
-//
-//                  // ENABLE THIS LINE OF CODE BELOW TO SHOW WHEN THE BACKPACK IS INTERACTED WITH
-//                  //owner.level().addParticle(ParticleTypes.FIREWORK, newX, viewer.getEyeY() + 0.1, newZ, 0, 0, 0);
-//
-//                  PlaySound.OPEN.at(owner);
-//
-//                  if (!viewer.level().isClientSide() && viewer.containerMenu != viewer.inventoryMenu) {
-//                        backSlot.addViewer(viewer);
-//                  }
-//
-//                  return InteractionResult.sidedSuccess(!viewer.level().isClientSide);
-//            }
+                  // ENABLE THIS LINE OF CODE BELOW TO SHOW WHEN THE BACKPACK IS INTERACTED WITH
+                  //owner.level().addParticle(ParticleTypes.FIREWORK, newX, viewer.getEyeY() + 0.1, newZ, 0, 0, 0);
+
+                  PlaySound.OPEN.at(owner);
+                  return InteractionResult.sidedSuccess(!viewer.level().isClientSide);
+            }
 
             return InteractionResult.PASS;
       }
@@ -229,10 +193,9 @@ public class BackSlot extends Slot {
             ItemStack stack = this.getItem();
             if (stack.isEmpty())
                   backpackInventory.clearViewers();
-//            if (owner instanceof ServerPlayer serverPlayer) { TODO: IMPLEMENT NETWORK
-//                  Services.NETWORK.SyncBackSlot(serverPlayer);
-//                  Services.NETWORK.SyncBackpackInventory(serverPlayer);
-//            }
+            if (owner instanceof ServerPlayer serverPlayer) {
+                  Services.NETWORK.SyncBackSlot(serverPlayer);
+            }
       }
 
       // RETURN FALSE TO CANCEL A PLAYER'S INVENTORY CLICK
@@ -323,7 +286,7 @@ public class BackSlot extends Slot {
                               if (backpackInventory.isEmpty())
                                     player.getInventory().add(-1, stack);
                               else {
-//                                    Backpack.drop(player, stack, backpackInventory.getItemStacks()); TODO: IMPLEMENT BACKPACK
+                                    drop(player, stack, backpackInventory.getItemStacks());
                                     stack.setCount(0);
                               }
                               return false;
@@ -336,8 +299,6 @@ public class BackSlot extends Slot {
                                     continueInsert = playerInventory.add(-1, backpackInventory.removeItemSilent(0));
                                     itemRemoved = true;
                               }
-                              if (itemRemoved)
-                                    PlaySound.TAKE.toClient(player);
                               return false;
                         }
                         if (slotIndex < SLOT_INDEX) {
@@ -370,6 +331,41 @@ public class BackSlot extends Slot {
                   }
             }
             return true;
+      }
+
+      public static void drop(Player player, ItemStack backpackStack, NonNullList<ItemStack> itemStacks) {
+            Kind kind = Kind.fromStack(backpackStack);
+            if (!Kind.isBackpack(backpackStack)) {
+                  player.spawnAtLocation(backpackStack.copy(), 0.5f);
+                  if (Kind.POT.is(kind)) {
+                        int iteration = 0;
+                        int maxIterations = 72;
+                        while (!itemStacks.isEmpty() && iteration < maxIterations) {
+                              ItemStack stack = itemStacks.remove(iteration);
+                              if (stack.getMaxStackSize() == 64) {
+                                    player.spawnAtLocation(stack, 0.5f);
+                              } else while (stack.getCount() > 0) {
+                                    int removedCount = Math.min(stack.getCount(), stack.getMaxStackSize());
+                                    player.spawnAtLocation(stack.copyWithCount(removedCount));
+                                    stack.shrink(removedCount);
+                              }
+                              iteration++;
+                        }
+                        SoundEvent soundEvent = iteration >= maxIterations ? SoundEvents.DECORATED_POT_BREAK : SoundEvents.DECORATED_POT_SHATTER;
+                        player.playSound(soundEvent, 0.4f, 0.8f);
+                  }
+                  return;
+            }
+
+            BlockPos blockPos = player.getOnPos();
+            int x = blockPos.getX();
+            double y = blockPos.getY() + 2D / 16 + 1;
+            int z = blockPos.getZ();
+
+            new BackpackEntity(player, player.level(), x, y, z, Direction.UP,
+                        backpackStack, itemStacks, player.getYRot());
+
+            PlaySound.DROP.at(player);
       }
 
       private static void moveAll(BackpackInventory backpackInventory, InventoryMenu inventoryMenu) {

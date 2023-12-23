@@ -1,6 +1,8 @@
 package com.beansgalaxy.backpacks.general;
 
+import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.platform.Services;
+import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -8,6 +10,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -306,5 +309,21 @@ public interface BackpackInventory extends Container {
       @Override
       default void stopOpen(Player player) {
             removeViewer(player);
+            if (getViewable().viewers < 1)
+                  PlaySound.CLOSE.at(getOwner());
+      }
+
+      static BackpackInventory get(Entity entity) {
+            if (entity instanceof Backpack backpack)
+                  return backpack.getBackpackInventory();
+            if (entity instanceof Player player) {
+                  BackSlot backSlot = BackSlot.get(player);
+                  return backSlot.backpackInventory;
+            }
+            return null;
+      }
+
+      default MenuProvider getMenuProvider() {
+            return Services.NETWORK.getMenuProvider(getOwner());
       }
 }

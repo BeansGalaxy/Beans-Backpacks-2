@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.ForgeMain;
+import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.client.renderer.BackpackModel;
 import com.beansgalaxy.backpacks.client.renderer.BackpackRenderer;
 import com.beansgalaxy.backpacks.client.renderer.PotModel;
@@ -16,7 +17,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class ClientEvents {
+public class ClientModEvents {
       @SubscribeEvent
       public static void clientSetup(FMLClientSetupEvent event) {
             event.enqueueWork(() -> {
@@ -26,8 +27,8 @@ public class ClientEvents {
 
       @SubscribeEvent
       public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
-            event.registerLayerDefinition(Constants.BACKPACK_MODEL, BackpackModel::getTexturedModelData);
-            event.registerLayerDefinition(Constants.POT_MODEL, PotModel::getTexturedModelData);
+            event.registerLayerDefinition(RendererHelper.BACKPACK_MODEL, BackpackModel::getTexturedModelData);
+            event.registerLayerDefinition(RendererHelper.POT_MODEL, PotModel::getTexturedModelData);
       }
 
       @SubscribeEvent

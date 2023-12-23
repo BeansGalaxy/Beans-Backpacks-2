@@ -4,16 +4,16 @@ import com.beansgalaxy.backpacks.client.network.SyncViewersPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 
-public class SyncViewersPacketS2All {
+public class SyncViewersPacketS2C {
       int entityId;
       byte viewers;
 
-      public SyncViewersPacketS2All(int entityId, byte viewers) {
+      public SyncViewersPacketS2C(int entityId, byte viewers) {
             this.entityId = entityId;
             this.viewers = viewers;
       }
 
-      public SyncViewersPacketS2All(FriendlyByteBuf byteBuf) {
+      public SyncViewersPacketS2C(FriendlyByteBuf byteBuf) {
             this(byteBuf.readInt(), byteBuf.readByte());
       }
 

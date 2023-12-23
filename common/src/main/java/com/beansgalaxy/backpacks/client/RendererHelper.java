@@ -11,6 +11,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -28,6 +29,9 @@ import java.awt.*;
 import java.util.Map;
 
 public interface RendererHelper {
+    ModelLayerLocation BACKPACK_MODEL = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "backpack_model"), "main");
+    ModelLayerLocation POT_MODEL = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "pot_player"), "main");
+
     ResourceLocation OVERLAY_LEATHER = new ResourceLocation(Constants.MOD_ID, "textures/entity/leather_overlay.png");
     Map<String, ResourceLocation> ButtonIdentifiers = ImmutableMap.of(
                 "gold", new ResourceLocation(Constants.MOD_ID, "textures/entity/overlay/gold.png"),
@@ -35,8 +39,7 @@ public interface RendererHelper {
                 "diamond", new ResourceLocation(Constants.MOD_ID, "textures/entity/overlay/diamond.png"),
                 "netherite", new ResourceLocation(Constants.MOD_ID, "textures/entity/overlay/netherite.png"));
 
-
-    static void renderOverlays(PoseStack pose, int light, MultiBufferSource mbs, Color tint, RegistryAccess registryAccess, BackpackInventory.Data data, BackpackModel model, TextureAtlas atlas) {
+      static void renderOverlays(PoseStack pose, int light, MultiBufferSource mbs, Color tint, RegistryAccess registryAccess, BackpackInventory.Data data, BackpackModel model, TextureAtlas atlas) {
         Kind kind = data.kind;
         CompoundTag trim = data.trim;
         if (kind.isTrimmable() && trim.get("material") != null && trim.get("pattern") != null)

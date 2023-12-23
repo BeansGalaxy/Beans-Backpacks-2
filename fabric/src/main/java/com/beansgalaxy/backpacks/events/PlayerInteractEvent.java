@@ -13,7 +13,7 @@ public class PlayerInteractEvent implements UseBlockCallback {
       @Override
       public InteractionResult interact(Player player, Level world, InteractionHand hand, BlockHitResult hitResult) {
             Direction direction = hitResult.getDirection();
-            BlockPos blockPos = hitResult.getBlockPos().relative(direction);
+            BlockPos blockPos = hitResult.getBlockPos();
             return PlaceBackpackEvent.interact(player, hand, direction, blockPos);
       }
 }

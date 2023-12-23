@@ -1,17 +1,9 @@
 package com.beansgalaxy.backpacks.general;
 
-import com.beansgalaxy.backpacks.Constants;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.client.resources.sounds.SoundInstance;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 public enum PlaySound {
@@ -44,25 +36,5 @@ public enum PlaySound {
         if (!world.isClientSide) {
             world.playSound(null, entity.blockPosition(), soundEvent, SoundSource.BLOCKS, volume, 1f);
         }
-    }
-
-    public void toClient(Player player) {
-        if (!player.level().isClientSide) {
-            Minecraft.getInstance().getSoundManager().play(
-                new SimpleSoundInstance(this.soundEvent.getLocation(), SoundSource.PLAYERS, 0.7f, player.level().random.nextFloat() * 0.1f + 0.8f,
-                            SoundInstance.createUnseededRandom(), false, 0, SoundInstance.Attenuation.LINEAR, 0.0, 0.0, 0.0, true)
-                );
-        }
-    }
-
-    public static void registerAll() {
-        for (PlaySound sound : PlaySound.values()) {
-            PlaySound.register(sound.toString().toLowerCase());
-        }
-    }
-
-    private static SoundEvent register(String name) {
-        ResourceLocation id = new ResourceLocation(Constants.MOD_ID, name);
-        return Registry.register(BuiltInRegistries.SOUND_EVENT, id, SoundEvent.createVariableRangeEvent(id));
     }
 }

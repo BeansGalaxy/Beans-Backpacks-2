@@ -4,8 +4,10 @@ import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.general.BackpackInventory;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.network.packages.SprintKeyPacketC2S;
-import com.beansgalaxy.backpacks.network.packages.SyncViewersPacketS2All;
+import com.beansgalaxy.backpacks.network.packages.SyncBackSlotS2C;
+import com.beansgalaxy.backpacks.network.packages.SyncViewersPacketS2C;
 import com.beansgalaxy.backpacks.platform.services.NetworkHelper;
+import com.beansgalaxy.backpacks.screen.BackSlot;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,17 +27,17 @@ public class ForgeNetworkHelper implements NetworkHelper {
       @Override
       public void SyncViewers(Entity owner, byte viewers) {
             int id = owner.getId();
-            NetworkPackages.S2All(new SyncViewersPacketS2All(id, viewers));
+            NetworkPackages.S2All(new SyncViewersPacketS2C(id, viewers));
       }
 
       @Override
       public void openBackpackMenu(Player player, Backpack entity) {
             if (player instanceof ServerPlayer serverPlayer)
-                  serverPlayer.openMenu(entity.menuProvider, buf -> buf.writeInt(entity.getId()));
+                  serverPlayer.openMenu(entity.getBackpackInventory().getMenuProvider(), buf -> buf.writeInt(entity.getId()));
       }
 
       @Override
-      public MenuProvider getMenuProvider(Backpack backpack) {
+      public MenuProvider getMenuProvider(Entity entity) {
             return new MenuProvider() {
 
                   @Override
@@ -49,11 +51,16 @@ public class ForgeNetworkHelper implements NetworkHelper {
                         if (player.isSpectator())
                               return null;
                         else {
-                              BackpackInventory backpackInventory = backpack.getBackpackInventory();
+                              BackpackInventory backpackInventory = BackpackInventory.get(entity);
                               backpackInventory.addViewer(player);
                               return new BackpackMenu(containerId, player.getInventory(), backpackInventory);
                         }
                   }
             };
+      }
+
+      @Override
+      public void SyncBackSlot(ServerPlayer owner) {
+            NetworkPackages.S2All(new SyncBackSlotS2C(owner.getUUID(), BackSlot.get(owner).getItem()));
       }
 }

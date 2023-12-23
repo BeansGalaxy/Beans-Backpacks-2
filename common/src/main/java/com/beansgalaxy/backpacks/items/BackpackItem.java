@@ -13,12 +13,18 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+import java.util.Objects;
+import java.util.Optional;
 
 public class BackpackItem extends Item {
       public final static int DEFAULT_COLOR = 10511680;
@@ -31,41 +37,60 @@ public class BackpackItem extends Item {
       public InteractionResult useOn(UseOnContext ctx) {
             Player player = ctx.getPlayer();
             Direction direction = ctx.getClickedFace();
-            BlockPos blockPos = ctx.getClickedPos().relative(direction);
+            BlockPos clickedPos = ctx.getClickedPos();
             ItemStack backpackStack = ctx.getItemInHand();
 
-            int x = blockPos.getX();
-            double y = blockPos.getY() + 2d / 16;
-            int z = blockPos.getZ();
-
-            AABB box = BackpackEntity.newBox(blockPos, y, 10 / 16d, direction);
-            boolean spaceEmpty = player.level().noCollision(box);
-            if (spaceEmpty && doesPlace(player, x, y, z, direction, backpackStack, false)) {
+            if (useOnBlock(player, direction, clickedPos, backpackStack, false)) {
                   return InteractionResult.SUCCESS;
             }
 
             return InteractionResult.PASS;
       }
 
-      public static InteractionResult hotkeyOnBlock(Player player, Direction direction, BlockPos blockPos) {
-            ItemStack backpackStack = BackSlot.get(player).getItem();
+      public static InteractionResult hotkeyOnBlock(Player player, Direction direction, BlockPos clickedPos) {
+            BackSlot backSlot = BackSlot.get(player);
+            ItemStack backpackStack = backSlot.getItem();
 
-            int x = blockPos.getX();
-            double y = blockPos.getY() + 2d / 16;
-            int z = blockPos.getZ();
-
-            AABB box = BackpackEntity.newBox(blockPos, y, 10 / 16d, direction);
-            if (player.level().noCollision(box) && BackpackItem.doesPlace(player, x, y, z, direction, backpackStack, true)) {
-//                  if (player instanceof ServerPlayer serverPlayer) TODO: IMPLEMENT NETWORKING
-//                        Services.NETWORK.SyncBackSlot(serverPlayer);
+            if (useOnBlock(player, direction, clickedPos, backpackStack, true)) {
+                  backSlot.setChanged();
                   return InteractionResult.SUCCESS;
             }
 
             return InteractionResult.PASS;
+      }
+
+      private static Boolean useOnBlock(Player player, Direction direction, BlockPos clickedPos, ItemStack backpackStack, boolean fromBackSlot) {
+            Level level = player.level();
+            BlockPos blockPos;
+
+            boolean isVertical = direction.getAxis().isVertical();
+            if (isVertical && level.getBlockState(clickedPos).getCollisionShape(level, clickedPos).isEmpty()) {
+                  blockPos = clickedPos;
+            } else
+                  blockPos =  clickedPos.relative(direction);
+
+            int y = blockPos.getY();
+            AABB box = BackpackEntity.newBox(blockPos, y, 9 / 16d, direction);
+            double yOffset = 2d / 16;
+
+            if (isVertical) {
+                  boolean isRelative = !Objects.equals(blockPos, clickedPos);
+                  AABB $$4 = new AABB(blockPos);
+                  if (isRelative)
+                        $$4 = $$4.expandTowards(0.0, -1.0, 0.0);
+
+                  Iterable<VoxelShape> $$5 = level.getCollisions(null, $$4);
+                  yOffset += Shapes.collide(Direction.Axis.Y, box, $$5, isRelative ? -2.0 : -1.0);
+
+                  if (level.noCollision($$4))
+                        yOffset += 1;
+            }
+
+            boolean spaceEmpty = level.noCollision(box.move(0, yOffset, 0));
+            return spaceEmpty && doesPlace(player, blockPos.getX(), y + yOffset, blockPos.getZ(), direction, backpackStack, fromBackSlot);
       }
 
       public static InteractionResult useOnBackpack(Player player, BackpackEntity backpackEntity, ItemStack backpackStack, boolean fromBackSlot) {
-
             Vec3 pos = backpackEntity.position();
             Direction direction = backpackEntity.direction;
 
@@ -77,8 +102,7 @@ public class BackpackItem extends Item {
             AABB box = backpackEntity.getBoundingBox().move(0, 10d / 16 * invert, 0);
             boolean spaceEmpty = player.level().noCollision(box);
             if (spaceEmpty && doesPlace(player, x, y, z, direction, backpackStack, fromBackSlot)) {
-//                  if (player instanceof ServerPlayer serverPlayer) TODO: IMPLEMENT NETWORKING
-//                        Services.NETWORK.SyncBackSlot(serverPlayer);
+                  BackSlot.get(player).setChanged();
                   return InteractionResult.SUCCESS;
             }
 
@@ -131,10 +155,7 @@ public class BackpackItem extends Item {
       }
 
       @Override
-      public void verifyTagAfterLoad(CompoundTag tag) {
-            CompoundTag display = tag.getCompound("display");
-            String key = display.getString("key");
-            String name = display.getString("name");
+      public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
+            return Tooltip.get(stack);
       }
-
 }

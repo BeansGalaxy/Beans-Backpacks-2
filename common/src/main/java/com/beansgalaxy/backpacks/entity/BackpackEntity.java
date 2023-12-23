@@ -44,7 +44,7 @@ public class BackpackEntity extends Backpack {
 
       public BackpackEntity(Player player, Level world, int x, double y, int z, Direction direction,
                             ItemStack backpackStack, NonNullList<ItemStack> stacks, float yaw) {
-            super(world, stacks);
+            super(world);
             this.actualY = y;
             this.pos = BlockPos.containing(x, y, z);
             this.setDirection(direction);
@@ -52,11 +52,16 @@ public class BackpackEntity extends Backpack {
 
             if (!direction.getAxis().isHorizontal())
                   this.setYRot(yaw);
+
             if (!world.isClientSide()) {
                   world.gameEvent(player, GameEvent.ENTITY_PLACE, this.position());
                   world.addFreshEntity(this);
             }
 
+            if (stacks != null && !stacks.isEmpty()) {
+                  this.backpackInventory.getItemStacks().addAll(stacks);
+                  stacks.clear();
+            }
       }
 
       public static ItemStack toStack(BackpackEntity backpack) {
@@ -231,13 +236,13 @@ public class BackpackEntity extends Backpack {
 
       // NBT
       protected void addAdditionalSaveData(CompoundTag tag) {
-            backpackInventory.writeNbt(tag, backpackInventory.getItemStacks().isEmpty());
+            super.addAdditionalSaveData(tag);
             tag.putByte("facing", (byte)this.direction.get3DDataValue());
             tag.put("display", getDisplay());
       }
 
       protected void readAdditionalSaveData(CompoundTag tag) {
-            backpackInventory.readStackNbt(tag);
+            super.readAdditionalSaveData(tag);
             this.setDirection(Direction.from3DDataValue(tag.getByte("facing")));
             this.setDisplay(tag.getCompound("display"));
       }
@@ -395,9 +400,6 @@ public class BackpackEntity extends Backpack {
 
       public boolean isPickable() {
             return true;
-      }
-
-      public void startOpen(Player player) {
       }
 
       public Vec3 position() {
