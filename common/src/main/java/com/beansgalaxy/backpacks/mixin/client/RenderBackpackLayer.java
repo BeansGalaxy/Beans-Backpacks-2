@@ -1,4 +1,4 @@
-package com.beansgalaxy.backpacks.mixin;
+package com.beansgalaxy.backpacks.mixin.client;
 
 import com.beansgalaxy.backpacks.client.renderer.BackpackFeature;
 import com.beansgalaxy.backpacks.client.renderer.PotFeature;
@@ -23,5 +23,4 @@ public abstract class RenderBackpackLayer extends LivingEntityRenderer<AbstractC
             this.addLayer(new BackpackFeature<>(this, ctx.getModelSet(), ctx.getModelManager()));
             this.addLayer(new PotFeature<>(this, ctx.getModelSet()));
       }
-
 }

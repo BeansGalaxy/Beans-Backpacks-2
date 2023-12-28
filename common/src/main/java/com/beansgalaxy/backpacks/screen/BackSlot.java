@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.screen;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.general.BackpackInventory;
@@ -176,17 +177,19 @@ public class BackSlot extends Slot {
             return Kind.isWearable(stack);
       }
 
+      public boolean isActive() {
+            ItemStack chestplateStack = owner.inventoryMenu.slots.get(6).getItem();
+            boolean isDisabled = Constants.DISABLES_BACK_SLOT.contains(chestplateStack.getItem());
+            return !owner.isCreative() && !isDisabled;
+      }
+
       public boolean mayPickup(Player playerEntity) {
             ItemStack itemStack = this.getItem();
-            return (itemStack.isEmpty() || playerEntity.isCreative() || !EnchantmentHelper.hasBindingCurse(itemStack)) && (getInventory(playerEntity).getItemStacks().isEmpty() || Kind.ELYTRA.is(itemStack));
+            return (itemStack.isEmpty() || playerEntity.isCreative() || !EnchantmentHelper.hasBindingCurse(itemStack)) || (!getInventory(playerEntity).getItemStacks().isEmpty() && Kind.isStorage(itemStack));
       }
 
       public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
             return null;
-      }
-
-      public boolean isActive() {
-            return !owner.isCreative();
       }
 
       public void setChanged() {

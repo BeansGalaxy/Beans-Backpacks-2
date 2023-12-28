@@ -1,4 +1,4 @@
-package com.beansgalaxy.backpacks.mixin;
+package com.beansgalaxy.backpacks.mixin.client;
 
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.screen.BackSlot;

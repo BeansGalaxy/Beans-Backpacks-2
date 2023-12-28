@@ -1,5 +1,6 @@
-package com.beansgalaxy.backpacks.mixin;
+package com.beansgalaxy.backpacks.mixin.common;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.general.Kind;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import com.mojang.datafixers.util.Pair;
@@ -10,7 +11,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -81,7 +81,8 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
 
                   @Override
                   public boolean mayPlace(ItemStack stack) {
-                        return equipmentSlot == Mob.getEquipmentSlotForItem(stack) && !stack.is(Items.ELYTRA);
+                        boolean conflictsWithBackSlot = Constants.DISABLES_BACK_SLOT.contains(stack.getItem()) && !BackSlot.get(owner).getItem().isEmpty();
+                        return equipmentSlot == Mob.getEquipmentSlotForItem(stack) && !Constants.CHESTPLATE_DISABLED.contains(stack.getItem()) && !conflictsWithBackSlot;
                   }
 
                   @Override

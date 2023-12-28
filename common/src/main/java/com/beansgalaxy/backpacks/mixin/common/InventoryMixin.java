@@ -1,4 +1,4 @@
-package com.beansgalaxy.backpacks.mixin;
+package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.general.BackpackInventory;
 import com.beansgalaxy.backpacks.general.Kind;

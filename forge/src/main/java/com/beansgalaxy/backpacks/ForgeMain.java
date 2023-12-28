@@ -33,8 +33,6 @@ public class ForgeMain {
         ENTITIES.register(bus);
         MENU_TYPES.register(bus);
 
-        bus.addListener(this::addCreative);
-
         Constants.LOG.info("Initializing Beans' Backpacks Forge");
         CommonClass.init();
     }

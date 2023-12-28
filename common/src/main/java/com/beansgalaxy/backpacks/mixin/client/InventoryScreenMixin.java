@@ -1,4 +1,4 @@
-package com.beansgalaxy.backpacks.mixin;
+package com.beansgalaxy.backpacks.mixin.client;
 
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.client.gui.GuiGraphics;
@@ -31,6 +31,7 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
 
       @Inject(method = "renderBg", at = @At("TAIL"))
       protected void renderBg(GuiGraphics context, float delta, int mouseX, int mouseY, CallbackInfo ci) {
-            this.templateSlotIcon.render(this.menu, context, delta, this.leftPos, this.topPos);
+            if (BackSlot.get(this.minecraft.player).isActive())
+                  this.templateSlotIcon.render(this.menu, context, delta, this.leftPos, this.topPos);
       }
 }

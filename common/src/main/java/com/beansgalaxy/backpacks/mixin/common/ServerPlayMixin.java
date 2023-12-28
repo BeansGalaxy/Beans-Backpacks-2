@@ -1,4 +1,4 @@
-package com.beansgalaxy.backpacks.mixin;
+package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.events.PlaceBackpackEvent;
 import net.minecraft.server.level.ServerPlayer;

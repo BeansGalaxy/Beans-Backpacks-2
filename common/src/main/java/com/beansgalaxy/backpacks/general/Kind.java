@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.general;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.nbt.CompoundTag;
@@ -11,8 +12,7 @@ public enum Kind {
       LEATHER(Services.REGISTRY.getLeather()),
       METAL(Services.REGISTRY.getMetal()),
       UPGRADED(Services.REGISTRY.getUpgraded()),
-      POT(Items.DECORATED_POT.asItem()),
-      ELYTRA(Items.ELYTRA.asItem());
+      POT(Items.DECORATED_POT.asItem());
 
       final Item item;
 
@@ -29,7 +29,7 @@ public enum Kind {
             for(Kind kind: Kind.values())
                   if(stack.is(kind.getItem()))
                         return true;
-            return false;
+            return Constants.CHESTPLATE_DISABLED.contains(stack.getItem());
       }
 
       public static boolean isStorage(ItemStack stack) {
