@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks;
 
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.events.ElytraFlightEvent;
+import com.beansgalaxy.backpacks.events.LivingEntityDeath;
 import com.beansgalaxy.backpacks.events.PlayerInteractEvent;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
@@ -11,6 +12,7 @@ import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -37,6 +39,7 @@ public class FabricMain implements ModInitializer {
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(Constants.MOD_ID, RecipieSmithing.Serializer.ID),
                     RecipieSmithing.Serializer.INSTANCE);
 
+        ServerLivingEntityEvents.AFTER_DEATH.register(new LivingEntityDeath());
         EntityElytraEvents.CUSTOM.register(new ElytraFlightEvent());
         UseBlockCallback.EVENT.register(new PlayerInteractEvent());
         Constants.LOG.info("Initializing Beans' Backpacks Fabric");

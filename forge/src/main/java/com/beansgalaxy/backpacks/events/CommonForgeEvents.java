@@ -1,11 +1,13 @@
 package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -33,5 +35,11 @@ public class CommonForgeEvents {
             event.setUseItem(result);
 
             denyQue = consumesAction && hand == InteractionHand.MAIN_HAND;
+      }
+
+      @SubscribeEvent
+      public static void LivingEntityDeath(LivingDeathEvent event) {
+            if (event.getEntity() instanceof Player player)
+                  BackSlot.get(player).drop();
       }
 }

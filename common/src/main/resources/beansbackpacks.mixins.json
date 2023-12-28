@@ -8,7 +8,7 @@
     "common.DataResourcesMixin",
     "common.InventoryMenuMixin",
     "common.InventoryMixin",
-    "common.PlayerEntityMixin",
+    "common.InteractWithPlayer",
     "common.ServerPlayMixin"
   ],
   "client": [

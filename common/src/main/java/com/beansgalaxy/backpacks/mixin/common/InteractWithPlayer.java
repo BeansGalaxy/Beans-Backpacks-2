@@ -11,8 +11,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.util.ITokenProvider;
 
 @Mixin(Player.class)
-public abstract class PlayerEntityMixin extends LivingEntity implements ITokenProvider {
-      protected PlayerEntityMixin(EntityType<? extends LivingEntity> $$0, Level $$1) {
+public abstract class InteractWithPlayer extends LivingEntity implements ITokenProvider {
+      protected InteractWithPlayer(EntityType<? extends LivingEntity> $$0, Level $$1) {
             super($$0, $$1);
       }
 

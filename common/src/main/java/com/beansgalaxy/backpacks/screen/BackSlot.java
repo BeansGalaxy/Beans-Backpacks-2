@@ -289,7 +289,7 @@ public class BackSlot extends Slot {
                               if (backpackInventory.isEmpty())
                                     player.getInventory().add(-1, stack);
                               else {
-                                    drop(player, stack, backpackInventory.getItemStacks());
+                                    backSlot.drop();
                                     stack.setCount(0);
                               }
                               return false;
@@ -336,39 +336,44 @@ public class BackSlot extends Slot {
             return true;
       }
 
-      public static void drop(Player player, ItemStack backpackStack, NonNullList<ItemStack> itemStacks) {
+      public void drop() {
+            ItemStack backpackStack = this.getItem();
+            NonNullList<ItemStack> itemStacks = backpackInventory.getItemStacks();
             Kind kind = Kind.fromStack(backpackStack);
+
             if (!Kind.isBackpack(backpackStack)) {
-                  player.spawnAtLocation(backpackStack.copy(), 0.5f);
+                  owner.spawnAtLocation(backpackStack.copy(), 0.5f);
                   if (Kind.POT.is(kind)) {
                         int iteration = 0;
                         int maxIterations = 72;
                         while (!itemStacks.isEmpty() && iteration < maxIterations) {
                               ItemStack stack = itemStacks.remove(iteration);
                               if (stack.getMaxStackSize() == 64) {
-                                    player.spawnAtLocation(stack, 0.5f);
+                                    owner.spawnAtLocation(stack, 0.5f);
                               } else while (stack.getCount() > 0) {
                                     int removedCount = Math.min(stack.getCount(), stack.getMaxStackSize());
-                                    player.spawnAtLocation(stack.copyWithCount(removedCount));
+                                    owner.spawnAtLocation(stack.copyWithCount(removedCount));
                                     stack.shrink(removedCount);
                               }
                               iteration++;
                         }
                         SoundEvent soundEvent = iteration >= maxIterations ? SoundEvents.DECORATED_POT_BREAK : SoundEvents.DECORATED_POT_SHATTER;
-                        player.playSound(soundEvent, 0.4f, 0.8f);
+                        owner.playSound(soundEvent, 0.4f, 0.8f);
                   }
                   return;
             }
 
-            BlockPos blockPos = player.getOnPos();
+            BlockPos blockPos = owner.getOnPos();
+            float yRot = owner.getYRot() + 180;
+
             int x = blockPos.getX();
-            double y = blockPos.getY() + 2D / 16 + 1;
+            double y = blockPos.getY() + 1;
             int z = blockPos.getZ();
 
-            new BackpackEntity(player, player.level(), x, y, z, Direction.UP,
-                        backpackStack, itemStacks, player.getYRot());
+            new BackpackEntity(owner, owner.level(), x, y, z, Direction.UP,
+                        backpackStack, itemStacks, yRot);
 
-            PlaySound.DROP.at(player);
+            PlaySound.DROP.at(owner);
       }
 
       private static void moveAll(BackpackInventory backpackInventory, InventoryMenu inventoryMenu) {
