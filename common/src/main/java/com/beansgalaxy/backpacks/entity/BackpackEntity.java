@@ -262,8 +262,15 @@ public class BackpackEntity extends Backpack {
 
       /** COLLISIONS AND INTERACTIONS **/
       public boolean canCollideWith(Entity that) {
-            return (that.canBeCollidedWith() || that.isPushable()) && !this.isPassengerOfSameVehicle(that);
+            if (that instanceof LivingEntity livingEntity && !livingEntity.isAlive())
+                  return false;
+
+            if (this.isPassengerOfSameVehicle(that))
+                  return false;
+
+            return (that.canBeCollidedWith() || that.isPushable());
       }
+
       public boolean canBeCollidedWith() {
             return true;
       }

@@ -364,10 +364,10 @@ public class BackSlot extends Slot {
             }
 
             BlockPos blockPos = owner.getOnPos();
-            float yRot = owner.getYRot() + 180;
+            float yRot = owner.yBodyRot + 180;
 
             int x = blockPos.getX();
-            double y = blockPos.getY() + 1;
+            double y = blockPos.getY() + 2;
             int z = blockPos.getZ();
 
             new BackpackEntity(owner, owner.level(), x, y, z, Direction.UP,

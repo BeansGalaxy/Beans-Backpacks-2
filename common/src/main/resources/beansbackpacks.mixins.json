@@ -6,12 +6,13 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "common.DataResourcesMixin",
+    "common.InteractWithPlayer",
     "common.InventoryMenuMixin",
     "common.InventoryMixin",
-    "common.InteractWithPlayer",
     "common.ServerPlayMixin"
   ],
   "client": [
+    "client.DisableCape",
     "client.ElytraRenderer",
     "client.InventoryScreenMixin",
     "client.ItemModelBaker",
