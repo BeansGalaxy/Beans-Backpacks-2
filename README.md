@@ -33,6 +33,12 @@ that might've fallen to the bottom, ask your friend to help out and grab it for 
 Double-check your diamonds after they've been in there though.
 </p>
 
+<h3> Inventory Controls</h3>
+
+Holding CTRL while in your inventory has some added functionality to help move you items around. 
+Use CTRL as if you were shift clicking items into any other inventory. CTRL + LMB on a Backpack 
+you're wearing while items are inside drop it where you stand.
+
 <h2 align="center">More Than Meets The Eye! </h2>
 <p align="center"><img align="center" src="assets/images/banners/other_wearables.png" alt="Other Wearables"></p>
 
@@ -56,9 +62,8 @@ stack to 64.
 
 <p align="justify">
 A big feature in Version 2 is that you can add your own backpacks with custom properties by only 
-using data and resource packs. Start by downloading the example I have <a href="https://github.com/BeansGalaxy/Beans-Backpacks-2/tree/master/assets/examples"> HERE </a> <--- <br>
-
-
+using data and resource packs. Start by downloading the example I have <a href="https://github.com/BeansGalaxy/Beans-Backpacks-2/tree/master/assets/examples"> HERE </a> 
+and read along with "Creating Your Own" to add your own backpack.
 </p>
 
 
