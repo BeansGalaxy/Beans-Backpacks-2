@@ -1,22 +1,10 @@
 package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.network.packages.CallBackSlotC2S;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ClientForgeEvents {
 
-      @SubscribeEvent
-      public static void playerLogIn(ClientPlayerNetworkEvent.LoggingIn event) {
-            CallBackSlotC2S.call(event.getPlayer());
-      }
-
-      @SubscribeEvent
-      public static void playerLogIn(ClientPlayerNetworkEvent.Clone event) {
-            CallBackSlotC2S.call(event.getPlayer());
-      }
 }

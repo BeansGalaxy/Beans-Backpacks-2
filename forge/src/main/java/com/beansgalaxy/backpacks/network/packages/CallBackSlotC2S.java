@@ -1,15 +1,22 @@
 package com.beansgalaxy.backpacks.network.packages;
 
 import com.beansgalaxy.backpacks.network.NetworkPackages;
+import com.beansgalaxy.backpacks.network.client.SyncBackSlotS2C;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.minecraftforge.network.NetworkDirection;
 
 import java.util.UUID;
 
 public class CallBackSlotC2S {
+      public static void register() {
+            NetworkPackages.INSTANCE.messageBuilder(CallBackSlotC2S.class, NetworkDirection.PLAY_TO_SERVER)
+                        .encoder(CallBackSlotC2S::encode).decoder(CallBackSlotC2S::new).consumerMainThread(CallBackSlotC2S::handle).add();
+      }
+
       final UUID uuid;
 
       public CallBackSlotC2S(FriendlyByteBuf buf) {

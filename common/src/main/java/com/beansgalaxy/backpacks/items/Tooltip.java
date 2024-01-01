@@ -6,6 +6,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.tooltip.BundleTooltip;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
@@ -18,21 +19,28 @@ import java.util.Optional;
 public class Tooltip {
       protected static Optional<TooltipComponent> get(ItemStack stack) {
             Player player = Minecraft.getInstance().player;
-            NonNullList<Slot> slots = Minecraft.getInstance().player.inventoryMenu.slots;
-            // IS BACKPACK SLOT LOADED AND PLAYER IS LOOKING IN THE PLAYER INVENTORY
-            if (slots.size() <= BackSlot.SLOT_INDEX || player.containerMenu != player.inventoryMenu)
+            if (player == null)
                   return Optional.empty();
+
+            // IS BACKPACK SLOT LOADED AND PLAYER IS LOOKING IN THE PLAYER INVENTORY
+            NonNullList<Slot> slots = player.inventoryMenu.slots;
+            if (slots.size() <= BackSlot.SLOT_INDEX || !(player.containerMenu instanceof InventoryMenu))
+                  return Optional.empty();
+
+            // IS BACKPACK EQUIPPED
             BackSlot backSlot = BackSlot.get(player);
             ItemStack equippedOnBack = backSlot.getItem();
-            // IS BACKPACK EQUIPPED
             if (!stack.equals(equippedOnBack))
                   return Optional.empty();
+
             NonNullList<ItemStack> defaultedList = NonNullList.create();
             NonNullList<ItemStack> backpackList = BackSlot.getInventory(player).getItemStacks();
             backpackList.forEach(itemstack -> defaultedList.add(itemstack.copy()));
-            if (!defaultedList.isEmpty()) {
+            if (!defaultedList.isEmpty())
+            {
                   defaultedList.remove(0);
-                  for (int j = 0; j < defaultedList.size(); j++) {
+                  for (int j = 0; j < defaultedList.size(); j++)
+                  {
                         ItemStack itemStack = defaultedList.get(j);
                         int count = defaultedList.stream()
                                     .filter(itemStacks -> itemStacks.is(itemStack.getItem()) && !itemStack.equals(itemStacks))
@@ -40,7 +48,6 @@ public class Tooltip {
                         itemStack.setCount(count + itemStack.getCount());
                         defaultedList.removeIf(ItemStack::isEmpty);
                   }
-
             }
             int totalWeight = getBundleOccupancy(defaultedList) / backSlot.backpackInventory.getMaxStacks();
             return Optional.of(new BundleTooltip(defaultedList, totalWeight));

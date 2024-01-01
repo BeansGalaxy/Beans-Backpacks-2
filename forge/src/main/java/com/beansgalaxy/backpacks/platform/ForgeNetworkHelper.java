@@ -4,11 +4,13 @@ import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.general.BackpackInventory;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.network.packages.SprintKeyPacketC2S;
-import com.beansgalaxy.backpacks.network.packages.SyncBackSlotS2C;
-import com.beansgalaxy.backpacks.network.packages.SyncViewersPacketS2C;
+import com.beansgalaxy.backpacks.network.client.SyncBackInventory2C;
+import com.beansgalaxy.backpacks.network.client.SyncBackSlotS2C;
+import com.beansgalaxy.backpacks.network.client.SyncViewersPacketS2C;
 import com.beansgalaxy.backpacks.platform.services.NetworkHelper;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
@@ -62,5 +64,14 @@ public class ForgeNetworkHelper implements NetworkHelper {
       @Override
       public void SyncBackSlot(ServerPlayer owner) {
             NetworkPackages.S2All(new SyncBackSlotS2C(owner.getUUID(), BackSlot.get(owner).getItem()));
+      }
+
+      @Override
+      public void backpackInventory2C(ServerPlayer owner) {
+            BackpackInventory backpackInventory = BackSlot.getInventory(owner);
+            CompoundTag compound = new CompoundTag();
+            backpackInventory.writeNbt(compound, backpackInventory.isEmpty());
+            String stacks = compound.getAsString();
+            NetworkPackages.S2C(new SyncBackInventory2C(stacks), owner);
       }
 }

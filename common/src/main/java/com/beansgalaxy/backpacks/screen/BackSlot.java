@@ -169,29 +169,43 @@ public class BackSlot extends Slot {
             return List.of(SLOT_BACKPACK);
       }
 
+      public void replaceWith(BackSlot backSlot) {
+            ItemStack backStack = backSlot.getItem();
+            this.container.setItem(getContainerSlot(), backStack);
+
+            NonNullList<ItemStack> stacks = backSlot.backpackInventory.getItemStacks();
+            this.backpackInventory.getItemStacks().addAll(stacks);
+      }
+
+      @Override
       public int getMaxStackSize() {
             return 1;
       }
 
+      @Override
       public boolean mayPlace(ItemStack stack) {
             return Kind.isWearable(stack);
       }
 
+      @Override
       public boolean isActive() {
             ItemStack chestplateStack = owner.inventoryMenu.slots.get(6).getItem();
             boolean isDisabled = Constants.DISABLES_BACK_SLOT.contains(chestplateStack.getItem());
             return !owner.isCreative() && !isDisabled;
       }
 
+      @Override
       public boolean mayPickup(Player playerEntity) {
             ItemStack itemStack = this.getItem();
             return (itemStack.isEmpty() || playerEntity.isCreative() || !EnchantmentHelper.hasBindingCurse(itemStack)) || (!getInventory(playerEntity).getItemStacks().isEmpty() && Kind.isStorage(itemStack));
       }
 
+      @Override
       public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
             return null;
       }
 
+      @Override
       public void setChanged() {
             ItemStack stack = this.getItem();
             if (stack.isEmpty())

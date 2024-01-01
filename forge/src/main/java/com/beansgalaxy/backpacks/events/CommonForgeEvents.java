@@ -1,13 +1,19 @@
 package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.network.NetworkPackages;
+import com.beansgalaxy.backpacks.network.client.SyncBackSlotS2C;
+import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -41,5 +47,48 @@ public class CommonForgeEvents {
       public static void LivingEntityDeath(LivingDeathEvent event) {
             if (event.getEntity() instanceof Player player)
                   BackSlot.get(player).drop();
+      }
+
+      @SubscribeEvent
+      public static void PlayerCloneEvent(PlayerEvent.Clone event) {
+            Player owner = event.getEntity();
+            Player original = event.getOriginal();
+
+            BackSlot oldBackSlot = BackSlot.get(original);
+            BackSlot newBackSlot = BackSlot.get(owner);
+            newBackSlot.replaceWith(oldBackSlot);
+
+            if (owner instanceof ServerPlayer serverPlayer)
+                  Services.NETWORK.SyncBackSlot(serverPlayer);
+      }
+
+      @SubscribeEvent
+      public static void PlayerRespawnEvent(PlayerEvent.PlayerRespawnEvent event) {
+            if (event.isEndConquered() && event.getEntity() instanceof ServerPlayer serverPlayer)
+                  Services.NETWORK.backpackInventory2C(serverPlayer);
+
+      }
+
+      @SubscribeEvent
+      public static void PlayerChangeDimensions(PlayerEvent.PlayerChangedDimensionEvent event) {
+            if (event.getEntity() instanceof ServerPlayer player)
+                  Services.NETWORK.backpackInventory2C(player);
+      }
+
+      @SubscribeEvent
+      public static void PlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
+            if (event.getEntity() instanceof ServerPlayer player)
+            {
+                  Services.NETWORK.backpackInventory2C(player);
+
+                  ItemStack stack = BackSlot.get(player).getItem();
+                  NetworkPackages.S2C(new SyncBackSlotS2C(player.getUUID(), stack), player);
+            }
+      }
+
+      @SubscribeEvent
+      public static void loadPlayer(PlayerEvent.StartTracking event) {
+            if (event.getEntity() instanceof ServerPlayer thisPlayer && event.getTarget() instanceof Player owner)
+                  NetworkPackages.S2C(new SyncBackSlotS2C(owner.getUUID(), BackSlot.get(owner).getItem()), thisPlayer);
       }
 }

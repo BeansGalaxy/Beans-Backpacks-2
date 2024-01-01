@@ -177,13 +177,16 @@ public interface BackpackInventory extends Container {
                   if (getContainerSize() > slot)
                         getItemStacks().set(slot, stack);
                   else getItemStacks().add(slot, stack);
-            else if (getContainerSize() > slot) getItemStacks().remove(slot);
+            else
+                  if (getContainerSize() > slot)
+                        getItemStacks().remove(slot);
       }
 
       default ItemStack returnItem(int slot, ItemStack stack) {
-            if (!stack.isEmpty()) {
+            if (!stack.isEmpty())
                   return insertItem(stack);
-            } else return removeItemNoUpdate(slot);
+            else
+                  return removeItemNoUpdate(slot);
       }
 
       default ItemStack insertItem(ItemStack stack) {
@@ -192,9 +195,8 @@ public interface BackpackInventory extends Container {
 
       default ItemStack insertItem(ItemStack stack, int amount) {
             ItemStack insertedStack = stack.copy();
-            if (insertItemSilent(stack, amount) != insertedStack) {
+            if (insertItemSilent(stack, amount) != insertedStack)
                   playSound(stack.isEmpty() ? PlaySound.INSERT : PlaySound.TAKE);
-            }
             return stack.isEmpty() ? ItemStack.EMPTY : stack;
       }
 
