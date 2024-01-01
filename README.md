@@ -1,13 +1,6 @@
-
-<h1 align="center">Bean's Backpacks </h1>
-
 <p><em><strong><span style="color: #ff9900;">!!!</span></strong></em> If you are looking for Version 1's Git, you can find it <a href="https://github.com/BeansGalaxy/BeansBackpacks">[here]</a><em><strong><span style="color: #ff9900;"> !!!</span></strong></em></p>
 
-If your crush has ever pointed and laughed while they said to you, "Ew. is that inventory clutter?
-Omg that's so embarrassing!" Then you've come to the right place!
-
-<img align="right" src="assets/images/back_slot.gif" alt="Back Slot" style="margin:10px">
-<h3> Introducing Bean's Backpacks!  </h3>
+<h1> Introducing Bean's Backpacks! <img align="right" src="assets/images/back_slot.gif" alt="Back Slot" style="margin:10px"> </h1>
 
 Babe wake up! A new slot just dropped! Opening your inventory you'll find the
 new "Back Slot". After equipping your Backpack, you can store items directly in
@@ -20,7 +13,7 @@ and Gold hold up to 576 items (9 Stacks).
 
 
 <h2 align="center">Show Your True Colors! </h2>
-<p align="center"><img src="assets/images/decorated_backpacks.png" alt="Decorated Backpacks"></p>
+<p align="center"><img src="assets/images/banners/customize_backpacks.png" alt="Customize Backpacks"></p>
 
 <p align="justify">
 Leather Backpacks can be dyed any color you can imagine and Iron and Gold Backpacks
@@ -31,7 +24,7 @@ can be trimmed with anything you get your hands on.
 <p align="center"><img src="assets/images/recipes.gif" alt="Recipes"></p>
 
 <h2 align="center">Fill 'er up! </h2>
-<p align="center"><img src="assets/images/using_backpacks.png" alt="Using Backpacks"></p>
+<p align="center"><img src="assets/images/banners/play_with_friends.png" alt="Play With Friends"></p>
 
 <p align="justify">
 New items are automatically put into the top of the backpack. Hovering over the backpack you
@@ -40,13 +33,15 @@ that might've fallen to the bottom, ask your friend to help out and grab it for 
 Double-check your diamonds after they've been in there though.
 </p>
 
-<h3> Pots <img align="right" src="assets/images/equipped_pot.png" alt="Equipping Pots"> </h3>
+<h2 align="center">More Than Meets The Eye! </h2>
+<p align="center"><img align="center" src="assets/images/banners/other_wearables.png" alt="Other Wearables"></p>
 
-Equipping a Decorated Pot gives you unlimited storage of a single item. Great for
-transporting items from a farm or quarry! Pots cannot be unequipped or placed while
-there are items inside.  <br>
-Decorate the pot to show everyone what you're carrying. Sherds made with the
+<p align="justify">
+The Back Slot is used for more than just Backpacks. Equip a Decorated Pot and 
+get unlimited storage of a single item, great for transporting items from a farm 
+or quarry! Decorate the pot to show everyone what you're carrying. Sherds made with the
 decorated pot display on your back. Tell a story!
+</p>
 
 <h3> On Death</h3>
 
@@ -56,12 +51,16 @@ stack to 64.
 
 >⚠️ If you die with a pot, items that do not stack to 64 such as Lava Buckets and Ender Pearls will get deleted after spawning 72+ stacks.
 
-<h3> Custom Backpacks </h3>
+<h2 align="center">Looking for More? </h2>
+<p align="center"><img align="center" src="assets/images/banners/adding_backpacks.png" alt="Other Wearables"></p>
 
-A big feature in Version 2 is that you can add your own backpacks with custom properties 
-by only using data and resource packs. Sorry I haven't gotten around to making a proper
-wiki page about it, but I have an example pack here. Hopefully nobody reads this before I
-have the link working...
+<p align="justify">
+A big feature in Version 2 is that you can add your own backpacks with custom properties by only 
+using data and resource packs. Start by downloading the example I have <a href="https://github.com/BeansGalaxy/Beans-Backpacks-2/tree/master/assets/examples"> HERE </a> <--- <br>
+
+
+</p>
+
 
 <h2> FEEDBACK </h2>
 <a href="https://github.com/BeansGalaxy/Beans-Backpacks-2/labels/bug">Report a Bug </a>
