@@ -46,8 +46,14 @@ public class FabricNetworkHelper implements NetworkHelper {
       }
 
       @Override
-      public void openBackpackMenu(Player player, Backpack backpack) {
-            player.openMenu(backpack.getBackpackInventory().getMenuProvider());
+      public void openBackpackMenu(Player viewer, Backpack owner) {
+                  viewer.openMenu(owner.getBackpackInventory().getMenuProvider());
+      }
+
+      @Override
+      public void openBackpackMenu(Player viewer, Player owner) {
+                  viewer.openMenu(BackSlot.getInventory(owner).getMenuProvider());
+
       }
 
       @Override

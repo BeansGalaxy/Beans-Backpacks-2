@@ -33,9 +33,16 @@ public class ForgeNetworkHelper implements NetworkHelper {
       }
 
       @Override
-      public void openBackpackMenu(Player player, Backpack entity) {
-            if (player instanceof ServerPlayer serverPlayer)
-                  serverPlayer.openMenu(entity.getBackpackInventory().getMenuProvider(), buf -> buf.writeInt(entity.getId()));
+      public void openBackpackMenu(Player viewer, Backpack owner) {
+            if (viewer instanceof ServerPlayer serverPlayer) {
+                  serverPlayer.openMenu(owner.getBackpackInventory().getMenuProvider(), buf -> buf.writeInt(owner.getId()));
+            }
+      }
+
+      @Override
+      public void openBackpackMenu(Player viewer, Player owner) {
+            if (viewer instanceof ServerPlayer serverPlayer)
+                  serverPlayer.openMenu(BackSlot.getInventory(owner).getMenuProvider(), buf -> buf.writeInt(owner.getId()));
       }
 
       @Override

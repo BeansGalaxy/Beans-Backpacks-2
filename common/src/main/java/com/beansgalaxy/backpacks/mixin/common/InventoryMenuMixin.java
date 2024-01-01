@@ -49,7 +49,8 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                   @Override
                   public boolean isActive() {
                         ItemStack stack = BackSlot.get(player).getItem();
-                        return Kind.isStorage(stack) && !player.isCreative() && !stack.isEmpty();
+                        boolean b = !backSlot.backpackInventory.getItemStacks().isEmpty() || Kind.isStorage(stack);
+                        return b && !player.isCreative();
                   }
 
                   public boolean mayPlace(ItemStack stack) {
@@ -105,7 +106,7 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
       private void quickMove(Player player, int slot, CallbackInfoReturnable<ItemStack> cir) {
             Slot backSlot = this.slots.get(BackSlot.SLOT_INDEX);
             ItemStack stack = this.slots.get(slot).getItem();
-            if ((Kind.isWearable(stack)) && !backSlot.hasItem()) {
+            if ((Kind.isWearable(stack)) && !backSlot.hasItem() && backSlot.isActive()) {
                   backSlot.set(stack.copy());
                   stack.setCount(0);
             }

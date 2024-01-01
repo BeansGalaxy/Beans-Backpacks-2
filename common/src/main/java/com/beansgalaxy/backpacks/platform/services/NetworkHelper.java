@@ -12,7 +12,9 @@ public interface NetworkHelper {
 
       void SyncViewers(Entity owner, byte viewers);
 
-      void openBackpackMenu(Player player, Backpack entity);
+      void openBackpackMenu(Player viewer, Backpack owner);
+
+      void openBackpackMenu(Player viewer, Player owner);
 
       MenuProvider getMenuProvider(Entity backpack);
 

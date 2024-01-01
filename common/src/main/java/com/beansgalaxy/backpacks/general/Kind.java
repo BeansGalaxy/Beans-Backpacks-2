@@ -33,6 +33,9 @@ public enum Kind {
       }
 
       public static boolean isStorage(ItemStack stack) {
+            if (stack.isEmpty())
+                  return false;
+
             if (stack.is(Items.DECORATED_POT))
                   return true;
 

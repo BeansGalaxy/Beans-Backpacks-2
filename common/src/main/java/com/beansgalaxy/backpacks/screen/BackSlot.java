@@ -148,7 +148,7 @@ public class BackSlot extends Slot {
             boolean looking = e > 1.0 - radius * maxRadius && viewer.hasLineOfSight(owner);
 
             if (yawMatches && looking) { // INTERACT WITH BACKPACK CODE GOES HERE
-                  viewer.openMenu(backSlot.backpackInventory.getMenuProvider());
+                  Services.NETWORK.openBackpackMenu(viewer, owner);
 
                   // ENABLE THIS LINE OF CODE BELOW TO SHOW WHEN THE BACKPACK IS INTERACTED WITH
                   //owner.level().addParticle(ParticleTypes.FIREWORK, newX, viewer.getEyeY() + 0.1, newZ, 0, 0, 0);
@@ -197,7 +197,9 @@ public class BackSlot extends Slot {
       @Override
       public boolean mayPickup(Player playerEntity) {
             ItemStack itemStack = this.getItem();
-            return (itemStack.isEmpty() || playerEntity.isCreative() || !EnchantmentHelper.hasBindingCurse(itemStack)) || (!getInventory(playerEntity).getItemStacks().isEmpty() && Kind.isStorage(itemStack));
+            boolean backpackIsEmpty = getInventory(playerEntity).getItemStacks().isEmpty();
+            boolean standardCheck = itemStack.isEmpty() || !EnchantmentHelper.hasBindingCurse(itemStack);
+            return standardCheck && backpackIsEmpty;
       }
 
       @Override
@@ -277,7 +279,7 @@ public class BackSlot extends Slot {
             if (actionType == ClickType.THROW)
                   return true;
 
-            if (slotIndex < SLOT_INDEX && backSlot.sprintKeyIsPressed && backStack.isEmpty() && Kind.isWearable(stack)) {
+            if (slotIndex < SLOT_INDEX && backSlot.sprintKeyIsPressed && backStack.isEmpty() && backSlot.isActive() && Kind.isWearable(stack)) {
                   backSlot.safeInsert(stack);
                   return false;
             }
@@ -381,7 +383,7 @@ public class BackSlot extends Slot {
             float yRot = owner.yBodyRot + 180;
 
             int x = blockPos.getX();
-            double y = blockPos.getY() + 2;
+            double y = blockPos.getY() + 1.5;
             int z = blockPos.getZ();
 
             new BackpackEntity(owner, owner.level(), x, y, z, Direction.UP,
