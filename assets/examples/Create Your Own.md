@@ -10,7 +10,7 @@ needs to go to the client.
 
 <h2> Defining Your Data</h2>
 
-Create a file under `data/beansbackpacks/recipes`. This file will 
+Create a file under [`data/beansbackpacks/recipes`](Copper%20Backpacks%20Data%2Fdata%2Fbeansbackpacks%2Frecipes). This file will 
 describe the all the backpack's unique data. The name is not 
 important, but should be easily recognizable.
 
@@ -37,13 +37,20 @@ Finally, define the data. You'll need to define all of these fields for either `
 | `"kind"`       | Determines special properties of a backpack <br/> Must be either `LEATHER`, `METAL` or `UPGRADED` |
 | `"max_stacks"` | How many stacks can a backpack can hold<br/> Note that                                            |
 
-> **What does `"kind"` mean?** <br>
-> &ensp;&ensp; `LEATHER` backpacks can be dyed <br>
-> &ensp;&ensp; `METAL` backpacks can be trimmed <br>
-> &ensp;&ensp; `UPGRADED` backpacks can be trimmed and are fire-resistant
 
-> **Note on `"max_stacks"`** <br>
-> &ensp;&ensp; Remember that 4 stacks doesn't seem like much but 256 unique items is almost 10 shulker boxes <br>
+<blockquote><dl>
+<strong><font color="#aaa">What does <code>"kind"</code> mean? </font></strong>
+<dd>
+    <code>LEATHER</code> backpacks can be dyed <br>
+    <code>METAL</code> backpacks can be trimmed <br>
+    <code>UPGRADED</code> backpacks can be trimmed and are fire-resistant
+</dd>
+<strong><font color="#aaa">Note on <code>"max_stacks"</code></font></strong>
+<dd> 
+    Remember that 4 stacks doesn't seem like much but 256 unique items is almost 10 shulker boxes. 
+    If a backpack is too good it could limit creativity.
+</dd>
+</dl></blockquote>
 
 Now your .json file should look something like this.
 
@@ -73,14 +80,14 @@ Now your .json file should look something like this.
 
 <h3> Adding and Disabling from BackSlot </h3>
 
-Under `data/beansbackpacks/modify` you'll find two files, <br>
+Under [`data/beansbackpacks/modify`](Copper%20Backpacks%20Data%2Fdata%2Fbeansbackpacks%2Fmodify) you'll find two files, <br>
 
->[`disable_chestplate`](Copper%20Backpacks%20Data%2Fdata%2Fbeansbackpacks%2Fmodify%2Fdisable_chestplate) <br>
+> `disable_chestplate`<br>
 > Enables item to be worn in the Back Slot, and disables it from the Chestplate,
 > **_However_**, items with any special attributes do not keep their functionality 
 > nor support custom models.
 
->[`disables_back_slot`](Copper%20Backpacks%20Data%2Fdata%2Fbeansbackpacks%2Fmodify%2Fdisables_back_slot) <br>
+> `disables_back_slot` <br>
 > If this item is worn in the Chestplate, it disables anything from being worn 
 > in the Back Slot. Good for mods that add larger custom armor models.
 
