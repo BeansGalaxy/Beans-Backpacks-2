@@ -62,7 +62,7 @@ stack to 64.
 
 <p align="justify">
 A big feature in Version 2 is that you can add your own backpacks with custom properties by only 
-using data and resource packs. Start by downloading the example I have <a href="https://github.com/BeansGalaxy/Beans-Backpacks-2/tree/master/assets/examples"> HERE </a> 
+using data and resource packs. Start by downloading the example I have <a href="https://github.com/BeansGalaxy/Beans-Backpacks-2/tree/master/assets/examples">HERE</a> 
 and read along with "Creating Your Own" to add your own backpack.
 </p>
 
