@@ -38,19 +38,19 @@ Finally, define the data. You'll need to define all of these fields for either `
 | `"max_stacks"` | How many stacks can a backpack can hold<br/> Note that                                            |
 
 
-<blockquote><dl>
-<strong><font color="#aaa">What does <code>"kind"</code> mean? </font></strong>
+<dl>
+<strong>What does <code>"kind"</code> mean?</strong>
 <dd>
     <code>LEATHER</code> backpacks can be dyed <br>
     <code>METAL</code> backpacks can be trimmed <br>
     <code>UPGRADED</code> backpacks can be trimmed and are fire-resistant
 </dd>
-<strong><font color="#aaa">Note on <code>"max_stacks"</code></font></strong>
+<strong>Note on <code>"max_stacks"</code></strong>
 <dd> 
     Remember that 4 stacks doesn't seem like much but 256 unique items is almost 10 shulker boxes. 
     If a backpack is too good it could limit creativity.
 </dd>
-</dl></blockquote>
+</dl>
 
 Now your .json file should look something like this.
 
@@ -82,14 +82,19 @@ Now your .json file should look something like this.
 
 Under [`data/beansbackpacks/modify`](Copper%20Backpacks%20Data%2Fdata%2Fbeansbackpacks%2Fmodify) you'll find two files, <br>
 
-> `disable_chestplate`<br>
-> Enables item to be worn in the Back Slot, and disables it from the Chestplate,
-> **_However_**, items with any special attributes do not keep their functionality 
-> nor support custom models.
-
-> `disables_back_slot` <br>
-> If this item is worn in the Chestplate, it disables anything from being worn 
-> in the Back Slot. Good for mods that add larger custom armor models.
+<dl>
+<code>disable_chestplate</code>
+<dd>
+    Enables item to be worn in the Back Slot, and disables it from the Chestplate,
+    <b><i>However</b></i>, items with any special attributes do not keep their functionality 
+    nor support their custom models.
+</dd>
+<code>disables_back_slot</code>
+<dd> 
+    If this item is worn in the Chestplate, it disables anything from being worn
+    in the Back Slot. Good for mods that add larger custom armor models.
+</dd>
+</dl>
 
 These files are simply a list of items. If I wanted the Iron and Golden Chestplate 
 to be worn in the BackSlot I would write in `disable_chestplate`
