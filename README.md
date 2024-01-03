@@ -1,4 +1,4 @@
-<p><em><strong><span style="color: #ff9900;">!!!</span></strong></em> If you are looking for Version 1's Git, you can find it <a href="https://github.com/BeansGalaxy/BeansBackpacks">[here]</a><em><strong><span style="color: #ff9900;"> !!!</span></strong></em></p>
+<p align="center"><em><strong><span style="color: #ff9900;">!!!</span></strong></em> If you are looking for Version 1's Git, you can find it <a href="https://github.com/BeansGalaxy/BeansBackpacks">[here]</a><em><strong><span style="color: #ff9900;"> !!!</span></strong></em></p>
 
 <h1> Introducing Bean's Backpacks! <img align="right" src="assets/images/back_slot.gif" alt="Back Slot" style="margin:10px"> </h1>
 
