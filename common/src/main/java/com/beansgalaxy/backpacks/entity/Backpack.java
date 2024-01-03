@@ -1,8 +1,8 @@
 package com.beansgalaxy.backpacks.entity;
 
 import com.beansgalaxy.backpacks.general.BackpackInventory;
+import com.beansgalaxy.backpacks.general.MobileData;
 import com.beansgalaxy.backpacks.general.Kind;
-import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -22,7 +22,7 @@ public class Backpack extends Entity {
       public static final EntityDataAccessor<Integer> MAX_STACKS = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.INT);
       public static final EntityDataAccessor<Integer> COLOR = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.INT);
       public static final EntityDataAccessor<CompoundTag> TRIM = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.COMPOUND_TAG);
-      public static int DEFAULT_COLOR = 9062433;
+      public static final int DEFAULT_COLOR = 9062433;
 
       public final BackpackInventory.Viewable viewable = new BackpackInventory.Viewable();
       public final BackpackInventory backpackInventory = new BackpackInventory() {
@@ -59,7 +59,7 @@ public class Backpack extends Entity {
             }
 
             @Override
-            public BackpackInventory.Data getData() {
+            public MobileData getData() {
                   return Backpack.this.getData();
             }
       };
@@ -72,10 +72,10 @@ public class Backpack extends Entity {
             super(type, level);
       }
 
-      public BackpackInventory.Data getData() {
+      public MobileData getData() {
             String name = Backpack.this.entityData.get(NAME);
             int maxStacks = Backpack.this.entityData.get(MAX_STACKS);
-            return new BackpackInventory.Data(getKey(), name, getKind(), maxStacks, getColor(), getTrim());
+            return new MobileData(getKey(), name, getKind(), maxStacks, getColor(), getTrim());
       }
 
       public boolean isMirror() {
@@ -120,13 +120,12 @@ public class Backpack extends Entity {
             this.entityData.define(TRIM, new CompoundTag());
       }
 
-      public void initDisplay(BackpackInventory.Data data) {
+      public void initDisplay(MobileData data) {
             this.entityData.set(KEY, data.key);
             this.entityData.set(NAME, data.name);
             this.entityData.set(KIND, data.kind.name());
             this.entityData.set(MAX_STACKS, data.maxStacks);
-            int color = data.color == BackpackItem.DEFAULT_COLOR ? DEFAULT_COLOR : data.color;
-            this.entityData.set(COLOR, color);
+            this.entityData.set(COLOR, data.color);
             this.entityData.set(TRIM, data.trim);
       }
 

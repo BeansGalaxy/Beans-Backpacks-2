@@ -2,7 +2,7 @@ package com.beansgalaxy.backpacks.client.renderer;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.RendererHelper;
-import com.beansgalaxy.backpacks.general.BackpackInventory;
+import com.beansgalaxy.backpacks.general.MobileData;
 import com.beansgalaxy.backpacks.general.Kind;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -51,7 +51,7 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>>
         if (entity instanceof AbstractClientPlayer player) {
             BackSlot backSlot = BackSlot.get(player);
             ItemStack backpackStack = backSlot.getItem();
-            BackpackInventory.Data data = backSlot.backpackInventory.getData();
+            MobileData data = backSlot.backpackInventory.getData();
 
             if (!Kind.isBackpack(backpackStack))
                 return;

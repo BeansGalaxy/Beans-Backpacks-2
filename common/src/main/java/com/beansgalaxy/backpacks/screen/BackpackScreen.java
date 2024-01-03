@@ -68,7 +68,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
             RenderSystem.setShaderTexture(0, TEXTURE);
             int j = this.handler.invOffset + topPos;
             context.blit(TEXTURE, leftPos, j - 123, 0, 0, 0, imageWidth, imageHeight, 256, 256);
-            drawBackpack(context, width / 2, j, 205, this.handler.mirror, mouseX, mouseY);
+            drawBackpack(context, width / 2, j, 202, this.handler.mirror, mouseX, mouseY);
       }
 
       private void drawBackpack(GuiGraphics context, int x, int y, int scale, Backpack entity, int mouseX, int mouseY) {

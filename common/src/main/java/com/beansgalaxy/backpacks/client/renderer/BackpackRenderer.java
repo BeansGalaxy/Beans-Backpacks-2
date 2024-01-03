@@ -5,6 +5,7 @@ import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.general.BackpackInventory;
+import com.beansgalaxy.backpacks.general.MobileData;
 import com.beansgalaxy.backpacks.general.Kind;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -52,7 +53,7 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
       public void render(T entity, float yaw, float tickDelta, PoseStack pose, MultiBufferSource mbs, int light) {
             super.render(entity, yaw += renderWobble(entity, yaw), tickDelta, pose, mbs, light);
             Backpack bEntity = ((Backpack) entity);
-            BackpackInventory.Data data = ((Backpack) entity).getBackpackInventory().getData();
+            MobileData data = ((Backpack) entity).getBackpackInventory().getData();
             BackpackInventory.Viewable viewable = ((Backpack) entity).getBackpackInventory().getViewable();
             Kind kind = data.kind;
 

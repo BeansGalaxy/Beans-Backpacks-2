@@ -18,6 +18,7 @@
     "client.ItemModelBaker",
     "client.ItemRendererMixin",
     "client.RenderBackpackLayer",
+    "client.SmithingScreenMixin",
     "client.UpdateSprintKey"
   ],
   "server": [

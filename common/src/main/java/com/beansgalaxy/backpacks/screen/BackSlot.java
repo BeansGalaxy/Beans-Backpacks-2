@@ -1,13 +1,12 @@
 package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.general.BackpackInventory;
+import com.beansgalaxy.backpacks.general.MobileData;
 import com.beansgalaxy.backpacks.general.Kind;
 import com.beansgalaxy.backpacks.general.PlaySound;
 import com.beansgalaxy.backpacks.items.BackpackItem;
-import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.AdvancementTree;
@@ -84,24 +83,9 @@ public class BackSlot extends Slot {
                   return this.itemStacks;
             }
 
-            @Override public BackpackInventory.Data getData() {
+            @Override public MobileData getData() {
                   ItemStack stack = BackSlot.this.getItem();
-                  if (!Kind.isBackpack(stack))
-                        return null;
-
-                  CompoundTag display = stack.getOrCreateTagElement("display");
-
-                  String key = display.getString("key");
-                  String name = display.getString("name");
-                  Kind kind = Kind.fromStack(stack);
-                  int maxStacks = display.getInt("max_stacks");
-                  int itemColor = stack.getItem() instanceof DyableBackpack dyableBackpack ? dyableBackpack.getColor(stack) : 0xFFFFFF;
-                  int color = itemColor == BackpackItem.DEFAULT_COLOR ? Backpack.DEFAULT_COLOR : itemColor;
-
-                  CompoundTag trim = stack.getTagElement("Trim");
-
-                  BackpackInventory.Data data = new BackpackInventory.Data(key, name, kind, maxStacks, color, trim);
-                  return data;
+                  return BackpackItem.getItemData(stack);
             }
       };
 

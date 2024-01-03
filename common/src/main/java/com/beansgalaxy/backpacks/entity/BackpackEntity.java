@@ -48,7 +48,7 @@ public class BackpackEntity extends Backpack {
             this.actualY = y;
             this.pos = BlockPos.containing(x, y, z);
             this.setDirection(direction);
-            this.initDisplay(BackpackItem.getData(backpackStack));
+            this.initDisplay(BackpackItem.getItemData(backpackStack));
 
             if (!direction.getAxis().isHorizontal())
                   this.setYRot(yaw);

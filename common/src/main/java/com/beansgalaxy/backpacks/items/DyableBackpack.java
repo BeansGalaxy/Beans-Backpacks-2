@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.items;
 
+import com.beansgalaxy.backpacks.entity.Backpack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.DyeableLeatherItem;
@@ -13,6 +14,6 @@ public class DyableBackpack extends BackpackItem implements DyeableLeatherItem {
             if (nbtCompound != null && nbtCompound.contains(TAG_COLOR, Tag.TAG_ANY_NUMERIC)) {
                   return nbtCompound.getInt(TAG_COLOR);
             }
-            return DEFAULT_COLOR;
+            return Backpack.DEFAULT_COLOR;
       }
 }

@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.items;
 
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
-import com.beansgalaxy.backpacks.general.BackpackInventory;
+import com.beansgalaxy.backpacks.general.MobileData;
 import com.beansgalaxy.backpacks.general.Kind;
 import com.beansgalaxy.backpacks.general.PlaySound;
 import com.beansgalaxy.backpacks.screen.BackSlot;
@@ -27,8 +27,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class BackpackItem extends Item {
-      public final static int DEFAULT_COLOR = 10511680;
-
       public BackpackItem() {
             super(new Item.Properties().stacksTo(1));
       }
@@ -139,23 +137,24 @@ public class BackpackItem extends Item {
             return Component.translatable(stack.getOrCreateTagElement("display").getString("name"));
       }
 
+      @Override
+      public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
+            return Tooltip.get(stack);
+      }
 
-      public static BackpackInventory.Data getData(ItemStack stack) {
+      public static MobileData getItemData(ItemStack stack) {
+            if (!Kind.isBackpack(stack))
+                  return null;
+
             CompoundTag display = stack.getOrCreateTagElement("display");
 
             String key = display.getString("key");
             String name = display.getString("name");
             Kind kind = Kind.fromStack(stack);
             int maxStacks = display.getInt("max_stacks");
-            int color = stack.getItem() instanceof DyableBackpack dyableBackpack ? dyableBackpack.getColor(stack) : 0xFFFFFF;
+            int itemColor = stack.getItem() instanceof DyableBackpack dyableBackpack ? dyableBackpack.getColor(stack) : 0xFFFFFF;
             CompoundTag trim = stack.getTagElement("Trim");
 
-            BackpackInventory.Data data = new BackpackInventory.Data(key, name, kind, maxStacks, color, trim);
-            return data;
-      }
-
-      @Override
-      public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
-            return Tooltip.get(stack);
+            return new MobileData(key, name, kind, maxStacks, itemColor, trim);
       }
 }

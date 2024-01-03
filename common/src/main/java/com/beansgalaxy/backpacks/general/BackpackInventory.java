@@ -27,27 +27,7 @@ public interface BackpackInventory extends Container {
 
       Entity getOwner();
 
-      Data getData();
-
-      class Data {
-            public String key;
-            public int maxStacks;
-            public String name;
-            public Kind kind;
-            public int color;
-            public CompoundTag trim;
-
-            public Data() {}
-
-            public Data(String key, String name, Kind kind, int maxStacks, Integer color, CompoundTag trim) {
-                  this.key = key;
-                  this.name = name;
-                  this.kind = kind;
-                  this.maxStacks = maxStacks;
-                  this.color = color;
-                  this.trim = trim != null ? trim : new CompoundTag();
-            }
-      }
+      MobileData getData();
 
       class Viewable {
             public float headPitch = 0;
