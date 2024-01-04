@@ -1,10 +1,17 @@
 package com.beansgalaxy.backpacks.items;
 
+import com.beansgalaxy.backpacks.events.KeyPress;
+import com.beansgalaxy.backpacks.general.BackpackInventory;
+import com.beansgalaxy.backpacks.general.Kind;
 import com.beansgalaxy.backpacks.screen.BackSlot;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
@@ -14,6 +21,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
+import java.util.List;
 import java.util.Optional;
 
 public class Tooltip {
@@ -30,7 +38,7 @@ public class Tooltip {
             // IS BACKPACK EQUIPPED
             BackSlot backSlot = BackSlot.get(player);
             ItemStack equippedOnBack = backSlot.getItem();
-            if (!stack.equals(equippedOnBack))
+            if (!stack.equals(equippedOnBack) || backSlot.backpackInventory.getItemStacks().isEmpty())
                   return Optional.empty();
 
             NonNullList<ItemStack> defaultedList = NonNullList.create();
@@ -66,4 +74,68 @@ public class Tooltip {
       private static int getBundleOccupancy(NonNullList<ItemStack> defaultedList) {
             return defaultedList.stream().mapToInt(itemStack -> getItemOccupancy(itemStack) * itemStack.getCount()).sum();
       }
+
+      public static void text(List<Component> components) {
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (player == null)
+                  return;
+
+            BackSlot backSlot = BackSlot.get(player);
+            if (Kind.isBackpack(backSlot.getItem()) && backSlot.backpackInventory.getItemStacks().isEmpty())
+            {
+                  Component keyMessage = getKeyBinding().getTranslatedKeyMessage();
+
+                  String keyString = keyMessage.getString()
+                              .replace("Left", "L")
+                              .replace("Right", "R")
+                              .replace("Control", "Ctrl");
+
+                  components.add(Component.translatable("tooltip.beansbackpacks.empty_1", "§7§o" + keyString));
+                  components.add(Component.translatable("tooltip.beansbackpacks.empty_2"));
+            }
+
+      }
+
+      public static KeyMapping getKeyBinding() {
+            Minecraft instance = Minecraft.getInstance();
+            KeyMapping sprintKey = instance.options.keySprint;
+            KeyMapping customKey = KeyPress.INSTANCE.ACTION_KEY;
+
+            boolean isCustomUnbound = customKey.same(sprintKey) || customKey.isUnbound();
+
+            return isCustomUnbound ? sprintKey : customKey;
+      }
+
+      public static boolean isBarVisible(ItemStack stack) {
+            LocalPlayer player = Minecraft.getInstance().player;
+            BackSlot backSlot = BackSlot.get(player);
+
+            return backSlot.getItem() == stack && !backSlot.backpackInventory.getItemStacks().isEmpty();
+      }
+
+      public static int getBarWidth(ItemStack stack) {
+            LocalPlayer player = Minecraft.getInstance().player;
+            BackSlot backSlot = BackSlot.get(player);
+
+            if (backSlot.getItem() != stack)
+                  return 13;
+
+            BackpackInventory backpackInventory = backSlot.backpackInventory;
+            int spaceLeft = backpackInventory.spaceLeft();
+            int maxStacks = backpackInventory.getMaxStacks();
+
+            if (spaceLeft < 1) {
+                  barColor = FULL_COLOR;
+                  return 13;
+            } else
+                  barColor = BAR_COLOR;
+
+            int barWidth = spaceLeft * 13 / (maxStacks * 64);
+
+            return 13 - barWidth;
+      }
+
+      private static final int BAR_COLOR = Mth.color(0.4F, 0.4F, 1.0F);
+      private static final int FULL_COLOR = Mth.color(0.9F, 0.2F, 0.3F);
+      public static int barColor = BAR_COLOR;
 }

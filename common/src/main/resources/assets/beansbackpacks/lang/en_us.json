@@ -1,4 +1,6 @@
 {
   "key.beansbackpacks.action": "Place/Pick up Backpack",
-  "key.beansbackpacks.description": "Leave unbound to pair this action with the key bound to sprint."
+  "key.beansbackpacks.description": "Leave unbound to pair this action with the key bound to sprint.",
+  "tooltip.beansbackpacks.empty_1": "§8§oUse %d §8§oto quickly move",
+  "tooltip.beansbackpacks.empty_2": "§8§oitems into the backpack."
 }

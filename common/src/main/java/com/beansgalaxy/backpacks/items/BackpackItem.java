@@ -1,8 +1,8 @@
 package com.beansgalaxy.backpacks.items;
 
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
-import com.beansgalaxy.backpacks.general.MobileData;
 import com.beansgalaxy.backpacks.general.Kind;
+import com.beansgalaxy.backpacks.general.MobileData;
 import com.beansgalaxy.backpacks.general.PlaySound;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.core.BlockPos;
@@ -16,13 +16,16 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -140,6 +143,26 @@ public class BackpackItem extends Item {
       @Override
       public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
             return Tooltip.get(stack);
+      }
+
+      @Override
+      public void appendHoverText(ItemStack $$0, @Nullable Level $$1, List<Component> components, TooltipFlag $$3) {
+            Tooltip.text(components);
+      }
+
+      @Override
+      public boolean isBarVisible(ItemStack stack) {
+            return Tooltip.isBarVisible(stack);
+      }
+
+      @Override
+      public int getBarWidth(ItemStack stack) {
+            return Tooltip.getBarWidth(stack);
+      }
+
+      @Override
+      public int getBarColor(ItemStack $$0) {
+            return Tooltip.barColor;
       }
 
       public static MobileData getItemData(ItemStack stack) {
