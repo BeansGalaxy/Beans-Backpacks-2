@@ -1,8 +1,10 @@
 package com.beansgalaxy.backpacks.mixin.client;
 
+import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,15 +18,23 @@ public class UpdateSprintKey {
       @Inject(method = "tick", at = @At("TAIL"))
       public void tick(CallbackInfo ci) {
             LocalPlayer localPlayer = (LocalPlayer) (Object) this;
+            Minecraft instance = Minecraft.getInstance();
 
-            long clientWindowHandle = Minecraft.getInstance().getWindow().getWindow();
-            int sprintKeyCode = Minecraft.getInstance().options.keySprint.getDefaultKey().getValue();
-            boolean sprintKeyPressed = InputConstants.isKeyDown(clientWindowHandle, sprintKeyCode);
-            boolean sprintKeyPrevious = BackSlot.get(localPlayer).sprintKeyIsPressed;
+            KeyMapping sprintKey = instance.options.keySprint;
+            KeyMapping customKey = KeyPress.INSTANCE.ACTION_KEY;
+            boolean isCustomUnbound = customKey.same(sprintKey) || customKey.isUnbound();
 
-            if (sprintKeyPressed != sprintKeyPrevious) {
-                  BackSlot.get(localPlayer).sprintKeyIsPressed = sprintKeyPressed;
-                  Services.NETWORK.SprintKey(sprintKeyPressed);
+            KeyMapping actionKey = isCustomUnbound ? sprintKey : customKey;
+
+            long clientWindowHandle = instance.getWindow().getWindow();
+            String keyName = actionKey.saveString();
+            int keyCode = InputConstants.getKey(keyName).getValue();
+            boolean actionKeyPressed = InputConstants.isKeyDown(clientWindowHandle, keyCode);
+            boolean actionKeyPrevious = BackSlot.get(localPlayer).actionKeyPressed;
+
+            if (actionKeyPressed != actionKeyPrevious) {
+                  BackSlot.get(localPlayer).actionKeyPressed = actionKeyPressed;
+                  Services.NETWORK.SprintKey(actionKeyPressed);
             }
       }
 

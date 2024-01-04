@@ -345,15 +345,15 @@ public class BackpackEntity extends Backpack {
       // PREFORMS THIS ACTION WHEN IT IS RIGHT-CLICKED
       @Override
       public InteractionResult interact(Player player, InteractionHand hand) {
-            boolean sprintKeyPressed = BackSlot.get(player).sprintKeyIsPressed;
+            boolean actionKeyPressed = BackSlot.get(player).actionKeyPressed;
             ItemStack backStack = BackSlot.get(player).getItem();
             ItemStack handStack = player.getMainHandItem();
-            ItemStack backpackStack = sprintKeyPressed ? backStack : handStack;
+            ItemStack backpackStack = actionKeyPressed ? backStack : handStack;
 
             if (Kind.isBackpack(backpackStack))
-                  return BackpackItem.useOnBackpack(player, this, backpackStack, sprintKeyPressed);
+                  return BackpackItem.useOnBackpack(player, this, backpackStack, actionKeyPressed);
 
-            if (!sprintKeyPressed) {
+            if (!actionKeyPressed) {
                   if (viewable.viewers < 1)
                         PlaySound.OPEN.at(this);
                   Services.NETWORK.openBackpackMenu(player, this);

@@ -29,6 +29,6 @@ public class SprintKeyPacketC2S {
 
       public void handle(CustomPayloadEvent.Context context) {
             ServerPlayer player = context.getSender();
-            BackSlot.get(player).sprintKeyIsPressed = sprintKeyPressed;
+            BackSlot.get(player).actionKeyPressed = sprintKeyPressed;
       }
 }

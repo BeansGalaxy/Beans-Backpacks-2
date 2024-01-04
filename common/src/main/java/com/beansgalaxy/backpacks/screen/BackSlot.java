@@ -3,8 +3,8 @@ package com.beansgalaxy.backpacks.screen;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.general.BackpackInventory;
-import com.beansgalaxy.backpacks.general.MobileData;
 import com.beansgalaxy.backpacks.general.Kind;
+import com.beansgalaxy.backpacks.general.MobileData;
 import com.beansgalaxy.backpacks.general.PlaySound;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -43,7 +43,7 @@ public class BackSlot extends Slot {
 
       public static int SLOT_INDEX;
       private final Player owner;
-      public boolean sprintKeyIsPressed = false;
+      public boolean actionKeyPressed = false;
 
       public final BackpackInventory backpackInventory = new BackpackInventory() {
 
@@ -263,7 +263,7 @@ public class BackSlot extends Slot {
             if (actionType == ClickType.THROW)
                   return true;
 
-            if (slotIndex < SLOT_INDEX && backSlot.sprintKeyIsPressed && backStack.isEmpty() && backSlot.isActive() && Kind.isWearable(stack)) {
+            if (slotIndex < SLOT_INDEX && backSlot.actionKeyPressed && backStack.isEmpty() && backSlot.isActive() && Kind.isWearable(stack)) {
                   backSlot.safeInsert(stack);
                   return false;
             }
@@ -282,7 +282,7 @@ public class BackSlot extends Slot {
                   }
             }
             else if (Kind.isWearable(backStack)) {
-                  if (backSlot.sprintKeyIsPressed) {
+                  if (backSlot.actionKeyPressed) {
                         if (slotIndex == SLOT_INDEX && Kind.isStorage(stack)) {
                               if (Kind.POT.is(stack))
                                     return false;

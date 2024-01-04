@@ -17,6 +17,7 @@
     "client.InventoryScreenMixin",
     "client.ItemModelBaker",
     "client.ItemRendererMixin",
+    "client.KeyBindTooltip",
     "client.RenderBackpackLayer",
     "client.SmithingScreenMixin",
     "client.UpdateSprintKey"

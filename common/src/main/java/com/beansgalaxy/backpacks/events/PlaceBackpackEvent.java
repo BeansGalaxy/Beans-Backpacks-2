@@ -19,7 +19,7 @@ public class PlaceBackpackEvent {
         if (player.isSpectator())
             return InteractionResult.PASS;
 
-        if (BackSlot.get(player).sprintKeyIsPressed && Kind.isBackpack(BackSlot.get(player).getItem())) {
+        if (BackSlot.get(player).actionKeyPressed && Kind.isBackpack(BackSlot.get(player).getItem())) {
             if (!player.isSprinting() && !player.isSwimming()) {
                 return BackpackItem.hotkeyOnBlock(player, direction, clickedPos);
             }

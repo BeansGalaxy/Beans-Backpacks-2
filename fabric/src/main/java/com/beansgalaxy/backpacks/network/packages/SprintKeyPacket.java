@@ -20,6 +20,6 @@ public class SprintKeyPacket {
       public static void receiveAtServer(MinecraftServer server, ServerPlayer serverPlayer, ServerGamePacketListenerImpl handler,
                                          FriendlyByteBuf buf, PacketSender responseSender) {
             boolean sprintKeyPressed = buf.readBoolean();
-            BackSlot.get(serverPlayer).sprintKeyIsPressed = sprintKeyPressed;
+            BackSlot.get(serverPlayer).actionKeyPressed = sprintKeyPressed;
       }
 }
