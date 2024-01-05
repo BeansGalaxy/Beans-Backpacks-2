@@ -1,9 +1,9 @@
 package com.beansgalaxy.backpacks.items;
 
+import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.KeyPress;
-import com.beansgalaxy.backpacks.general.BackpackInventory;
-import com.beansgalaxy.backpacks.general.Kind;
 import com.beansgalaxy.backpacks.screen.BackSlot;
+import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -86,8 +86,8 @@ public class Tooltip {
                   Component keyMessage = getKeyBinding().getTranslatedKeyMessage();
 
                   String keyString = keyMessage.getString()
-                              .replace("Left", "L")
-                              .replace("Right", "R")
+                              .replace("Left ", "L")
+                              .replace("Right ", "R")
                               .replace("Control", "Ctrl");
 
                   components.add(Component.translatable("tooltip.beansbackpacks.empty_1", "§7§o" + keyString));

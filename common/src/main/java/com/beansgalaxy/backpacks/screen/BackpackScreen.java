@@ -2,7 +2,6 @@ package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.entity.Backpack;
-import com.beansgalaxy.backpacks.general.BackpackInventory;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;

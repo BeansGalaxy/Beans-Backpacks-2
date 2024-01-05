@@ -1,13 +1,13 @@
 package com.beansgalaxy.backpacks.platform;
 
 import com.beansgalaxy.backpacks.entity.Backpack;
-import com.beansgalaxy.backpacks.general.BackpackInventory;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.network.packages.SprintKeyPacket;
 import com.beansgalaxy.backpacks.network.packages.SyncBackInventory2C;
 import com.beansgalaxy.backpacks.network.packages.SyncBackSlotS2All;
 import com.beansgalaxy.backpacks.platform.services.NetworkHelper;
 import com.beansgalaxy.backpacks.screen.BackSlot;
+import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;

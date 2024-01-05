@@ -1,14 +1,14 @@
 package com.beansgalaxy.backpacks.platform;
 
 import com.beansgalaxy.backpacks.entity.Backpack;
-import com.beansgalaxy.backpacks.general.BackpackInventory;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
-import com.beansgalaxy.backpacks.network.packages.SprintKeyPacketC2S;
 import com.beansgalaxy.backpacks.network.client.SyncBackInventory2C;
 import com.beansgalaxy.backpacks.network.client.SyncBackSlotS2C;
 import com.beansgalaxy.backpacks.network.client.SyncViewersPacketS2C;
+import com.beansgalaxy.backpacks.network.packages.SprintKeyPacketC2S;
 import com.beansgalaxy.backpacks.platform.services.NetworkHelper;
 import com.beansgalaxy.backpacks.screen.BackSlot;
+import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;

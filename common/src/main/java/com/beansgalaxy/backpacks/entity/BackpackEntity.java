@@ -1,7 +1,6 @@
 package com.beansgalaxy.backpacks.entity;
 
-import com.beansgalaxy.backpacks.general.Kind;
-import com.beansgalaxy.backpacks.general.PlaySound;
+import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.beansgalaxy.backpacks.platform.Services;

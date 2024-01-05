@@ -1,4 +1,4 @@
-package com.beansgalaxy.backpacks.general;
+package com.beansgalaxy.backpacks.entity;
 
 import net.minecraft.nbt.CompoundTag;
 

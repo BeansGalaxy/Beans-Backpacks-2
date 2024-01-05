@@ -1,8 +1,8 @@
 package com.beansgalaxy.backpacks.mixin.common;
 
-import com.beansgalaxy.backpacks.general.BackpackInventory;
-import com.beansgalaxy.backpacks.general.Kind;
+import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.screen.BackSlot;
+import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.Container;

@@ -1,6 +1,6 @@
 package com.beansgalaxy.backpacks.items;
 
-import com.beansgalaxy.backpacks.general.Kind;
+import com.beansgalaxy.backpacks.entity.Kind;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.PrimitiveCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

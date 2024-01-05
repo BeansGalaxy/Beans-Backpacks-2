@@ -1,4 +1,4 @@
-package com.beansgalaxy.backpacks.general;
+package com.beansgalaxy.backpacks.entity;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.items.BackpackItem;

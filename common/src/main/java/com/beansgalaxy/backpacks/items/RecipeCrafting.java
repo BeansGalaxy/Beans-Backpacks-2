@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.items;
 
-import com.beansgalaxy.backpacks.general.Kind;
-import com.mojang.serialization.*;
+import com.beansgalaxy.backpacks.entity.Kind;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.PrimitiveCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.RegistryAccess;
@@ -11,7 +11,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
 public class RecipeCrafting extends CustomRecipe {

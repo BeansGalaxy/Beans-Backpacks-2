@@ -1,9 +1,7 @@
 package com.beansgalaxy.backpacks.entity;
 
-import com.beansgalaxy.backpacks.general.BackpackInventory;
-import com.beansgalaxy.backpacks.general.MobileData;
-import com.beansgalaxy.backpacks.general.Kind;
 import com.beansgalaxy.backpacks.platform.Services;
+import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;

@@ -1,8 +1,8 @@
 package com.beansgalaxy.backpacks.network.packages;
 
-import com.beansgalaxy.backpacks.general.BackpackInventory;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.screen.BackSlot;
+import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;

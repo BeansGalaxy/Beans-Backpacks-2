@@ -1,9 +1,9 @@
 package com.beansgalaxy.backpacks.items;
 
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
-import com.beansgalaxy.backpacks.general.Kind;
-import com.beansgalaxy.backpacks.general.MobileData;
-import com.beansgalaxy.backpacks.general.PlaySound;
+import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.entity.MobileData;
+import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

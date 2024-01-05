@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.general.Kind;
+import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.resources.ResourceLocation;

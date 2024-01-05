@@ -2,8 +2,8 @@ package com.beansgalaxy.backpacks.mixin.client;
 
 import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.entity.Backpack;
-import com.beansgalaxy.backpacks.general.MobileData;
-import com.beansgalaxy.backpacks.general.Kind;
+import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.entity.MobileData;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.ItemCombinerScreen;

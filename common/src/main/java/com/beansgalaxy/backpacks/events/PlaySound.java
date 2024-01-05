@@ -1,4 +1,4 @@
-package com.beansgalaxy.backpacks.general;
+package com.beansgalaxy.backpacks.events;
 
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;

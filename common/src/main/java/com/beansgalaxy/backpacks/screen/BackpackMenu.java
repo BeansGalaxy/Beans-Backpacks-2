@@ -1,8 +1,7 @@
 package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.entity.Backpack;
-import com.beansgalaxy.backpacks.general.BackpackInventory;
-import com.beansgalaxy.backpacks.general.MobileData;
+import com.beansgalaxy.backpacks.entity.MobileData;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;

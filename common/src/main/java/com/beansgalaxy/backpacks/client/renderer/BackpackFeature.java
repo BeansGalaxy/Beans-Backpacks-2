@@ -2,8 +2,8 @@ package com.beansgalaxy.backpacks.client.renderer;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.RendererHelper;
-import com.beansgalaxy.backpacks.general.MobileData;
-import com.beansgalaxy.backpacks.general.Kind;
+import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.entity.MobileData;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

@@ -1,8 +1,10 @@
-package com.beansgalaxy.backpacks.general;
+package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.entity.Backpack;
+import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.entity.MobileData;
+import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
-import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
