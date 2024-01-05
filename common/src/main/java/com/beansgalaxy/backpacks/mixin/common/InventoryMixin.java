@@ -14,7 +14,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -59,10 +58,11 @@ public abstract class InventoryMixin implements Container {
             }
       }
 
-      @Redirect(method = "add(Lnet/minecraft/world/item/ItemStack;)Z", at = @At(value = "INVOKE",
-                  target = "Lnet/minecraft/world/entity/player/Inventory;add(ILnet/minecraft/world/item/ItemStack;)Z"))
-      public boolean insertStack(Inventory instance, int slot, ItemStack stack) {
-            return BackSlot.get(instance.player).pickupItemEntity(instance, stack);
+      @Inject(method = "add(ILnet/minecraft/world/item/ItemStack;)Z", at = @At("HEAD"), cancellable = true)
+      public void insertStack(int slot, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+            Inventory instance = (Inventory) (Object) this;
+            if (slot == -1 && BackSlot.get(instance.player).pickupItemEntity(instance, stack))
+                  cir.setReturnValue(true);
       }
 
 }

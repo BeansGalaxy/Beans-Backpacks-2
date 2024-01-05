@@ -33,7 +33,6 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
             super($$0, $$1);
       }
 
-
       @Inject(method = "<init>", at = @At("TAIL"))
       private void onConstructed(Inventory playerInventory, boolean isServerSide, Player player, CallbackInfo ci) {
             BackSlot.SLOT_INDEX = slots.size();
@@ -59,7 +58,6 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
 
             });
       }
-
 
       @ModifyArg(method = "<init>", at = @At(value = "INVOKE", ordinal = 2, target = "Lnet/minecraft/world/inventory/InventoryMenu;addSlot(Lnet/minecraft/world/inventory/Slot;)Lnet/minecraft/world/inventory/Slot;"))
       private Slot overrideChestplate(Slot par1) {
