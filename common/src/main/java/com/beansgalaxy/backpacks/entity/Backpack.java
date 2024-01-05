@@ -129,7 +129,7 @@ public class Backpack extends Entity {
 
       @Override
       protected void addAdditionalSaveData(CompoundTag tag) {
-            backpackInventory.writeNbt(tag, backpackInventory.getItemStacks().isEmpty());
+            backpackInventory.writeNbt(tag, backpackInventory.isEmpty());
       }
 
       @Override

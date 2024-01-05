@@ -1,9 +1,11 @@
 {
   "key.beansbackpacks.action": "Place/Pick up Backpack",
   "key.beansbackpacks.description": "Leave unbound to pair this action with the key bound to sprint.",
-  "tooltip.beansbackpacks.empty_title": "§8§oHold %d §8§ofor quick actions",
-  "tooltip.beansbackpacks.empty_1": "§8§oUse %d §8§oto quickly move",
-  "tooltip.beansbackpacks.empty_2": "§8§oitems into the backpack.",
-  "tooltip.beansbackpacks.empty_3": "%d §8§o+ click a block to",
-  "tooltip.beansbackpacks.empty_4": "§8§oquickly place and equip it."
+  "tooltip.beansbackpacks.empty_title_1": "§7Hold %d §7for quick actions",
+  "tooltip.beansbackpacks.empty_title_2": "",
+  "tooltip.beansbackpacks.empty_1": "§7Hold %d §7to move items",
+  "tooltip.beansbackpacks.empty_2": "§7quickly into backpack.",
+  "tooltip.beansbackpacks.empty_3": "%d §7+ %d §7backpacks or",
+  "tooltip.beansbackpacks.empty_4": "§7blocks to place and equip.",
+  "tooltip.beansbackpacks.empty_5": ""
 }

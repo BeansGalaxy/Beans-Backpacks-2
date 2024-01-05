@@ -1,6 +1,5 @@
 package com.beansgalaxy.backpacks.items;
 
-import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
@@ -11,6 +10,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class Tooltip {
+
       protected static Optional<TooltipComponent> get(ItemStack stack) {
             Player player = Minecraft.getInstance().player;
             if (player == null)
@@ -38,7 +39,7 @@ public class Tooltip {
             // IS BACKPACK EQUIPPED
             BackSlot backSlot = BackSlot.get(player);
             ItemStack equippedOnBack = backSlot.getItem();
-            if (!stack.equals(equippedOnBack) || backSlot.backpackInventory.getItemStacks().isEmpty())
+            if (!stack.equals(equippedOnBack) || backSlot.backpackInventory.isEmpty())
                   return Optional.empty();
 
             NonNullList<ItemStack> defaultedList = NonNullList.create();
@@ -75,23 +76,60 @@ public class Tooltip {
             return defaultedList.stream().mapToInt(itemStack -> getItemOccupancy(itemStack) * itemStack.getCount()).sum();
       }
 
-      public static void text(List<Component> components) {
-            LocalPlayer player = Minecraft.getInstance().player;
+      /** LORE AND NAME **/
+      private static String key;
+
+      public static Component name(ItemStack stack) {
+            Minecraft instance = Minecraft.getInstance();
+            LocalPlayer player = instance.player;
+            if (player != null) {
+                  BackSlot backSlot = BackSlot.get(player);
+                  ItemStack backStack = backSlot.getItem();
+
+                  if (stack == backStack && backSlot.backpackInventory.isEmpty() && backSlot.actionKeyPressed)
+                  {
+                        return Component.translatable("tooltip.beansbackpacks.empty_1", key);
+                  }
+            }
+            return Component.translatable(stack.getOrCreateTagElement("display").getString("name"));
+      }
+
+      public static void lore(ItemStack stack, List<Component> components) {
+            Minecraft instance = Minecraft.getInstance();
+            LocalPlayer player = instance.player;
             if (player == null)
                   return;
 
             BackSlot backSlot = BackSlot.get(player);
-            if (Kind.isBackpack(backSlot.getItem()) && backSlot.backpackInventory.getItemStacks().isEmpty())
+            ItemStack backStack = backSlot.getItem();
+            if (stack == backStack && backSlot.backpackInventory.isEmpty())
             {
-                  Component keyMessage = getKeyBinding().getTranslatedKeyMessage();
-
-                  String keyString = keyMessage.getString()
+                  key = "§6" + getKeyBinding().getTranslatedKeyMessage().getString()
                               .replace("Left ", "L")
                               .replace("Right ", "R")
                               .replace("Control", "Ctrl");
 
-                  components.add(Component.translatable("tooltip.beansbackpacks.empty_1", "§7§o" + keyString));
-                  components.add(Component.translatable("tooltip.beansbackpacks.empty_2"));
+                  if (backSlot.actionKeyPressed)
+                  {
+                        String useKey = "§6" +  instance.options.keyUse.getTranslatedKeyMessage().getString()
+                                    .replace("Right Button", "RClick")
+                                    .replace("Left Button", "LClick")
+                                    .replace("Left ", "L")
+                                    .replace("Right ", "R");
+
+                        MutableComponent e2 = Component.translatable("tooltip.beansbackpacks.empty_2", key);
+                        if (!e2.getString().isEmpty()) components.add(e2);
+                        components.add(Component.literal(""));
+                        components.add(Component.translatable("tooltip.beansbackpacks.empty_3", key, useKey));
+                        components.add(Component.translatable("tooltip.beansbackpacks.empty_4", key, useKey));
+                        MutableComponent e5 = Component.translatable("tooltip.beansbackpacks.empty_5", key, useKey);
+                        if (!e5.getString().isEmpty()) components.add(e5);
+                  } else
+                  {
+                        components.add(Component.translatable("tooltip.beansbackpacks.empty_title_1", key));
+                        MutableComponent t2 = Component.translatable("tooltip.beansbackpacks.empty_title_2", key);
+                        if (!t2.getString().isEmpty()) components.add(t2);
+                  }
             }
 
       }
@@ -110,7 +148,7 @@ public class Tooltip {
             LocalPlayer player = Minecraft.getInstance().player;
             BackSlot backSlot = BackSlot.get(player);
 
-            return backSlot.getItem() == stack && !backSlot.backpackInventory.getItemStacks().isEmpty();
+            return backSlot.getItem() == stack && !backSlot.backpackInventory.isEmpty();
       }
 
       public static int getBarWidth(ItemStack stack) {

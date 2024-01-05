@@ -180,7 +180,7 @@ public class BackSlot extends Slot {
       @Override
       public boolean mayPickup(Player playerEntity) {
             ItemStack itemStack = this.getItem();
-            boolean backpackIsEmpty = getInventory(playerEntity).getItemStacks().isEmpty();
+            boolean backpackIsEmpty = getInventory(playerEntity).isEmpty();
             boolean standardCheck = itemStack.isEmpty() || !EnchantmentHelper.hasBindingCurse(itemStack);
             return standardCheck && backpackIsEmpty;
       }

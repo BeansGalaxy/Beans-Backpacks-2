@@ -137,7 +137,7 @@ public class BackpackItem extends Item {
 
       @Override
       public Component getName(ItemStack stack) {
-            return Component.translatable(stack.getOrCreateTagElement("display").getString("name"));
+            return Tooltip.name(stack);
       }
 
       @Override
@@ -146,8 +146,8 @@ public class BackpackItem extends Item {
       }
 
       @Override
-      public void appendHoverText(ItemStack $$0, @Nullable Level $$1, List<Component> components, TooltipFlag $$3) {
-            Tooltip.text(components);
+      public void appendHoverText(ItemStack stack, @Nullable Level $$1, List<Component> components, TooltipFlag $$3) {
+            Tooltip.lore(stack, components);
       }
 
       @Override

@@ -49,7 +49,7 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                   @Override
                   public boolean isActive() {
                         ItemStack stack = BackSlot.get(player).getItem();
-                        boolean b = !backSlot.backpackInventory.getItemStacks().isEmpty() || Kind.isStorage(stack);
+                        boolean b = !backSlot.backpackInventory.isEmpty() || Kind.isStorage(stack);
                         return b && !player.isCreative();
                   }
 
