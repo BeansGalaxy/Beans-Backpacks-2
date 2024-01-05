@@ -2,10 +2,9 @@ package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
-import com.beansgalaxy.backpacks.general.BackpackInventory;
-import com.beansgalaxy.backpacks.general.Kind;
-import com.beansgalaxy.backpacks.general.MobileData;
-import com.beansgalaxy.backpacks.general.PlaySound;
+import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.entity.MobileData;
+import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.mojang.datafixers.util.Pair;
@@ -221,28 +220,33 @@ public class BackSlot extends Slot {
             ItemStack stack = slot.getItem();
 
 
-            if (slotIndex == SLOT_INDEX + 1 && Kind.POT.is(backStack)) {
-                  if (actionType == ClickType.THROW && cursorStack.isEmpty()) {
+            if (slotIndex == SLOT_INDEX + 1 && Kind.POT.is(backStack))
+            {
+                  if (actionType == ClickType.THROW && cursorStack.isEmpty())
+                  {
                         int count = button == 0 ? 1 : Math.min(stack.getCount(), maxStack);
                         ItemStack itemStack = backpackInventory.removeItem(0, count);
                         player.drop(itemStack, true);
                         return false;
                   }
-                  if (actionType == ClickType.SWAP) {
+                  if (actionType == ClickType.SWAP)
+                  {
                         ItemStack itemStack = playerInventory.getItem(button);
                         if (itemStack.isEmpty()) {
-                              if (backpackStack.getCount() > maxStack) {
+                              if (backpackStack.getCount() > maxStack)
+                              {
                                     playerInventory.setItem(button, backpackStack.copyWithCount(maxStack));
                                     backpackStack.shrink(maxStack);
                                     return false;
                               }
                               playerInventory.setItem(button, backpackInventory.removeItemNoUpdate(0));
-                        }
-                        else {
+                        } else
+                        {
                               if (backpackStack.isEmpty())
                                     return true;
                               if (backpackStack.getCount() > maxStack)
-                                    if (playerInventory.add(-1, itemStack)) {
+                                    if (playerInventory.add(-1, itemStack))
+                                    {
                                           playerInventory.setItem(button, backpackStack.copyWithCount(maxStack));
                                           backpackStack.shrink(maxStack);
                                           return false;
@@ -252,7 +256,8 @@ public class BackSlot extends Slot {
                         }
                         return false;
                   }
-                  if (button == 1 && cursorStack.isEmpty() && backpackStack.getCount() > maxStack) {
+                  if (button == 1 && cursorStack.isEmpty() && backpackStack.getCount() > maxStack)
+                  {
                         int count = Math.max(1, maxStack / 2);
                         ItemStack splitStack = backpackInventory.removeItem(0, count);
                         inventoryMenu.setCarried(splitStack);
@@ -263,16 +268,20 @@ public class BackSlot extends Slot {
             if (actionType == ClickType.THROW)
                   return true;
 
-            if (slotIndex < SLOT_INDEX && backSlot.actionKeyPressed && backStack.isEmpty() && backSlot.isActive() && Kind.isWearable(stack)) {
+            if (slotIndex < SLOT_INDEX && backSlot.actionKeyPressed && backStack.isEmpty() && backSlot.isActive() && Kind.isWearable(stack))
+            {
                   backSlot.safeInsert(stack);
                   return false;
             }
 
-            if (actionType == ClickType.QUICK_MOVE) {
-                  if (slotIndex == SLOT_INDEX + 1) {
+            if (actionType == ClickType.QUICK_MOVE)
+            {
+                  if (slotIndex == SLOT_INDEX + 1)
+                  {
                         if (Kind.POT.is(backStack))
                               playerInventory.add(-1, backpackInventory.removeItemNoUpdate(0));
-                        else if (!Kind.isBackpack(backStack) && Kind.isWearable(backStack)) {
+                        else if (!Kind.isBackpack(backStack) && Kind.isWearable(backStack))
+                        {
                               player.getInventory().add(-1, backpackStack);
                               if (backpackStack.isEmpty())
                                     backpackInventory.removeItemNoUpdate(0);
@@ -280,51 +289,49 @@ public class BackSlot extends Slot {
                               inventoryMenu.quickMoveStack(player, slotIndex);
                         return false;
                   }
-            }
-            else if (Kind.isWearable(backStack)) {
-                  if (backSlot.actionKeyPressed) {
-                        if (slotIndex == SLOT_INDEX && Kind.isStorage(stack)) {
-                              if (Kind.POT.is(stack))
-                                    return false;
-                              if (backpackInventory.isEmpty())
+            } else if (Kind.isWearable(backStack))
+            {
+                  if (backSlot.actionKeyPressed)
+                  {
+                        if (slotIndex == SLOT_INDEX && Kind.isStorage(stack))
+                              if (backpackInventory.isEmpty() && !Kind.POT.is(stack))
                                     player.getInventory().add(-1, stack);
-                              else {
-                                    backSlot.drop();
-                                    stack.setCount(0);
-                              }
-                              return false;
-                        }
-                        if (slotIndex == SLOT_INDEX + 1) {
+                              else return false;
+
+                        if (slotIndex == SLOT_INDEX + 1)
+                        {
                               Item compareItem = backpackInventory.getItem(0).copy().getItem();
                               boolean continueInsert = true;
                               boolean itemRemoved = false;
-                              while (!backpackInventory.isEmpty() && backpackInventory.getItem(0).is(compareItem) && continueInsert) {
+                              while (!backpackInventory.isEmpty() && backpackInventory.getItem(0).is(compareItem) && continueInsert)
+                              {
                                     continueInsert = playerInventory.add(-1, backpackInventory.removeItemSilent(0));
                                     itemRemoved = true;
                               }
+                              if (itemRemoved)
+                                    PlaySound.TAKE.at(player);
                               return false;
                         }
                         if (slotIndex < SLOT_INDEX) {
                               if (actionType == ClickType.PICKUP_ALL)
                                     moveAll(backpackInventory, inventoryMenu);
                               else slot.set(backpackInventory.insertItem(stack));
-                        } else {
-                              playerInventory.add(-1, stack);
-                        }
+                        } else playerInventory.add(-1, stack);
                         return false;
-                  }
-                  else {
-                        if (slotIndex == SLOT_INDEX + 1) {
+                  } else
+                  {
+                        if (slotIndex == SLOT_INDEX + 1)
+                        {
                               if (actionType == ClickType.PICKUP_ALL)
                                     return false;
 
-                              if (button == 1) {
-                                    if (!cursorStack.is(backpackStack.getItem()) && !cursorStack.isEmpty()) {
-                                          backpackInventory.insertItem(cursorStack, 1);
-                                          return false;
-                                    }
+                              if (button == 1 && !cursorStack.is(backpackStack.getItem()) && !cursorStack.isEmpty())
+                              {
+                                    backpackInventory.insertItem(cursorStack, 1);
+                                    return false;
                               }
-                              if (button == 0) {
+                              if (button == 0)
+                              {
                                     inventoryMenu.setRemoteCarried(cursorStack);
                                     ItemStack returnStack = backpackInventory.returnItem(0, cursorStack);
                                     inventoryMenu.setCarried(returnStack);
