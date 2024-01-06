@@ -5,9 +5,9 @@ import net.minecraft.nbt.CompoundTag;
 public class MobileData {
 
       public String key;
-      public int maxStacks;
       public String name;
       public Kind kind;
+      public int maxStacks;
       public int color;
       public CompoundTag trim;
 
@@ -30,10 +30,13 @@ public class MobileData {
       }
 
       public class Raw {
+            public String type;
             public String name;
             public String key;
             public String kind;
             public int max_stacks;
+            public String material;
+            public String binder;
 
             public Raw() {}
       }

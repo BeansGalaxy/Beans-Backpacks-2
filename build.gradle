@@ -46,6 +46,10 @@ subprojects {
             name = 'BlameJared Maven (JEI / CraftTweaker / Bookshelf)'
             url = 'https://maven.blamejared.com'
         }
+        // REI FABRIC
+        maven {
+            url "https://maven.shedaniel.me"
+        }
     }
 
     tasks.withType(JavaCompile).configureEach {

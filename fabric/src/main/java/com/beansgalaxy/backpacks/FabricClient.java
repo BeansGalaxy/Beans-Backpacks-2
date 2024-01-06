@@ -26,7 +26,7 @@ public class FabricClient implements ClientModInitializer {
 
             EntityModelLayerRegistry.registerModelLayer(RendererHelper.POT_MODEL, PotModel::getTexturedModelData);
             EntityModelLayerRegistry.registerModelLayer(RendererHelper.BACKPACK_MODEL, BackpackModel::getTexturedModelData);
-            EntityRendererRegistry.register(FabricMain.ENTITY, BackpackRenderer::new);
+            EntityRendererRegistry.register(FabricMain.BACKPACK_ENTITY, BackpackRenderer::new);
             MenuScreens.register(FabricMain.BACKPACK_MENU, BackpackScreen::new);
 
             KeyBindingHelper.registerKeyBinding(KeyPress.INSTANCE.ACTION_KEY);

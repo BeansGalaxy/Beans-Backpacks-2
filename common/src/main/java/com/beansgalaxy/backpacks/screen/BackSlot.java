@@ -408,49 +408,4 @@ public class BackSlot extends Slot {
                   }
             }
       }
-
-      public boolean pickupItemEntity(Inventory instance, ItemStack stack) {
-            if (stack.isEmpty())
-                  return false;
-
-            Player player = instance.player;
-            BackSlot backSlot = BackSlot.get(player);
-            BackpackInventory backpackInventory = BackSlot.getInventory(player);
-
-            if (Kind.fromStack(getItem()) == null || !Kind.isStorage(backSlot.getItem()))
-                  return instance.add(-1, stack);
-
-            if (backpackInventory.canPlaceItem(stack)) {
-                  instance.items.forEach(stacks -> {
-                        if (stacks.is(stack.getItem())) {
-                              int present = stacks.getCount();
-                              int inserted = stack.getCount();
-                              int count = present + inserted;
-                              int remainder = Math.max(0, count - stack.getMaxStackSize());
-                              count -= remainder;
-
-                              stacks.setCount(count);
-                              stack.setCount(remainder);
-                        }
-                  });
-
-                  backpackInventory.getItemStacks().forEach(stacks -> {
-                        if (stacks.is(stack.getItem())) {
-                              backpackInventory.insertItemSilent(stack, stack.getCount());
-                              backpackInventory.setChanged();
-                        }
-                  });
-            }
-
-            if (stack.isEmpty())
-                  return true;
-
-            if (instance.add(-1, stack))
-                  return true;
-
-            if (backpackInventory.canPlaceItem(stack))
-                  return backpackInventory.insertItemSilent(stack, stack.getCount()).isEmpty();
-
-            return false;
-      }
 }

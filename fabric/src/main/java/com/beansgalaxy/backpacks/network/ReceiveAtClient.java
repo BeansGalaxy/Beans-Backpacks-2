@@ -28,4 +28,8 @@ public class ReceiveAtClient {
             byte viewers = byteBuf.readByte();
             SyncViewersPacket.receiveAtClient(id, viewers);
       }
+
+      public static void RegisterBackpckData(Minecraft minecraft, ClientPacketListener clientPacketListener, FriendlyByteBuf buf, PacketSender packetSender) {
+
+      }
 }

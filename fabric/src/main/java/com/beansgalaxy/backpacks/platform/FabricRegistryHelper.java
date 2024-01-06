@@ -26,7 +26,7 @@ public class FabricRegistryHelper implements RegistryHelper {
 
       @Override
       public EntityType<? extends Entity> getEntity() {
-            return FabricMain.ENTITY;
+            return FabricMain.BACKPACK_ENTITY;
       }
 
       @Override

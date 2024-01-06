@@ -4,6 +4,7 @@ import com.beansgalaxy.backpacks.entity.Kind;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.PrimitiveCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -13,6 +14,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
@@ -25,14 +27,23 @@ public class RecipeCrafting extends CustomRecipe {
       final int maxStacks;
 
       public RecipeCrafting(Item material, Item binder, String name, String kind, String key, int maxStacks) {
-            super(CraftingBookCategory.MISC);
+            super(CraftingBookCategory.EQUIPMENT);
+            this.key = key;
             this.material = material;
             this.binder = binder;
             this.name = name;
             this.kind = kind;
-            this.key = key;
             this.maxStacks = maxStacks;
       }
+
+//      public RecipeCrafting(String key) {
+//            super(CraftingBookCategory.EQUIPMENT);
+//            MobileData data = Constants.REGISTERED_DATA.get(key);
+//            this.key = key;
+//            this.name = data.name;
+//            this.kind = data.kind.name();
+//            this.maxStacks = data.maxStacks;
+//      }
 
       public Item getMaterial() {
             return material;
@@ -79,7 +90,20 @@ public class RecipeCrafting extends CustomRecipe {
 
       @Override
       public ItemStack getResultItem(RegistryAccess var1) {
-            return ItemStack.EMPTY;
+            return BackpackItem.stackFromKey(key);
+      }
+
+      @Override
+      public NonNullList<Ingredient> getIngredients() {
+            Ingredient mat = Ingredient.of(material);
+            Ingredient bin = Ingredient.of(binder);
+            Ingredient emp = Ingredient.EMPTY;
+
+            return NonNullList.of(
+                  mat, bin, mat,
+                  mat, emp, mat,
+                  mat, bin, mat
+            );
       }
 
       @Override

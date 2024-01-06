@@ -13,12 +13,10 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -42,13 +40,6 @@ public class ForgeMain {
         CommonClass.init();
     }
 
-    private void addCreative(BuildCreativeModeTabContentsEvent event) {
-        if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
-            event.accept(LEATHER_BACKPACK);
-            event.accept(METAL_BACKPACK);
-            event.accept(UPGRADED_BACKPACK);
-        }
-    }
     // REGISTER MENUS
     public static final DeferredRegister<MenuType<?>> MENU_TYPES =
                 DeferredRegister.create(ForgeRegistries.MENU_TYPES, Constants.MOD_ID);

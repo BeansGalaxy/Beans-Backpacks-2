@@ -16,19 +16,20 @@ import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 public class FabricMain implements ModInitializer {
     
@@ -36,47 +37,56 @@ public class FabricMain implements ModInitializer {
     public void onInitialize() {
         NetworkPackages.registerC2SPackets();
 
-        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(Constants.MOD_ID, RecipeCrafting.Serializer.ID),
-                    RecipeCrafting.Serializer.INSTANCE);
-        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(Constants.MOD_ID, RecipeSmithing.Serializer.ID),
-                    RecipeSmithing.Serializer.INSTANCE);
-
         ServerPlayerEvents.COPY_FROM.register(new CopyPlayerEvent());
         ServerLivingEntityEvents.AFTER_DEATH.register(new LivingEntityDeath());
         EntityElytraEvents.CUSTOM.register(new ElytraFlightEvent());
         UseBlockCallback.EVENT.register(new PlayerInteractEvent());
         Constants.LOG.info("Initializing Beans' Backpacks Fabric");
         CommonClass.init();
-    }
 
-    // REGISTERS ENTITY
-    public static final EntityType<Entity> ENTITY = Registry.register(
-                BuiltInRegistries.ENTITY_TYPE, new ResourceLocation(Constants.MOD_ID, "backpack"),
-                FabricEntityTypeBuilder.create(MobCategory.MISC, BackpackEntity::new).build());
-
-    // REGISTERS MENUS
-    public static final MenuType<BackpackMenu> BACKPACK_MENU = Registry.register(
-                BuiltInRegistries.MENU, new ResourceLocation(Constants.MOD_ID, "backpack_menu"),
-                new ExtendedScreenHandlerType<>(BackpackMenu::new));
-
-    // REGISTERS ITEMS
-    public static void registerItems() {
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(FabricMain::addItemsToTab);
-    }
-
-    private static void addItemsToTab(FabricItemGroupEntries entries) {
-        entries.accept(LEATHER_BACKPACK);
-        entries.accept(METAL_BACKPACK);
-        entries.accept(UPGRADED_BACKPACK);
     }
 
     public static final Item LEATHER_BACKPACK = registerItem("backpack", new DyableBackpack());
     public static final Item METAL_BACKPACK = registerItem("metal_backpack", new BackpackItem());
     public static final Item UPGRADED_BACKPACK = registerItem("upgraded_backpack", new BackpackItem());
 
-    private static Item registerItem(String name, Item item) {
+    private static Item registerItem(String name, Item item)
+    {
         ResourceLocation resourceLocation = new ResourceLocation(Constants.MOD_ID, name);
         return Registry.register(BuiltInRegistries.ITEM, resourceLocation, item);
     }
+
+    public static final RecipeCrafting.Serializer RECIPE_CRAFTING =
+                Registry.register(BuiltInRegistries.RECIPE_SERIALIZER,
+                new ResourceLocation(Constants.MOD_ID, RecipeCrafting.Serializer.ID),
+                            RecipeCrafting.Serializer.INSTANCE);
+
+    public static final RecipeSmithing.Serializer RECIPE_SMITHING =
+                Registry.register(BuiltInRegistries.RECIPE_SERIALIZER,
+                new ResourceLocation(Constants.MOD_ID, RecipeSmithing.Serializer.ID),
+                            RecipeSmithing.Serializer.INSTANCE);
+
+    // REGISTER CREATIVE TAB
+    public static final CreativeModeTab BACKPACK_TAB = FabricItemGroup.builder()
+                .title(Component.translatable("itemGroup." + Constants.MOD_ID))
+                .icon(() -> new ItemStack(LEATHER_BACKPACK))
+                .displayItems((params, output) -> {
+                    Constants.REGISTERED_DATA.keySet().forEach( key ->
+                                output.accept(BackpackItem.stackFromKey(key)));
+                }).build();
+
+    public static final CreativeModeTab CREATIVE_TAB =
+                Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,
+                new ResourceLocation(Constants.MOD_ID, "backpacks"), BACKPACK_TAB);
+
+    public static final EntityType<Entity> BACKPACK_ENTITY =
+                Registry.register(BuiltInRegistries.ENTITY_TYPE,
+                new ResourceLocation(Constants.MOD_ID, "backpack"),
+                FabricEntityTypeBuilder.create(MobCategory.MISC, BackpackEntity::new).build());
+
+    public static final MenuType<BackpackMenu> BACKPACK_MENU =
+                Registry.register(BuiltInRegistries.MENU,
+                new ResourceLocation(Constants.MOD_ID, "backpack_menu"),
+                new ExtendedScreenHandlerType<>(BackpackMenu::new));
 
 }

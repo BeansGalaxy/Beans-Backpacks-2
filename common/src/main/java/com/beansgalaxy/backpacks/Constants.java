@@ -25,10 +25,21 @@ public class Constants {
 	public static HashSet<Item> CHESTPLATE_DISABLED = new HashSet<>();
 	public static HashSet<Item> DISABLES_BACK_SLOT = new HashSet<>();
 
-	public static void disableFromChestplate(String string) {
+	public static void registerAdditionalData(String key, MobileData data) {
+		if (key.isEmpty())
+			return;
+
+		REGISTERED_DATA.put(key, data);
+	}
+
+	public static Item itemFromString(String string) {
 		String[] location = string.split(":");
 		ResourceLocation resourceLocation = new ResourceLocation(location[0], location[1]);
-		Item item = BuiltInRegistries.ITEM.get(resourceLocation);
+            return BuiltInRegistries.ITEM.get(resourceLocation);
+	}
+
+	public static void disableFromChestplate(String string) {
+		Item item = itemFromString(string);
 		CHESTPLATE_DISABLED.add(item.asItem());
 	}
 
@@ -39,9 +50,7 @@ public class Constants {
 	}
 
 	public static void disablesBackSlot(String string) {
-		String[] location = string.split(":");
-		ResourceLocation resourceLocation = new ResourceLocation(location[0], location[1]);
-		Item item = BuiltInRegistries.ITEM.get(resourceLocation);
+		Item item = itemFromString(string);
 		DISABLES_BACK_SLOT.add(item.asItem());
 	}
 

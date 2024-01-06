@@ -74,6 +74,7 @@ public class DataResourcesMixin {
             Map<ResourceLocation, Resource> recipeKinds = resourceManager.listResources("recipes",
                         (in) -> in.getPath().endsWith(".json") && in.getNamespace().equals(Constants.MOD_ID));
 
+            Constants.REGISTERED_DATA.clear();
             recipeKinds.forEach(((resourceLocation, resource) -> {
                   try {
                         InputStream open = resource.open();
@@ -82,9 +83,13 @@ public class DataResourcesMixin {
                         ObjectMapper map = ObjectMapper.create();
                         MobileData.Raw data = map.readValue(json, MobileData.Raw.class);
 
+//                        String type = Constants.MOD_ID + ":" + RecipeCrafting.Serializer.ID;
+//                        if (!Objects.equals(data.type, type))
+//                              return;
+
                         Kind kind = Kind.fromName(data.kind);
 
-                        Constants.REGISTERED_DATA.put(data.key, new MobileData(data.key, data.name, kind, data.max_stacks));
+                        Constants.registerAdditionalData(data.key, new MobileData(data.key, data.name, kind, data.max_stacks));
 
                   } catch (IOException e) {
                         throw new RuntimeException(e);

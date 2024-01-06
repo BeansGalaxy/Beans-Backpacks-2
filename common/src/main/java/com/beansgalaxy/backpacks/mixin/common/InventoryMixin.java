@@ -59,10 +59,46 @@ public abstract class InventoryMixin implements Container {
       }
 
       @Inject(method = "add(ILnet/minecraft/world/item/ItemStack;)Z", at = @At("HEAD"), cancellable = true)
-      public void insertStack(int slot, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+      public void insertInventory(int slot, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
             Inventory instance = (Inventory) (Object) this;
-            if (slot == -1 && BackSlot.get(instance.player).pickupItemEntity(instance, stack))
-                  cir.setReturnValue(true);
+            if (slot == -1 && !stack.isEmpty())
+            {
+                  BackSlot backSlot = BackSlot.get(player);
+                  BackpackInventory backpackInventory = BackSlot.getInventory(player);
+
+                  if (Kind.isStorage(backSlot.getItem()) && backpackInventory.canPlaceItem(stack))
+                  {
+                        instance.items.forEach(stacks -> {
+                              if (stacks.is(stack.getItem())) {
+                                    int present = stacks.getCount();
+                                    int inserted = stack.getCount();
+                                    int count = present + inserted;
+                                    int remainder = Math.max(0, count - stack.getMaxStackSize());
+                                    count -= remainder;
+
+                                    stacks.setCount(count);
+                                    stack.setCount(remainder);
+                              }
+                        });
+
+                        backpackInventory.getItemStacks().forEach(stacks -> {
+                              if (stacks.is(stack.getItem())) {
+                                    backpackInventory.insertItemSilent(stack, stack.getCount());
+                                    backpackInventory.setChanged();
+                              }
+                        });
+
+                        if (stack.isEmpty())
+                              cir.setReturnValue(true);
+                  }
+            }
       }
 
+      @Inject(method = "add(ILnet/minecraft/world/item/ItemStack;)Z", at = @At("RETURN"), cancellable = true)
+      public void insertBackpack(int $$0, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+            if (!cir.getReturnValue()) {
+                  BackpackInventory backpackInventory = BackSlot.getInventory(player);
+                  cir.setReturnValue(backpackInventory.insertItemSilent(stack, stack.getCount()).isEmpty());
+            }
+      }
 }

@@ -28,14 +28,14 @@ public class CategoryCrafting implements ICraftingCategoryExtension<RecipeCrafti
       public void setRecipe(RecipeHolder<RecipeCrafting> recipeHolder, IRecipeLayoutBuilder builder, ICraftingGridHelper craftingGridHelper, IFocusGroup focuses) {
             Item materialItem = recipeHolder.value().getMaterial();
             Item binderItem = recipeHolder.value().getBinder();
-            List<ItemStack> material = List.of(materialItem.getDefaultInstance());
-            List<ItemStack> binder = List.of(binderItem.getDefaultInstance());
-            List<ItemStack> empty = List.of(ItemStack.EMPTY);
+            List<ItemStack> mat = List.of(materialItem.getDefaultInstance());
+            List<ItemStack> bin = List.of(binderItem.getDefaultInstance());
+            List<ItemStack> emp = List.of(ItemStack.EMPTY);
 
             List<List<ItemStack>> stacks = List.of(
-                  material, binder, material,
-                  material, empty, material,
-                  material, binder, material
+                        mat, bin, mat,
+                        mat, emp, mat,
+                        mat, bin, mat
             );
 
             craftingGridHelper.createAndSetInputs(builder, stacks, 3, 3);
