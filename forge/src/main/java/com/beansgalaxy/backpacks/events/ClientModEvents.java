@@ -13,6 +13,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -46,6 +47,11 @@ public class ClientModEvents {
       @SubscribeEvent
       public static void registerKeys(RegisterKeyMappingsEvent event) {
             event.register(KeyPress.INSTANCE.ACTION_KEY);
+      }
+
+      @SubscribeEvent
+      public static void registerCreativeTab(BuildCreativeModeTabContentsEvent event) {
+
       }
 
 }

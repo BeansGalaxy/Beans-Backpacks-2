@@ -135,7 +135,7 @@ public class RecipeCrafting extends CustomRecipe {
             return kind;
       }
 
-      private String getKey() {
+      public String getKey() {
             return key;
       }
 

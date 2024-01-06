@@ -7,5 +7,6 @@
   "tooltip.beansbackpacks.empty_2": "§7quickly into backpack.",
   "tooltip.beansbackpacks.empty_3": "%d §7+ %d §7backpacks or",
   "tooltip.beansbackpacks.empty_4": "§7blocks to place and equip.",
-  "tooltip.beansbackpacks.empty_5": ""
+  "tooltip.beansbackpacks.empty_5": "",
+  "itemGroup.beansbackpacks": "Backpacks"
 }

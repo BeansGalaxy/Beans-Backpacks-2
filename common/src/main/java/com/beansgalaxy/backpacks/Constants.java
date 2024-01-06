@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks;
 
+import com.beansgalaxy.backpacks.entity.MobileData;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -10,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class Constants {
@@ -18,6 +20,7 @@ public class Constants {
 	public static final String MOD_NAME = "Beans' Backpacks";
 	public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
 
+	public static HashMap<String, MobileData> REGISTERED_DATA = new HashMap<>();
 	public static HashSet<String> BACKPACK_KEYS = new HashSet<>();
 	public static HashSet<Item> CHESTPLATE_DISABLED = new HashSet<>();
 	public static HashSet<Item> DISABLES_BACK_SLOT = new HashSet<>();

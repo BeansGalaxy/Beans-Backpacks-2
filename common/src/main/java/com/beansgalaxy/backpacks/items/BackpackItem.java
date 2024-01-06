@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.items;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.entity.MobileData;
@@ -179,5 +180,23 @@ public class BackpackItem extends Item {
             CompoundTag trim = stack.getTagElement("Trim");
 
             return new MobileData(key, name, kind, maxStacks, itemColor, trim);
+      }
+
+      public static ItemStack stackFromKey(String key) {
+            MobileData data = Constants.REGISTERED_DATA.get(key);
+            CompoundTag display = tagFromKey(key);
+
+            ItemStack stack = data.kind.getItem().getDefaultInstance();
+            stack.getOrCreateTag().put("display", display);
+            return stack;
+      }
+
+      public static CompoundTag tagFromKey(String key) {
+            MobileData data = Constants.REGISTERED_DATA.get(key);
+            CompoundTag display = new CompoundTag();
+            display.putString("key", data.key);
+            display.putString("name", data.name);
+            display.putInt("max_stacks", data.maxStacks);
+            return display;
       }
 }

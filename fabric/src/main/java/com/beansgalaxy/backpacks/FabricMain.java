@@ -8,7 +8,7 @@ import com.beansgalaxy.backpacks.events.PlayerInteractEvent;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.beansgalaxy.backpacks.items.RecipeCrafting;
-import com.beansgalaxy.backpacks.items.RecipieSmithing;
+import com.beansgalaxy.backpacks.items.RecipeSmithing;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import net.fabricmc.api.ModInitializer;
@@ -38,8 +38,8 @@ public class FabricMain implements ModInitializer {
 
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(Constants.MOD_ID, RecipeCrafting.Serializer.ID),
                     RecipeCrafting.Serializer.INSTANCE);
-        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(Constants.MOD_ID, RecipieSmithing.Serializer.ID),
-                    RecipieSmithing.Serializer.INSTANCE);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(Constants.MOD_ID, RecipeSmithing.Serializer.ID),
+                    RecipeSmithing.Serializer.INSTANCE);
 
         ServerPlayerEvents.COPY_FROM.register(new CopyPlayerEvent());
         ServerLivingEntityEvents.AFTER_DEATH.register(new LivingEntityDeath());

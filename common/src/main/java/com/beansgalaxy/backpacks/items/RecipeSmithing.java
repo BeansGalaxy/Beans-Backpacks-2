@@ -15,7 +15,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SmithingRecipe;
 import net.minecraft.world.level.Level;
 
-public class RecipieSmithing implements SmithingRecipe {
+public class RecipeSmithing implements SmithingRecipe {
       final Item template;
       final Item material;
       final Item base;
@@ -24,7 +24,7 @@ public class RecipieSmithing implements SmithingRecipe {
       final String kind;
       final int maxStacks;
 
-      public RecipieSmithing(Item template, Item material, Item base, String name, String key, String kind, int maxStacks) {
+      public RecipeSmithing(Item template, Item material, Item base, String name, String key, String kind, int maxStacks) {
             this.template = template;
             this.material = material;
             this.base = base;
@@ -77,33 +77,33 @@ public class RecipieSmithing implements SmithingRecipe {
 
       @Override
       public RecipeSerializer<?> getSerializer() {
-            return RecipieSmithing.Serializer.INSTANCE;
+            return RecipeSmithing.Serializer.INSTANCE;
       }
 
-      public static class Serializer implements RecipeSerializer<RecipieSmithing> {
-            public static final RecipieSmithing.Serializer INSTANCE = new RecipieSmithing.Serializer();
+      public static class Serializer implements RecipeSerializer<RecipeSmithing> {
+            public static final RecipeSmithing.Serializer INSTANCE = new RecipeSmithing.Serializer();
             public static final String ID = "smithing";
 
-            public static final Codec<RecipieSmithing> CODEC = RecordCodecBuilder.create(
+            public static final Codec<RecipeSmithing> CODEC = RecordCodecBuilder.create(
                         in -> in.group(
-                                                BuiltInRegistries.ITEM.byNameCodec().fieldOf("template").forGetter(RecipieSmithing::getTemplate),
-                                                BuiltInRegistries.ITEM.byNameCodec().fieldOf("material").forGetter(RecipieSmithing::getMaterial),
-                                                BuiltInRegistries.ITEM.byNameCodec().fieldOf("base").forGetter(RecipieSmithing::getBase),
-                                                PrimitiveCodec.STRING.fieldOf("name").forGetter(RecipieSmithing::getName),
-                                                PrimitiveCodec.STRING.fieldOf("key").forGetter(RecipieSmithing::getKey),
-                                                PrimitiveCodec.STRING.fieldOf("kind").forGetter(RecipieSmithing::getKind),
-                                                PrimitiveCodec.INT.fieldOf("max_stacks").forGetter(RecipieSmithing::getMaxStacks)
+                                                BuiltInRegistries.ITEM.byNameCodec().fieldOf("template").forGetter(RecipeSmithing::getTemplate),
+                                                BuiltInRegistries.ITEM.byNameCodec().fieldOf("material").forGetter(RecipeSmithing::getMaterial),
+                                                BuiltInRegistries.ITEM.byNameCodec().fieldOf("base").forGetter(RecipeSmithing::getBase),
+                                                PrimitiveCodec.STRING.fieldOf("name").forGetter(RecipeSmithing::getName),
+                                                PrimitiveCodec.STRING.fieldOf("key").forGetter(RecipeSmithing::getKey),
+                                                PrimitiveCodec.STRING.fieldOf("kind").forGetter(RecipeSmithing::getKind),
+                                                PrimitiveCodec.INT.fieldOf("max_stacks").forGetter(RecipeSmithing::getMaxStacks)
                                     )
-                                    .apply(in, RecipieSmithing::new)
+                                    .apply(in, RecipeSmithing::new)
             );
 
             @Override
-            public Codec<RecipieSmithing> codec() {
+            public Codec<RecipeSmithing> codec() {
                   return CODEC;
             }
 
             @Override
-            public RecipieSmithing fromNetwork(FriendlyByteBuf buf) {
+            public RecipeSmithing fromNetwork(FriendlyByteBuf buf) {
                   Item template = buf.readItem().getItem();
                   Item material = buf.readItem().getItem();
                   Item base = buf.readItem().getItem();
@@ -112,11 +112,11 @@ public class RecipieSmithing implements SmithingRecipe {
                   String key = buf.readUtf();
                   int maxStacks = buf.readInt();
 
-                  return new RecipieSmithing(template, material, base, name, kind, key, maxStacks);
+                  return new RecipeSmithing(template, material, base, name, kind, key, maxStacks);
             }
 
             @Override
-            public void toNetwork(FriendlyByteBuf buf, RecipieSmithing var2) {
+            public void toNetwork(FriendlyByteBuf buf, RecipeSmithing var2) {
                   buf.writeItem(var2.getTemplate().getDefaultInstance());
                   buf.writeItem(var2.getMaterial().getDefaultInstance());
                   buf.writeItem(var2.getBase().getDefaultInstance());
