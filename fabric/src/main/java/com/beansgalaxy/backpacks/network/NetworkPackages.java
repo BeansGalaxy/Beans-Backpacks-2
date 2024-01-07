@@ -15,7 +15,6 @@ public class NetworkPackages {
       public static final ResourceLocation CALL_BACK_SLOT_2S = new ResourceLocation(Constants.MOD_ID, "call_back_slot_s");
       public static final ResourceLocation SYNC_BACK_INV_2C = new ResourceLocation(Constants.MOD_ID, "backpack_inventory_c");
       public static final ResourceLocation CALL_BACK_INV_2S = new ResourceLocation(Constants.MOD_ID, "call_backpack_inventory_s");
-      public static final ResourceLocation REG_BACKPACK_DATA_2C = new ResourceLocation(Constants.MOD_ID, "registered_data_c");
 
       public static void registerC2SPackets() {
             ServerPlayNetworking.registerGlobalReceiver(SPRINT_KEY_2S, SprintKeyPacket::receiveAtServer);
@@ -27,7 +26,6 @@ public class NetworkPackages {
             ClientPlayNetworking.registerGlobalReceiver(SYNC_VIEWERS_2All, ReceiveAtClient::SyncViewers);
             ClientPlayNetworking.registerGlobalReceiver(SYNC_BACK_SLOT_2C, ReceiveAtClient::SyncBackSlot);
             ClientPlayNetworking.registerGlobalReceiver(SYNC_BACK_INV_2C, ReceiveAtClient::SyncBackInventory);
-            ClientPlayNetworking.registerGlobalReceiver(REG_BACKPACK_DATA_2C, ReceiveAtClient::RegisterBackpckData);
       }
 
 }
