@@ -2,8 +2,8 @@ package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
+import com.beansgalaxy.backpacks.entity.Data;
 import com.beansgalaxy.backpacks.entity.Kind;
-import com.beansgalaxy.backpacks.entity.MobileData;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -82,7 +82,7 @@ public class BackSlot extends Slot {
                   return this.itemStacks;
             }
 
-            @Override public MobileData getData() {
+            @Override public Data getData() {
                   ItemStack stack = BackSlot.this.getItem();
                   return BackpackItem.getItemData(stack);
             }
@@ -245,7 +245,7 @@ public class BackSlot extends Slot {
                               if (backpackStack.isEmpty())
                                     return true;
                               if (backpackStack.getCount() > maxStack)
-                                    if (playerInventory.add(-1, itemStack))
+                                    if (playerInventory.add(-2, itemStack))
                                     {
                                           playerInventory.setItem(button, backpackStack.copyWithCount(maxStack));
                                           backpackStack.shrink(maxStack);
@@ -279,10 +279,10 @@ public class BackSlot extends Slot {
                   if (slotIndex == SLOT_INDEX + 1)
                   {
                         if (Kind.POT.is(backStack))
-                              playerInventory.add(-1, backpackInventory.removeItemNoUpdate(0));
+                              playerInventory.add(-2, backpackInventory.removeItemNoUpdate(0));
                         else if (!Kind.isBackpack(backStack) && Kind.isWearable(backStack))
                         {
-                              player.getInventory().add(-1, backpackStack);
+                              playerInventory.add(-2, backpackStack);
                               if (backpackStack.isEmpty())
                                     backpackInventory.removeItemNoUpdate(0);
                         } else
@@ -295,7 +295,7 @@ public class BackSlot extends Slot {
                   {
                         if (slotIndex == SLOT_INDEX && Kind.isStorage(stack))
                               if (backpackInventory.isEmpty() && !Kind.POT.is(stack))
-                                    player.getInventory().add(-1, stack);
+                                    playerInventory.add(-2, stack);
                               else return false;
 
                         if (slotIndex == SLOT_INDEX + 1)
@@ -305,7 +305,7 @@ public class BackSlot extends Slot {
                               boolean itemRemoved = false;
                               while (!backpackInventory.isEmpty() && backpackInventory.getItem(0).is(compareItem) && continueInsert)
                               {
-                                    continueInsert = playerInventory.add(-1, backpackInventory.removeItemSilent(0));
+                                    continueInsert = playerInventory.add(-2, backpackInventory.removeItemSilent(0));
                                     itemRemoved = true;
                               }
                               if (itemRemoved)
@@ -316,7 +316,7 @@ public class BackSlot extends Slot {
                               if (actionType == ClickType.PICKUP_ALL)
                                     moveAll(backpackInventory, inventoryMenu);
                               else slot.set(backpackInventory.insertItem(stack));
-                        } else playerInventory.add(-1, stack);
+                        } else playerInventory.add(-2, stack);
                         return false;
                   } else
                   {

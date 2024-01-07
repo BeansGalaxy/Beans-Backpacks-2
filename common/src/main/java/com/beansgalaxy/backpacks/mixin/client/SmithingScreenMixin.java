@@ -2,8 +2,8 @@ package com.beansgalaxy.backpacks.mixin.client;
 
 import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.entity.Backpack;
+import com.beansgalaxy.backpacks.entity.Data;
 import com.beansgalaxy.backpacks.entity.Kind;
-import com.beansgalaxy.backpacks.entity.MobileData;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.ItemCombinerScreen;
@@ -43,7 +43,7 @@ public abstract class SmithingScreenMixin extends ItemCombinerScreen<SmithingMen
             this.backpackPreview = new Backpack(this.minecraft.level) {
 
                   @Override
-                  public MobileData getData() {
+                  public Data getData() {
                         ItemStack stack = smithingMenu.getSlot(3).getItem();
                         return BackpackItem.getItemData(stack);
                   }

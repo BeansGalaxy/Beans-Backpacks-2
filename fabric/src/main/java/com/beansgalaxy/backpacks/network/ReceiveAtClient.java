@@ -1,14 +1,18 @@
 package com.beansgalaxy.backpacks.network;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.network.SyncBackInventory;
 import com.beansgalaxy.backpacks.client.network.SyncBackSlot;
 import com.beansgalaxy.backpacks.client.network.SyncViewersPacket;
+import com.beansgalaxy.backpacks.entity.Data;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.Map;
 import java.util.UUID;
 
 public class ReceiveAtClient {
@@ -27,5 +31,16 @@ public class ReceiveAtClient {
             int id = byteBuf.readInt();
             byte viewers = byteBuf.readByte();
             SyncViewersPacket.receiveAtClient(id, viewers);
+      }
+
+      public static void ConfigBackpackData(Minecraft minecraft, ClientPacketListener clientPacketListener, FriendlyByteBuf buf, PacketSender packetSender) {
+            Map<String, CompoundTag> map = buf.readMap(FriendlyByteBuf::readUtf, FriendlyByteBuf::readNbt);
+            for (String key: map.keySet())
+            {
+                  CompoundTag tag = map.get(key);
+                  Data data = new Data(tag);
+
+                  Constants.registerAdditionalData(key, data);
+            }
       }
 }

@@ -1,8 +1,8 @@
 package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.entity.Backpack;
+import com.beansgalaxy.backpacks.entity.Data;
 import com.beansgalaxy.backpacks.entity.Kind;
-import com.beansgalaxy.backpacks.entity.MobileData;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.NonNullList;
@@ -29,7 +29,7 @@ public interface BackpackInventory extends Container {
 
       Entity getOwner();
 
-      MobileData getData();
+      Data getData();
 
       class Viewable {
             public float headPitch = 0;

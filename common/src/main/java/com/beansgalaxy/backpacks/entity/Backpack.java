@@ -57,7 +57,7 @@ public class Backpack extends Entity {
             }
 
             @Override
-            public MobileData getData() {
+            public Data getData() {
                   return Backpack.this.getData();
             }
       };
@@ -70,10 +70,10 @@ public class Backpack extends Entity {
             super(type, level);
       }
 
-      public MobileData getData() {
+      public Data getData() {
             String name = Backpack.this.entityData.get(NAME);
             int maxStacks = Backpack.this.entityData.get(MAX_STACKS);
-            return new MobileData(getKey(), name, getKind(), maxStacks, getColor(), getTrim());
+            return new Data(getKey(), name, getKind(), maxStacks, getColor(), getTrim());
       }
 
       public boolean isMirror() {
@@ -118,7 +118,7 @@ public class Backpack extends Entity {
             this.entityData.define(TRIM, new CompoundTag());
       }
 
-      public void initDisplay(MobileData data) {
+      public void initDisplay(Data data) {
             this.entityData.set(KEY, data.key);
             this.entityData.set(NAME, data.name);
             this.entityData.set(KIND, data.kind.name());

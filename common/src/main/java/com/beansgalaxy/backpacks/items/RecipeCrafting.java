@@ -1,5 +1,7 @@
 package com.beansgalaxy.backpacks.items;
 
+import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.entity.Data;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.PrimitiveCodec;
@@ -36,14 +38,16 @@ public class RecipeCrafting extends CustomRecipe {
             this.maxStacks = maxStacks;
       }
 
-//      public RecipeCrafting(String key) {
-//            super(CraftingBookCategory.EQUIPMENT);
-//            MobileData data = Constants.REGISTERED_DATA.get(key);
-//            this.key = key;
-//            this.name = data.name;
-//            this.kind = data.kind.name();
-//            this.maxStacks = data.maxStacks;
-//      }
+      public RecipeCrafting(String key) {
+            super(CraftingBookCategory.EQUIPMENT);
+            Data data = Constants.REGISTERED_DATA.get(key);
+            this.key = key;
+            this.material = data.material;
+            this.binder = data.binder;
+            this.name = data.name;
+            this.kind = data.kind.name();
+            this.maxStacks = data.maxStacks;
+      }
 
       public Item getMaterial() {
             return material;

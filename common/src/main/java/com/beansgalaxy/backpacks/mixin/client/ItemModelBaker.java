@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+import java.util.HashSet;
 import java.util.Map;
 
 @Mixin(ModelBakery.class)
@@ -27,13 +28,13 @@ public abstract class ItemModelBaker {
                   String namespace = p_251575_.getNamespace();
                   return s.endsWith(".json") && namespace.equals(Constants.MOD_ID);
             });
-
+            HashSet<String> keys = new HashSet<>();
             for(ResourceLocation resourceLocation: resourceLocationResourceMap.keySet()) {
                   String key = resourceLocation.getPath().replaceAll("models/item/backpack/", "").replaceAll(".json", "");
-                  Constants.BACKPACK_KEYS.add(key);
+                  keys.add(key);
             }
 
-            for(String key : Constants.BACKPACK_KEYS)
+            for(String key : keys)
                   this.bakeBackpackModel(key);
       }
 

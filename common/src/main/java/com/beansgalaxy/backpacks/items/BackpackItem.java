@@ -2,8 +2,8 @@ package com.beansgalaxy.backpacks.items;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
+import com.beansgalaxy.backpacks.entity.Data;
 import com.beansgalaxy.backpacks.entity.Kind;
-import com.beansgalaxy.backpacks.entity.MobileData;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.core.BlockPos;
@@ -166,7 +166,7 @@ public class BackpackItem extends Item {
             return Tooltip.barColor;
       }
 
-      public static MobileData getItemData(ItemStack stack) {
+      public static Data getItemData(ItemStack stack) {
             if (!Kind.isBackpack(stack))
                   return null;
 
@@ -179,11 +179,11 @@ public class BackpackItem extends Item {
             int itemColor = stack.getItem() instanceof DyableBackpack dyableBackpack ? dyableBackpack.getColor(stack) : 0xFFFFFF;
             CompoundTag trim = stack.getTagElement("Trim");
 
-            return new MobileData(key, name, kind, maxStacks, itemColor, trim);
+            return new Data(key, name, kind, maxStacks, itemColor, trim);
       }
 
       public static ItemStack stackFromKey(String key) {
-            MobileData data = Constants.REGISTERED_DATA.get(key);
+            Data data = Constants.REGISTERED_DATA.get(key);
             CompoundTag display = tagFromKey(key);
 
             ItemStack stack = data.kind.getItem().getDefaultInstance();
@@ -192,9 +192,9 @@ public class BackpackItem extends Item {
       }
 
       public static CompoundTag tagFromKey(String key) {
-            MobileData data = Constants.REGISTERED_DATA.get(key);
+            Data data = Constants.REGISTERED_DATA.get(key);
             CompoundTag display = new CompoundTag();
-            display.putString("key", data.key);
+            display.putString("key", key);
             display.putString("name", data.name);
             display.putInt("max_stacks", data.maxStacks);
             return display;

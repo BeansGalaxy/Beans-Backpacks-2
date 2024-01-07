@@ -1,10 +1,7 @@
 package com.beansgalaxy.backpacks;
 
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
-import com.beansgalaxy.backpacks.events.CopyPlayerEvent;
-import com.beansgalaxy.backpacks.events.ElytraFlightEvent;
-import com.beansgalaxy.backpacks.events.LivingEntityDeath;
-import com.beansgalaxy.backpacks.events.PlayerInteractEvent;
+import com.beansgalaxy.backpacks.events.*;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.beansgalaxy.backpacks.items.RecipeCrafting;
@@ -15,6 +12,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -37,6 +35,7 @@ public class FabricMain implements ModInitializer {
     public void onInitialize() {
         NetworkPackages.registerC2SPackets();
 
+        ServerEntityEvents.ENTITY_LOAD.register(new PlayerJoin());
         ServerPlayerEvents.COPY_FROM.register(new CopyPlayerEvent());
         ServerLivingEntityEvents.AFTER_DEATH.register(new LivingEntityDeath());
         EntityElytraEvents.CUSTOM.register(new ElytraFlightEvent());
