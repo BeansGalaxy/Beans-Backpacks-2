@@ -1,10 +1,10 @@
-package com.beansgalaxy.backpacks.screen;
+package com.beansgalaxy.backpacks.core;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.entity.Backpack;
-import com.beansgalaxy.backpacks.entity.Data;
-import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
+import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -23,13 +23,11 @@ public interface BackpackInventory extends Container {
 
       Viewable getViewable();
 
-      Kind getKind();
-
       int getMaxStacks();
 
       Entity getOwner();
 
-      Data getData();
+      LocalData getLocalData();
 
       class Viewable {
             public float headPitch = 0;
@@ -197,11 +195,16 @@ public interface BackpackInventory extends Container {
       }
 
       default int spaceLeft() {
+            String key = getLocalData().key;
+            Traits traits = Constants.TRAITS_MAP.get(key);
+
+            if (traits.kind == null)
+                  return 0;
+
             int totalWeight = this.getItemStacks().stream().mapToInt(
                         itemStacks -> weightByItem(itemStacks) * itemStacks.getCount()).sum();
 
-            int maxWeight = getMaxStacks() * 64;
-            return getKind() == null ? 0 : maxWeight - totalWeight;
+            return getMaxStacks() * 64 - totalWeight;
       }
 
       default int weightByItem(ItemStack stack) {
@@ -214,7 +217,7 @@ public interface BackpackInventory extends Container {
                   ItemStack lookSlot = getItem(i);
                   if (!stack.isEmpty() && ItemStack.isSameItemSameTags(stack, lookSlot)) {
                         int count = stack.getCount() + lookSlot.getCount();
-                        int maxCount = getKind() == Kind.POT ? Integer.MAX_VALUE : stack.getMaxStackSize();
+                        int maxCount = getLocalData().kind() == Kind.POT ? Integer.MAX_VALUE : stack.getMaxStackSize();
                         if (count > maxCount) {
                               lookSlot.setCount(maxCount);
                               count -= maxCount;
@@ -272,7 +275,7 @@ public interface BackpackInventory extends Container {
             boolean isEmpty = getItemStacks().isEmpty();
             ItemStack stack1 = isEmpty ? ItemStack.EMPTY : getItemStacks().get(0);
             boolean sameStack = !stack.is(stack1.getItem());
-            boolean isPot = getKind() == Kind.POT;
+            boolean isPot = getLocalData().kind() == Kind.POT;
             boolean isFull = spaceLeft() < 1;
             if (!isEmpty && isPot && sameStack || isFull)
                   return false;

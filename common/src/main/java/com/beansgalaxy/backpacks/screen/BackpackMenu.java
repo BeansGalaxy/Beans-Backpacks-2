@@ -1,7 +1,8 @@
 package com.beansgalaxy.backpacks.screen;
 
+import com.beansgalaxy.backpacks.core.BackpackInventory;
+import com.beansgalaxy.backpacks.core.LocalData;
 import com.beansgalaxy.backpacks.entity.Backpack;
-import com.beansgalaxy.backpacks.entity.Data;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -47,13 +48,13 @@ public class BackpackMenu extends AbstractContainerMenu {
             Backpack backpack = new Backpack(level) {
 
                   @Override
-                  public Data getData() {
-                        return BackpackMenu.this.backpackInventory.getData();
+                  public BackpackInventory getBackpackInventory() {
+                        return BackpackMenu.this.backpackInventory;
                   }
 
                   @Override
-                  public BackpackInventory getBackpackInventory() {
-                        return BackpackMenu.this.backpackInventory;
+                  public LocalData getLocalData() {
+                        return this.backpackInventory.getLocalData();
                   }
             };
             return backpack;

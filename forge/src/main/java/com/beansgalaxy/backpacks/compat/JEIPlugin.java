@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.compat;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.items.BackpackItem;
+import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.items.RecipeCrafting;
 import com.beansgalaxy.backpacks.platform.Services;
 import mezz.jei.api.IModPlugin;
@@ -33,7 +33,17 @@ public class JEIPlugin implements IModPlugin {
                   CompoundTag display = stack.getOrCreateTagElement("display");
                   String key = display.getString("key");
 
-                  return BackpackItem.tagFromKey(key).getAsString();
+
+
+                  Traits traits = Constants.TRAITS_MAP.get(key);
+                  CompoundTag tag = new CompoundTag();
+                  tag.putString("key", key);
+                  if (key.isEmpty())
+                        return tag.getAsString();
+                  tag.putString("name", traits.name);
+                  tag.putInt("max_stacks", traits.maxStacks);
+
+                  return tag.getAsString();
             };
 
             registration.registerSubtypeInterpreter(Services.REGISTRY.getLeather(), interpreter);

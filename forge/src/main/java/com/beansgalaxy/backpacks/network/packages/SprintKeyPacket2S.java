@@ -7,19 +7,19 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.network.NetworkDirection;
 
-public class SprintKeyPacketC2S {
+public class SprintKeyPacket2S {
       public static void register() {
-            NetworkPackages.INSTANCE.messageBuilder(SprintKeyPacketC2S.class, NetworkDirection.PLAY_TO_SERVER)
-                        .encoder(SprintKeyPacketC2S::encode).decoder(SprintKeyPacketC2S::new).consumerMainThread(SprintKeyPacketC2S::handle).add();
+            NetworkPackages.INSTANCE.messageBuilder(SprintKeyPacket2S.class, NetworkDirection.PLAY_TO_SERVER)
+                        .encoder(SprintKeyPacket2S::encode).decoder(SprintKeyPacket2S::new).consumerMainThread(SprintKeyPacket2S::handle).add();
       }
 
       boolean sprintKeyPressed;
 
-      public SprintKeyPacketC2S(boolean sprintKeyPressed) {
+      public SprintKeyPacket2S(boolean sprintKeyPressed) {
             this.sprintKeyPressed = sprintKeyPressed;
       }
 
-      public SprintKeyPacketC2S(FriendlyByteBuf byteBuf) {
+      public SprintKeyPacket2S(FriendlyByteBuf byteBuf) {
             this(byteBuf.readBoolean());
       }
 

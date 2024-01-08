@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -51,7 +52,8 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
 
       @Override
       public void render(GuiGraphics ctx, int mouseX, int mouseY, float delta) {
-            if (handler.backpackInventory.getData() == null || handler.owner.isRemoved()) {
+            String key = handler.backpackInventory.getLocalData().key;
+            if (Constants.TRAITS_MAP.get(key) == null || handler.owner.isRemoved()) {
                   onClose();
                   return;
             }
@@ -100,7 +102,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
                                     || mouseY < (double)(top + 100)
                                     || mouseX >= (double)(left + this.imageWidth)
                                     || mouseY >= (double)(top + this.imageHeight);
-            boolean backpackSlots = // BOUNDS OF BACKPACK SLOTS
+            boolean backpackSlots = // BOUNDS OF MAX BACKPACK SLOTS
                         mouseX < (double)(left - 10)
                                     || mouseY < (double)(top + handler.invOffset - 35)
                                     || mouseX >= (double)(left + this.imageWidth + 10)

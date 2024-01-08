@@ -1,9 +1,9 @@
 package com.beansgalaxy.backpacks.network;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.network.packages.SprintKeyPacket;
+import com.beansgalaxy.backpacks.network.packages.SprintKeyPacket2S;
 import com.beansgalaxy.backpacks.network.packages.SyncBackInventory2C;
-import com.beansgalaxy.backpacks.network.packages.SyncBackSlotS2All;
+import com.beansgalaxy.backpacks.network.packages.SyncBackSlot2All;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.resources.ResourceLocation;
@@ -18,8 +18,8 @@ public class NetworkPackages {
       public static final ResourceLocation CONFIG_DATA_2C = new ResourceLocation(Constants.MOD_ID, "backpack_config_c");
 
       public static void registerC2SPackets() {
-            ServerPlayNetworking.registerGlobalReceiver(SPRINT_KEY_2S, SprintKeyPacket::receiveAtServer);
-            ServerPlayNetworking.registerGlobalReceiver(CALL_BACK_SLOT_2S, SyncBackSlotS2All::callSyncBackSlot);
+            ServerPlayNetworking.registerGlobalReceiver(SPRINT_KEY_2S, SprintKeyPacket2S::receiveAtServer);
+            ServerPlayNetworking.registerGlobalReceiver(CALL_BACK_SLOT_2S, SyncBackSlot2All::callSyncBackSlot);
             ServerPlayNetworking.registerGlobalReceiver(CALL_BACK_INV_2S, SyncBackInventory2C::callSyncBackInventory);
       }
 

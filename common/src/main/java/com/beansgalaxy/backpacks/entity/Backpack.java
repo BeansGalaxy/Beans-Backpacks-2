@@ -1,7 +1,10 @@
 package com.beansgalaxy.backpacks.entity;
 
+import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.core.BackpackInventory;
+import com.beansgalaxy.backpacks.core.Kind;
+import com.beansgalaxy.backpacks.core.LocalData;
 import com.beansgalaxy.backpacks.platform.Services;
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -14,10 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class Backpack extends Entity {
-      public static final EntityDataAccessor<String> KIND = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.STRING);
       public static final EntityDataAccessor<String> KEY = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.STRING);
-      public static final EntityDataAccessor<String> NAME = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.STRING);
-      public static final EntityDataAccessor<Integer> MAX_STACKS = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.INT);
       public static final EntityDataAccessor<Integer> COLOR = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.INT);
       public static final EntityDataAccessor<CompoundTag> TRIM = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.COMPOUND_TAG);
       public static final int DEFAULT_COLOR = 9062433;
@@ -37,13 +37,8 @@ public class Backpack extends Entity {
             }
 
             @Override
-            public Kind getKind() {
-                  return Backpack.this.getKind();
-            }
-
-            @Override
             public int getMaxStacks() {
-                  return Backpack.this.entityData.get(MAX_STACKS);
+                  return Backpack.this.getLocalData().maxStacks();
             }
 
             @Override
@@ -57,8 +52,8 @@ public class Backpack extends Entity {
             }
 
             @Override
-            public Data getData() {
-                  return Backpack.this.getData();
+            public LocalData getLocalData() {
+                  return Backpack.this.getLocalData();
             }
       };
 
@@ -70,10 +65,8 @@ public class Backpack extends Entity {
             super(type, level);
       }
 
-      public Data getData() {
-            String name = Backpack.this.entityData.get(NAME);
-            int maxStacks = Backpack.this.entityData.get(MAX_STACKS);
-            return new Data(getKey(), name, getKind(), maxStacks, getColor(), getTrim());
+      public LocalData getLocalData() {
+            return new LocalData(entityData.get(KEY), entityData.get(COLOR), entityData.get(TRIM));
       }
 
       public boolean isMirror() {
@@ -97,7 +90,8 @@ public class Backpack extends Entity {
       }
 
       public Kind getKind() {
-            return Kind.fromName(this.entityData.get(KIND));
+            String key = getKey();
+            return Constants.TRAITS_MAP.get(key).kind;
       }
 
       public String getKey() {
@@ -111,18 +105,12 @@ public class Backpack extends Entity {
       @Override
       protected void defineSynchedData() {
             this.entityData.define(KEY, "");
-            this.entityData.define(NAME, "null");
-            this.entityData.define(KIND, "");
-            this.entityData.define(MAX_STACKS, 0);
             this.entityData.define(COLOR, DEFAULT_COLOR);
             this.entityData.define(TRIM, new CompoundTag());
       }
 
-      public void initDisplay(Data data) {
+      public void initDisplay(LocalData data) {
             this.entityData.set(KEY, data.key);
-            this.entityData.set(NAME, data.name);
-            this.entityData.set(KIND, data.kind.name());
-            this.entityData.set(MAX_STACKS, data.maxStacks);
             this.entityData.set(COLOR, data.color);
             this.entityData.set(TRIM, data.trim);
       }
@@ -139,9 +127,6 @@ public class Backpack extends Entity {
 
       public void setDisplay(CompoundTag display) {
             this.entityData.set(KEY, display.getString("key"));
-            this.entityData.set(NAME, display.getString("name"));
-            this.entityData.set(KIND, display.getString("kind"));
-            this.entityData.set(MAX_STACKS, display.getInt("max_stacks"));
             this.entityData.set(COLOR, display.getInt("color"));
             this.entityData.set(TRIM, display.getCompound("Trim"));
       }

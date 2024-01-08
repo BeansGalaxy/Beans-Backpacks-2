@@ -1,9 +1,10 @@
 package com.beansgalaxy.backpacks.items;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.core.Kind;
+import com.beansgalaxy.backpacks.core.LocalData;
+import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
-import com.beansgalaxy.backpacks.entity.Data;
-import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.core.BlockPos;
@@ -166,37 +167,26 @@ public class BackpackItem extends Item {
             return Tooltip.barColor;
       }
 
-      public static Data getItemData(ItemStack stack) {
+      public static LocalData getItemTraits(ItemStack stack) {
             if (!Kind.isBackpack(stack))
                   return null;
 
             CompoundTag display = stack.getOrCreateTagElement("display");
 
             String key = display.getString("key");
-            String name = display.getString("name");
-            Kind kind = Kind.fromStack(stack);
-            int maxStacks = display.getInt("max_stacks");
             int itemColor = stack.getItem() instanceof DyableBackpack dyableBackpack ? dyableBackpack.getColor(stack) : 0xFFFFFF;
             CompoundTag trim = stack.getTagElement("Trim");
 
-            return new Data(key, name, kind, maxStacks, itemColor, trim);
+            return new LocalData(key, itemColor, trim);
       }
 
       public static ItemStack stackFromKey(String key) {
-            Data data = Constants.REGISTERED_DATA.get(key);
-            CompoundTag display = tagFromKey(key);
-
-            ItemStack stack = data.kind.getItem().getDefaultInstance();
-            stack.getOrCreateTag().put("display", display);
-            return stack;
-      }
-
-      public static CompoundTag tagFromKey(String key) {
-            Data data = Constants.REGISTERED_DATA.get(key);
+            Traits traits = Constants.TRAITS_MAP.get(key);
             CompoundTag display = new CompoundTag();
             display.putString("key", key);
-            display.putString("name", data.name);
-            display.putInt("max_stacks", data.maxStacks);
-            return display;
+
+            ItemStack stack = traits.kind.getItem().getDefaultInstance();
+            stack.getOrCreateTag().put("display", display);
+            return stack;
       }
 }

@@ -1,4 +1,4 @@
-package com.beansgalaxy.backpacks.entity;
+package com.beansgalaxy.backpacks.core;
 
 import com.beansgalaxy.backpacks.Constants;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -6,38 +6,20 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 
-public class Data {
+public class Traits {
 
-      public String key;
+      public Item template;
+      public Item base;
       public Item material;
       public Item binder;
+
       public String name;
       public Kind kind;
       public int maxStacks;
-      public int color;
-      public CompoundTag trim;
 
-      public Data(String key, String name, Kind kind, int maxStacks, int color, CompoundTag trim) {
-            this.key = key;
-            this.name = name;
-            this.kind = kind;
-            this.maxStacks = maxStacks;
-            this.color = color;
-            this.trim = trim != null ? trim : new CompoundTag();
-      }
-
-      public Data(String key, Item material, Item binder, String name, Kind kind, int maxStacks) {
-            this.key = key;
-            this.material = material;
-            this.binder = binder;
-            this.name = name;
-            this.kind = kind;
-            this.maxStacks = maxStacks;
-            this.color = 0xFFFFFF;
-            this.trim = new CompoundTag();
-      }
-
-      public Data(Data.Raw raw) {
+      public Traits(Traits.Raw raw) {
+            this.template = Constants.itemFromString(raw.template);
+            this.base = Constants.itemFromString(raw.base);
             this.material = Constants.itemFromString(raw.material);
             this.binder = Constants.itemFromString(raw.binder);
             this.name = raw.name;
@@ -45,15 +27,20 @@ public class Data {
             this.maxStacks = raw.max_stacks;
       }
 
+      public boolean isSmithing() {
+            return binder == null;
+      }
+
       public class Raw {
-            public String key;
+            public String template;
+            public String base;
             public String material;
             public String binder;
+
+            public String key;
             public String name;
             public String kind;
             public int max_stacks;
-
-            public Raw() {}
       }
 
       public CompoundTag toTag() {
@@ -69,7 +56,7 @@ public class Data {
             return data;
       }
 
-      public Data(CompoundTag tag) {
+      public Traits(CompoundTag tag) {
             material = Constants.itemFromString(tag.getString("material"));
             binder = Constants.itemFromString(tag.getString("binder"));
             name = tag.getString("name");

@@ -1,4 +1,4 @@
-package com.beansgalaxy.backpacks.entity;
+package com.beansgalaxy.backpacks.core;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.items.BackpackItem;
@@ -40,7 +40,10 @@ public enum Kind {
                   return true;
 
             CompoundTag tag = stack.getTag();
-            return tag != null && tag.getCompound("display").getInt("max_stacks") > 0;
+            if (tag == null || !isBackpack(stack)) return false;
+
+            String key = tag.getCompound("display").getString("key");
+            return Constants.TRAITS_MAP.get(key).maxStacks > 0;
       }
 
       public boolean isTrimmable() {

@@ -10,7 +10,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 
-public class SprintKeyPacket {
+public class SprintKeyPacket2S {
       public static void C2S(boolean sprintKeyIsPressed) {
             FriendlyByteBuf buf = PacketByteBufs.create();
             buf.writeBoolean(sprintKeyIsPressed);

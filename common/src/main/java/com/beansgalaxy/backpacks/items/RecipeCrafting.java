@@ -1,14 +1,13 @@
 package com.beansgalaxy.backpacks.items;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.entity.Data;
-import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.core.Kind;
+import com.beansgalaxy.backpacks.core.Traits;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.PrimitiveCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.inventory.CraftingContainer;
@@ -40,13 +39,13 @@ public class RecipeCrafting extends CustomRecipe {
 
       public RecipeCrafting(String key) {
             super(CraftingBookCategory.EQUIPMENT);
-            Data data = Constants.REGISTERED_DATA.get(key);
+            Traits traits = Constants.TRAITS_MAP.get(key);
             this.key = key;
-            this.material = data.material;
-            this.binder = data.binder;
-            this.name = data.name;
-            this.kind = data.kind.name();
-            this.maxStacks = data.maxStacks;
+            this.material = traits.material;
+            this.binder = traits.binder;
+            this.name = traits.name;
+            this.kind = traits.kind.name();
+            this.maxStacks = traits.maxStacks;
       }
 
       public Item getMaterial() {
@@ -81,8 +80,6 @@ public class RecipeCrafting extends CustomRecipe {
 
             CompoundTag display = new CompoundTag();
             display.putString("key", key);
-            display.putString("name", name);
-            display.putInt("max_stacks", maxStacks);
             stack.getOrCreateTag().put("display", display);
             return stack;
       }
@@ -121,12 +118,7 @@ public class RecipeCrafting extends CustomRecipe {
 
             public static final Codec<RecipeCrafting> CODEC = RecordCodecBuilder.create(
                         in -> in.group(
-                                                BuiltInRegistries.ITEM.byNameCodec().fieldOf("material").forGetter(RecipeCrafting::getMaterial),
-                                                BuiltInRegistries.ITEM.byNameCodec().fieldOf("binder").forGetter(RecipeCrafting::getBinder),
-                                                PrimitiveCodec.STRING.fieldOf("name").forGetter(RecipeCrafting::getName),
-                                                PrimitiveCodec.STRING.fieldOf("kind").forGetter(RecipeCrafting::getKind),
-                                                PrimitiveCodec.STRING.fieldOf("key").forGetter(RecipeCrafting::getKey),
-                                                PrimitiveCodec.INT.fieldOf("max_stacks").forGetter(RecipeCrafting::getMaxStacks)
+                                                PrimitiveCodec.STRING.fieldOf("key").forGetter(RecipeCrafting::getKey)
                                     )
                                     .apply(in, RecipeCrafting::new)
             );

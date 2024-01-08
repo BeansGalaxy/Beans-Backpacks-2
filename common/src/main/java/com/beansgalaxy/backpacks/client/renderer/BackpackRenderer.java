@@ -2,11 +2,11 @@ package com.beansgalaxy.backpacks.client.renderer;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.RendererHelper;
+import com.beansgalaxy.backpacks.core.BackpackInventory;
+import com.beansgalaxy.backpacks.core.Kind;
+import com.beansgalaxy.backpacks.core.LocalData;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
-import com.beansgalaxy.backpacks.entity.Data;
-import com.beansgalaxy.backpacks.entity.Kind;
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -53,9 +53,13 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
       public void render(T entity, float yaw, float tickDelta, PoseStack pose, MultiBufferSource mbs, int light) {
             super.render(entity, yaw += renderWobble(entity, yaw), tickDelta, pose, mbs, light);
             Backpack bEntity = ((Backpack) entity);
-            Data data = ((Backpack) entity).getBackpackInventory().getData();
-            BackpackInventory.Viewable viewable = ((Backpack) entity).getBackpackInventory().getViewable();
-            Kind kind = data.kind;
+            LocalData localData = bEntity.getBackpackInventory().getLocalData();
+
+            if (localData.key.isEmpty())
+                  return;
+
+            BackpackInventory.Viewable viewable = bEntity.getBackpackInventory().getViewable();
+            Kind kind = Constants.TRAITS_MAP.get(localData.key).kind;
 
             if (kind == null)
                   return;
@@ -77,13 +81,13 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
                   renderHitbox(pose, mbs.getBuffer(RenderType.lines()), entity, yaw, light);
             pose.translate(0, -3 / 16f, 0);
             this.model.setupAnim(entity, 0F, 0F, 0F, 50F, 0F);
-            Color tint = new Color(data.color);
-            String key = data.key;
+            Color tint = new Color(localData.color);
+            String key = localData.key;
             ResourceLocation texture = new ResourceLocation(Constants.MOD_ID, "textures/entity/" + key + ".png");
             VertexConsumer vc = mbs.getBuffer(this.model.renderType(texture));
             this.model.renderToBuffer(pose, vc, light, OverlayTexture.NO_OVERLAY, tint.getRed() / 255F, tint.getGreen() / 255F, tint.getBlue() / 255F, 1F);
             RegistryAccess registryAccess = bEntity.getCommandSenderWorld().registryAccess();
-            renderOverlays(pose, light, mbs, tint, registryAccess, data, this.model, this.trimAtlas);
+            renderOverlays(pose, light, mbs, tint, registryAccess, localData, this.model, this.trimAtlas);
             pose.popPose();
       }
 

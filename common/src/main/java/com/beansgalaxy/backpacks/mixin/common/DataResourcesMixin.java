@@ -1,8 +1,7 @@
 package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.entity.Data;
-import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.core.Traits;
 import com.mojang.authlib.minecraft.client.ObjectMapper;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.RegistryAccess;
@@ -11,7 +10,6 @@ import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.flag.FeatureFlagSet;
-import net.minecraft.world.item.Item;
 import org.apache.commons.io.IOUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -75,24 +73,16 @@ public class DataResourcesMixin {
             Map<ResourceLocation, Resource> recipeKinds = resourceManager.listResources("recipes",
                         (in) -> in.getPath().endsWith(".json") && in.getNamespace().equals(Constants.MOD_ID));
 
-            Constants.REGISTERED_DATA.clear();
+            Constants.TRAITS_MAP.clear();
             recipeKinds.forEach(((resourceLocation, resource) -> {
                   try {
                         InputStream open = resource.open();
                         String json = IOUtils.toString(open, StandardCharsets.UTF_8);
 
                         ObjectMapper map = ObjectMapper.create();
-                        Data.Raw data = map.readValue(json, Data.Raw.class);
+                        Traits.Raw raw = map.readValue(json, Traits.Raw.class);
 
-//                        String type = Constants.MOD_ID + ":" + RecipeCrafting.Serializer.ID;
-//                        if (!Objects.equals(data.type, type))
-//                              return;
-
-                        Kind kind = Kind.fromName(data.kind);
-                        Item material = Constants.itemFromString(data.material);
-                        Item binder = Constants.itemFromString(data.binder);
-
-                        Constants.registerAdditionalData(data.key, new Data(data.key, material, binder, data.name, kind, data.max_stacks));
+                        Constants.registerAdditionalData(raw.key, new Traits(raw));
 
                   } catch (IOException e) {
                         throw new RuntimeException(e);

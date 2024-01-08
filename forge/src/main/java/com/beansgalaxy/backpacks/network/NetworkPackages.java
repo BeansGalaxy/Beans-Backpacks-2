@@ -1,10 +1,13 @@
 package com.beansgalaxy.backpacks.network;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.network.client.ConfigureKeys2C;
 import com.beansgalaxy.backpacks.network.client.SyncBackInventory2C;
-import com.beansgalaxy.backpacks.network.client.SyncBackSlotS2C;
-import com.beansgalaxy.backpacks.network.client.SyncViewersPacketS2C;
-import com.beansgalaxy.backpacks.network.packages.*;
+import com.beansgalaxy.backpacks.network.client.SyncBackSlot2C;
+import com.beansgalaxy.backpacks.network.client.SyncViewersPacket2C;
+import com.beansgalaxy.backpacks.network.packages.CallBackInventory2S;
+import com.beansgalaxy.backpacks.network.packages.CallBackSlot2S;
+import com.beansgalaxy.backpacks.network.packages.SprintKeyPacket2S;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.ChannelBuilder;
@@ -20,12 +23,13 @@ public class NetworkPackages {
                   .simpleChannel();
 
       public static void register() {
-            SprintKeyPacketC2S.register();
-            SyncViewersPacketS2C.register();
-            SyncBackSlotS2C.register();
-            CallBackSlotC2S.register();
+            SprintKeyPacket2S.register();
+            SyncViewersPacket2C.register();
+            SyncBackSlot2C.register();
+            CallBackSlot2S.register();
             SyncBackInventory2C.register();
-            CallBackInventory2C.register();
+            CallBackInventory2S.register();
+            ConfigureKeys2C.register();
       }
 
       public static void C2S(Object mgs) {

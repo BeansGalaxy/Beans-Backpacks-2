@@ -1,9 +1,10 @@
 package com.beansgalaxy.backpacks.mixin.client;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.RendererHelper;
+import com.beansgalaxy.backpacks.core.Kind;
+import com.beansgalaxy.backpacks.core.LocalData;
 import com.beansgalaxy.backpacks.entity.Backpack;
-import com.beansgalaxy.backpacks.entity.Data;
-import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.ItemCombinerScreen;
@@ -43,18 +44,20 @@ public abstract class SmithingScreenMixin extends ItemCombinerScreen<SmithingMen
             this.backpackPreview = new Backpack(this.minecraft.level) {
 
                   @Override
-                  public Data getData() {
+                  public LocalData getLocalData() {
                         ItemStack stack = smithingMenu.getSlot(3).getItem();
-                        return BackpackItem.getItemData(stack);
+                        return BackpackItem.getItemTraits(stack);
                   }
             };
       }
 
       @Redirect(method = "renderBg", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;renderEntityInInventory(Lnet/minecraft/client/gui/GuiGraphics;FFILorg/joml/Vector3f;Lorg/joml/Quaternionf;Lorg/joml/Quaternionf;Lnet/minecraft/world/entity/LivingEntity;)V"))
       protected void renderEntityRedirect(GuiGraphics graphics, float x, float y, int $$3, Vector3f $$4, Quaternionf $$5, Quaternionf $$6, LivingEntity $$7) {
-            boolean switchRender = smithingMenu != null && Kind.isBackpack(smithingMenu.getSlot(3).getItem()) && backpackPreview.getData() != null;
-            Entity renderedEntity = switchRender ? backpackPreview : $$7;
+            boolean switchRender = smithingMenu != null &&
+                        Kind.isBackpack(smithingMenu.getSlot(3).getItem()) &&
+                        Constants.TRAITS_MAP.get(backpackPreview.getLocalData().key) != null;
 
+            Entity renderedEntity = switchRender ? backpackPreview : $$7;
             RendererHelper.renderBackpackForSmithing(graphics, x, y, $$3, $$4, $$5, $$6, switchRender, renderedEntity);
       }
 

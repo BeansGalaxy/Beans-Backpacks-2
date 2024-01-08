@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.entity;
 
+import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
@@ -29,6 +30,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
+import java.util.Objects;
 
 public class BackpackEntity extends Backpack {
       public Direction direction;
@@ -47,7 +49,7 @@ public class BackpackEntity extends Backpack {
             this.actualY = y;
             this.pos = BlockPos.containing(x, y, z);
             this.setDirection(direction);
-            this.initDisplay(BackpackItem.getItemData(backpackStack));
+            this.initDisplay(Objects.requireNonNull(BackpackItem.getItemTraits(backpackStack)));
 
             if (!direction.getAxis().isHorizontal())
                   this.setYRot(yaw);
@@ -64,14 +66,13 @@ public class BackpackEntity extends Backpack {
       }
 
       public static ItemStack toStack(BackpackEntity backpack) {
-            Kind kind = backpack.getKind();
+            Kind kind = backpack.getLocalData().kind();
             Item item = kind.getItem();
             ItemStack stack = item.getDefaultInstance();
+            String key = backpack.getKey();
 
             CompoundTag display = new CompoundTag();
-            display.putString("key", backpack.getKey());
-            display.putString("name", backpack.entityData.get(NAME));
-            display.putInt("max_stacks", backpack.entityData.get(MAX_STACKS));
+            display.putString("key", key);
             stack.getOrCreateTag().put("display", display);
 
             CompoundTag trim = backpack.getTrim();
@@ -83,13 +84,6 @@ public class BackpackEntity extends Backpack {
                   stack.getOrCreateTagElement("display").putInt("color", color);
 
             return stack;
-      }
-
-      public Backpack createMirror() {
-            Backpack backpack = new Backpack(Services.REGISTRY.getEntity(), null);
-            backpack.setDisplay(this.getDisplay());
-            backpack.viewable.headPitch = this.viewable.headPitch;
-            return backpack;
       }
 
       protected float getEyeHeight(Pose p_31784_, EntityDimensions p_31785_) {
@@ -161,7 +155,7 @@ public class BackpackEntity extends Backpack {
       }
 
       private void wobble() {
-            Kind kind = getKind();
+            Kind kind = getLocalData().kind();
             if (!Kind.UPGRADED.is(kind) && isInLava() || !Kind.METAL.is(kind) && isOnFire()) {
                   wobble += 2;
             } else
@@ -173,7 +167,7 @@ public class BackpackEntity extends Backpack {
       private void updateGravity() {
             this.setNoGravity(this.isNoGravity() && !this.level().noCollision(this, this.getBoundingBox().inflate(0.1, -0.1, 0.1)));
             boolean inLava = this.isInLava();
-            Kind b$kind = getKind();
+            Kind b$kind = getLocalData().kind();
             if (!this.isNoGravity()) {
                   if (this.isInWater()) {
                         inWaterGravity();
@@ -215,11 +209,11 @@ public class BackpackEntity extends Backpack {
       }
 
       public boolean displayFireAnimation() {
-            return this.isOnFire() && !this.isSpectator() && getKind() != Kind.UPGRADED;
+            return this.isOnFire() && !this.isSpectator() && getLocalData().kind() != Kind.UPGRADED;
       }
 
       public boolean fireImmune() {
-            return getKind() == Kind.UPGRADED || this.getType().fireImmune();
+            return getLocalData().kind() == Kind.UPGRADED || this.getType().fireImmune();
       }
 
       /** DATA MANAGEMENT **/
@@ -250,9 +244,6 @@ public class BackpackEntity extends Backpack {
       public CompoundTag getDisplay() {
             CompoundTag tag = new CompoundTag();
             tag.putString("key", this.entityData.get(KEY));
-            tag.putString("name", this.entityData.get(NAME));
-            tag.putString("kind", this.entityData.get(KIND));
-            tag.putInt("max_stacks", this.entityData.get(MAX_STACKS));
             tag.putInt("color", this.entityData.get(COLOR));
             if (TRIM != null)
                   tag.put("Trim", this.entityData.get(TRIM));

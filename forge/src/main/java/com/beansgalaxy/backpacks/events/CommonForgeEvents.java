@@ -1,12 +1,15 @@
 package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
-import com.beansgalaxy.backpacks.network.client.SyncBackSlotS2C;
+import com.beansgalaxy.backpacks.network.client.ConfigureKeys2C;
+import com.beansgalaxy.backpacks.network.client.SyncBackSlot2C;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -18,6 +21,9 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class CommonForgeEvents {
@@ -82,13 +88,23 @@ public class CommonForgeEvents {
                   Services.NETWORK.backpackInventory2C(player);
 
                   ItemStack stack = BackSlot.get(player).getItem();
-                  NetworkPackages.S2C(new SyncBackSlotS2C(player.getUUID(), stack), player);
+                  NetworkPackages.S2C(new SyncBackSlot2C(player.getUUID(), stack), player);
+
+
+                  Map<String, CompoundTag> map = new HashMap<>();
+
+                  for (String key: Constants.TRAITS_MAP.keySet()) {
+                        Traits traits = Constants.TRAITS_MAP.get(key);
+                        map.put(key, traits.toTag());
+                  }
+
+                  NetworkPackages.S2C(new ConfigureKeys2C(map), player);
             }
       }
 
       @SubscribeEvent
       public static void loadPlayer(PlayerEvent.StartTracking event) {
             if (event.getEntity() instanceof ServerPlayer thisPlayer && event.getTarget() instanceof Player owner)
-                  NetworkPackages.S2C(new SyncBackSlotS2C(owner.getUUID(), BackSlot.get(owner).getItem()), thisPlayer);
+                  NetworkPackages.S2C(new SyncBackSlot2C(owner.getUUID(), BackSlot.get(owner).getItem()), thisPlayer);
       }
 }

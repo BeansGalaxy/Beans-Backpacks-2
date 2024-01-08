@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 import java.util.UUID;
 
-public class SyncBackSlotS2All {
+public class SyncBackSlot2All {
       public static void S2All(ServerPlayer owner, ItemStack stack) {
             Level world = owner.level();
             List<ServerPlayer> playerList = world.getServer().getPlayerList().getPlayers();

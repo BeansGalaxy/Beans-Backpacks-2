@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.network.packages;
 
 import com.beansgalaxy.backpacks.network.NetworkPackages;
-import com.beansgalaxy.backpacks.network.client.SyncBackSlotS2C;
+import com.beansgalaxy.backpacks.network.client.SyncBackSlot2C;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -11,25 +11,25 @@ import net.minecraftforge.network.NetworkDirection;
 
 import java.util.UUID;
 
-public class CallBackSlotC2S {
+public class CallBackSlot2S {
       public static void register() {
-            NetworkPackages.INSTANCE.messageBuilder(CallBackSlotC2S.class, NetworkDirection.PLAY_TO_SERVER)
-                        .encoder(CallBackSlotC2S::encode).decoder(CallBackSlotC2S::new).consumerMainThread(CallBackSlotC2S::handle).add();
+            NetworkPackages.INSTANCE.messageBuilder(CallBackSlot2S.class, NetworkDirection.PLAY_TO_SERVER)
+                        .encoder(CallBackSlot2S::encode).decoder(CallBackSlot2S::new).consumerMainThread(CallBackSlot2S::handle).add();
       }
 
       final UUID uuid;
 
-      public CallBackSlotC2S(FriendlyByteBuf buf) {
+      public CallBackSlot2S(FriendlyByteBuf buf) {
             this(buf.readUUID());
       }
 
-      public CallBackSlotC2S(UUID uuid) {
+      public CallBackSlot2S(UUID uuid) {
             this.uuid = uuid;
       }
 
       public static void call(Player player) {
             UUID uuid = player.getUUID();
-            NetworkPackages.C2S(new CallBackSlotC2S(uuid));
+            NetworkPackages.C2S(new CallBackSlot2S(uuid));
       }
 
       public void encode(FriendlyByteBuf buf) {
@@ -39,6 +39,6 @@ public class CallBackSlotC2S {
       public void handle(CustomPayloadEvent.Context context) {
             Player otherPlayer = context.getSender().level().getPlayerByUUID(uuid);
             ItemStack stack = BackSlot.get(otherPlayer).getItem();
-            NetworkPackages.S2C(new SyncBackSlotS2C(uuid, stack), context.getSender());
+            NetworkPackages.S2C(new SyncBackSlot2C(uuid, stack), context.getSender());
       }
 }

@@ -1,6 +1,8 @@
 package com.beansgalaxy.backpacks.items;
 
-import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.core.Kind;
+import com.beansgalaxy.backpacks.core.Traits;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.PrimitiveCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -34,6 +36,17 @@ public class RecipeSmithing implements SmithingRecipe {
             this.maxStacks = maxStacks;
       }
 
+      public RecipeSmithing(String key) {
+            Traits traits = Constants.TRAITS_MAP.get(key);
+            this.template = traits.template;
+            this.material = traits.material;
+            this.base = traits.base;
+            this.name = traits.name;
+            this.key = key;
+            this.kind = traits.kind.name();
+            this.maxStacks = traits.maxStacks;
+      }
+
 
       @Override
       public boolean isTemplateIngredient(ItemStack var1) {
@@ -64,8 +77,6 @@ public class RecipeSmithing implements SmithingRecipe {
             backpackStack.setTag(tag);
             CompoundTag display = (CompoundTag) tag.get("display");
             display.putString("key", key);
-            display.putString("name", name);
-            display.putInt("max_stacks", maxStacks);
 
             return backpackStack;
       }

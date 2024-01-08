@@ -9,21 +9,21 @@ import net.minecraftforge.network.NetworkDirection;
 
 import java.util.UUID;
 
-public class SyncBackSlotS2C {
+public class SyncBackSlot2C {
       public static void register() {
-            NetworkPackages.INSTANCE.messageBuilder(SyncBackSlotS2C.class, NetworkDirection.PLAY_TO_CLIENT)
-                        .encoder(SyncBackSlotS2C::encode).decoder(SyncBackSlotS2C::new).consumerMainThread(SyncBackSlotS2C::handle).add();
+            NetworkPackages.INSTANCE.messageBuilder(SyncBackSlot2C.class, NetworkDirection.PLAY_TO_CLIENT)
+                        .encoder(SyncBackSlot2C::encode).decoder(SyncBackSlot2C::new).consumerMainThread(SyncBackSlot2C::handle).add();
       }
 
       final UUID uuid;
       final ItemStack stack;
 
-      public SyncBackSlotS2C(UUID uuid, ItemStack stack) {
+      public SyncBackSlot2C(UUID uuid, ItemStack stack) {
             this.uuid = uuid;
             this.stack = stack;
       }
 
-      public SyncBackSlotS2C(FriendlyByteBuf buf) {
+      public SyncBackSlot2C(FriendlyByteBuf buf) {
             this(buf.readUUID(), buf.readItem());
       }
 

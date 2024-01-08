@@ -4,7 +4,7 @@ import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.network.SyncBackInventory;
 import com.beansgalaxy.backpacks.client.network.SyncBackSlot;
 import com.beansgalaxy.backpacks.client.network.SyncViewersPacket;
-import com.beansgalaxy.backpacks.entity.Data;
+import com.beansgalaxy.backpacks.core.Traits;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
@@ -38,9 +38,9 @@ public class ReceiveAtClient {
             for (String key: map.keySet())
             {
                   CompoundTag tag = map.get(key);
-                  Data data = new Data(tag);
+                  Traits traits = new Traits(tag);
 
-                  Constants.registerAdditionalData(key, data);
+                  Constants.registerAdditionalData(key, traits);
             }
       }
 }

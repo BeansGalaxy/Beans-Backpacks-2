@@ -1,8 +1,8 @@
 package com.beansgalaxy.backpacks.client.network;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.screen.BackSlot;
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;

@@ -9,25 +9,25 @@ import net.minecraftforge.network.NetworkDirection;
 
 import java.util.UUID;
 
-public class CallBackInventory2C {
+public class CallBackInventory2S {
       public static void register() {
-            NetworkPackages.INSTANCE.messageBuilder(CallBackInventory2C.class, NetworkDirection.PLAY_TO_SERVER)
-                        .encoder(CallBackInventory2C::encode).decoder(CallBackInventory2C::new).consumerMainThread(CallBackInventory2C::handle).add();
+            NetworkPackages.INSTANCE.messageBuilder(CallBackInventory2S.class, NetworkDirection.PLAY_TO_SERVER)
+                        .encoder(CallBackInventory2S::encode).decoder(CallBackInventory2S::new).consumerMainThread(CallBackInventory2S::handle).add();
       }
 
       final UUID uuid;
 
-      public CallBackInventory2C(FriendlyByteBuf buf) {
+      public CallBackInventory2S(FriendlyByteBuf buf) {
             this(buf.readUUID());
       }
 
-      public CallBackInventory2C(UUID uuid) {
+      public CallBackInventory2S(UUID uuid) {
             this.uuid = uuid;
       }
 
       public static void call(Player player) {
             UUID uuid = player.getUUID();
-            NetworkPackages.C2S(new CallBackInventory2C(uuid));
+            NetworkPackages.C2S(new CallBackInventory2S(uuid));
       }
 
       public void encode(FriendlyByteBuf buf) {

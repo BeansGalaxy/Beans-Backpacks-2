@@ -70,7 +70,7 @@ public class FabricMain implements ModInitializer {
                 .title(Component.translatable("itemGroup." + Constants.MOD_ID))
                 .icon(() -> new ItemStack(LEATHER_BACKPACK))
                 .displayItems((params, output) -> {
-                    Constants.REGISTERED_DATA.keySet().forEach( key ->
+                    Constants.TRAITS_MAP.keySet().forEach(key ->
                                 output.accept(BackpackItem.stackFromKey(key)));
                 }).build();
 

@@ -1,8 +1,10 @@
 package com.beansgalaxy.backpacks.items;
 
+import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.core.BackpackInventory;
+import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.screen.BackSlot;
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -91,7 +93,9 @@ public class Tooltip {
                         return Component.translatable("tooltip.beansbackpacks.empty_1", key);
                   }
             }
-            return Component.translatable(stack.getOrCreateTagElement("display").getString("name"));
+            String key = stack.getOrCreateTagElement("display").getString("key");
+            Traits traits = Constants.TRAITS_MAP.get(key);
+            return Component.literal(traits.name);
       }
 
       public static void lore(ItemStack stack, List<Component> components) {

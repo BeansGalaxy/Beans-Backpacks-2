@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.compat;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.entity.Data;
+import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.RecipeCrafting;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
@@ -46,9 +46,9 @@ public class DisplayCrafting extends BasicDisplay implements SimpleGridMenuDispl
       }
 
       public static List<EntryIngredient> inputs(RecipeCrafting recipe) {
-            Data data = Constants.REGISTERED_DATA.get(recipe.getKey());
-            EntryIngredient mat = EntryIngredients.ofItems(List.of(data.material));
-            EntryIngredient bin = EntryIngredients.ofItems(List.of(data.binder));
+            Traits traits = Constants.TRAITS_MAP.get(recipe.getKey());
+            EntryIngredient mat = EntryIngredients.ofItems(List.of(traits.material));
+            EntryIngredient bin = EntryIngredients.ofItems(List.of(traits.binder));
             EntryIngredient emp = EntryIngredient.empty();
 
             return List.of(

@@ -1,9 +1,10 @@
 package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.core.BackpackInventory;
+import com.beansgalaxy.backpacks.core.Kind;
+import com.beansgalaxy.backpacks.core.LocalData;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
-import com.beansgalaxy.backpacks.entity.Data;
-import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -54,10 +55,6 @@ public class BackSlot extends Slot {
                   return BackSlot.this.viewable;
             }
 
-            @Override public Kind getKind() {
-                  return Kind.fromStack(BackSlot.this.getItem());
-            }
-
             @Override public int getMaxStacks() {
                   ItemStack stack = BackSlot.this.getItem();
                   if (stack.is(Items.DECORATED_POT))
@@ -67,7 +64,7 @@ public class BackSlot extends Slot {
                   if (display == null)
                         return 0;
                   else
-                        return display.getInt("max_stacks");
+                        return getLocalData().maxStacks();
             }
 
             NonNullList<Player> playersViewing = NonNullList.create();
@@ -82,9 +79,9 @@ public class BackSlot extends Slot {
                   return this.itemStacks;
             }
 
-            @Override public Data getData() {
+            @Override public LocalData getLocalData() {
                   ItemStack stack = BackSlot.this.getItem();
-                  return BackpackItem.getItemData(stack);
+                  return BackpackItem.getItemTraits(stack);
             }
       };
 

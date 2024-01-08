@@ -1,13 +1,13 @@
 package com.beansgalaxy.backpacks.platform;
 
+import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
-import com.beansgalaxy.backpacks.network.packages.SprintKeyPacket;
+import com.beansgalaxy.backpacks.network.packages.SprintKeyPacket2S;
 import com.beansgalaxy.backpacks.network.packages.SyncBackInventory2C;
-import com.beansgalaxy.backpacks.network.packages.SyncBackSlotS2All;
+import com.beansgalaxy.backpacks.network.packages.SyncBackSlot2All;
 import com.beansgalaxy.backpacks.platform.services.NetworkHelper;
 import com.beansgalaxy.backpacks.screen.BackSlot;
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -28,7 +28,7 @@ import java.util.List;
 public class FabricNetworkHelper implements NetworkHelper {
       @Override
       public void SprintKey(boolean sprintKeyPressed) {
-            SprintKeyPacket.C2S(sprintKeyPressed);
+            SprintKeyPacket2S.C2S(sprintKeyPressed);
       }
 
       @Override
@@ -86,7 +86,7 @@ public class FabricNetworkHelper implements NetworkHelper {
 
       @Override
       public void SyncBackSlot(ServerPlayer owner) {
-            SyncBackSlotS2All.S2All(owner, BackSlot.get(owner).getItem());
+            SyncBackSlot2All.S2All(owner, BackSlot.get(owner).getItem());
       }
 
       @Override

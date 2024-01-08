@@ -1,14 +1,14 @@
 package com.beansgalaxy.backpacks.platform;
 
+import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.network.client.SyncBackInventory2C;
-import com.beansgalaxy.backpacks.network.client.SyncBackSlotS2C;
-import com.beansgalaxy.backpacks.network.client.SyncViewersPacketS2C;
-import com.beansgalaxy.backpacks.network.packages.SprintKeyPacketC2S;
+import com.beansgalaxy.backpacks.network.client.SyncBackSlot2C;
+import com.beansgalaxy.backpacks.network.client.SyncViewersPacket2C;
+import com.beansgalaxy.backpacks.network.packages.SprintKeyPacket2S;
 import com.beansgalaxy.backpacks.platform.services.NetworkHelper;
 import com.beansgalaxy.backpacks.screen.BackSlot;
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -23,13 +23,13 @@ import org.jetbrains.annotations.Nullable;
 public class ForgeNetworkHelper implements NetworkHelper {
       @Override
       public void SprintKey(boolean sprintKeyPressed) {
-            NetworkPackages.C2S(new SprintKeyPacketC2S(sprintKeyPressed));
+            NetworkPackages.C2S(new SprintKeyPacket2S(sprintKeyPressed));
       }
 
       @Override
       public void SyncViewers(Entity owner, byte viewers) {
             int id = owner.getId();
-            NetworkPackages.S2All(new SyncViewersPacketS2C(id, viewers));
+            NetworkPackages.S2All(new SyncViewersPacket2C(id, viewers));
       }
 
       @Override
@@ -70,7 +70,7 @@ public class ForgeNetworkHelper implements NetworkHelper {
 
       @Override
       public void SyncBackSlot(ServerPlayer owner) {
-            NetworkPackages.S2All(new SyncBackSlotS2C(owner.getUUID(), BackSlot.get(owner).getItem()));
+            NetworkPackages.S2All(new SyncBackSlot2C(owner.getUUID(), BackSlot.get(owner).getItem()));
       }
 
       @Override
