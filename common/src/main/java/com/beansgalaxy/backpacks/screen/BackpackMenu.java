@@ -38,7 +38,7 @@ public class BackpackMenu extends AbstractContainerMenu {
             this.ownerYaw = owner.getVisualRotationYInDegrees();
             this.viewer = playerInventory.player;
             this.mirror = createMirror(playerInventory.player.level());
-            this.max_stacks = backpackInventory.getMaxStacks();
+            this.max_stacks = backpackInventory.getLocalData().maxStacks();
             createInventorySlots(playerInventory);
             FIRST_SLOT_INDEX = slots.size();
             createBackpackSlots(backpackInventory);

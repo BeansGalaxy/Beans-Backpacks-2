@@ -94,7 +94,7 @@ public class CommonForgeEvents {
                   Map<String, CompoundTag> map = new HashMap<>();
 
                   for (String key: Constants.TRAITS_MAP.keySet()) {
-                        Traits traits = Constants.TRAITS_MAP.get(key);
+                        Traits traits = Traits.get(key);
                         map.put(key, traits.toTag());
                   }
 

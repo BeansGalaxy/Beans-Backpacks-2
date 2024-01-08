@@ -7,6 +7,24 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 
 public class Traits {
+      public static Traits get(String key) {
+            Traits traits = Constants.TRAITS_MAP.get(key);
+            if (traits == null)
+            {
+                  Constants.LOG.info("!!! Requested Traits but Traits returned null !!! Returning default empty Traits");
+                  return new Traits();
+            }
+            return traits;
+      }
+      public static void clear() {
+            Constants.TRAITS_MAP.clear();
+      }
+
+      private Traits() {
+            name = "";
+            kind = Kind.UPGRADED;
+            maxStacks = 0;
+      }
 
       public Item template;
       public Item base;

@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
+import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -53,7 +54,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
       @Override
       public void render(GuiGraphics ctx, int mouseX, int mouseY, float delta) {
             String key = handler.backpackInventory.getLocalData().key;
-            if (Constants.TRAITS_MAP.get(key) == null || handler.owner.isRemoved()) {
+            if (Traits.get(key).maxStacks == 0 || handler.owner.isRemoved()) {
                   onClose();
                   return;
             }

@@ -14,7 +14,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -29,7 +28,6 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.Vec3;
 
@@ -53,18 +51,6 @@ public class BackSlot extends Slot {
 
             @Override public Viewable getViewable() {
                   return BackSlot.this.viewable;
-            }
-
-            @Override public int getMaxStacks() {
-                  ItemStack stack = BackSlot.this.getItem();
-                  if (stack.is(Items.DECORATED_POT))
-                        return 999;
-
-                  CompoundTag display = stack.getTagElement("display");
-                  if (display == null)
-                        return 0;
-                  else
-                        return getLocalData().maxStacks();
             }
 
             NonNullList<Player> playersViewing = NonNullList.create();

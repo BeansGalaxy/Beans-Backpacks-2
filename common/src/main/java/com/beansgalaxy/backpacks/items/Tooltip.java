@@ -1,6 +1,5 @@
 package com.beansgalaxy.backpacks.items;
 
-import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.events.KeyPress;
@@ -60,7 +59,7 @@ public class Tooltip {
                         defaultedList.removeIf(ItemStack::isEmpty);
                   }
             }
-            int totalWeight = getBundleOccupancy(defaultedList) / backSlot.backpackInventory.getMaxStacks();
+            int totalWeight = getBundleOccupancy(defaultedList) / backSlot.backpackInventory.getLocalData().maxStacks();
             return Optional.of(new BundleTooltip(defaultedList, totalWeight));
       }
 
@@ -94,8 +93,7 @@ public class Tooltip {
                   }
             }
             String key = stack.getOrCreateTagElement("display").getString("key");
-            Traits traits = Constants.TRAITS_MAP.get(key);
-            return Component.literal(traits.name);
+            return Component.literal(Traits.get(key).name);
       }
 
       public static void lore(ItemStack stack, List<Component> components) {
@@ -164,7 +162,7 @@ public class Tooltip {
 
             BackpackInventory backpackInventory = backSlot.backpackInventory;
             int spaceLeft = backpackInventory.spaceLeft();
-            int maxStacks = backpackInventory.getMaxStacks();
+            int maxStacks = backpackInventory.getLocalData().maxStacks();
 
             if (spaceLeft < 1) {
                   barColor = FULL_COLOR;

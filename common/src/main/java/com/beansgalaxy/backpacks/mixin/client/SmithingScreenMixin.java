@@ -1,9 +1,9 @@
 package com.beansgalaxy.backpacks.mixin.client;
 
-import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.LocalData;
+import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import net.minecraft.client.gui.GuiGraphics;
@@ -55,7 +55,7 @@ public abstract class SmithingScreenMixin extends ItemCombinerScreen<SmithingMen
       protected void renderEntityRedirect(GuiGraphics graphics, float x, float y, int $$3, Vector3f $$4, Quaternionf $$5, Quaternionf $$6, LivingEntity $$7) {
             boolean switchRender = smithingMenu != null &&
                         Kind.isBackpack(smithingMenu.getSlot(3).getItem()) &&
-                        Constants.TRAITS_MAP.get(backpackPreview.getLocalData().key) != null;
+                        Traits.get(backpackPreview.getLocalData().key).maxStacks == 0;
 
             Entity renderedEntity = switchRender ? backpackPreview : $$7;
             RendererHelper.renderBackpackForSmithing(graphics, x, y, $$3, $$4, $$5, $$6, switchRender, renderedEntity);

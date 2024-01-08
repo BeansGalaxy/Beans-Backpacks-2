@@ -73,7 +73,7 @@ public class DataResourcesMixin {
             Map<ResourceLocation, Resource> recipeKinds = resourceManager.listResources("recipes",
                         (in) -> in.getPath().endsWith(".json") && in.getNamespace().equals(Constants.MOD_ID));
 
-            Constants.TRAITS_MAP.clear();
+            Traits.clear();
             recipeKinds.forEach(((resourceLocation, resource) -> {
                   try {
                         InputStream open = resource.open();

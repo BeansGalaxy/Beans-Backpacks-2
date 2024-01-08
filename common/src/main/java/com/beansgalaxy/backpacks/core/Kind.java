@@ -43,7 +43,7 @@ public enum Kind {
             if (tag == null || !isBackpack(stack)) return false;
 
             String key = tag.getCompound("display").getString("key");
-            return Constants.TRAITS_MAP.get(key).maxStacks > 0;
+            return Traits.get(key).maxStacks > 0;
       }
 
       public boolean isTrimmable() {

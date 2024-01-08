@@ -49,7 +49,7 @@ public interface RendererHelper {
                 "netherite", new ResourceLocation(Constants.MOD_ID, "textures/entity/overlay/netherite.png"));
 
     static void renderOverlays(PoseStack pose, int light, MultiBufferSource mbs, Color tint, RegistryAccess registryAccess, LocalData data, BackpackModel model, TextureAtlas atlas) {
-        Kind kind = Constants.TRAITS_MAP.get(data.key).kind;
+        Kind kind = data.kind();
         CompoundTag trim = data.trim;
         if (kind.isTrimmable() && trim.get("material") != null && trim.get("pattern") != null)
             TrimHelper.getBackpackTrim(registryAccess, trim).ifPresent((trim1) ->

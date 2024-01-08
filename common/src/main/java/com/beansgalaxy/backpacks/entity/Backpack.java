@@ -1,9 +1,9 @@
 package com.beansgalaxy.backpacks.entity;
 
-import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.LocalData;
+import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -34,11 +34,6 @@ public class Backpack extends Entity {
             @Override
             public Viewable getViewable() {
                   return viewable;
-            }
-
-            @Override
-            public int getMaxStacks() {
-                  return Backpack.this.getLocalData().maxStacks();
             }
 
             @Override
@@ -91,7 +86,7 @@ public class Backpack extends Entity {
 
       public Kind getKind() {
             String key = getKey();
-            return Constants.TRAITS_MAP.get(key).kind;
+            return Traits.get(key).kind;
       }
 
       public String getKey() {

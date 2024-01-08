@@ -35,7 +35,7 @@ public class JEIPlugin implements IModPlugin {
 
 
 
-                  Traits traits = Constants.TRAITS_MAP.get(key);
+                  Traits traits = Traits.get(key);
                   CompoundTag tag = new CompoundTag();
                   tag.putString("key", key);
                   if (key.isEmpty())

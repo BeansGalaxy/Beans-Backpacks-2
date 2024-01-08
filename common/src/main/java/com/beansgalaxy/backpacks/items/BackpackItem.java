@@ -1,6 +1,5 @@
 package com.beansgalaxy.backpacks.items;
 
-import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.LocalData;
 import com.beansgalaxy.backpacks.core.Traits;
@@ -18,6 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -168,6 +168,9 @@ public class BackpackItem extends Item {
       }
 
       public static LocalData getItemTraits(ItemStack stack) {
+            if (stack.is(Items.DECORATED_POT))
+                  return LocalData.POT;
+
             if (!Kind.isBackpack(stack))
                   return null;
 
@@ -181,7 +184,7 @@ public class BackpackItem extends Item {
       }
 
       public static ItemStack stackFromKey(String key) {
-            Traits traits = Constants.TRAITS_MAP.get(key);
+            Traits traits = Traits.get(key);
             CompoundTag display = new CompoundTag();
             display.putString("key", key);
 

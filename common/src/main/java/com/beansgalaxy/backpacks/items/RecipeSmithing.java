@@ -1,6 +1,5 @@
 package com.beansgalaxy.backpacks.items;
 
-import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.mojang.serialization.Codec;
@@ -37,7 +36,7 @@ public class RecipeSmithing implements SmithingRecipe {
       }
 
       public RecipeSmithing(String key) {
-            Traits traits = Constants.TRAITS_MAP.get(key);
+            Traits traits = Traits.get(key);
             this.template = traits.template;
             this.material = traits.material;
             this.base = traits.base;

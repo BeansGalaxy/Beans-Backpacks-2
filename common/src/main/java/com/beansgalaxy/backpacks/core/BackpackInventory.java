@@ -1,6 +1,5 @@
 package com.beansgalaxy.backpacks.core;
 
-import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -15,15 +14,15 @@ import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.ShulkerBoxBlock;
 
 import java.util.List;
 
 public interface BackpackInventory extends Container {
 
       Viewable getViewable();
-
-      int getMaxStacks();
 
       Entity getOwner();
 
@@ -195,16 +194,13 @@ public interface BackpackInventory extends Container {
       }
 
       default int spaceLeft() {
-            String key = getLocalData().key;
-            Traits traits = Constants.TRAITS_MAP.get(key);
-
-            if (traits.kind == null)
+            if (getLocalData().kind() == null)
                   return 0;
 
             int totalWeight = this.getItemStacks().stream().mapToInt(
                         itemStacks -> weightByItem(itemStacks) * itemStacks.getCount()).sum();
 
-            return getMaxStacks() * 64 - totalWeight;
+            return getLocalData().maxStacks() * 64 - totalWeight;
       }
 
       default int weightByItem(ItemStack stack) {
@@ -271,15 +267,17 @@ public interface BackpackInventory extends Container {
       }
 
 
-      default boolean canPlaceItem(ItemStack stack) {
-            boolean isEmpty = getItemStacks().isEmpty();
-            ItemStack stack1 = isEmpty ? ItemStack.EMPTY : getItemStacks().get(0);
-            boolean sameStack = !stack.is(stack1.getItem());
-            boolean isPot = getLocalData().kind() == Kind.POT;
-            boolean isFull = spaceLeft() < 1;
-            if (!isEmpty && isPot && sameStack || isFull)
+      default boolean canPlaceItem(ItemStack inserted) {
+            if (inserted.getItem() instanceof BlockItem block && block.getBlock() instanceof ShulkerBoxBlock)
                   return false;
-            return true;
+
+            boolean isEmpty = getItemStacks().isEmpty();
+            ItemStack topStack = isEmpty ? ItemStack.EMPTY : getItemStacks().get(0);
+            if (getLocalData().kind() == Kind.POT)
+                  return isEmpty || inserted.is(topStack.getItem());
+
+            boolean isFull = spaceLeft() < 1;
+            return isEmpty || !isFull;
       }
 
       @Override

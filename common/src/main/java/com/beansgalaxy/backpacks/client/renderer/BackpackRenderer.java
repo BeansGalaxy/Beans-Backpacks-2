@@ -59,7 +59,7 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
                   return;
 
             BackpackInventory.Viewable viewable = bEntity.getBackpackInventory().getViewable();
-            Kind kind = Constants.TRAITS_MAP.get(localData.key).kind;
+            Kind kind = localData.kind();
 
             if (kind == null)
                   return;

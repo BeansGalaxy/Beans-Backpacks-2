@@ -1,6 +1,5 @@
 package com.beansgalaxy.backpacks.items;
 
-import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.mojang.serialization.Codec;
@@ -39,7 +38,7 @@ public class RecipeCrafting extends CustomRecipe {
 
       public RecipeCrafting(String key) {
             super(CraftingBookCategory.EQUIPMENT);
-            Traits traits = Constants.TRAITS_MAP.get(key);
+            Traits traits = Traits.get(key);
             this.key = key;
             this.material = traits.material;
             this.binder = traits.binder;
