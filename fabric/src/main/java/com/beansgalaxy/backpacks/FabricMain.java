@@ -34,9 +34,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public class FabricMain implements ModInitializer {
-    public static EquipAnyCriterion EQUIP_ANY = CriteriaTriggers.register(Constants.MOD_ID + "/equip_any", new EquipAnyCriterion());
-    public static PlaceCriterion PLACE = CriteriaTriggers.register(Constants.MOD_ID + "/place", new PlaceCriterion());
-    public static SpecialCriterion SPECIAL = CriteriaTriggers.register(Constants.MOD_ID + "/special", new SpecialCriterion());
+    public static EquipAnyCriterion EQUIP_ANY = CriteriaTriggers.register(new EquipAnyCriterion());
+    public static PlaceCriterion PLACE = CriteriaTriggers.register(new PlaceCriterion());
+    public static SpecialCriterion SPECIAL = CriteriaTriggers.register(new SpecialCriterion());
     
     @Override
     public void onInitialize() {
@@ -64,13 +64,11 @@ public class FabricMain implements ModInitializer {
 
     public static final RecipeCrafting.Serializer RECIPE_CRAFTING =
                 Registry.register(BuiltInRegistries.RECIPE_SERIALIZER,
-                new ResourceLocation(Constants.MOD_ID, RecipeCrafting.Serializer.ID),
-                            RecipeCrafting.Serializer.INSTANCE);
+                RecipeCrafting.ID, RecipeCrafting.Serializer.INSTANCE);
 
     public static final RecipeSmithing.Serializer RECIPE_SMITHING =
                 Registry.register(BuiltInRegistries.RECIPE_SERIALIZER,
-                new ResourceLocation(Constants.MOD_ID, RecipeSmithing.Serializer.ID),
-                            RecipeSmithing.Serializer.INSTANCE);
+                RecipeSmithing.ID, RecipeSmithing.Serializer.INSTANCE);
 
     // REGISTER CREATIVE TAB
     public static final CreativeModeTab BACKPACK_TAB = FabricItemGroup.builder()

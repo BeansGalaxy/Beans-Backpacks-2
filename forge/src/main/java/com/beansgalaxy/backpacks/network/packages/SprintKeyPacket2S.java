@@ -4,12 +4,14 @@ import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent;
+
+import java.util.function.Supplier;
 
 public class SprintKeyPacket2S {
-      public static void register() {
-            NetworkPackages.INSTANCE.messageBuilder(SprintKeyPacket2S.class, NetworkDirection.PLAY_TO_SERVER)
+      public static void register(int i) {
+            NetworkPackages.INSTANCE.messageBuilder(SprintKeyPacket2S.class, i, NetworkDirection.PLAY_TO_SERVER)
                         .encoder(SprintKeyPacket2S::encode).decoder(SprintKeyPacket2S::new).consumerMainThread(SprintKeyPacket2S::handle).add();
       }
 
@@ -27,8 +29,8 @@ public class SprintKeyPacket2S {
             buf.writeBoolean(this.sprintKeyPressed);
       }
 
-      public void handle(CustomPayloadEvent.Context context) {
-            ServerPlayer player = context.getSender();
+      public void handle(Supplier<NetworkEvent.Context> context) {
+            ServerPlayer player = context.get().getSender();
             BackSlot.get(player).actionKeyPressed = sprintKeyPressed;
       }
 }

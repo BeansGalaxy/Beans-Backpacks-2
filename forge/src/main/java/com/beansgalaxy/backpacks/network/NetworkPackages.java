@@ -10,38 +10,39 @@ import com.beansgalaxy.backpacks.network.packages.CallBackSlot2S;
 import com.beansgalaxy.backpacks.network.packages.SprintKeyPacket2S;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.ChannelBuilder;
+import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.SimpleChannel;
+import net.minecraftforge.network.simple.SimpleChannel;
 
 public class NetworkPackages {
-      public static SimpleChannel INSTANCE = ChannelBuilder.named(
-                  new ResourceLocation(Constants.MOD_ID, "main"))
-                  .serverAcceptedVersions(((status, version) -> true))
-                  .clientAcceptedVersions(((status, version) -> true))
-                  .networkProtocolVersion(1)
-                  .simpleChannel();
+      private static final String PROTOCOL = "1";
+      public static SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
+                  new ResourceLocation(Constants.MOD_ID, "main"),
+                  () -> PROTOCOL,
+                  PROTOCOL::equals,
+                  PROTOCOL::equals);
 
       public static void register() {
-            SprintKeyPacket2S.register();
-            SyncViewersPacket2C.register();
-            SyncBackSlot2C.register();
-            CallBackSlot2S.register();
-            SyncBackInventory2C.register();
-            CallBackInventory2S.register();
-            ConfigureKeys2C.register();
+            int index = 0;
+            SprintKeyPacket2S.register(index++);
+            SyncViewersPacket2C.register(index++);
+            SyncBackSlot2C.register(index++);
+            CallBackSlot2S.register(index++);
+            SyncBackInventory2C.register(index++);
+            CallBackInventory2S.register(index++);
+            ConfigureKeys2C.register(index);
       }
 
       public static void C2S(Object mgs) {
-            INSTANCE.send(mgs, PacketDistributor.SERVER.noArg());
+            INSTANCE.send(PacketDistributor.SERVER.noArg(), mgs);
       }
 
       public static void S2C(Object msg, ServerPlayer player) {
-            INSTANCE.send(msg, PacketDistributor.PLAYER.with(player));
+            INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), msg);
       }
 
       public static void S2All(Object msg) {
-            INSTANCE.send(msg, PacketDistributor.ALL.noArg());
+            INSTANCE.send(PacketDistributor.ALL.noArg(), msg);
       }
 
 }

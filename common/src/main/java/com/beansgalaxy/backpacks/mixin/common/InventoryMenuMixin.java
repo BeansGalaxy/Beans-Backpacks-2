@@ -68,9 +68,10 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
             return new Slot(par1.container, index, par1.x, par1.y) {
 
                   @Override
-                  public void setByPlayer(ItemStack stack, ItemStack previousStack) {
+                  public void setByPlayer(ItemStack stack) {
+                        ItemStack previousStack = this.getItem();
                         owner.onEquipItem(equipmentSlot, previousStack, stack);
-                        super.setByPlayer(stack, previousStack);
+                        super.setByPlayer(stack);
                   }
 
                   @Override

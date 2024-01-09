@@ -1,14 +1,15 @@
 package com.beansgalaxy.backpacks.items;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.Traits;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.PrimitiveCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.google.gson.JsonObject;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -19,6 +20,8 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
 public class RecipeCrafting extends CustomRecipe {
+      public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, RecipeCrafting.Serializer.ID);
+
       final Item material;
       final Item binder;
       final String name;
@@ -27,7 +30,7 @@ public class RecipeCrafting extends CustomRecipe {
       final int maxStacks;
 
       public RecipeCrafting(Item material, Item binder, String name, String kind, String key, int maxStacks) {
-            super(CraftingBookCategory.EQUIPMENT);
+            super(ID, CraftingBookCategory.EQUIPMENT);
             this.key = key;
             this.material = material;
             this.binder = binder;
@@ -37,7 +40,7 @@ public class RecipeCrafting extends CustomRecipe {
       }
 
       public RecipeCrafting(String key) {
-            super(CraftingBookCategory.EQUIPMENT);
+            super(ID, CraftingBookCategory.EQUIPMENT);
             Traits traits = Traits.get(key);
             this.key = key;
             this.material = traits.material;
@@ -115,20 +118,14 @@ public class RecipeCrafting extends CustomRecipe {
             public static final Serializer INSTANCE = new Serializer();
             public static final String ID = "crafting";
 
-            public static final Codec<RecipeCrafting> CODEC = RecordCodecBuilder.create(
-                        in -> in.group(
-                                                PrimitiveCodec.STRING.fieldOf("key").forGetter(RecipeCrafting::getKey)
-                                    )
-                                    .apply(in, RecipeCrafting::new)
-            );
-
             @Override
-            public Codec<RecipeCrafting> codec() {
-                  return CODEC;
+            public RecipeCrafting fromJson(ResourceLocation resourceLocation, JsonObject jsonObject) {
+                  String key = GsonHelper.getAsString(jsonObject, "key", "");
+                  return new RecipeCrafting(key);
             }
 
             @Override
-            public RecipeCrafting fromNetwork(FriendlyByteBuf buf) {
+            public RecipeCrafting fromNetwork(ResourceLocation resourceLocation, FriendlyByteBuf buf) {
                   Item material = buf.readItem().getItem();
                   Item binder = buf.readItem().getItem();
                   String name = buf.readUtf();

@@ -41,8 +41,8 @@ public class ForgeRegistryHelper implements RegistryHelper {
       }
 
       @Override
-      public void triggerPlace(ServerPlayer player) {
-            ForgeMain.PLACE.trigger(player);
+      public void triggerPlace(ServerPlayer player, String key) {
+            ForgeMain.PLACE.trigger(player, key);
       }
 
       @Override

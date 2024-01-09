@@ -1,14 +1,14 @@
 package com.beansgalaxy.backpacks.items;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.Traits;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.PrimitiveCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.google.gson.JsonObject;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -17,6 +17,8 @@ import net.minecraft.world.item.crafting.SmithingRecipe;
 import net.minecraft.world.level.Level;
 
 public class RecipeSmithing implements SmithingRecipe {
+      public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, RecipeSmithing.Serializer.ID);
+
       final Item template;
       final Item material;
       final Item base;
@@ -86,6 +88,11 @@ public class RecipeSmithing implements SmithingRecipe {
       }
 
       @Override
+      public ResourceLocation getId() {
+            return ID;
+      }
+
+      @Override
       public RecipeSerializer<?> getSerializer() {
             return RecipeSmithing.Serializer.INSTANCE;
       }
@@ -94,26 +101,14 @@ public class RecipeSmithing implements SmithingRecipe {
             public static final RecipeSmithing.Serializer INSTANCE = new RecipeSmithing.Serializer();
             public static final String ID = "smithing";
 
-            public static final Codec<RecipeSmithing> CODEC = RecordCodecBuilder.create(
-                        in -> in.group(
-                                                BuiltInRegistries.ITEM.byNameCodec().fieldOf("template").forGetter(RecipeSmithing::getTemplate),
-                                                BuiltInRegistries.ITEM.byNameCodec().fieldOf("material").forGetter(RecipeSmithing::getMaterial),
-                                                BuiltInRegistries.ITEM.byNameCodec().fieldOf("base").forGetter(RecipeSmithing::getBase),
-                                                PrimitiveCodec.STRING.fieldOf("name").forGetter(RecipeSmithing::getName),
-                                                PrimitiveCodec.STRING.fieldOf("key").forGetter(RecipeSmithing::getKey),
-                                                PrimitiveCodec.STRING.fieldOf("kind").forGetter(RecipeSmithing::getKind),
-                                                PrimitiveCodec.INT.fieldOf("max_stacks").forGetter(RecipeSmithing::getMaxStacks)
-                                    )
-                                    .apply(in, RecipeSmithing::new)
-            );
-
             @Override
-            public Codec<RecipeSmithing> codec() {
-                  return CODEC;
+            public RecipeSmithing fromJson(ResourceLocation resourceLocation, JsonObject jsonObject) {
+                  String key = GsonHelper.getAsString(jsonObject, "key", "");
+                  return new RecipeSmithing(key);
             }
 
             @Override
-            public RecipeSmithing fromNetwork(FriendlyByteBuf buf) {
+            public RecipeSmithing fromNetwork(ResourceLocation resourceLocation, FriendlyByteBuf buf) {
                   Item template = buf.readItem().getItem();
                   Item material = buf.readItem().getItem();
                   Item base = buf.readItem().getItem();

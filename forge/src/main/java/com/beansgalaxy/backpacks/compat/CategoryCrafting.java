@@ -8,26 +8,30 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategoryExtension;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
 
 import java.util.List;
 
-public class CategoryCrafting implements ICraftingCategoryExtension<RecipeCrafting> {
+public class CategoryCrafting implements ICraftingCategoryExtension {
+      private final RecipeCrafting recipe;
+
+      public CategoryCrafting(RecipeCrafting recipe) {
+            this.recipe = recipe;
+      }
 
       @Override
-      public int getWidth(RecipeHolder<RecipeCrafting> recipeHolder) {
+      public int getWidth() {
             return 3;
       }
 
       @Override
-      public int getHeight(RecipeHolder<RecipeCrafting> recipeHolder) {
+      public int getHeight() {
             return 3;
       }
 
       @Override
-      public void setRecipe(RecipeHolder<RecipeCrafting> recipeHolder, IRecipeLayoutBuilder builder, ICraftingGridHelper craftingGridHelper, IFocusGroup focuses) {
-            Item materialItem = recipeHolder.value().getMaterial();
-            Item binderItem = recipeHolder.value().getBinder();
+      public void setRecipe(IRecipeLayoutBuilder builder, ICraftingGridHelper craftingGridHelper, IFocusGroup focuses) {
+            Item materialItem = recipe.getMaterial();
+            Item binderItem = recipe.getBinder();
             List<ItemStack> mat = List.of(materialItem.getDefaultInstance());
             List<ItemStack> bin = List.of(binderItem.getDefaultInstance());
             List<ItemStack> emp = List.of(ItemStack.EMPTY);
@@ -40,7 +44,7 @@ public class CategoryCrafting implements ICraftingCategoryExtension<RecipeCrafti
 
             craftingGridHelper.createAndSetInputs(builder, stacks, 3, 3);
 
-            ItemStack outputStack = BackpackItem.stackFromKey(recipeHolder.value().getKey());
+            ItemStack outputStack = BackpackItem.stackFromKey(recipe.getKey());
             List<ItemStack> output = List.of(outputStack);
             craftingGridHelper.createAndSetOutputs(builder, output);
       }

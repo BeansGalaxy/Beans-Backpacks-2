@@ -3,12 +3,14 @@ package com.beansgalaxy.backpacks.network.client;
 import com.beansgalaxy.backpacks.client.network.SyncViewersPacket;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent;
+
+import java.util.function.Supplier;
 
 public class SyncViewersPacket2C {
-      public static void register() {
-            NetworkPackages.INSTANCE.messageBuilder(SyncViewersPacket2C.class, NetworkDirection.PLAY_TO_CLIENT)
+      public static void register(int i) {
+            NetworkPackages.INSTANCE.messageBuilder(SyncViewersPacket2C.class, i, NetworkDirection.PLAY_TO_CLIENT)
                         .encoder(SyncViewersPacket2C::encode).decoder(SyncViewersPacket2C::new).consumerMainThread(SyncViewersPacket2C::handle).add();
       }
 
@@ -29,7 +31,7 @@ public class SyncViewersPacket2C {
             byteBuf.writeByte(viewers);
       }
 
-      public void handle(CustomPayloadEvent.Context context) {
+      public void handle(Supplier<NetworkEvent.Context> context) {
             SyncViewersPacket.receiveAtClient(entityId, viewers);
       }
 }

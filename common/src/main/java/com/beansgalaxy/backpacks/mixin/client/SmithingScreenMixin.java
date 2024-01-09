@@ -17,7 +17,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.SmithingMenu;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -51,14 +50,21 @@ public abstract class SmithingScreenMixin extends ItemCombinerScreen<SmithingMen
             };
       }
 
-      @Redirect(method = "renderBg", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;renderEntityInInventory(Lnet/minecraft/client/gui/GuiGraphics;FFILorg/joml/Vector3f;Lorg/joml/Quaternionf;Lorg/joml/Quaternionf;Lnet/minecraft/world/entity/LivingEntity;)V"))
-      protected void renderEntityRedirect(GuiGraphics graphics, float x, float y, int $$3, Vector3f $$4, Quaternionf $$5, Quaternionf $$6, LivingEntity $$7) {
-            boolean switchRender = smithingMenu != null &&
-                        Kind.isBackpack(smithingMenu.getSlot(3).getItem()) &&
-                        Traits.get(backpackPreview.getLocalData().key).maxStacks == 0;
+      @Redirect(method = "renderBg", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;renderEntityInInventory(Lnet/minecraft/client/gui/GuiGraphics;IIILorg/joml/Quaternionf;Lorg/joml/Quaternionf;Lnet/minecraft/world/entity/LivingEntity;)V"))
+      protected void renderEntityRedirect(GuiGraphics graphics, int x, int y, int scale, Quaternionf $$4, Quaternionf $$5, LivingEntity livingEntity) {
+            boolean switchRender = false;
 
-            Entity renderedEntity = switchRender ? backpackPreview : $$7;
-            RendererHelper.renderBackpackForSmithing(graphics, x, y, $$3, $$4, $$5, $$6, switchRender, renderedEntity);
+
+            if (smithingMenu != null) {
+                  boolean backpack = Kind.isBackpack(smithingMenu.getSlot(3).getItem());
+                  if (backpack) {
+                        boolean stack = Traits.get(backpackPreview.getLocalData().key).maxStacks != 0;
+                        switchRender = stack;
+                  }
+            }
+
+            Entity renderedEntity = switchRender ? backpackPreview : livingEntity;
+            RendererHelper.renderBackpackForSmithing(graphics, x, y, scale, $$5, switchRender, renderedEntity);
       }
 
 }

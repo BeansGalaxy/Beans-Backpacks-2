@@ -4,14 +4,15 @@ import com.beansgalaxy.backpacks.client.network.SyncBackSlot;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class SyncBackSlot2C {
-      public static void register() {
-            NetworkPackages.INSTANCE.messageBuilder(SyncBackSlot2C.class, NetworkDirection.PLAY_TO_CLIENT)
+      public static void register(int i) {
+            NetworkPackages.INSTANCE.messageBuilder(SyncBackSlot2C.class, i, NetworkDirection.PLAY_TO_CLIENT)
                         .encoder(SyncBackSlot2C::encode).decoder(SyncBackSlot2C::new).consumerMainThread(SyncBackSlot2C::handle).add();
       }
 
@@ -32,7 +33,7 @@ public class SyncBackSlot2C {
             buf.writeItem(stack);
       }
 
-      public void handle(CustomPayloadEvent.Context context) {
+      public void handle(Supplier<NetworkEvent.Context> context) {
             SyncBackSlot.receiveAtClient(uuid, stack);
       }
 }

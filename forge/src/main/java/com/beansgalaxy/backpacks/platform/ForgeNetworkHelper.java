@@ -18,6 +18,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
 public class ForgeNetworkHelper implements NetworkHelper {
@@ -35,14 +36,14 @@ public class ForgeNetworkHelper implements NetworkHelper {
       @Override
       public void openBackpackMenu(Player viewer, Backpack owner) {
             if (viewer instanceof ServerPlayer serverPlayer) {
-                  serverPlayer.openMenu(owner.getBackpackInventory().getMenuProvider(), buf -> buf.writeInt(owner.getId()));
+                  NetworkHooks.openScreen(serverPlayer, owner.getBackpackInventory().getMenuProvider(), buf -> buf.writeInt(owner.getId()));
             }
       }
 
       @Override
       public void openBackpackMenu(Player viewer, Player owner) {
             if (viewer instanceof ServerPlayer serverPlayer)
-                  serverPlayer.openMenu(BackSlot.getInventory(owner).getMenuProvider(), buf -> buf.writeInt(owner.getId()));
+                  NetworkHooks.openScreen(serverPlayer, BackSlot.getInventory(owner).getMenuProvider(), buf -> buf.writeInt(owner.getId()));
       }
 
       @Override

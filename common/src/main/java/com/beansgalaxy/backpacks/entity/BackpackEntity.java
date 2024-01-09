@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.entity;
 
 import com.beansgalaxy.backpacks.core.Kind;
+import com.beansgalaxy.backpacks.core.LocalData;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.items.BackpackItem;
@@ -32,7 +33,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
-import java.util.Objects;
 
 public class BackpackEntity extends Backpack {
       public Direction direction;
@@ -46,12 +46,12 @@ public class BackpackEntity extends Backpack {
       }
 
       public BackpackEntity(Player player, Level world, int x, double y, int z, Direction direction,
-                            ItemStack backpackStack, NonNullList<ItemStack> stacks, float yaw) {
+                            LocalData traits, NonNullList<ItemStack> stacks, float yaw) {
             super(world);
             this.actualY = y;
             this.pos = BlockPos.containing(x, y, z);
             this.setDirection(direction);
-            this.initDisplay(Objects.requireNonNull(BackpackItem.getItemTraits(backpackStack)));
+            this.initDisplay(traits);
 
             if (!direction.getAxis().isHorizontal())
                   this.setYRot(yaw);

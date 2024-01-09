@@ -9,18 +9,18 @@ import me.shedaniel.rei.api.common.display.basic.BasicDisplay;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
 
 import java.util.List;
+import java.util.Optional;
 
 public class DisplayCrafting extends BasicDisplay implements SimpleGridMenuDisplay {
       private final List<EntryIngredient> inputs;
       private final List<EntryIngredient> outputs;
 
-      public DisplayCrafting(RecipeHolder<RecipeCrafting> recipe) {
-            super(inputs(recipe.value()), outputs(recipe.value()));
-            this.inputs = inputs(recipe.value());
-            this.outputs = outputs(recipe.value());
+      public DisplayCrafting(Optional<RecipeCrafting> recipe) {
+            super(inputs(recipe.get()), outputs(recipe.get()));
+            this.inputs = inputs(recipe.get());
+            this.outputs = outputs(recipe.get());
       }
 
       public DisplayCrafting(RecipeCrafting recipeCrafting) {

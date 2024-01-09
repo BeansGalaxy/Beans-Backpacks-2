@@ -6,14 +6,15 @@ import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class CallBackSlot2S {
-      public static void register() {
-            NetworkPackages.INSTANCE.messageBuilder(CallBackSlot2S.class, NetworkDirection.PLAY_TO_SERVER)
+      public static void register(int i) {
+            NetworkPackages.INSTANCE.messageBuilder(CallBackSlot2S.class, i, NetworkDirection.PLAY_TO_SERVER)
                         .encoder(CallBackSlot2S::encode).decoder(CallBackSlot2S::new).consumerMainThread(CallBackSlot2S::handle).add();
       }
 
@@ -36,9 +37,9 @@ public class CallBackSlot2S {
             buf.writeUUID(uuid);
       }
 
-      public void handle(CustomPayloadEvent.Context context) {
-            Player otherPlayer = context.getSender().level().getPlayerByUUID(uuid);
+      public void handle(Supplier<NetworkEvent.Context> context) {
+            Player otherPlayer = context.get().getSender().level().getPlayerByUUID(uuid);
             ItemStack stack = BackSlot.get(otherPlayer).getItem();
-            NetworkPackages.S2C(new SyncBackSlot2C(uuid, stack), context.getSender());
+            NetworkPackages.S2C(new SyncBackSlot2C(uuid, stack), context.get().getSender());
       }
 }

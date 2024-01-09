@@ -9,7 +9,7 @@ import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.advancements.AdvancementTree;
+import net.minecraft.advancements.AdvancementList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -127,7 +127,7 @@ public class BackSlot extends Slot {
       }
 
       public static List<ResourceLocation> getTextures() {
-            AdvancementTree manager = Minecraft.getInstance().getConnection().getAdvancements().getTree();
+            AdvancementList manager = Minecraft.getInstance().getConnection().getAdvancements().getAdvancements();
             boolean hasEndGoal = manager.get(ResourceLocation.tryParse("end/root")) != null;
             if (hasEndGoal)
                   return List.of(SLOT_ELYTRA, SLOT_BACKPACK);
@@ -354,6 +354,10 @@ public class BackSlot extends Slot {
                   return;
             }
 
+            LocalData traits = BackpackItem.getItemTraits(backpackStack);
+            if (traits == null)
+                  return;
+
             BlockPos blockPos = owner.getOnPos();
             float yRot = owner.yBodyRot + 180;
 
@@ -362,7 +366,7 @@ public class BackSlot extends Slot {
             int z = blockPos.getZ();
 
             new BackpackEntity(owner, owner.level(), x, y, z, Direction.UP,
-                        backpackStack, itemStacks, yRot);
+                        traits, itemStacks, yRot);
 
             PlaySound.DROP.at(owner);
       }

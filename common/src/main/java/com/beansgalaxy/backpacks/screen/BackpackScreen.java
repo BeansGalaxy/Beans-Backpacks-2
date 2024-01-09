@@ -58,7 +58,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
                   onClose();
                   return;
             }
-            renderBackground(ctx, mouseX, mouseY, delta);
+            renderBackground(ctx);
             super.render(ctx, mouseX, mouseY, delta);
             renderTooltip(ctx, mouseX, mouseY);
       }

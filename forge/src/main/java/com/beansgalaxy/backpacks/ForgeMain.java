@@ -30,9 +30,9 @@ import net.minecraftforge.registries.RegistryObject;
 
 @Mod(Constants.MOD_ID)
 public class ForgeMain {
-    public static EquipAnyCriterion EQUIP_ANY = CriteriaTriggers.register(Constants.MOD_ID + "/equip_any", new EquipAnyCriterion());
-    public static PlaceCriterion PLACE = CriteriaTriggers.register(Constants.MOD_ID + "/place", new PlaceCriterion());
-    public static SpecialCriterion SPECIAL = CriteriaTriggers.register(Constants.MOD_ID + "/special", new SpecialCriterion());
+    public static EquipAnyCriterion EQUIP_ANY = CriteriaTriggers.register(new EquipAnyCriterion());
+    public static PlaceCriterion PLACE = CriteriaTriggers.register(new PlaceCriterion());
+    public static SpecialCriterion SPECIAL = CriteriaTriggers.register(new SpecialCriterion());
 
     public ForgeMain() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();

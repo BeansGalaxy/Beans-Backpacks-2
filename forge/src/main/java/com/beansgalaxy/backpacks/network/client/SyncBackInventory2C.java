@@ -3,12 +3,14 @@ package com.beansgalaxy.backpacks.network.client;
 import com.beansgalaxy.backpacks.client.network.SyncBackInventory;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent;
+
+import java.util.function.Supplier;
 
 public class SyncBackInventory2C {
-      public static void register() {
-            NetworkPackages.INSTANCE.messageBuilder(SyncBackInventory2C.class, NetworkDirection.PLAY_TO_CLIENT)
+      public static void register(int i) {
+            NetworkPackages.INSTANCE.messageBuilder(SyncBackInventory2C.class, i, NetworkDirection.PLAY_TO_CLIENT)
                         .encoder(SyncBackInventory2C::encode).decoder(SyncBackInventory2C::new).consumerMainThread(SyncBackInventory2C::handle).add();
       }
 
@@ -26,7 +28,7 @@ public class SyncBackInventory2C {
             buf.writeUtf(stacks);
       }
 
-      public void handle(CustomPayloadEvent.Context context) {
+      public void handle(Supplier<NetworkEvent.Context> context) {
             SyncBackInventory.receiveAtClient(stacks);
       }
 
