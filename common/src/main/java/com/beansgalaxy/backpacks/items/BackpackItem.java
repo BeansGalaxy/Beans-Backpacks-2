@@ -5,12 +5,14 @@ import com.beansgalaxy.backpacks.core.LocalData;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.events.PlaySound;
+import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -123,6 +125,9 @@ public class BackpackItem extends Item {
                         backpackStack, stacks, rotFromBlock(blockPos, player) + 90);
 
             PlaySound.PLACE.at(backpackEntity);
+
+            if (player instanceof ServerPlayer serverPlayer)
+                  Services.REGISTRY.triggerPlace(serverPlayer);
 
             backpackStack.shrink(1);
             return true;

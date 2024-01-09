@@ -10,9 +10,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -29,7 +29,7 @@ public class Backpack extends Entity {
                   return Backpack.this;
             }
 
-            NonNullList<Player> playersViewing = NonNullList.create();
+            NonNullList<ServerPlayer> playersViewing = NonNullList.create();
 
             @Override
             public Viewable getViewable() {
@@ -37,7 +37,7 @@ public class Backpack extends Entity {
             }
 
             @Override
-            public NonNullList<Player> getPlayersViewing() {
+            public NonNullList<ServerPlayer> getPlayersViewing() {
                   return playersViewing;
             }
 

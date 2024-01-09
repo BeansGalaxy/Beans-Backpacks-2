@@ -25,13 +25,6 @@ public class Constants {
 	public static HashSet<Item> CHESTPLATE_DISABLED = new HashSet<>();
 	public static HashSet<Item> DISABLES_BACK_SLOT = new HashSet<>();
 
-	public static void registerAdditionalData(String key, Traits traits) {
-		if (key.isEmpty())
-			return;
-
-		TRAITS_MAP.put(key, traits);
-	}
-
 	public static Item itemFromString(String string) {
 		if (string == null)
 			return Items.AIR;

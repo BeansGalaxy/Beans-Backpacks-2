@@ -61,7 +61,8 @@ public class ForgeNetworkHelper implements NetworkHelper {
                               return null;
                         else {
                               BackpackInventory backpackInventory = BackpackInventory.get(entity);
-                              backpackInventory.addViewer(player);
+                              if (player instanceof ServerPlayer serverPlayer)
+                                    backpackInventory.addViewer(serverPlayer);
                               return new BackpackMenu(containerId, player.getInventory(), backpackInventory);
                         }
                   }

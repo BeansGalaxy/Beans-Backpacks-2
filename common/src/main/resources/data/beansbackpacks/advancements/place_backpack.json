@@ -1,0 +1,17 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:anvil"
+    },
+    "title": "Too Heavy",
+    "description": "Place a Backpack on the Ground",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "beansbackpacks:beansbackpacks",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:beansbackpacks/place"
+    }
+  }
+}

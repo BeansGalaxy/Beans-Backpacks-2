@@ -1,6 +1,5 @@
 package com.beansgalaxy.backpacks.network;
 
-import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.network.SyncBackInventory;
 import com.beansgalaxy.backpacks.client.network.SyncBackSlot;
 import com.beansgalaxy.backpacks.client.network.SyncViewersPacket;
@@ -40,7 +39,7 @@ public class ReceiveAtClient {
                   CompoundTag tag = map.get(key);
                   Traits traits = new Traits(tag);
 
-                  Constants.registerAdditionalData(key, traits);
+                  Traits.register(key, traits);
             }
       }
 }

@@ -1,0 +1,21 @@
+{
+  "display": {
+    "icon": {
+      "item": "beansbackpacks:metal_backpack",
+      "nbt": "{display:{key:iron}}"
+    },
+    "title": "Time for an Upgrade",
+    "description": "Fill a Leather Backpack",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "beansbackpacks:place_backpack",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:beansbackpacks/special",
+      "conditions": {
+        "special": "FILLED_LEATHER"
+      }
+    }
+  }
+}

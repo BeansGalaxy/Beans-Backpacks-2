@@ -53,9 +53,9 @@ public class BackSlot extends Slot {
                   return BackSlot.this.viewable;
             }
 
-            NonNullList<Player> playersViewing = NonNullList.create();
+            NonNullList<ServerPlayer> playersViewing = NonNullList.create();
 
-            @Override public NonNullList<Player> getPlayersViewing() {
+            @Override public NonNullList<ServerPlayer> getPlayersViewing() {
                   return playersViewing;
             }
 
@@ -179,6 +179,7 @@ public class BackSlot extends Slot {
             if (stack.isEmpty())
                   backpackInventory.clearViewers();
             if (owner instanceof ServerPlayer serverPlayer) {
+                  Services.REGISTRY.triggerEquipAny(serverPlayer);
                   Services.NETWORK.SyncBackSlot(serverPlayer);
             }
       }

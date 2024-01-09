@@ -2,6 +2,8 @@ package com.beansgalaxy.backpacks.core;
 
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.events.PlaySound;
+import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
+import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.core.NonNullList;
@@ -10,6 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
@@ -19,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
 
 import java.util.List;
+import java.util.Objects;
 
 public interface BackpackInventory extends Container {
 
@@ -56,29 +60,27 @@ public interface BackpackInventory extends Container {
             }
       }
 
-      NonNullList<Player> getPlayersViewing();
+      NonNullList<ServerPlayer> getPlayersViewing();
 
       default void clearViewers() {
             getPlayersViewing().clear();
             getViewable().viewers = 0;
       }
 
-      default void addViewer(Player viewer) {
-            if (getPlayersViewing().stream().noneMatch(viewing -> viewing.equals(viewer))) {}
+      default void addViewer(ServerPlayer viewer) {
             getPlayersViewing().add(viewer);
             updateViewers();
       }
 
-      default void removeViewer(Player viewer) {
+      default void removeViewer(ServerPlayer viewer) {
             getPlayersViewing().remove(viewer);
             updateViewers();
       }
 
       default void updateViewers() {
-            NonNullList<Player> playersViewing = getPlayersViewing();
+            NonNullList<ServerPlayer> playersViewing = getPlayersViewing();
             getViewable().viewers = (byte) Math.min(playersViewing.size(), Byte.MAX_VALUE);
-            if (!getOwner().level().isClientSide)
-                  Services.NETWORK.SyncViewers(getOwner(), getViewable().viewers);
+            Services.NETWORK.SyncViewers(getOwner(), getViewable().viewers);
       }
 
       static boolean yawMatches(float viewerYaw, float ownerYaw, double acceptableYaw) {
@@ -181,16 +183,29 @@ public interface BackpackInventory extends Container {
 
       default ItemStack insertItemSilent(ItemStack stack, int amount) {
             if (!stack.isEmpty() && canPlaceItem(stack)) {
+                  boolean isServerSide = !getOwner().level().isClientSide();
                   int space = spaceLeft();
                   int weight = weightByItem(stack);
                   int weightedSpace = space / weight;
                   int count = Math.min(weightedSpace, amount);
-                  if (count > 0) {
+                  if (count > 0)
+                  {
+                        if (isServerSide && stack.getItem() instanceof BackpackItem)
+                              triggerAdvancements(SpecialCriterion.Special.LAYERED);
                         this.getItemStacks().add(0, mergeItem(stack.copyWithCount(count)));
                         stack.setCount(stack.getCount() - count);
                   }
+                  if (isServerSide && Objects.equals(getLocalData().key, "leather") && spaceLeft() < 1)
+                        triggerAdvancements(SpecialCriterion.Special.FILLED_LEATHER);
             }
             return stack;
+      }
+
+      private void triggerAdvancements(SpecialCriterion.Special special) {
+            if (getOwner() instanceof ServerPlayer thisPlayer)
+                  Services.REGISTRY.triggerSpecial(thisPlayer, special);
+            for (ServerPlayer otherPlayers : getPlayersViewing())
+                  Services.REGISTRY.triggerSpecial(otherPlayers, special);
       }
 
       default int spaceLeft() {
@@ -293,7 +308,8 @@ public interface BackpackInventory extends Container {
 
       @Override
       default void stopOpen(Player player) {
-            removeViewer(player);
+            if (player instanceof ServerPlayer serverPlayer)
+                  removeViewer(serverPlayer);
             if (getViewable().viewers < 1)
                   PlaySound.CLOSE.at(getOwner());
       }

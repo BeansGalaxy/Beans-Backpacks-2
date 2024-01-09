@@ -82,7 +82,7 @@ public class DataResourcesMixin {
                         ObjectMapper map = ObjectMapper.create();
                         Traits.Raw raw = map.readValue(json, Traits.Raw.class);
 
-                        Constants.registerAdditionalData(raw.key, new Traits(raw));
+                        Traits.register(raw.key, new Traits(raw));
 
                   } catch (IOException e) {
                         throw new RuntimeException(e);

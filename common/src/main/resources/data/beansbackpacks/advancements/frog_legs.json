@@ -1,0 +1,21 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:lily_pad"
+    },
+    "title": "Frog Legs",
+    "description": "Hop off a Backpack",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "parent": "beansbackpacks:beansbackpacks",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:beansbackpacks/special",
+      "conditions": {
+        "special": "HOP"
+      }
+    }
+  }
+}

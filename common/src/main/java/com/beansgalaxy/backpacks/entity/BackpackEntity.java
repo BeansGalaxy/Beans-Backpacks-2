@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.entity;
 
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
+import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -13,6 +14,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -190,8 +192,11 @@ public class BackpackEntity extends Backpack {
             if (!entityList.isEmpty()) {
                   Entity entity = entityList.get(0);
                   double velocity = this.actualY - entity.getY();
-                  if (entityList.get(0) instanceof Player)
+                  if (entityList.get(0) instanceof Player player) {
                         this.setDeltaMovement(0, velocity / 10, 0);
+                        if (player instanceof ServerPlayer serverPlayer)
+                              Services.REGISTRY.triggerSpecial(serverPlayer, SpecialCriterion.Special.HOP);
+                  }
                   else if (velocity < -0.6)
                         inWaterBob();
                   else this.setDeltaMovement(0, velocity / 20, 0);

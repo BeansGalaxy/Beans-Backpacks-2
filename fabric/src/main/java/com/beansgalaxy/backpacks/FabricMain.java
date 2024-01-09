@@ -2,6 +2,9 @@ package com.beansgalaxy.backpacks;
 
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.events.*;
+import com.beansgalaxy.backpacks.events.advancements.EquipAnyCriterion;
+import com.beansgalaxy.backpacks.events.advancements.PlaceCriterion;
+import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.beansgalaxy.backpacks.items.RecipeCrafting;
@@ -17,6 +20,7 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -30,6 +34,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public class FabricMain implements ModInitializer {
+    public static EquipAnyCriterion EQUIP_ANY = CriteriaTriggers.register(Constants.MOD_ID + "/equip_any", new EquipAnyCriterion());
+    public static PlaceCriterion PLACE = CriteriaTriggers.register(Constants.MOD_ID + "/place", new PlaceCriterion());
+    public static SpecialCriterion SPECIAL = CriteriaTriggers.register(Constants.MOD_ID + "/special", new SpecialCriterion());
     
     @Override
     public void onInitialize() {

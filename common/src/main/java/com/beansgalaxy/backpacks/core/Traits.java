@@ -7,11 +7,18 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 
 public class Traits {
+      public static void register(String key, Traits traits) {
+            if (key.isEmpty())
+                  return;
+
+            Constants.TRAITS_MAP.put(key, traits);
+      }
+
       public static Traits get(String key) {
             Traits traits = Constants.TRAITS_MAP.get(key);
             if (traits == null)
             {
-                  Constants.LOG.info("!!! Requested Traits but Traits returned null !!! Returning default empty Traits");
+                  Constants.LOG.info("Requested Traits for key: \"" + key + "\" but Traits returned null");
                   return new Traits();
             }
             return traits;

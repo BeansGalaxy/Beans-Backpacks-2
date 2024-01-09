@@ -1,6 +1,5 @@
 package com.beansgalaxy.backpacks.network.client;
 
-import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import net.minecraft.nbt.CompoundTag;
@@ -36,7 +35,7 @@ public class ConfigureKeys2C {
                   CompoundTag tag = map.get(key);
                   Traits traits = new Traits(tag);
 
-                  Constants.registerAdditionalData(key, traits);
+                  Traits.register(key, traits);
             }
       }
 }

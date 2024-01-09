@@ -1,6 +1,5 @@
 package com.beansgalaxy.backpacks.core;
 
-import com.beansgalaxy.backpacks.Constants;
 import net.minecraft.nbt.CompoundTag;
 
 public class LocalData {
@@ -22,7 +21,7 @@ public class LocalData {
       }
 
       public Traits traits() {
-            return Constants.TRAITS_MAP.get(key);
+            return Traits.get(key);
       }
 
       public String name() {
