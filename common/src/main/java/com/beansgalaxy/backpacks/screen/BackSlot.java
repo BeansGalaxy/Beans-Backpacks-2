@@ -353,6 +353,9 @@ public class BackSlot extends Slot {
                   }
                   return;
             }
+            LocalData traits = BackpackItem.getItemTraits(backpackStack);
+            if (traits == null || traits.key.isEmpty())
+                  return;
 
             BlockPos blockPos = owner.getOnPos();
             float yRot = owner.yBodyRot + 180;
@@ -362,7 +365,7 @@ public class BackSlot extends Slot {
             int z = blockPos.getZ();
 
             new BackpackEntity(owner, owner.level(), x, y, z, Direction.UP,
-                        backpackStack, itemStacks, yRot);
+                        traits, itemStacks, yRot);
 
             PlaySound.DROP.at(owner);
       }

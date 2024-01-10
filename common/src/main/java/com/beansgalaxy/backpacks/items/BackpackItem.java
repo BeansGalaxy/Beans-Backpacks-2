@@ -115,6 +115,10 @@ public class BackpackItem extends Item {
       }
 
       public static boolean doesPlace(Player player, int x, double y, int z, Direction direction, ItemStack backpackStack, boolean fromBackSlot) {
+            LocalData traits = BackpackItem.getItemTraits(backpackStack);
+            if (traits == null || traits.key.isEmpty())
+                  return false;
+
             Level world = player.level();
             BlockPos blockPos = BlockPos.containing(x, y, z);
 
@@ -122,12 +126,12 @@ public class BackpackItem extends Item {
                         BackSlot.getInventory(player).getItemStacks() : NonNullList.create();
 
             BackpackEntity backpackEntity = new BackpackEntity(player, world, x, y, z, direction,
-                        backpackStack, stacks, rotFromBlock(blockPos, player) + 90);
+                        traits, stacks, rotFromBlock(blockPos, player) + 90);
 
             PlaySound.PLACE.at(backpackEntity);
 
             if (player instanceof ServerPlayer serverPlayer)
-                  Services.REGISTRY.triggerPlace(serverPlayer);
+                  Services.REGISTRY.triggerPlace(serverPlayer, traits.key);
 
             backpackStack.shrink(1);
             return true;
