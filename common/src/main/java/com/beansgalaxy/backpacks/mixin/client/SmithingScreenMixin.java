@@ -55,7 +55,7 @@ public abstract class SmithingScreenMixin extends ItemCombinerScreen<SmithingMen
       protected void renderEntityRedirect(GuiGraphics graphics, float x, float y, int $$3, Vector3f $$4, Quaternionf $$5, Quaternionf $$6, LivingEntity $$7) {
             boolean switchRender = smithingMenu != null &&
                         Kind.isBackpack(smithingMenu.getSlot(3).getItem()) &&
-                        Traits.get(backpackPreview.getLocalData().key).maxStacks == 0;
+                        Traits.get(backpackPreview.getLocalData().key).maxStacks != 0;
 
             Entity renderedEntity = switchRender ? backpackPreview : $$7;
             RendererHelper.renderBackpackForSmithing(graphics, x, y, $$3, $$4, $$5, $$6, switchRender, renderedEntity);

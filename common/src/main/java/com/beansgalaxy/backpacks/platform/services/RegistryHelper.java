@@ -21,7 +21,7 @@ public interface RegistryHelper {
 
       void triggerEquipAny(ServerPlayer player);
 
-      void triggerPlace(ServerPlayer player);
+      void triggerPlace(ServerPlayer player, String key);
 
       void triggerSpecial(ServerPlayer player, SpecialCriterion.Special special);
 

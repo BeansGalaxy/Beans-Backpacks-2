@@ -42,8 +42,8 @@ public class FabricRegistryHelper implements RegistryHelper {
       }
 
       @Override
-      public void triggerPlace(ServerPlayer player) {
-            FabricMain.PLACE.trigger(player);
+      public void triggerPlace(ServerPlayer player, String key) {
+            FabricMain.PLACE.trigger(player, key);
       }
 
       @Override
