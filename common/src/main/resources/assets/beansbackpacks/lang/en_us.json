@@ -8,5 +8,14 @@
   "tooltip.beansbackpacks.empty_3": "%d §7+ %d §7backpacks or",
   "tooltip.beansbackpacks.empty_4": "§7blocks to place and equip.",
   "tooltip.beansbackpacks.empty_5": "",
-  "itemGroup.beansbackpacks": "Backpacks"
+  "itemGroup.beansbackpacks": "Backpacks",
+
+  "sounds.beansbackpacks.place": "Backpack Placed",
+  "sounds.beansbackpacks.equip": "Backpack Equipped",
+  "sounds.beansbackpacks.hit": "Hit Backpack",
+  "sounds.beansbackpacks.break": "Broke Backpack",
+  "sounds.beansbackpacks.insert": "Inserted into Backpack",
+  "sounds.beansbackpacks.take": "Took from Backpack",
+  "sounds.beansbackpacks.open": "Opened Backpack",
+  "sounds.beansbackpacks.close": "Closed Backpack"
 }

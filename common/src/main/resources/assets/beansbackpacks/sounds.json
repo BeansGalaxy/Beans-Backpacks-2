@@ -1,0 +1,134 @@
+{
+  "place_leather": {
+    "subtitles": "sounds.beansbackpacks.place",
+    "sounds": [
+      "beansbackpacks:leather/place"
+    ]
+  },
+  "equip_leather": {
+    "subtitles": "sounds.beansbackpacks.equip",
+    "sounds": [
+      "beansbackpacks:leather/equip"
+    ]
+  },
+  "hit_leather": {
+    "subtitles": "sounds.beansbackpacks.hit",
+    "sounds": [
+      "beansbackpacks:leather/hit"
+    ]
+  },
+  "break_leather": {
+    "subtitles": "sounds.beansbackpacks.break",
+    "sounds": [
+      "beansbackpacks:leather/break"
+    ]
+  },
+  "insert_leather": {
+    "subtitles": "sounds.beansbackpacks.insert",
+    "sounds": [
+      "beansbackpacks:leather/insert"
+    ]
+  },
+  "take_leather": {
+    "subtitles": "sounds.beansbackpacks.take",
+    "sounds": [
+      "beansbackpacks:leather/take"
+    ]
+  },
+  "open_leather": {
+    "subtitles": "sounds.beansbackpacks.open",
+    "sounds": [
+      "beansbackpacks:leather/open"
+    ]
+  },
+  "close_leather": {
+    "subtitles": "sounds.beansbackpacks.close",
+    "sounds": [
+      "beansbackpacks:leather/close"
+    ]
+  },
+  "place_metal": {
+    "subtitles": "sounds.beansbackpacks.place",
+    "sounds": [
+      "beansbackpacks:metal/place"
+    ]
+  },
+  "equip_metal": {
+    "subtitles": "sounds.beansbackpacks.equip",
+    "sounds": [
+      "beansbackpacks:metal/equip"
+    ]
+  },
+  "hit_metal": {
+    "subtitles": "sounds.beansbackpacks.hit",
+    "sounds": [
+      "beansbackpacks:metal/hit"
+    ]
+  },
+  "break_metal": {
+    "subtitles": "sounds.beansbackpacks.break",
+    "sounds": [
+      "beansbackpacks:metal/break"
+    ]
+  },
+  "insert_metal": {
+    "subtitles": "sounds.beansbackpacks.insert",
+    "sounds": [
+      "beansbackpacks:metal/insert"
+    ]
+  },
+  "take_metal": {
+    "subtitles": "sounds.beansbackpacks.take",
+    "sounds": [
+      "beansbackpacks:metal/take"
+    ]
+  },
+  "open_metal": {
+    "subtitles": "sounds.beansbackpacks.open",
+    "sounds": [
+      "beansbackpacks:metal/open"
+    ]
+  },
+  "close_metal": {
+    "subtitles": "sounds.beansbackpacks.close",
+    "sounds": [
+      "beansbackpacks:metal/close"
+    ]
+  },
+  "place_upgraded": {
+    "subtitles": "sounds.beansbackpacks.place",
+    "sounds": [
+      "beansbackpacks:upgraded/place"
+    ]
+  },
+  "equip_upgraded": {
+    "subtitles": "sounds.beansbackpacks.equip",
+    "sounds": [
+      "beansbackpacks:upgraded/equip"
+    ]
+  },
+  "hit_upgraded": {
+    "subtitles": "sounds.beansbackpacks.hit",
+    "sounds": [
+      "beansbackpacks:upgraded/hit"
+    ]
+  },
+  "break_upgraded": {
+    "subtitles": "sounds.beansbackpacks.break",
+    "sounds": [
+      "beansbackpacks:upgraded/break"
+    ]
+  },
+  "open_upgraded": {
+    "subtitles": "sounds.beansbackpacks.open",
+    "sounds": [
+      "beansbackpacks:upgraded/open"
+    ]
+  },
+  "close_upgraded": {
+    "subtitles": "sounds.beansbackpacks.close",
+    "sounds": [
+      "beansbackpacks:upgraded/close"
+    ]
+  }
+}

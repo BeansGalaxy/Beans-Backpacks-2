@@ -129,7 +129,7 @@ public class BackpackItem extends Item {
             BackpackEntity backpackEntity = new BackpackEntity(player, world, x, y, z, direction,
                         traits, stacks, rotFromBlock(blockPos, player) + 90);
 
-            PlaySound.PLACE.at(backpackEntity);
+            PlaySound.PLACE.at(backpackEntity, traits.kind());
             if (player instanceof ServerPlayer serverPlayer)
                   Services.REGISTRY.triggerPlace(serverPlayer, traits.key);
 

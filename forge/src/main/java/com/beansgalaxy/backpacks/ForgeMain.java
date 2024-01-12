@@ -42,6 +42,7 @@ public class ForgeMain {
         ENTITIES.register(bus);
         MENU_TYPES.register(bus);
         CREATIVE_TABS.register(bus);
+        Sounds.register(bus);
 
         Constants.LOG.info("Initializing Beans' Backpacks Forge");
         CommonClass.init();

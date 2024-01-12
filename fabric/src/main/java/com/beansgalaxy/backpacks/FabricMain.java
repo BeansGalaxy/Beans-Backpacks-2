@@ -47,6 +47,7 @@ public class FabricMain implements ModInitializer {
         ServerLivingEntityEvents.AFTER_DEATH.register(new LivingEntityDeath());
         EntityElytraEvents.CUSTOM.register(new ElytraFlightEvent());
         UseBlockCallback.EVENT.register(new PlayerInteractEvent());
+        Sounds.register();
         Constants.LOG.info("Initializing Beans' Backpacks Fabric");
         CommonClass.init();
 

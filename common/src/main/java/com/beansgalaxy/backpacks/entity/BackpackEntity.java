@@ -301,7 +301,7 @@ public class BackpackEntity extends Backpack {
                               return true;
                         }
                         else {
-                              PlaySound.HIT.at(this);
+                              PlaySound.HIT.at(this, getKind());
                               return hop(height);
                         }
                   }
@@ -312,7 +312,7 @@ public class BackpackEntity extends Backpack {
       }
 
       private void breakAndDropContents() {
-            PlaySound.BREAK.at(this);
+            PlaySound.BREAK.at(this, getKind());
             boolean dropItems = level().getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS);
             if (dropItems) {
                   while (!this.getItemStacks().isEmpty()) {
@@ -350,7 +350,7 @@ public class BackpackEntity extends Backpack {
 
             if (!actionKeyPressed) {
                   if (viewable.viewers < 1)
-                        PlaySound.OPEN.at(this);
+                        PlaySound.OPEN.at(this, getKind());
                   Services.NETWORK.openBackpackMenu(player, this);
                   return InteractionResult.SUCCESS;
             }
@@ -365,10 +365,10 @@ public class BackpackEntity extends Backpack {
                   if (backpackEntity.getItemStacks().isEmpty()) {
                         if (!player.level().isClientSide())
                               backpackEntity.spawnAtLocation(toStack(backpackEntity));
-                        PlaySound.BREAK.at(backpackEntity);
+                        PlaySound.BREAK.at(backpackEntity, backpackEntity.getKind());
                   }
                   else {
-                        PlaySound.HIT.at(backpackEntity);
+                        PlaySound.HIT.at(backpackEntity, backpackEntity.getKind());
                         return backpackEntity.hop(.1);
                   }
             }
@@ -382,7 +382,7 @@ public class BackpackEntity extends Backpack {
                   playerInventoryStacks.clear();
                   playerInventoryStacks.addAll(backpackEntityStacks);
                   backSlot.set(toStack(backpackEntity));
-                  PlaySound.EQUIP.at(player);
+                  PlaySound.EQUIP.at(player, backpackEntity.getKind());
             }
             if (!backpackEntity.isRemoved() && !player.level().isClientSide()) {
                   backpackEntity.kill();

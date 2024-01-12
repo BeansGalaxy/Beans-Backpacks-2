@@ -1,9 +1,13 @@
 package com.beansgalaxy.backpacks.platform;
 
 import com.beansgalaxy.backpacks.FabricMain;
+import com.beansgalaxy.backpacks.Sounds;
+import com.beansgalaxy.backpacks.core.Kind;
+import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.platform.services.RegistryHelper;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.MenuType;
@@ -49,5 +53,97 @@ public class FabricRegistryHelper implements RegistryHelper {
       @Override
       public void triggerSpecial(ServerPlayer player, SpecialCriterion.Special special) {
             FabricMain.SPECIAL.trigger(player, special);
+      }
+
+      @Override
+      public SoundEvent getSound(Kind kind, PlaySound type) {
+            SoundEvent sound = type.getDefaultSoundEvent();
+            switch (kind) {
+                  case LEATHER -> {
+                        switch (type) {
+                              case PLACE -> {
+                                    return Sounds.PLACE_LEATHER;
+                              }
+                              case EQUIP -> {
+                                    return Sounds.EQUIP_LEATHER;
+                              }
+                              case HIT -> {
+                                    return Sounds.HIT_LEATHER;
+                              }
+                              case BREAK -> {
+                                    return Sounds.BREAK_LEATHER;
+                              }
+                              case INSERT -> {
+                                    return Sounds.INSERT_LEATHER;
+                              }
+                              case TAKE -> {
+                                    return Sounds.TAKE_LEATHER;
+                              }
+                              case OPEN -> {
+                                    return Sounds.OPEN_LEATHER;
+                              }
+                              case CLOSE -> {
+                                    return Sounds.CLOSE_LEATHER;
+                              }
+                        }
+                  }
+                  case METAL -> {
+                        switch (type) {
+                              case PLACE -> {
+                                    return Sounds.PLACE_METAL;
+                              }
+                              case EQUIP -> {
+                                    return Sounds.EQUIP_METAL;
+                              }
+                              case HIT -> {
+                                    return Sounds.HIT_METAL;
+                              }
+                              case BREAK -> {
+                                    return Sounds.BREAK_METAL;
+                              }
+                              case INSERT -> {
+                                    return Sounds.INSERT_METAL;
+                              }
+                              case TAKE -> {
+                                    return Sounds.TAKE_METAL;
+                              }
+                              case OPEN -> {
+                                    return Sounds.OPEN_METAL;
+                              }
+                              case CLOSE -> {
+                                    return Sounds.CLOSE_METAL;
+                              }
+                        }
+                  }
+                  case UPGRADED -> {
+                        switch (type) {
+                              case PLACE -> {
+                                    return Sounds.PLACE_UPGRADED;
+                              }
+                              case EQUIP -> {
+                                    return Sounds.EQUIP_UPGRADED;
+                              }
+                              case HIT -> {
+                                    return Sounds.HIT_UPGRADED;
+                              }
+                              case BREAK -> {
+                                    return Sounds.BREAK_UPGRADED;
+                              }
+                              case INSERT -> {
+                                    return Sounds.INSERT_METAL;
+                              }
+                              case TAKE -> {
+                                    return Sounds.TAKE_METAL;
+                              }
+                              case OPEN -> {
+                                    return Sounds.OPEN_UPGRADED;
+                              }
+                              case CLOSE -> {
+                                    return Sounds.CLOSE_UPGRADED;
+                              }
+                        }
+                  }
+            }
+            return sound;
       }
 }
