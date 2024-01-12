@@ -96,7 +96,7 @@ public interface BackpackInventory extends Container {
       NonNullList<ItemStack> getItemStacks();
 
       default void playSound(PlaySound sound) {
-            sound.at(getOwner());
+            sound.at(getOwner(), getLocalData().kind());
       }
 
       @Override
@@ -311,7 +311,7 @@ public interface BackpackInventory extends Container {
             if (player instanceof ServerPlayer serverPlayer)
                   removeViewer(serverPlayer);
             if (getViewable().viewers < 1)
-                  PlaySound.CLOSE.at(getOwner());
+                  playSound(PlaySound.CLOSE);
       }
 
       static BackpackInventory get(Entity entity) {

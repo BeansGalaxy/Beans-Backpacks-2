@@ -119,7 +119,7 @@ public class BackSlot extends Slot {
                   // ENABLE THIS LINE OF CODE BELOW TO SHOW WHEN THE BACKPACK IS INTERACTED WITH
                   //owner.level().addParticle(ParticleTypes.FIREWORK, newX, viewer.getEyeY() + 0.1, newZ, 0, 0, 0);
 
-                  PlaySound.OPEN.at(owner);
+                  PlaySound.OPEN.at(owner, Kind.fromStack(backpackStack));
                   return InteractionResult.sidedSuccess(!viewer.level().isClientSide);
             }
 
@@ -293,7 +293,7 @@ public class BackSlot extends Slot {
                                     itemRemoved = true;
                               }
                               if (itemRemoved)
-                                    PlaySound.TAKE.at(player);
+                                    PlaySound.TAKE.at(player, Kind.fromStack(backStack));
                               return false;
                         }
                         if (slotIndex < SLOT_INDEX) {
@@ -366,8 +366,6 @@ public class BackSlot extends Slot {
 
             new BackpackEntity(owner, owner.level(), x, y, z, Direction.UP,
                         traits, itemStacks, yRot);
-
-            PlaySound.DROP.at(owner);
       }
 
       private static void moveAll(BackpackInventory backpackInventory, InventoryMenu inventoryMenu) {
