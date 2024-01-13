@@ -23,6 +23,16 @@ public class Traits {
             }
             return traits;
       }
+
+      public static String keyFromIngredients(Item material, Item binder) {
+            for (String key: Constants.TRAITS_MAP.keySet()) {
+                  Traits traits = get(key);
+                  if (traits.material == material && traits.binder == binder)
+                        return key;
+            }
+            return null;
+      }
+
       public static void clear() {
             Constants.TRAITS_MAP.clear();
       }

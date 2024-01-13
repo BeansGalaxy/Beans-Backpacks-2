@@ -1,5 +1,5 @@
 {
-  "type": "beansbackpacks:smithing",
+  "type": "beansbackpacks:backpack_smithing",
   "template": "minecraft:netherite_upgrade_smithing_template",
   "base": "beansbackpacks:metal_backpack",
   "material": "minecraft:netherite_ingot",

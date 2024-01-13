@@ -56,6 +56,7 @@ public class ForgeMain {
                 () -> IForgeMenuType.create(BackpackMenu::new));
 
 
+
     // REGISTER ENTITIES
     public static final DeferredRegister<EntityType<?>> ENTITIES =
                 DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, Constants.MOD_ID);
@@ -68,10 +69,10 @@ public class ForgeMain {
                 DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Constants.MOD_ID);
 
     public static final RegistryObject<RecipeSerializer<RecipeCrafting>> BACKPACK_RECIPE =
-                RECIPES.register(RecipeCrafting.Serializer.ID, () -> RecipeCrafting.Serializer.INSTANCE);
+                RECIPES.register(RecipeCrafting.ID, () -> RecipeCrafting.INSTANCE);
 
     public static final RegistryObject<RecipeSerializer<RecipeSmithing>> BACKPACK_SMITHING_RECIPE =
-                RECIPES.register(RecipeSmithing.Serializer.ID, () -> RecipeSmithing.Serializer.INSTANCE);
+                RECIPES.register(RecipeSmithing.ID, () -> RecipeSmithing.INSTANCE);
 
     // REGISTER ITEMS
     public static final DeferredRegister<Item> ITEMS =

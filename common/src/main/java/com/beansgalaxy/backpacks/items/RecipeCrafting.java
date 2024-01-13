@@ -1,125 +1,126 @@
 package com.beansgalaxy.backpacks.items;
 
-import com.beansgalaxy.backpacks.core.Kind;
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.PrimitiveCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
-public class RecipeCrafting extends CustomRecipe {
-      final Item material;
-      final Item binder;
-      final String name;
-      final String kind;
-      final String key;
-      final int maxStacks;
-
-      public RecipeCrafting(Item material, Item binder, String name, String kind, String key, int maxStacks) {
-            super(CraftingBookCategory.EQUIPMENT);
-            this.key = key;
-            this.material = material;
-            this.binder = binder;
-            this.name = name;
-            this.kind = kind;
-            this.maxStacks = maxStacks;
-      }
+public class RecipeCrafting extends ShapedRecipe {
+      public static final String ID = "backpack_crafting";
+      public static final ResourceLocation LOCATION = new ResourceLocation(Constants.MOD_ID, ID);
+      public static final RecipeSerializer<RecipeCrafting> INSTANCE = new Serializer();
+      private final String key;
 
       public RecipeCrafting(String key) {
-            super(CraftingBookCategory.EQUIPMENT);
-            Traits traits = Traits.get(key);
+            super("backpack_" + key, CraftingBookCategory.EQUIPMENT, 3, 3, getIngredients(key), getResultItem(key));
             this.key = key;
-            this.material = traits.material;
-            this.binder = traits.binder;
-            this.name = traits.name;
-            this.kind = traits.kind.name();
-            this.maxStacks = traits.maxStacks;
-      }
-
-      public Item getMaterial() {
-            return material;
-      }
-
-      public Item getBinder() {
-            return binder;
-      }
-
-      public String getName() {
-            return name;
       }
 
       @Override
-      public boolean matches(CraftingContainer container, Level var2) {
-            return container.getItem(1).is(getBinder()) &&
-                  container.getItem(7).is(getBinder()) &&
-                  container.getItem(0).is(getMaterial()) &&
-                  container.getItem(2).is(getMaterial()) &&
-                  container.getItem(3).is(getMaterial()) &&
-                  container.getItem(5).is(getMaterial()) &&
-                  container.getItem(6).is(getMaterial()) &&
-                  container.getItem(8).is(getMaterial());
+      public boolean matches(CraftingContainer container, Level level) {
+            if (container.getWidth() != 3 || container.getHeight() != 3)
+                  return false;
+
+            Item material = container.getItem(0).getItem();
+            Item binder = container.getItem(1).getItem();
+
+            if (container.getItem(0).isEmpty() || container.getItem(1).isEmpty())
+                  return false;
+
+            if (binder != container.getItem(7).getItem())
+                  return false;
+
+            int[] materialSlots = {2, 3, 5, 6, 8};
+            for (int i: materialSlots)
+            {
+                  Item item = container.getItem(i).getItem();
+                  if (item != material)
+                        return false;
+            }
+
+//          RETURNS TRUE ONLY IF...
+//           - CRAFTING GRID IS 3x3
+//           - MATERIALS AND BINDERS ARE IN THEIR CORRECT SLOTS
+//           - THERE IS A REGISTERED BACKPACK WITH THOSE MATERIALS AND BINDERS
+
+            String key = Traits.keyFromIngredients(material, binder);
+            return key != null && !key.isEmpty();
       }
 
       @Override
-      public ItemStack assemble(CraftingContainer var1, RegistryAccess var2) {
-            Kind kind = Kind.fromName(this.kind);
-            Item item = kind.getItem();
-            ItemStack stack = item.getDefaultInstance();
+      public @NotNull ItemStack assemble(CraftingContainer container, RegistryAccess leve) {
+            String key = Traits.keyFromIngredients(container.getItem(0).getItem(), container.getItem(1).getItem());
+            if (key == null || key.isEmpty())
+                  return ItemStack.EMPTY;
 
-            CompoundTag display = new CompoundTag();
-            display.putString("key", key);
-            stack.getOrCreateTag().put("display", display);
-            return stack;
+            return BackpackItem.stackFromKey(key);
       }
 
       @Override
-      public boolean canCraftInDimensions(int var1, int var2) {
+      public boolean isIncomplete() {
             return false;
       }
 
       @Override
-      public ItemStack getResultItem(RegistryAccess var1) {
+      public boolean canCraftInDimensions(int $$0, int $$1) {
+            return true;
+      }
+
+      @Override
+      public ItemStack getResultItem(RegistryAccess $$0) {
+            return getResultItem(this.key);
+      }
+
+      public static ItemStack getResultItem(String key) {
+            if (key == null || key.isEmpty())
+                  return ItemStack.EMPTY;
             return BackpackItem.stackFromKey(key);
       }
 
       @Override
       public NonNullList<Ingredient> getIngredients() {
-            Ingredient mat = Ingredient.of(material);
-            Ingredient bin = Ingredient.of(binder);
+            return getIngredients(this.key);
+      }
+
+      public static NonNullList<Ingredient> getIngredients(String key) {
+            if (key == null || key.isEmpty())
+                  return NonNullList.create();
+
+            Traits traits = Traits.get(key);
+            Ingredient mat = Ingredient.of(traits.material);
+            Ingredient bin = Ingredient.of(traits.binder);
             Ingredient emp = Ingredient.EMPTY;
 
-            return NonNullList.of(
-                  mat, bin, mat,
-                  mat, emp, mat,
-                  mat, bin, mat
-            );
+            return NonNullList.of(Ingredient.EMPTY,
+                        mat, bin, mat,
+                        mat, emp, mat,
+                        mat, bin, mat);
       }
 
       @Override
-      public RecipeSerializer<?> getSerializer() {
-            return Serializer.INSTANCE;
+      public @NotNull RecipeSerializer<RecipeCrafting> getSerializer() {
+            return INSTANCE;
       }
 
       public static class Serializer implements RecipeSerializer<RecipeCrafting> {
-            public static final Serializer INSTANCE = new Serializer();
-            public static final String ID = "crafting";
-
             public static final Codec<RecipeCrafting> CODEC = RecordCodecBuilder.create(
                         in -> in.group(
-                                                PrimitiveCodec.STRING.fieldOf("key").forGetter(RecipeCrafting::getKey)
-                                    )
-                                    .apply(in, RecipeCrafting::new)
+                                    PrimitiveCodec.STRING.fieldOf("key").forGetter(RecipeCrafting::getKey)
+                                          ).apply(in, RecipeCrafting::new)
             );
 
             @Override
@@ -128,37 +129,18 @@ public class RecipeCrafting extends CustomRecipe {
             }
 
             @Override
-            public RecipeCrafting fromNetwork(FriendlyByteBuf buf) {
-                  Item material = buf.readItem().getItem();
-                  Item binder = buf.readItem().getItem();
-                  String name = buf.readUtf();
-                  String kind = buf.readUtf();
-                  String key = buf.readUtf();
-                  int maxStacks = buf.readInt();
-
-                  return new RecipeCrafting(material, binder, name, kind, key, maxStacks);
+            public void toNetwork(FriendlyByteBuf buf, RecipeCrafting recipe) {
+                  buf.writeUtf(recipe.key);
             }
 
             @Override
-            public void toNetwork(FriendlyByteBuf buf, RecipeCrafting var2) {
-                  buf.writeItem(var2.getMaterial().getDefaultInstance());
-                  buf.writeItem(var2.getBinder().getDefaultInstance());
-                  buf.writeUtf(var2.getName());
-                  buf.writeUtf(var2.getKind());
-                  buf.writeUtf(var2.getKey());
-                  buf.writeInt(var2.getMaxStacks());
+            public RecipeCrafting fromNetwork(FriendlyByteBuf buf) {
+                  String key = buf.readUtf();
+                  return new RecipeCrafting(key);
             }
-      }
-
-      private String getKind() {
-            return kind;
       }
 
       public String getKey() {
             return key;
-      }
-
-      private int getMaxStacks() {
-            return maxStacks;
       }
 }

@@ -31,7 +31,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ArmorMaterials;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 import java.awt.*;
 import java.util.Map;
@@ -166,13 +165,13 @@ public interface RendererHelper {
         return 40 < Math.round(hue) && 60 > Math.round(hue);
     }
 
-    static void renderBackpackForSmithing(GuiGraphics graphics, float x, float y, int $$3, Vector3f $$4, Quaternionf quad, Quaternionf $$6, boolean switchRender, Entity renderedEntity) {
+    static void renderBackpackForSmithing(GuiGraphics graphics, float x, float y, int scale, Quaternionf $$5, boolean switchRender, Entity renderedEntity) {
           graphics.pose().pushPose();
 
           Quaternionf rotation;
           if (switchRender)
           {
-                $$3 = 50;
+                scale = 50;
                 graphics.pose().translate(x, y - 8, 50.0);
                 rotation = new Quaternionf().rotationXYZ(0.43633232F, 3.5f, (float) Math.PI);
           } else {
@@ -180,14 +179,14 @@ public interface RendererHelper {
                 rotation = new Quaternionf().rotationXYZ(0.43633232F, 0.0F, (float) Math.PI);
           }
 
-          graphics.pose().mulPoseMatrix(new Matrix4f().scaling((float) $$3, (float) $$3, (float)(-$$3)));
-          graphics.pose().translate($$4.x, $$4.y, $$4.z);
+          graphics.pose().mulPoseMatrix(new Matrix4f().scaling((float) scale, (float) scale, (float)(-scale)));
+//          graphics.pose().translate(location.x, location.y, location.z);
           Lighting.setupForEntityInInventory();
           graphics.pose().mulPose(rotation);
           EntityRenderDispatcher $$8 = Minecraft.getInstance().getEntityRenderDispatcher();
-          if ($$6 != null) {
-                $$6.conjugate();
-                $$8.overrideCameraOrientation($$6);
+          if ($$5 != null) {
+                $$5.conjugate();
+                $$8.overrideCameraOrientation($$5);
           }
 
           $$8.setRenderShadow(false);

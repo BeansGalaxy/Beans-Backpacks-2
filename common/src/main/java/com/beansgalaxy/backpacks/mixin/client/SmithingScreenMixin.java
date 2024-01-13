@@ -3,7 +3,6 @@ package com.beansgalaxy.backpacks.mixin.client;
 import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.LocalData;
-import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import net.minecraft.client.gui.GuiGraphics;
@@ -52,13 +51,20 @@ public abstract class SmithingScreenMixin extends ItemCombinerScreen<SmithingMen
       }
 
       @Redirect(method = "renderBg", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;renderEntityInInventory(Lnet/minecraft/client/gui/GuiGraphics;FFILorg/joml/Vector3f;Lorg/joml/Quaternionf;Lorg/joml/Quaternionf;Lnet/minecraft/world/entity/LivingEntity;)V"))
-      protected void renderEntityRedirect(GuiGraphics graphics, float x, float y, int $$3, Vector3f $$4, Quaternionf $$5, Quaternionf $$6, LivingEntity $$7) {
-            boolean switchRender = smithingMenu != null &&
-                        Kind.isBackpack(smithingMenu.getSlot(3).getItem()) &&
-                        Traits.get(backpackPreview.getLocalData().key).maxStacks != 0;
+      protected void renderEntityRedirect(GuiGraphics graphics, float x, float y, int scale, Vector3f vec, Quaternionf $$4, Quaternionf $$5, LivingEntity livingEntity) {
+            boolean switchRender = false;
 
-            Entity renderedEntity = switchRender ? backpackPreview : $$7;
-            RendererHelper.renderBackpackForSmithing(graphics, x, y, $$3, $$4, $$5, $$6, switchRender, renderedEntity);
+
+            if (smithingMenu != null) {
+                  boolean backpack = Kind.isBackpack(smithingMenu.getSlot(3).getItem());
+                  if (backpack) {
+                        boolean stack = backpackPreview.getLocalData().maxStacks() != 0;
+                        switchRender = stack;
+                  }
+            }
+
+            Entity renderedEntity = switchRender ? backpackPreview : livingEntity;
+            RendererHelper.renderBackpackForSmithing(graphics, x, y, scale, $$5, switchRender, renderedEntity);
       }
 
 }

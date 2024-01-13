@@ -51,7 +51,7 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>>
         if (entity instanceof AbstractClientPlayer player) {
             BackSlot backSlot = BackSlot.get(player);
             ItemStack backpackStack = backSlot.getItem();
-            LocalData localData = backSlot.backpackInventory.getLocalData();
+            LocalData traits = backSlot.backpackInventory.getLocalData();
 
             if (!Kind.isBackpack(backpackStack))
                 return;
@@ -64,8 +64,8 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>>
             sneakInter = sneakInter(player, pose, sneakInter);
 
             this.model.setupAnim(entity, limbAngle, limbDistance, tickDelta, animationProgress, yHeadRot);
-            Color tint = new Color(localData.color);
-            ResourceLocation texture = new ResourceLocation(Constants.MOD_ID, "textures/entity/" + localData.key + ".png");
+            Color tint = new Color(traits.color);
+            ResourceLocation texture = new ResourceLocation(Constants.MOD_ID, "textures/entity/" + traits.key + ".png");
             VertexConsumer vc = mbs.getBuffer(this.model.renderType(texture));
             backpackModel.mask.xScale = 0.999f;
             backpackModel.mask.zScale = 0.93f;
@@ -73,7 +73,7 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>>
             this.model.renderToBuffer(pose, vc, light, OverlayTexture.NO_OVERLAY, tint.getRed() / 255F, tint.getGreen() / 255F, tint.getBlue() / 255F, 1F);
 
             RegistryAccess registryAccess = entity.getCommandSenderWorld().registryAccess();
-            RendererHelper.renderOverlays(pose, light, mbs, tint, registryAccess, localData, (BackpackModel) this.model, this.trimAtlas);
+            RendererHelper.renderOverlays(pose, light, mbs, tint, registryAccess, traits, (BackpackModel) this.model, this.trimAtlas);
             pose.popPose();
         }
     }

@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 
 public class LocalData {
       public static final LocalData POT = new LocalData(true);
+      public static final LocalData EMPTY = new LocalData("");
 
       public String key;
       public int color;
@@ -19,6 +20,8 @@ public class LocalData {
       LocalData(boolean isPot) {
             this.isPot = isPot;
       }
+      LocalData(String key) {
+            this.key = key;}
 
       public Traits traits() {
             return Traits.get(key);

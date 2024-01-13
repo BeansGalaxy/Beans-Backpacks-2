@@ -15,7 +15,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -32,6 +32,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 
 public class FabricMain implements ModInitializer {
     public static EquipAnyCriterion EQUIP_ANY = CriteriaTriggers.register(Constants.MOD_ID + "/equip_any", new EquipAnyCriterion());
@@ -42,7 +43,7 @@ public class FabricMain implements ModInitializer {
     public void onInitialize() {
         NetworkPackages.registerC2SPackets();
 
-        ServerEntityEvents.ENTITY_LOAD.register(new PlayerJoin());
+        ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register(new SyncDataEvent());
         ServerPlayerEvents.COPY_FROM.register(new CopyPlayerEvent());
         ServerLivingEntityEvents.AFTER_DEATH.register(new LivingEntityDeath());
         EntityElytraEvents.CUSTOM.register(new ElytraFlightEvent());
@@ -50,7 +51,6 @@ public class FabricMain implements ModInitializer {
         Sounds.register();
         Constants.LOG.info("Initializing Beans' Backpacks Fabric");
         CommonClass.init();
-
     }
 
     public static final Item LEATHER_BACKPACK = registerItem("backpack", new DyableBackpack());
@@ -63,15 +63,11 @@ public class FabricMain implements ModInitializer {
         return Registry.register(BuiltInRegistries.ITEM, resourceLocation, item);
     }
 
-    public static final RecipeCrafting.Serializer RECIPE_CRAFTING =
-                Registry.register(BuiltInRegistries.RECIPE_SERIALIZER,
-                new ResourceLocation(Constants.MOD_ID, RecipeCrafting.Serializer.ID),
-                            RecipeCrafting.Serializer.INSTANCE);
+    public static final RecipeSerializer<RecipeCrafting> RECIPE_CRAFTING = Registry.register(
+                            BuiltInRegistries.RECIPE_SERIALIZER, RecipeCrafting.LOCATION, RecipeCrafting.INSTANCE);
 
-    public static final RecipeSmithing.Serializer RECIPE_SMITHING =
-                Registry.register(BuiltInRegistries.RECIPE_SERIALIZER,
-                new ResourceLocation(Constants.MOD_ID, RecipeSmithing.Serializer.ID),
-                            RecipeSmithing.Serializer.INSTANCE);
+    public static final RecipeSerializer<RecipeSmithing> RECIPE_SMITHING = Registry.register(
+                            BuiltInRegistries.RECIPE_SERIALIZER, RecipeSmithing.LOCATION, RecipeSmithing.INSTANCE);
 
     // REGISTER CREATIVE TAB
     public static final CreativeModeTab BACKPACK_TAB = FabricItemGroup.builder()

@@ -353,8 +353,9 @@ public class BackSlot extends Slot {
                   }
                   return;
             }
+
             LocalData traits = BackpackItem.getItemTraits(backpackStack);
-            if (traits == null || traits.key.isEmpty())
+            if (traits == null)
                   return;
 
             BlockPos blockPos = owner.getOnPos();

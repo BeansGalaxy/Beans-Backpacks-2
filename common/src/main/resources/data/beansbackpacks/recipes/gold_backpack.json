@@ -1,5 +1,5 @@
 {
-  "type": "beansbackpacks:crafting",
+  "type": "beansbackpacks:backpack_crafting",
   "material":  "minecraft:gold_ingot",
   "binder": "minecraft:phantom_membrane",
   "name": "Gold Backpack",

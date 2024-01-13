@@ -8,7 +8,6 @@ import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.events.LoadEntityEvent;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
-import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
@@ -32,6 +31,6 @@ public class FabricClient implements ClientModInitializer {
             KeyBindingHelper.registerKeyBinding(KeyPress.INSTANCE.ACTION_KEY);
             ClientEntityEvents.ENTITY_LOAD.register(new LoadEntityEvent());
             ColorProviderRegistry.ITEM.register((stack, layer) ->
-                        (layer != 1 ? ((DyableBackpack) stack.getItem()).getColor(stack) : 16777215), Services.REGISTRY.getLeather());
+                        (layer != 1 ? ((DyableBackpack) stack.getItem()).getColor(stack) : 16777215), FabricMain.LEATHER_BACKPACK);
       }
 }
