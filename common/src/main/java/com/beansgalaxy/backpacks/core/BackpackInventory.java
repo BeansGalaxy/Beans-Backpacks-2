@@ -30,6 +30,7 @@ public interface BackpackInventory extends Container {
 
       Entity getOwner();
 
+
       LocalData getLocalData();
 
       class Viewable {
@@ -182,7 +183,7 @@ public interface BackpackInventory extends Container {
       }
 
       default ItemStack insertItemSilent(ItemStack stack, int amount) {
-            if (!stack.isEmpty() && canPlaceItem(stack)) {
+            if (!stack.isEmpty() && canPlaceItem(stack) && getLocalData() != null) {
                   boolean isServerSide = !getOwner().level().isClientSide();
                   int space = spaceLeft();
                   int weight = weightByItem(stack);

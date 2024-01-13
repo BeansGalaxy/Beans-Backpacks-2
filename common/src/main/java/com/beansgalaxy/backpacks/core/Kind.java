@@ -42,8 +42,8 @@ public enum Kind {
             CompoundTag tag = stack.getTag();
             if (tag == null || !isBackpack(stack)) return false;
 
-            String key = tag.getCompound("display").getString("key");
-            return Traits.get(key).maxStacks > 0;
+            int maxStacks = BackpackItem.getItemTraits(stack).maxStacks();
+            return maxStacks > 0;
       }
 
       public boolean isTrimmable() {

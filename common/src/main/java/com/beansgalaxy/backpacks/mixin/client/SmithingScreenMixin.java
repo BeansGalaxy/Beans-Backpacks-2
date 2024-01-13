@@ -3,7 +3,6 @@ package com.beansgalaxy.backpacks.mixin.client;
 import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.LocalData;
-import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import net.minecraft.client.gui.GuiGraphics;
@@ -58,7 +57,7 @@ public abstract class SmithingScreenMixin extends ItemCombinerScreen<SmithingMen
             if (smithingMenu != null) {
                   boolean backpack = Kind.isBackpack(smithingMenu.getSlot(3).getItem());
                   if (backpack) {
-                        boolean stack = Traits.get(backpackPreview.getLocalData().key).maxStacks != 0;
+                        boolean stack = backpackPreview.getLocalData().maxStacks() != 0;
                         switchRender = stack;
                   }
             }

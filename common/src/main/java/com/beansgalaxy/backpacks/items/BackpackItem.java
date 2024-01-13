@@ -181,7 +181,7 @@ public class BackpackItem extends Item {
                   return LocalData.POT;
 
             if (!Kind.isBackpack(stack))
-                  return null;
+                  return LocalData.EMPTY;
 
             CompoundTag display = stack.getOrCreateTagElement("display");
 

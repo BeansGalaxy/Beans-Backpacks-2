@@ -15,6 +15,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -89,17 +90,29 @@ public class CommonForgeEvents {
 
                   ItemStack stack = BackSlot.get(player).getItem();
                   NetworkPackages.S2C(new SyncBackSlot2C(player.getUUID(), stack), player);
-
-
-                  Map<String, CompoundTag> map = new HashMap<>();
-
-                  for (String key: Constants.TRAITS_MAP.keySet()) {
-                        Traits traits = Traits.get(key);
-                        map.put(key, traits.toTag());
-                  }
-
-                  NetworkPackages.S2C(new ConfigureKeys2C(map), player);
             }
+      }
+
+      @SubscribeEvent
+      public static void syncDataPackEvent(OnDatapackSyncEvent event)
+      {
+            ServerPlayer player = event.getPlayer();
+            Map<String, CompoundTag> map = new HashMap<>();
+
+            for (String key : Constants.TRAITS_MAP.keySet()) {
+                  Traits traits = Traits.get(key);
+                  map.put(key, traits.toTag());
+            }
+
+            // Null Player means data pack is being sent to all players
+            if (player == null)
+                  for (ServerPlayer players : event.getPlayerList().getPlayers())
+                        NetworkPackages.S2C(new ConfigureKeys2C(map), players);
+            else
+                  NetworkPackages.S2C(new ConfigureKeys2C(map), player);
+
+            String syncedPlayers = player == null ? "all players" : "\"" + player.getDisplayName().getString() + "\"";
+            Constants.LOG.info("Syncing {} data to {}", Constants.MOD_ID, syncedPlayers);
       }
 
       @SubscribeEvent
