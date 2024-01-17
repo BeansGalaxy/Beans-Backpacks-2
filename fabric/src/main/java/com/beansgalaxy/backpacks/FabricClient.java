@@ -4,10 +4,13 @@ import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.client.renderer.BackpackModel;
 import com.beansgalaxy.backpacks.client.renderer.BackpackRenderer;
 import com.beansgalaxy.backpacks.client.renderer.PotModel;
+import com.beansgalaxy.backpacks.compat.TrinketsRegistry;
 import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.events.LoadEntityEvent;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
+import com.beansgalaxy.backpacks.platform.Services;
+import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
@@ -32,5 +35,8 @@ public class FabricClient implements ClientModInitializer {
             ClientEntityEvents.ENTITY_LOAD.register(new LoadEntityEvent());
             ColorProviderRegistry.ITEM.register((stack, layer) ->
                         (layer != 1 ? ((DyableBackpack) stack.getItem()).getColor(stack) : 16777215), FabricMain.LEATHER_BACKPACK);
+
+            if (Services.COMPAT.isModLoaded(CompatHelper.TRINKETS))
+                  TrinketsRegistry.register();
       }
 }

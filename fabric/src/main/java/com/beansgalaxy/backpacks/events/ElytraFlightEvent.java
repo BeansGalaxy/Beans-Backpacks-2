@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.screen.BackSlot;
+import com.beansgalaxy.backpacks.core.BackData;
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,7 +17,7 @@ public class ElytraFlightEvent implements EntityElytraEvents.Custom {
 
             if (Constants.CHESTPLATE_DISABLED.contains(Items.ELYTRA) && entity instanceof Player player)
             {
-                  ItemStack backStack = BackSlot.get(player).getItem();
+                  ItemStack backStack = BackData.get(player).getItem();
                   if (!backStack.is(Items.ELYTRA) || !ElytraItem.isFlyEnabled(backStack))
                         return false;
 

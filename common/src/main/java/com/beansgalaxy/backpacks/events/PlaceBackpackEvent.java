@@ -1,8 +1,8 @@
 package com.beansgalaxy.backpacks.events;
 
+import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.items.BackpackItem;
-import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -19,11 +19,10 @@ public class PlaceBackpackEvent {
         if (player.isSpectator())
             return InteractionResult.PASS;
 
-        if (BackSlot.get(player).actionKeyPressed && Kind.isBackpack(BackSlot.get(player).getItem())) {
+        if (BackData.get(player).actionKeyPressed && Kind.isBackpack(BackData.get(player).getItem())) {
             if (!player.isSprinting() && !player.isSwimming()) {
                 return BackpackItem.hotkeyOnBlock(player, direction, clickedPos);
-            }
-            else if (player.level() instanceof ServerLevel serverLevel && player instanceof ServerPlayer serverPlayer) {
+            } else if (player.level() instanceof ServerLevel serverLevel && player instanceof ServerPlayer serverPlayer) {
                 if (coyoteList.stream().noneMatch(clicks -> clicks.player.equals(player)))
                     coyoteList.add(new CoyoteClick(player, direction, clickedPos, hand));
             }

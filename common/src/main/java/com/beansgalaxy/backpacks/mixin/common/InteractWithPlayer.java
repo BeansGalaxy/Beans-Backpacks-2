@@ -1,6 +1,6 @@
 package com.beansgalaxy.backpacks.mixin.common;
 
-import com.beansgalaxy.backpacks.screen.BackSlot;
+import com.beansgalaxy.backpacks.core.BackSlot;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;

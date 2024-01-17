@@ -1,12 +1,12 @@
 package com.beansgalaxy.backpacks.items;
 
+import com.beansgalaxy.backpacks.core.BackData;
+import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
-import com.beansgalaxy.backpacks.core.LocalData;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
-import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -15,11 +15,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.SlotAccess;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ClickAction;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -52,12 +55,49 @@ public class BackpackItem extends Item {
             return InteractionResult.PASS;
       }
 
+      @Override
+      public boolean overrideOtherStackedOnMe(ItemStack backStack, ItemStack thatStack, Slot slot, ClickAction clickAction, Player player, SlotAccess access) {
+            BackData backData = BackData.get(player);
+            BackpackInventory backpackInventory = backData.backpackInventory;
+
+            if (backStack != backData.getItem())
+                  return false;
+
+            if (backpackInventory.isEmpty() && thatStack.isEmpty())
+                  return false;
+
+            ItemStack backpackStack = backpackInventory.getItem(0);
+            if (clickAction == ClickAction.SECONDARY) {
+                  if (thatStack.isEmpty()) {
+                        int count = Math.max(1, backpackStack.getCount() / 2);
+                        access.set(backpackInventory.removeItem(0, count));
+                  } else {
+                        backpackInventory.insertItem(thatStack, 1);
+                  }
+                  return true;
+            }
+
+            Inventory playerInventory = player.getInventory();
+            if (backData.actionKeyPressed && thatStack.isEmpty() && playerInventory.getFreeSlot() != -1) {
+                  if (Kind.POT.is(backStack))
+                        playerInventory.add(-2, backpackInventory.removeItemNoUpdate(0));
+                  else {
+                        playerInventory.add(-2, backpackStack);
+                        if (backpackStack.isEmpty())
+                              backpackInventory.removeItemNoUpdate(0);
+                  }
+                  return true;
+            }
+
+            return access.set(backpackInventory.returnItem(0, thatStack));
+      }
+
       public static InteractionResult hotkeyOnBlock(Player player, Direction direction, BlockPos clickedPos) {
-            BackSlot backSlot = BackSlot.get(player);
-            ItemStack backpackStack = backSlot.getItem();
+            BackData backData = BackData.get(player);
+            ItemStack backpackStack = backData.getItem();
 
             if (useOnBlock(player, direction, clickedPos, backpackStack, true)) {
-                  backSlot.setChanged();
+                  backData.setChanged();
                   return InteractionResult.SUCCESS;
             }
 
@@ -107,7 +147,7 @@ public class BackpackItem extends Item {
             AABB box = backpackEntity.getBoundingBox().move(0, 10d / 16 * invert, 0);
             boolean spaceEmpty = player.level().noCollision(box);
             if (spaceEmpty && doesPlace(player, x, y, z, direction, backpackStack, fromBackSlot)) {
-                  BackSlot.get(player).setChanged();
+                  BackData.get(player).setChanged();
                   return InteractionResult.SUCCESS;
             }
 
@@ -115,16 +155,15 @@ public class BackpackItem extends Item {
       }
 
       public static boolean doesPlace(Player player, int x, double y, int z, Direction direction, ItemStack backpackStack, boolean fromBackSlot) {
-            LocalData traits = BackpackItem.getItemTraits(backpackStack);
-
-            if (traits == null)
+            Traits.LocalData traits = Traits.LocalData.fromStack(backpackStack);
+            if (traits == null || traits.key.isEmpty())
                   return false;
 
             Level world = player.level();
             BlockPos blockPos = BlockPos.containing(x, y, z);
 
             NonNullList<ItemStack> stacks = fromBackSlot ?
-                        BackSlot.getInventory(player).getItemStacks() : NonNullList.create();
+                        BackData.get(player).backpackInventory.getItemStacks() : NonNullList.create();
 
             BackpackEntity backpackEntity = new BackpackEntity(player, world, x, y, z, direction,
                         traits, stacks, rotFromBlock(blockPos, player) + 90);
@@ -157,7 +196,7 @@ public class BackpackItem extends Item {
       }
 
       @Override
-      public void appendHoverText(ItemStack stack, @Nullable Level $$1, List<Component> components, TooltipFlag $$3) {
+      public void appendHoverText(ItemStack stack, @Nullable Level $$1, List<Component> components, TooltipFlag flag) {
             Tooltip.lore(stack, components);
       }
 
@@ -174,22 +213,6 @@ public class BackpackItem extends Item {
       @Override
       public int getBarColor(ItemStack $$0) {
             return Tooltip.barColor;
-      }
-
-      public static LocalData getItemTraits(ItemStack stack) {
-            if (stack.is(Items.DECORATED_POT))
-                  return LocalData.POT;
-
-            if (!Kind.isBackpack(stack))
-                  return LocalData.EMPTY;
-
-            CompoundTag display = stack.getOrCreateTagElement("display");
-
-            String key = display.getString("key");
-            int itemColor = stack.getItem() instanceof DyableBackpack dyableBackpack ? dyableBackpack.getColor(stack) : 0xFFFFFF;
-            CompoundTag trim = stack.getTagElement("Trim");
-
-            return new LocalData(key, itemColor, trim);
       }
 
       public static ItemStack stackFromKey(String key) {

@@ -2,7 +2,7 @@ package com.beansgalaxy.backpacks.client.renderer;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.RendererHelper;
-import com.beansgalaxy.backpacks.screen.BackSlot;
+import com.beansgalaxy.backpacks.core.BackData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
@@ -38,18 +38,18 @@ public class PotFeature<T extends LivingEntity, M extends EntityModel<T>>
 
     @Override
     public void render(PoseStack pose, MultiBufferSource mbs, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float yHeadRot, float headPitch) {
-        ItemStack backpackStack;
+        ItemStack backStack;
         if (entity instanceof AbstractClientPlayer player)
-            backpackStack = player.inventoryMenu.slots.get(BackSlot.SLOT_INDEX).getItem();
+            backStack = BackData.get(player).getItem();
         else
-            backpackStack = ItemStack.EMPTY;
-        if (!backpackStack.is(Items.DECORATED_POT))
+            backStack = ItemStack.EMPTY;
+        if (!backStack.is(Items.DECORATED_POT))
             return;
 
 
         CompoundTag nbt = new CompoundTag();
-        if (backpackStack.getTag() != null)
-            nbt = backpackStack.getTag().getCompound("BlockEntityTag");
+        if (backStack.getTag() != null)
+            nbt = backStack.getTag().getCompound("BlockEntityTag");
 
         DecoratedPotBlockEntity.Decorations sherds = DecoratedPotBlockEntity.Decorations.load(nbt);
 

@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.core.BackpackInventory;
-import com.beansgalaxy.backpacks.core.LocalData;
+import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
@@ -48,13 +48,13 @@ public class BackpackMenu extends AbstractContainerMenu {
             Backpack backpack = new Backpack(level) {
 
                   @Override
-                  public BackpackInventory getBackpackInventory() {
+                  public BackpackInventory getInventory() {
                         return BackpackMenu.this.backpackInventory;
                   }
 
                   @Override
-                  public LocalData getLocalData() {
-                        return this.backpackInventory.getLocalData();
+                  public Traits.LocalData getLocalData() {
+                        return this.getInventory().getLocalData();
                   }
             };
             return backpack;

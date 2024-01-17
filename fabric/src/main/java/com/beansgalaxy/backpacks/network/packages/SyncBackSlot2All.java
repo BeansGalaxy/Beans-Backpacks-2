@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.network.packages;
 
+import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
-import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -33,7 +33,12 @@ public class SyncBackSlot2All {
       public static void callSyncBackSlot(MinecraftServer server, ServerPlayer thisPlayer, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
             UUID uuid = buf.readUUID();
             Player otherPlayer = thisPlayer.level().getPlayerByUUID(uuid);
-            ItemStack backStack = BackSlot.get(otherPlayer).getItem();
+
+            if (otherPlayer == null)
+                  return;
+
+
+            ItemStack backStack = BackData.get(otherPlayer).getItem();
 
             FriendlyByteBuf bufSlot = PacketByteBufs.create();
             bufSlot.writeUUID(uuid);

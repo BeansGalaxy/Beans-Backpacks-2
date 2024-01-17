@@ -72,11 +72,8 @@ public class ForgeRegistryHelper implements RegistryHelper {
                               case BREAK -> {
                                     return Sounds.BREAK_LEATHER.get();
                               }
-                              case INSERT -> {
+                              case INSERT, TAKE -> {
                                     return Sounds.INSERT_LEATHER.get();
-                              }
-                              case TAKE -> {
-                                    return Sounds.TAKE_LEATHER.get();
                               }
                               case OPEN -> {
                                     return Sounds.OPEN_LEATHER.get();

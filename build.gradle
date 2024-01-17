@@ -50,6 +50,20 @@ subprojects {
         maven {
             url "https://maven.shedaniel.me"
         }
+        // TRINKETS FABRIC
+        maven {
+            name = "TerraformersMC"
+            url = "https://maven.terraformersmc.com/"
+        }
+        maven {
+            name = "Ladysnake Libs"
+            url = 'https://maven.ladysnake.org/releases'
+        }
+        // CURIOS FORGE
+        maven {
+            name = "Illusive Soulworks maven"
+            url = "https://maven.theillusivec4.top/"
+        }
     }
 
     tasks.withType(JavaCompile).configureEach {
@@ -74,7 +88,8 @@ subprojects {
                 "mod_id": mod_id,
                 "license": license,
                 "description": project.description,
-                "credits": credits
+                "credits": credits,
+                "curios_version_range": curios_version_range
         ]
 
         filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml', '*.mixins.json']) {

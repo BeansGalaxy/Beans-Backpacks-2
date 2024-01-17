@@ -1,7 +1,9 @@
 package com.beansgalaxy.backpacks;
 
+import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.Traits;
-import com.beansgalaxy.backpacks.screen.BackSlot;
+import com.beansgalaxy.backpacks.platform.Services;
+import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -22,8 +24,10 @@ public class Constants {
 	public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
 
 	public static final HashMap<String, Traits> TRAITS_MAP = new HashMap<>();
+	public static final boolean SLOTS_MOD_ACTIVE = Services.COMPAT.anyModsLoaded(new String[]{CompatHelper.CURIOS, CompatHelper.TRINKETS});
 	public static HashSet<Item> CHESTPLATE_DISABLED = new HashSet<>();
 	public static HashSet<Item> DISABLES_BACK_SLOT = new HashSet<>();
+	public static int SLOT_INDEX;
 
 	public static Item itemFromString(String string) {
 		if (string == null)
@@ -39,7 +43,7 @@ public class Constants {
 	}
 
 	public static ItemStack getTorsoWearables(Player player, Item item) {
-		ItemStack backSlot = BackSlot.get(player).getItem();
+		ItemStack backSlot = BackData.get(player).getItem();
 		ItemStack chestplate = player.getItemBySlot(EquipmentSlot.CHEST);
 		return backSlot.is(item) ? backSlot : chestplate;
 	}

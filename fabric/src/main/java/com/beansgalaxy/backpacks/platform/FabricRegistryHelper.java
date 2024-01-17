@@ -73,11 +73,8 @@ public class FabricRegistryHelper implements RegistryHelper {
                               case BREAK -> {
                                     return Sounds.BREAK_LEATHER;
                               }
-                              case INSERT -> {
+                              case INSERT, TAKE -> {
                                     return Sounds.INSERT_LEATHER;
-                              }
-                              case TAKE -> {
-                                    return Sounds.TAKE_LEATHER;
                               }
                               case OPEN -> {
                                     return Sounds.OPEN_LEATHER;

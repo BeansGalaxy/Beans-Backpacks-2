@@ -1,9 +1,12 @@
 package com.beansgalaxy.backpacks.items;
 
+import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.events.KeyPress;
-import com.beansgalaxy.backpacks.screen.BackSlot;
+import com.beansgalaxy.backpacks.platform.Services;
+import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -15,7 +18,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.tooltip.BundleTooltip;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.BlockItem;
@@ -32,23 +34,23 @@ public class Tooltip {
             if (player == null)
                   return Optional.empty();
 
-            // IS BACKPACK SLOT LOADED AND PLAYER IS LOOKING IN THE PLAYER INVENTORY
-            NonNullList<Slot> slots = player.inventoryMenu.slots;
-            if (slots.size() <= BackSlot.SLOT_INDEX || !(player.containerMenu instanceof InventoryMenu))
+            if (!(player.containerMenu instanceof InventoryMenu))
                   return Optional.empty();
 
             // IS BACKPACK EQUIPPED
-            BackSlot backSlot = BackSlot.get(player);
-            ItemStack equippedOnBack = backSlot.getItem();
-            if (!stack.equals(equippedOnBack) || backSlot.backpackInventory.isEmpty())
+            BackData backData = BackData.get(player);
+            ItemStack equippedOnBack = backData.getItem();
+            if (!stack.equals(equippedOnBack) || backData.backpackInventory.isEmpty())
                   return Optional.empty();
 
             NonNullList<ItemStack> defaultedList = NonNullList.create();
-            NonNullList<ItemStack> backpackList = BackSlot.getInventory(player).getItemStacks();
+            NonNullList<ItemStack> backpackList = BackData.get(player).backpackInventory.getItemStacks();
             backpackList.forEach(itemstack -> defaultedList.add(itemstack.copy()));
             if (!defaultedList.isEmpty())
             {
-                  defaultedList.remove(0);
+                  if (!Constants.SLOTS_MOD_ACTIVE)
+                        defaultedList.remove(0);
+
                   for (int j = 0; j < defaultedList.size(); j++)
                   {
                         ItemStack itemStack = defaultedList.get(j);
@@ -59,7 +61,7 @@ public class Tooltip {
                         defaultedList.removeIf(ItemStack::isEmpty);
                   }
             }
-            int totalWeight = getBundleOccupancy(defaultedList) / backSlot.backpackInventory.getLocalData().maxStacks();
+            int totalWeight = getBundleOccupancy(defaultedList) / backData.backpackInventory.getLocalData().maxStacks();
             return Optional.of(new BundleTooltip(defaultedList, totalWeight));
       }
 
@@ -81,17 +83,6 @@ public class Tooltip {
       private static String key;
 
       public static Component name(ItemStack stack) {
-            Minecraft instance = Minecraft.getInstance();
-            LocalPlayer player = instance.player;
-            if (player != null) {
-                  BackSlot backSlot = BackSlot.get(player);
-                  ItemStack backStack = backSlot.getItem();
-
-                  if (stack == backStack && backSlot.backpackInventory.isEmpty() && backSlot.actionKeyPressed)
-                  {
-                        return Component.translatable("tooltip.beansbackpacks.empty_1", key);
-                  }
-            }
             String key = stack.getOrCreateTagElement("display").getString("key");
             return Component.literal(Traits.get(key).name);
       }
@@ -102,37 +93,48 @@ public class Tooltip {
             if (player == null)
                   return;
 
-            BackSlot backSlot = BackSlot.get(player);
-            ItemStack backStack = backSlot.getItem();
-            if (stack == backStack && backSlot.backpackInventory.isEmpty())
-            {
+            BackData backData = BackData.get(player);
+            ItemStack backStack = backData.getItem();
+            if (stack == backStack && backData.backpackInventory.isEmpty()) {
                   key = "§6" + getKeyBinding().getTranslatedKeyMessage().getString()
                               .replace("Left ", "L")
                               .replace("Right ", "R")
                               .replace("Control", "Ctrl");
 
-                  if (backSlot.actionKeyPressed)
-                  {
-                        String useKey = "§6" +  instance.options.keyUse.getTranslatedKeyMessage().getString()
+                  if (backData.actionKeyPressed) {
+                        String useKey = "§6" + instance.options.keyUse.getTranslatedKeyMessage().getString()
                                     .replace("Right Button", "RClick")
                                     .replace("Left Button", "LClick")
                                     .replace("Left ", "L")
                                     .replace("Right ", "R");
 
-                        MutableComponent e2 = Component.translatable("tooltip.beansbackpacks.empty_2", key);
-                        if (!e2.getString().isEmpty()) components.add(e2);
-                        components.add(Component.literal(""));
-                        components.add(Component.translatable("tooltip.beansbackpacks.empty_3", key, useKey));
+                        MutableComponent empty = Component.literal("");
+                        if (Services.COMPAT.isModLoaded(CompatHelper.CURIOS))
+                              components.add(empty);
+
+                        components.add(Component.translatable("tooltip.beansbackpacks.empty_0", key));
+                        components.add(Component.translatable("tooltip.beansbackpacks.empty_1", key));
+                        components.add(empty);
+                        components.add(Component.translatable("tooltip.beansbackpacks.empty_2", key));
+                        MutableComponent e3 = Component.translatable("tooltip.beansbackpacks.empty_3", key);
+                        if (!e3.getString().isEmpty())
+                              components.add(e3);
+                        components.add(empty);
                         components.add(Component.translatable("tooltip.beansbackpacks.empty_4", key, useKey));
-                        MutableComponent e5 = Component.translatable("tooltip.beansbackpacks.empty_5", key, useKey);
-                        if (!e5.getString().isEmpty()) components.add(e5);
-                  } else
-                  {
+                        components.add(Component.translatable("tooltip.beansbackpacks.empty_5", key, useKey));
+                        MutableComponent e5 = Component.translatable("tooltip.beansbackpacks.empty_6", key, useKey);
+                        if (!e5.getString().isEmpty())
+                              components.add(e5);
+                        if (Services.COMPAT.isModLoaded(CompatHelper.TRINKETS))
+                              components.add(empty);
+
+                  } else {
                         components.add(Component.translatable("tooltip.beansbackpacks.empty_title_1", key));
                         MutableComponent t2 = Component.translatable("tooltip.beansbackpacks.empty_title_2", key);
                         if (!t2.getString().isEmpty()) components.add(t2);
                   }
             }
+
 
       }
 
@@ -148,19 +150,19 @@ public class Tooltip {
 
       public static boolean isBarVisible(ItemStack stack) {
             LocalPlayer player = Minecraft.getInstance().player;
-            BackSlot backSlot = BackSlot.get(player);
+            BackData backSlot = BackData.get(player);
 
             return backSlot.getItem() == stack && !backSlot.backpackInventory.isEmpty();
       }
 
       public static int getBarWidth(ItemStack stack) {
             LocalPlayer player = Minecraft.getInstance().player;
-            BackSlot backSlot = BackSlot.get(player);
+            BackData backData = BackData.get(player);
 
-            if (backSlot.getItem() != stack)
+            if (backData.getItem() != stack)
                   return 13;
 
-            BackpackInventory backpackInventory = backSlot.backpackInventory;
+            BackpackInventory backpackInventory = backData.backpackInventory;
             int spaceLeft = backpackInventory.spaceLeft();
             int maxStacks = backpackInventory.getLocalData().maxStacks();
 

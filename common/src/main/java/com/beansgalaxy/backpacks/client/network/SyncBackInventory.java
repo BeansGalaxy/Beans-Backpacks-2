@@ -1,8 +1,8 @@
 package com.beansgalaxy.backpacks.client.network;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
-import com.beansgalaxy.backpacks.screen.BackSlot;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -15,7 +15,7 @@ public class SyncBackInventory {
             CompoundTag tag = stringToNbt(stacks);
 
             LocalPlayer player = Minecraft.getInstance().player;
-            BackpackInventory backpackInventory = BackSlot.getInventory(player);
+            BackpackInventory backpackInventory = BackData.get(player).backpackInventory;
             backpackInventory.getItemStacks().clear();
 
             backpackInventory.readStackNbt(tag);

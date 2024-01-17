@@ -1,10 +1,13 @@
 package com.beansgalaxy.backpacks.core;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.items.DyableBackpack;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class Traits {
       public static void register(String key, Traits traits) {
@@ -37,7 +40,7 @@ public class Traits {
             Constants.TRAITS_MAP.clear();
       }
 
-      private Traits() {
+      protected Traits() {
             name = "";
             kind = Kind.UPGRADED;
             maxStacks = 0;
@@ -97,5 +100,59 @@ public class Traits {
             name = tag.getString("name");
             kind = Kind.fromName(tag.getString("kind"));
             maxStacks = tag.getInt("max_stacks");
+      }
+
+      public static class LocalData {
+            public static final LocalData POT = new LocalData(true);
+            public static final LocalData EMPTY = new LocalData("");
+
+            public String key;
+            public int color;
+            public CompoundTag trim;
+            private boolean isPot;
+
+            public LocalData(String key, int color, CompoundTag trim) {
+                  this.key = key;
+                  this.color = color;
+                  this.trim = trim == null ? new CompoundTag() : trim;
+            }
+
+            LocalData(boolean isPot) {
+                  this.isPot = isPot;
+            }
+            LocalData(String key) {
+                  this.key = key;}
+
+            public static LocalData fromStack(ItemStack stack) {
+                  if (stack.is(Items.DECORATED_POT))
+                        return POT;
+
+                  if (!Kind.isBackpack(stack))
+                        return EMPTY;
+
+                  CompoundTag display = stack.getOrCreateTagElement("display");
+
+                  String key = display.getString("key");
+                  int itemColor = stack.getItem() instanceof DyableBackpack dyableBackpack ? dyableBackpack.getColor(stack) : 0xFFFFFF;
+                  CompoundTag trim = stack.getTagElement("Trim");
+
+                  return new LocalData(key, itemColor, trim);
+            }
+
+            public Traits traits() {
+                  return get(key);
+            }
+
+            public String name() {
+                  return traits().name;
+            }
+
+            public Kind kind() {
+                  return isPot ? Kind.POT : traits().kind;
+            }
+
+            public int maxStacks() {
+                  return isPot ? 999 : traits().maxStacks;
+            }
       }
 }

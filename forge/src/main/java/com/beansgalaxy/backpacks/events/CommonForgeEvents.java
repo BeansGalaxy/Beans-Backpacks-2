@@ -1,12 +1,12 @@
 package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.network.client.ConfigureKeys2C;
 import com.beansgalaxy.backpacks.network.client.SyncBackSlot2C;
 import com.beansgalaxy.backpacks.platform.Services;
-import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -42,7 +42,7 @@ public class CommonForgeEvents {
             InteractionResult interact = PlaceBackpackEvent.interact(player, hand, direction, clickedPos);
 
             boolean consumesAction = interact.consumesAction();
-            Event.Result result = consumesAction || denyQue ? Event.Result.DENY : Event.Result.ALLOW;
+            Event.Result result = consumesAction || denyQue ? Event.Result.DENY : Event.Result.DEFAULT;
 
             event.setUseBlock(result);
             event.setUseItem(result);
@@ -53,19 +53,17 @@ public class CommonForgeEvents {
       @SubscribeEvent
       public static void LivingEntityDeath(LivingDeathEvent event) {
             if (event.getEntity() instanceof Player player)
-                  BackSlot.get(player).drop();
+                  BackData.get(player).drop();
       }
 
       @SubscribeEvent
       public static void PlayerCloneEvent(PlayerEvent.Clone event) {
-            Player owner = event.getEntity();
-            Player original = event.getOriginal();
+            Player newPlayer = event.getEntity();
+            Player oldPlayer = event.getOriginal();
 
-            BackSlot oldBackSlot = BackSlot.get(original);
-            BackSlot newBackSlot = BackSlot.get(owner);
-            newBackSlot.replaceWith(oldBackSlot);
+            BackData.get(oldPlayer).copyTo(BackData.get(newPlayer));
 
-            if (owner instanceof ServerPlayer serverPlayer)
+            if (newPlayer instanceof ServerPlayer serverPlayer)
                   Services.NETWORK.SyncBackSlot(serverPlayer);
       }
 
@@ -88,7 +86,7 @@ public class CommonForgeEvents {
             {
                   Services.NETWORK.backpackInventory2C(player);
 
-                  ItemStack stack = BackSlot.get(player).getItem();
+                  ItemStack stack = BackData.get(player).getItem();
                   NetworkPackages.S2C(new SyncBackSlot2C(player.getUUID(), stack), player);
             }
       }
@@ -118,6 +116,6 @@ public class CommonForgeEvents {
       @SubscribeEvent
       public static void loadPlayer(PlayerEvent.StartTracking event) {
             if (event.getEntity() instanceof ServerPlayer thisPlayer && event.getTarget() instanceof Player owner)
-                  NetworkPackages.S2C(new SyncBackSlot2C(owner.getUUID(), BackSlot.get(owner).getItem()), thisPlayer);
+                  NetworkPackages.S2C(new SyncBackSlot2C(owner.getUUID(), BackData.get(owner).getItem()), thisPlayer);
       }
 }

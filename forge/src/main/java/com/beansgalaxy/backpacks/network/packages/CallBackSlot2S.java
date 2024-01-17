@@ -1,8 +1,8 @@
 package com.beansgalaxy.backpacks.network.packages;
 
+import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.network.client.SyncBackSlot2C;
-import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -39,7 +39,7 @@ public class CallBackSlot2S {
 
       public void handle(Supplier<NetworkEvent.Context> context) {
             Player otherPlayer = context.get().getSender().level().getPlayerByUUID(uuid);
-            ItemStack stack = BackSlot.get(otherPlayer).getItem();
+            ItemStack stack = BackData.get(otherPlayer).getItem();
             NetworkPackages.S2C(new SyncBackSlot2C(uuid, stack), context.get().getSender());
       }
 }

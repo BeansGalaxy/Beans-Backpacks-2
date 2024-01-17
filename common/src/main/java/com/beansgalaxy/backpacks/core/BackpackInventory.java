@@ -5,7 +5,6 @@ import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.platform.Services;
-import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -30,8 +29,7 @@ public interface BackpackInventory extends Container {
 
       Entity getOwner();
 
-
-      LocalData getLocalData();
+      Traits.LocalData getLocalData();
 
       class Viewable {
             public float headPitch = 0;
@@ -130,6 +128,11 @@ public interface BackpackInventory extends Container {
             if (stacks.get(slot).isEmpty())
                   stacks.remove(slot);
             return stack;
+      }
+
+      @Override
+      default int getMaxStackSize() {
+            return Container.super.getMaxStackSize();
       }
 
       @Override
@@ -317,11 +320,9 @@ public interface BackpackInventory extends Container {
 
       static BackpackInventory get(Entity entity) {
             if (entity instanceof Backpack backpack)
-                  return backpack.getBackpackInventory();
-            if (entity instanceof Player player) {
-                  BackSlot backSlot = BackSlot.get(player);
-                  return backSlot.backpackInventory;
-            }
+                  return backpack.getInventory();
+            if (entity instanceof Player player)
+                  return BackData.get(player).backpackInventory;
             return null;
       }
 

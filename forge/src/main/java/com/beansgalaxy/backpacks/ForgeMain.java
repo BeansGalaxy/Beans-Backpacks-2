@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks;
 
+import com.beansgalaxy.backpacks.compat.CurioRegistry;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.events.advancements.EquipAnyCriterion;
 import com.beansgalaxy.backpacks.events.advancements.PlaceCriterion;
@@ -8,6 +9,8 @@ import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.beansgalaxy.backpacks.items.RecipeCrafting;
 import com.beansgalaxy.backpacks.items.RecipeSmithing;
+import com.beansgalaxy.backpacks.platform.Services;
+import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.registries.Registries;
@@ -45,6 +48,10 @@ public class ForgeMain {
         Sounds.register(bus);
 
         Constants.LOG.info("Initializing Beans' Backpacks Forge");
+
+        if (Services.COMPAT.isModLoaded(CompatHelper.CURIOS))
+            bus.addListener(CurioRegistry::register);
+
         CommonClass.init();
     }
 

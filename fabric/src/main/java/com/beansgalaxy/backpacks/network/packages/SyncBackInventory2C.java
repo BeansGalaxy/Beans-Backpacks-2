@@ -1,8 +1,8 @@
 package com.beansgalaxy.backpacks.network.packages;
 
+import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
-import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -14,7 +14,7 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 
 public class SyncBackInventory2C {
       public static void S2C(ServerPlayer owner) {
-            BackpackInventory backpackInventory = BackSlot.getInventory(owner);
+            BackpackInventory backpackInventory = BackData.get(owner).backpackInventory;
             FriendlyByteBuf buf = PacketByteBufs.create();
             CompoundTag compound = new CompoundTag();
             backpackInventory.writeNbt(compound, backpackInventory.isEmpty());

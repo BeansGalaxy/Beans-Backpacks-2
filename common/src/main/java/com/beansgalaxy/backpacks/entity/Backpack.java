@@ -2,7 +2,6 @@ package com.beansgalaxy.backpacks.entity;
 
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
-import com.beansgalaxy.backpacks.core.LocalData;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.NonNullList;
@@ -47,7 +46,7 @@ public class Backpack extends Entity {
             }
 
             @Override
-            public LocalData getLocalData() {
+            public Traits.LocalData getLocalData() {
                   return Backpack.this.getLocalData();
             }
       };
@@ -60,8 +59,8 @@ public class Backpack extends Entity {
             super(type, level);
       }
 
-      public LocalData getLocalData() {
-            return new LocalData(entityData.get(KEY), entityData.get(COLOR), entityData.get(TRIM));
+      public Traits.LocalData getLocalData() {
+            return new Traits.LocalData(entityData.get(KEY), entityData.get(COLOR), entityData.get(TRIM));
       }
 
       public boolean isMirror() {
@@ -69,7 +68,7 @@ public class Backpack extends Entity {
             return !notMirror;
       }
 
-      public BackpackInventory getBackpackInventory() {
+      public BackpackInventory getInventory() {
             return backpackInventory;
       }
 
@@ -104,7 +103,7 @@ public class Backpack extends Entity {
             this.entityData.define(TRIM, new CompoundTag());
       }
 
-      public void initDisplay(LocalData data) {
+      public void initDisplay(Traits.LocalData data) {
             this.entityData.set(KEY, data.key);
             this.entityData.set(COLOR, data.color);
             this.entityData.set(TRIM, data.trim);

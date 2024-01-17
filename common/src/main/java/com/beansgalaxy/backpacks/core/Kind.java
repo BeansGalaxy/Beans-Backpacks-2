@@ -42,7 +42,7 @@ public enum Kind {
             CompoundTag tag = stack.getTag();
             if (tag == null || !isBackpack(stack)) return false;
 
-            int maxStacks = BackpackItem.getItemTraits(stack).maxStacks();
+            int maxStacks = Traits.LocalData.fromStack(stack).maxStacks();
             return maxStacks > 0;
       }
 
