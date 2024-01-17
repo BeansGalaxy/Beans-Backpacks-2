@@ -1,8 +1,8 @@
 package com.beansgalaxy.backpacks.events.advancements;
 
+import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
-import com.beansgalaxy.backpacks.screen.BackSlot;
 import com.google.gson.JsonObject;
 import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
 import net.minecraft.advancements.critereon.DeserializationContext;
@@ -63,7 +63,7 @@ public class EquipAnyCriterion extends SimpleCriterionTrigger<EquipAnyCriterion.
       }
 
       public void trigger(ServerPlayer player) {
-            BackSlot backSlot = BackSlot.get(player);
+            BackData backSlot = BackData.get(player);
             ItemStack backStack = backSlot.getItem();
             trigger(player, conditions -> conditions.requirementsMet(backStack));
       }

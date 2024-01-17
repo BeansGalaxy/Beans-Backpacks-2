@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.network.packages;
 
+import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
-import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.network.CustomPayloadEvent;
@@ -29,6 +29,6 @@ public class SprintKeyPacket2S {
 
       public void handle(CustomPayloadEvent.Context context) {
             ServerPlayer player = context.getSender();
-            BackSlot.get(player).actionKeyPressed = sprintKeyPressed;
+            BackData.get(player).actionKeyPressed = sprintKeyPressed;
       }
 }

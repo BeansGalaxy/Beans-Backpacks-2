@@ -3,7 +3,7 @@ package com.beansgalaxy.backpacks.client;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.renderer.BackpackModel;
 import com.beansgalaxy.backpacks.core.Kind;
-import com.beansgalaxy.backpacks.core.LocalData;
+import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.platform.Lighting;
@@ -47,7 +47,7 @@ public interface RendererHelper {
                 "diamond", new ResourceLocation(Constants.MOD_ID, "textures/entity/overlay/diamond.png"),
                 "netherite", new ResourceLocation(Constants.MOD_ID, "textures/entity/overlay/netherite.png"));
 
-    static void renderOverlays(PoseStack pose, int light, MultiBufferSource mbs, Color tint, RegistryAccess registryAccess, LocalData data, BackpackModel model, TextureAtlas atlas) {
+    static void renderOverlays(PoseStack pose, int light, MultiBufferSource mbs, Color tint, RegistryAccess registryAccess, Traits.LocalData data, BackpackModel model, TextureAtlas atlas) {
         Kind kind = data.kind();
         CompoundTag trim = data.trim;
         if (kind.isTrimmable() && trim.get("material") != null && trim.get("pattern") != null)

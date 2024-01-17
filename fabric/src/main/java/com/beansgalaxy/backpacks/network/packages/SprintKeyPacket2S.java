@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.network.packages;
 
+import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
-import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -20,6 +20,6 @@ public class SprintKeyPacket2S {
       public static void receiveAtServer(MinecraftServer server, ServerPlayer serverPlayer, ServerGamePacketListenerImpl handler,
                                          FriendlyByteBuf buf, PacketSender responseSender) {
             boolean sprintKeyPressed = buf.readBoolean();
-            BackSlot.get(serverPlayer).actionKeyPressed = sprintKeyPressed;
+            BackData.get(serverPlayer).actionKeyPressed = sprintKeyPressed;
       }
 }

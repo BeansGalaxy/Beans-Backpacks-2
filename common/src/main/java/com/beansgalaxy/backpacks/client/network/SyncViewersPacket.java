@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.client.network;
 
+import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
-import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;
@@ -16,7 +16,7 @@ public class SyncViewersPacket {
             if (entity instanceof BackpackEntity backpackEntity)
                   backpackEntity.viewable.viewers = viewers;
             else if (entity instanceof Player player) {
-                  BackSlot.get(player).viewable.viewers = viewers;
+                  BackData.get(player).backpackInventory.getViewable().viewers = viewers;
             }
       }
 }

@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.platform;
 
+import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
@@ -8,7 +9,6 @@ import com.beansgalaxy.backpacks.network.client.SyncBackSlot2C;
 import com.beansgalaxy.backpacks.network.client.SyncViewersPacket2C;
 import com.beansgalaxy.backpacks.network.packages.SprintKeyPacket2S;
 import com.beansgalaxy.backpacks.platform.services.NetworkHelper;
-import com.beansgalaxy.backpacks.screen.BackSlot;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -35,14 +35,14 @@ public class ForgeNetworkHelper implements NetworkHelper {
       @Override
       public void openBackpackMenu(Player viewer, Backpack owner) {
             if (viewer instanceof ServerPlayer serverPlayer) {
-                  serverPlayer.openMenu(owner.getBackpackInventory().getMenuProvider(), buf -> buf.writeInt(owner.getId()));
+                  serverPlayer.openMenu(owner.getInventory().getMenuProvider(), buf -> buf.writeInt(owner.getId()));
             }
       }
 
       @Override
       public void openBackpackMenu(Player viewer, Player owner) {
             if (viewer instanceof ServerPlayer serverPlayer)
-                  serverPlayer.openMenu(BackSlot.getInventory(owner).getMenuProvider(), buf -> buf.writeInt(owner.getId()));
+                  serverPlayer.openMenu(BackData.get(owner).backpackInventory.getMenuProvider(), buf -> buf.writeInt(owner.getId()));
       }
 
       @Override
@@ -71,12 +71,12 @@ public class ForgeNetworkHelper implements NetworkHelper {
 
       @Override
       public void SyncBackSlot(ServerPlayer owner) {
-            NetworkPackages.S2All(new SyncBackSlot2C(owner.getUUID(), BackSlot.get(owner).getItem()));
+            NetworkPackages.S2All(new SyncBackSlot2C(owner.getUUID(), BackData.get(owner).getItem()));
       }
 
       @Override
       public void backpackInventory2C(ServerPlayer owner) {
-            BackpackInventory backpackInventory = BackSlot.getInventory(owner);
+            BackpackInventory backpackInventory = BackData.get(owner).backpackInventory;
             CompoundTag compound = new CompoundTag();
             backpackInventory.writeNbt(compound, backpackInventory.isEmpty());
             String stacks = compound.getAsString();

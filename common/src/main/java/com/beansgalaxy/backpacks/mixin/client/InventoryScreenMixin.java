@@ -1,6 +1,8 @@
 package com.beansgalaxy.backpacks.mixin.client;
 
-import com.beansgalaxy.backpacks.screen.BackSlot;
+import com.beansgalaxy.backpacks.core.BackData;
+import com.beansgalaxy.backpacks.core.BackSlot;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.CyclingSlotBackground;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
@@ -18,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class InventoryScreenMixin extends EffectRenderingInventoryScreen<InventoryMenu> {
 
       @Unique
-      private final CyclingSlotBackground templateSlotIcon = new CyclingSlotBackground(BackSlot.SLOT_INDEX);
+      private final CyclingSlotBackground backSlotIcon = new CyclingSlotBackground(BackData.get(Minecraft.getInstance().player).backSlot.slotIndex);
 
       public InventoryScreenMixin(InventoryMenu screenHandler, Inventory playerInventory, Component text) {
             super(screenHandler, playerInventory, text);
@@ -26,12 +28,13 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
 
       @Inject(method = "containerTick", at = @At("HEAD"))
       public void containerTick(CallbackInfo ci) {
-            this.templateSlotIcon.tick(BackSlot.getTextures());
+            this.backSlotIcon.tick(BackSlot.getTextures());
       }
 
       @Inject(method = "renderBg", at = @At("TAIL"))
       protected void renderBg(GuiGraphics context, float delta, int mouseX, int mouseY, CallbackInfo ci) {
-            if (BackSlot.get(this.minecraft.player).isActive())
-                  this.templateSlotIcon.render(this.menu, context, delta, this.leftPos, this.topPos);
+            BackSlot backSlot = BackData.get(this.minecraft.player).backSlot;
+            if (backSlot.isActive() && backSlot.slotIndex != -1)
+                  this.backSlotIcon.render(this.menu, context, delta, this.leftPos, this.topPos);
       }
 }

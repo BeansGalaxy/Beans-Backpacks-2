@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.platform;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.beansgalaxy.backpacks.platform.services.NetworkHelper;
 import com.beansgalaxy.backpacks.platform.services.RegistryHelper;
 
@@ -10,6 +11,7 @@ public class Services {
 
     public static final NetworkHelper NETWORK = load(NetworkHelper.class);
     public static final RegistryHelper REGISTRY = load(RegistryHelper.class);
+    public static final CompatHelper COMPAT = load(CompatHelper.class);
 
     public static <T> T load(Class<T> clazz) {
 

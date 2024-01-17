@@ -4,7 +4,7 @@ import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
-import com.beansgalaxy.backpacks.core.LocalData;
+import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -53,12 +53,12 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
       public void render(T entity, float yaw, float tickDelta, PoseStack pose, MultiBufferSource mbs, int light) {
             super.render(entity, yaw += renderWobble(entity, yaw), tickDelta, pose, mbs, light);
             Backpack bEntity = ((Backpack) entity);
-            LocalData traits = bEntity.getBackpackInventory().getLocalData();
+            Traits.LocalData traits = bEntity.getInventory().getLocalData();
 
             if (traits.key.isEmpty())
                   return;
 
-            BackpackInventory.Viewable viewable = bEntity.getBackpackInventory().getViewable();
+            BackpackInventory.Viewable viewable = bEntity.getInventory().getViewable();
             Kind kind = traits.kind();
 
             if (kind == null)

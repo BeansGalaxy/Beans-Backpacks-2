@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.platform;
 
+import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
@@ -7,7 +8,6 @@ import com.beansgalaxy.backpacks.network.packages.SprintKeyPacket2S;
 import com.beansgalaxy.backpacks.network.packages.SyncBackInventory2C;
 import com.beansgalaxy.backpacks.network.packages.SyncBackSlot2All;
 import com.beansgalaxy.backpacks.platform.services.NetworkHelper;
-import com.beansgalaxy.backpacks.screen.BackSlot;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -47,12 +47,12 @@ public class FabricNetworkHelper implements NetworkHelper {
 
       @Override
       public void openBackpackMenu(Player viewer, Backpack owner) {
-                  viewer.openMenu(owner.getBackpackInventory().getMenuProvider());
+                  viewer.openMenu(owner.getInventory().getMenuProvider());
       }
 
       @Override
       public void openBackpackMenu(Player viewer, Player owner) {
-                  viewer.openMenu(BackSlot.getInventory(owner).getMenuProvider());
+                  viewer.openMenu(BackData.get(owner).backpackInventory.getMenuProvider());
 
       }
 
@@ -87,7 +87,7 @@ public class FabricNetworkHelper implements NetworkHelper {
 
       @Override
       public void SyncBackSlot(ServerPlayer owner) {
-            SyncBackSlot2All.S2All(owner, BackSlot.get(owner).getItem());
+            SyncBackSlot2All.S2All(owner, BackData.get(owner).getItem());
       }
 
       @Override

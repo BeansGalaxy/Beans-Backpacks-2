@@ -2,9 +2,10 @@ package com.beansgalaxy.backpacks.client.renderer;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.RendererHelper;
+import com.beansgalaxy.backpacks.core.BackData;
+import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
-import com.beansgalaxy.backpacks.core.LocalData;
-import com.beansgalaxy.backpacks.screen.BackSlot;
+import com.beansgalaxy.backpacks.core.Traits;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
@@ -49,9 +50,9 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>>
         ModelPart backpackBody = backpackModel.body;
 
         if (entity instanceof AbstractClientPlayer player) {
-            BackSlot backSlot = BackSlot.get(player);
-            ItemStack backpackStack = backSlot.getItem();
-            LocalData traits = backSlot.backpackInventory.getLocalData();
+            BackData backData = BackData.get(player);
+            ItemStack backpackStack = backData.getItem();
+            Traits.LocalData traits = backData.getLocalData();
 
             if (!Kind.isBackpack(backpackStack))
                 return;
@@ -59,8 +60,9 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>>
             pose.pushPose();
             ModelPart torso = ((PlayerModel<?>) this.getParentModel()).body;
             weld(backpackBody, torso);
-            backSlot.viewable.updateOpen();
-            backpackModel.head.xRot = backSlot.viewable.headPitch;
+            BackpackInventory.Viewable viewable = backData.backpackInventory.getViewable();
+            viewable.updateOpen();
+            backpackModel.head.xRot = viewable.headPitch;
             sneakInter = sneakInter(player, pose, sneakInter);
 
             this.model.setupAnim(entity, limbAngle, limbDistance, tickDelta, animationProgress, yHeadRot);

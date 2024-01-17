@@ -1,13 +1,13 @@
 package com.beansgalaxy.backpacks.entity;
 
+import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.Kind;
-import com.beansgalaxy.backpacks.core.LocalData;
+import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.beansgalaxy.backpacks.platform.Services;
-import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -23,7 +23,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
@@ -33,25 +32,29 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
+import java.util.UUID;
 
 public class BackpackEntity extends Backpack {
+      private final UUID placedBy;
       public Direction direction;
       protected BlockPos pos;
       public double actualY;
-      private static final int BREAK_TIMER = 20;
+      private static final int BREAK_TIMER = 25;
       public int wobble = 0;
 
       public BackpackEntity(EntityType<? extends Entity> type, Level level) {
             super(type, level);
+            placedBy = null;
       }
 
       public BackpackEntity(Player player, Level world, int x, double y, int z, Direction direction,
-                            LocalData traits, NonNullList<ItemStack> stacks, float yaw) {
+                            Traits.LocalData traits, NonNullList<ItemStack> stacks, float yaw) {
             super(world);
             this.actualY = y;
             this.pos = BlockPos.containing(x, y, z);
             this.setDirection(direction);
             this.initDisplay(traits);
+            this.placedBy = player.getUUID();
 
             if (!direction.getAxis().isHorizontal())
                   this.setYRot(yaw);
@@ -62,7 +65,7 @@ public class BackpackEntity extends Backpack {
             }
 
             if (stacks != null && !stacks.isEmpty()) {
-                  this.backpackInventory.getItemStacks().addAll(stacks);
+                  this.getInventory().getItemStacks().addAll(stacks);
                   stacks.clear();
             }
       }
@@ -295,7 +298,8 @@ public class BackpackEntity extends Backpack {
                         this.markHurt();
                   }
                   else {
-                        wobble += BREAK_TIMER * .8;
+                        float damage = player.getUUID() == placedBy ? .8f : .5f;
+                        wobble += (int) (BREAK_TIMER * damage);
                         if (wobble > BREAK_TIMER) {
                               breakAndDropContents();
                               return true;
@@ -340,8 +344,9 @@ public class BackpackEntity extends Backpack {
       // PREFORMS THIS ACTION WHEN IT IS RIGHT-CLICKED
       @Override
       public InteractionResult interact(Player player, InteractionHand hand) {
-            boolean actionKeyPressed = BackSlot.get(player).actionKeyPressed;
-            ItemStack backStack = BackSlot.get(player).getItem();
+            BackData backData = BackData.get(player);
+            boolean actionKeyPressed = backData.actionKeyPressed;
+            ItemStack backStack = backData.getItem();
             ItemStack handStack = player.getMainHandItem();
             ItemStack backpackStack = actionKeyPressed ? backStack : handStack;
 
@@ -352,37 +357,30 @@ public class BackpackEntity extends Backpack {
                   if (viewable.viewers < 1)
                         PlaySound.OPEN.at(this, getKind());
                   Services.NETWORK.openBackpackMenu(player, this);
-                  return InteractionResult.SUCCESS;
-            }
-
-            attemptEquip(player, this);
+            } else
+                  attemptEquip(player, this);
             return InteractionResult.SUCCESS;
       }
 
       public static boolean attemptEquip(Player player, BackpackEntity backpackEntity) {
-            Slot backSlot = BackSlot.get(player);
-            if (backSlot.hasItem() && !backpackEntity.isRemoved()) {
-                  if (backpackEntity.getItemStacks().isEmpty()) {
-                        if (!player.level().isClientSide())
-                              backpackEntity.spawnAtLocation(toStack(backpackEntity));
-                        PlaySound.BREAK.at(backpackEntity, backpackEntity.getKind());
-                  }
-                  else {
-                        PlaySound.HIT.at(backpackEntity, backpackEntity.getKind());
-                        return backpackEntity.hop(.1);
-                  }
+            BackData backSlot = BackData.get(player);
+            if (!backSlot.isEmpty() && !backpackEntity.isRemoved()) {
+                  PlaySound.HIT.at(backpackEntity, backpackEntity.getKind());
+                  return backpackEntity.hop(.1);
             }
             else {
 /*                  Equips Backpack only if...
                       - damage source is player.
                       - player is not creative.
                       - backSlot is not occupied */
-                  NonNullList<ItemStack> playerInventoryStacks = BackSlot.getInventory(player).getItemStacks();
+                  NonNullList<ItemStack> playerInventoryStacks = BackData.get(player).backpackInventory.getItemStacks();
                   NonNullList<ItemStack> backpackEntityStacks = backpackEntity.getItemStacks();
                   playerInventoryStacks.clear();
                   playerInventoryStacks.addAll(backpackEntityStacks);
                   backSlot.set(toStack(backpackEntity));
                   PlaySound.EQUIP.at(player, backpackEntity.getKind());
+                  if (player instanceof ServerPlayer serverPlayer)
+                        Services.NETWORK.backpackInventory2C(serverPlayer);
             }
             if (!backpackEntity.isRemoved() && !player.level().isClientSide()) {
                   backpackEntity.kill();

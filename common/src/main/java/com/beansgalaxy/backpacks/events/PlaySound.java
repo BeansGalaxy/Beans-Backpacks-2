@@ -40,7 +40,9 @@ public enum PlaySound {
         Level world = entity.level();
         if (!world.isClientSide) {
             Random rnd = new Random();
-            float pitch = random ? (rnd.nextFloat() / 5f) + 0.8f : 1f;
+            float pitch = random ? (rnd.nextFloat() / 4f) + 0.8f : 1f;
+            boolean tookLeather = kind.is(Kind.LEATHER) && this.equals(PlaySound.TAKE);
+            pitch += tookLeather ? 0.2f : 0;
             world.playSound(null, entity.blockPosition(), Services.REGISTRY.getSound(kind, this), SoundSource.BLOCKS, volume, pitch);
         }
     }
