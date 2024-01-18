@@ -58,13 +58,14 @@ public class CommonForgeEvents {
 
       @SubscribeEvent
       public static void PlayerCloneEvent(PlayerEvent.Clone event) {
-            Player newPlayer = event.getEntity();
-            Player oldPlayer = event.getOriginal();
+            if (!event.isWasDeath()) {
+                  Player newPlayer = event.getEntity();
+                  Player oldPlayer = event.getOriginal();
 
-            BackData.get(oldPlayer).copyTo(BackData.get(newPlayer));
-
-            if (newPlayer instanceof ServerPlayer serverPlayer)
-                  Services.NETWORK.SyncBackSlot(serverPlayer);
+                  BackData.get(oldPlayer).copyTo(BackData.get(newPlayer));
+                  if (newPlayer instanceof ServerPlayer serverPlayer)
+                        Services.NETWORK.SyncBackSlot(serverPlayer);
+            }
       }
 
       @SubscribeEvent
@@ -104,8 +105,7 @@ public class CommonForgeEvents {
 
             // Null Player means data pack is being sent to all players
             if (player == null)
-                  for (ServerPlayer players : event.getPlayerList().getPlayers())
-                        NetworkPackages.S2C(new ConfigureKeys2C(map), players);
+                  NetworkPackages.S2All(new ConfigureKeys2C(map));
             else
                   NetworkPackages.S2C(new ConfigureKeys2C(map), player);
 
