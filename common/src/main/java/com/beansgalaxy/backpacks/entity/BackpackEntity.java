@@ -346,7 +346,7 @@ public class BackpackEntity extends Backpack {
       public InteractionResult interact(Player player, InteractionHand hand) {
             BackData backData = BackData.get(player);
             boolean actionKeyPressed = backData.actionKeyPressed;
-            ItemStack backStack = backData.getItem();
+            ItemStack backStack = backData.getStack();
             ItemStack handStack = player.getMainHandItem();
             ItemStack backpackStack = actionKeyPressed ? backStack : handStack;
 

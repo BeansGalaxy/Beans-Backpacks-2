@@ -5,6 +5,8 @@ import com.beansgalaxy.backpacks.core.BackAccessor;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.InSlot;
 import com.beansgalaxy.backpacks.core.Kind;
+import com.beansgalaxy.backpacks.platform.Services;
+import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -37,13 +39,15 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
       @Inject(method = "<init>", at = @At("TAIL"))
       private void onConstructed(Inventory playerInventory, boolean isServerSide, Player player, CallbackInfo ci) {
             BackData backData = ((BackAccessor) playerInventory).getBackData();
-            if (!Constants.SLOTS_MOD_ACTIVE)
+            if (!Services.COMPAT.anyModsLoaded(new String[]{CompatHelper.CURIOS, CompatHelper.TRINKETS}))
             {
                   backData.backSlot.slotIndex = slots.size();
                   this.addSlot(backData.backSlot);
+            } else
+            {
+                  backData.inSlot.slotIndex = slots.size();
+                  this.addSlot(backData.inSlot);
             }
-            backData.inSlot.slotIndex = slots.size();
-            this.addSlot(backData.inSlot);
       }
 
       @ModifyArg(method = "<init>", at = @At(value = "INVOKE", ordinal = 2, target = "Lnet/minecraft/world/inventory/InventoryMenu;addSlot(Lnet/minecraft/world/inventory/Slot;)Lnet/minecraft/world/inventory/Slot;"))

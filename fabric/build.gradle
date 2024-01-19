@@ -19,7 +19,7 @@ dependencies {
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${rei_version}"
     modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}"
     // TRINKETS
-    modImplementation "dev.emi:trinkets:${trinkets_version}"
+    modCompileOnly "dev.emi:trinkets:${trinkets_version}"
     modImplementation include("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cca_version}")
     modImplementation include("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cca_version}")
 }

@@ -24,7 +24,7 @@ public class TrinketsRegistry {
                               else {
                                     ItemStack trinketStack = slot.inventory().getItem(chestBackIndex);
                                     BackData backSlot = BackData.get(player);
-                                    if (trinketStack != backSlot.getItem())
+                                    if (trinketStack != backSlot.getStack())
                                           backSlot.update(trinketStack);
                               }
                         }

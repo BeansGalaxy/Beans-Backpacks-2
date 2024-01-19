@@ -19,8 +19,6 @@ import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -34,7 +32,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 public class BackpackItem extends Item {
       public BackpackItem() {
@@ -55,23 +52,28 @@ public class BackpackItem extends Item {
             return InteractionResult.PASS;
       }
 
-      @Override
-      public boolean overrideOtherStackedOnMe(ItemStack backStack, ItemStack thatStack, Slot slot, ClickAction clickAction, Player player, SlotAccess access) {
+      public static boolean stackedOnMe(ItemStack thisStack, ItemStack thatStack, ClickAction clickAction, Player player, SlotAccess access) {
+            Kind kind = Kind.fromStack(thisStack);
+            if (kind == null)
+                  return false;
+
             BackData backData = BackData.get(player);
             BackpackInventory backpackInventory = backData.backpackInventory;
 
-            if (backStack != backData.getItem())
+            if (thisStack != backData.getStack())
                   return false;
 
-            if (backpackInventory.isEmpty() && thatStack.isEmpty())
-                  return false;
+            if (backpackInventory.isEmpty())
+                  if (thatStack.isEmpty() || Kind.isWearable(thatStack))
+                        return false;
 
             ItemStack backpackStack = backpackInventory.getItem(0);
             if (clickAction == ClickAction.SECONDARY) {
                   if (thatStack.isEmpty()) {
                         int count = Math.max(1, backpackStack.getCount() / 2);
                         access.set(backpackInventory.removeItem(0, count));
-                  } else {
+                  }
+                  else {
                         backpackInventory.insertItem(thatStack, 1);
                   }
                   return true;
@@ -79,7 +81,7 @@ public class BackpackItem extends Item {
 
             Inventory playerInventory = player.getInventory();
             if (backData.actionKeyPressed && thatStack.isEmpty() && playerInventory.getFreeSlot() != -1) {
-                  if (Kind.POT.is(backStack))
+                  if (Kind.POT.is(thisStack))
                         playerInventory.add(-2, backpackInventory.removeItemNoUpdate(0));
                   else {
                         playerInventory.add(-2, backpackStack);
@@ -94,7 +96,7 @@ public class BackpackItem extends Item {
 
       public static InteractionResult hotkeyOnBlock(Player player, Direction direction, BlockPos clickedPos) {
             BackData backData = BackData.get(player);
-            ItemStack backpackStack = backData.getItem();
+            ItemStack backpackStack = backData.getStack();
 
             if (useOnBlock(player, direction, clickedPos, backpackStack, true)) {
                   backData.setChanged();
@@ -188,11 +190,6 @@ public class BackpackItem extends Item {
       @Override
       public Component getName(ItemStack stack) {
             return Tooltip.name(stack);
-      }
-
-      @Override
-      public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
-            return Tooltip.get(stack);
       }
 
       @Override

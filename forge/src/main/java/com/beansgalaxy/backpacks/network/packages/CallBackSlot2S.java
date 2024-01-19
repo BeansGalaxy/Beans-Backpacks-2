@@ -39,7 +39,7 @@ public class CallBackSlot2S {
 
       public void handle(Supplier<NetworkEvent.Context> context) {
             Player otherPlayer = context.get().getSender().level().getPlayerByUUID(uuid);
-            ItemStack stack = BackData.get(otherPlayer).getItem();
+            ItemStack stack = BackData.get(otherPlayer).getStack();
             NetworkPackages.S2C(new SyncBackSlot2C(uuid, stack), context.get().getSender());
       }
 }

@@ -40,7 +40,7 @@ public class InventoryMixin implements BackAccessor {
       @Inject(method = "save", at = @At("TAIL"))
       public void writeBackSlot(ListTag tag, CallbackInfoReturnable<ListTag> cir) {
             BackData backData = BackData.get(player);
-            ItemStack backStack = backData.getItem();
+            ItemStack backStack = backData.getStack();
             if (!backStack.isEmpty()) {
                   CompoundTag compoundTag = new CompoundTag();
                   CompoundTag backItem = new CompoundTag();
@@ -97,7 +97,7 @@ public class InventoryMixin implements BackAccessor {
                   BackData backData = BackData.get(player);
                   BackpackInventory backpackInventory = backData.backpackInventory;
 
-                  if (Kind.isStorage(backData.getItem()) && backpackInventory.canPlaceItem(stack))
+                  if (Kind.isStorage(backData.getStack()) && backpackInventory.canPlaceItem(stack))
                   {
                         instance.items.forEach(stacks -> {
                               if (ItemStack.isSameItemSameTags(stacks, stack)) {

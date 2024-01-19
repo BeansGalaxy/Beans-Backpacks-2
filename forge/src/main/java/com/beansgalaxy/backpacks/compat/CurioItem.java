@@ -32,7 +32,7 @@ public class CurioItem implements ICurioItem {
       public void curioTick(SlotContext slotContext, ItemStack stack) {
             if (slotContext.entity() instanceof Player player) {
                   BackData backSlot = BackData.get(player);
-                  if (backSlot.getItem() != stack) {
+                  if (backSlot.getStack() != stack) {
                         backSlot.update(stack);
                   }
             }

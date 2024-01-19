@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.platform;
 
 import com.beansgalaxy.backpacks.compat.TrinketsRegistry;
+import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.world.entity.player.Player;
@@ -14,10 +15,11 @@ public class FabricCompatHelper implements CompatHelper {
       }
 
       @Override
-      public void setBackSlotItem(ItemStack stack, Player owner) {
-            if (isModLoaded(TRINKETS)) {
+      public void setBackSlotItem(BackData backData, ItemStack stack, Player owner) {
+            if (isModLoaded(TRINKETS))
                   TrinketsRegistry.setBackStack(stack, owner);
-            }
+            else
+                  backData.backSlot.container.setItem(0, stack);
       }
 
       @Override

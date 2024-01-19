@@ -17,7 +17,7 @@ public class ElytraFlightEvent implements EntityElytraEvents.Custom {
 
             if (Constants.CHESTPLATE_DISABLED.contains(Items.ELYTRA) && entity instanceof Player player)
             {
-                  ItemStack backStack = BackData.get(player).getItem();
+                  ItemStack backStack = BackData.get(player).getStack();
                   if (!backStack.is(Items.ELYTRA) || !ElytraItem.isFlyEnabled(backStack))
                         return false;
 

@@ -71,7 +71,7 @@ public class EquipAnyCriterion extends SimpleCriterionTrigger<EquipAnyCriterion.
 
       public void trigger(ServerPlayer player) {
             BackData backSlot = BackData.get(player);
-            ItemStack backStack = backSlot.getItem();
+            ItemStack backStack = backSlot.getStack();
             trigger(player, conditions -> conditions.requirementsMet(backStack));
       }
 }

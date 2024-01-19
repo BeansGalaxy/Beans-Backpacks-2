@@ -9,6 +9,7 @@
     "common.InteractWithPlayer",
     "common.InventoryMenuMixin",
     "common.InventoryMixin",
+    "common.ItemStackMixin",
     "common.ServerPlayMixin"
   ],
   "client": [

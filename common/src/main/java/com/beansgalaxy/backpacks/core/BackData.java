@@ -58,7 +58,7 @@ public class BackData {
             return ((BackAccessor) player.getInventory()).getBackData();
       }
 
-      public ItemStack getItem() {
+      public ItemStack getStack() {
             return backStack;
       }
 
@@ -68,7 +68,7 @@ public class BackData {
 
       public void set(ItemStack backStack) {
             update(backStack);
-            Services.COMPAT.setBackSlotItem(backStack, owner);
+            Services.COMPAT.setBackSlotItem(this, backStack, owner);
       }
 
       public void update(ItemStack backStack) {
@@ -77,7 +77,7 @@ public class BackData {
       }
 
       public void setChanged() {
-            ItemStack stack = this.getItem();
+            ItemStack stack = this.getStack();
             if (stack.isEmpty())
                   backpackInventory.clearViewers();
             if (owner instanceof ServerPlayer serverPlayer) {
