@@ -40,7 +40,7 @@ public class PotFeature<T extends LivingEntity, M extends EntityModel<T>>
     public void render(PoseStack pose, MultiBufferSource mbs, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float yHeadRot, float headPitch) {
         ItemStack backStack;
         if (entity instanceof AbstractClientPlayer player)
-            backStack = BackData.get(player).getItem();
+            backStack = BackData.get(player).getStack();
         else
             backStack = ItemStack.EMPTY;
         if (!backStack.is(Items.DECORATED_POT))

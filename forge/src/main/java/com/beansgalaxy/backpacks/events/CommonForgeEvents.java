@@ -87,7 +87,7 @@ public class CommonForgeEvents {
             {
                   Services.NETWORK.backpackInventory2C(player);
 
-                  ItemStack stack = BackData.get(player).getItem();
+                  ItemStack stack = BackData.get(player).getStack();
                   NetworkPackages.S2C(new SyncBackSlot2C(player.getUUID(), stack), player);
             }
       }
@@ -116,6 +116,6 @@ public class CommonForgeEvents {
       @SubscribeEvent
       public static void loadPlayer(PlayerEvent.StartTracking event) {
             if (event.getEntity() instanceof ServerPlayer thisPlayer && event.getTarget() instanceof Player owner)
-                  NetworkPackages.S2C(new SyncBackSlot2C(owner.getUUID(), BackData.get(owner).getItem()), thisPlayer);
+                  NetworkPackages.S2C(new SyncBackSlot2C(owner.getUUID(), BackData.get(owner).getStack()), thisPlayer);
       }
 }

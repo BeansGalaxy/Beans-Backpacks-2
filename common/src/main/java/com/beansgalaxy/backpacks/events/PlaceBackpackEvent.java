@@ -19,7 +19,7 @@ public class PlaceBackpackEvent {
         if (player.isSpectator())
             return InteractionResult.PASS;
 
-        if (BackData.get(player).actionKeyPressed && Kind.isBackpack(BackData.get(player).getItem())) {
+        if (BackData.get(player).actionKeyPressed && Kind.isBackpack(BackData.get(player).getStack())) {
             if (!player.isSprinting() && !player.isSwimming()) {
                 return BackpackItem.hotkeyOnBlock(player, direction, clickedPos);
             } else if (player.level() instanceof ServerLevel serverLevel && player instanceof ServerPlayer serverPlayer) {

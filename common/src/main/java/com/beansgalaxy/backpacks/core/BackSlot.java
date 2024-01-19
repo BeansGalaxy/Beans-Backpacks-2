@@ -31,15 +31,20 @@ public class BackSlot extends Slot {
       public boolean isActive() {
             ItemStack chestplateStack = backData.owner.inventoryMenu.slots.get(6).getItem();
             boolean isDisabled = Constants.DISABLES_BACK_SLOT.contains(chestplateStack.getItem());
-            return !backData.owner.isCreative() && !isDisabled && Constants.SLOTS_MOD_ACTIVE;
+            return !backData.owner.isCreative() && !isDisabled && !Constants.SLOTS_MOD_ACTIVE;
       }
 
       @Override
       public boolean mayPickup(Player player) {
-            ItemStack itemStack = backData.getItem();
+            ItemStack itemStack = backData.getStack();
             boolean backpackIsEmpty = backData.backpackInventory.isEmpty();
             boolean standardCheck = itemStack.isEmpty() || !EnchantmentHelper.hasBindingCurse(itemStack);
             return standardCheck && backpackIsEmpty;
+      }
+
+      @Override
+      public boolean mayPlace(ItemStack stack) {
+            return Kind.isWearable(stack);
       }
 
       @Override
@@ -58,7 +63,7 @@ public class BackSlot extends Slot {
       }
 
       public static InteractionResult openPlayerBackpackMenu(Player viewer, Player owner) {
-            ItemStack backpackStack = BackData.get(owner).getItem();
+            ItemStack backpackStack = BackData.get(owner).getStack();
             if (!Kind.isBackpack(backpackStack))
                   return InteractionResult.PASS;
 

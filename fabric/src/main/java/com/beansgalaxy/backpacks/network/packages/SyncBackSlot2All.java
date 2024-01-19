@@ -38,7 +38,7 @@ public class SyncBackSlot2All {
                   return;
 
 
-            ItemStack backStack = BackData.get(otherPlayer).getItem();
+            ItemStack backStack = BackData.get(otherPlayer).getStack();
 
             FriendlyByteBuf bufSlot = PacketByteBufs.create();
             bufSlot.writeUUID(uuid);

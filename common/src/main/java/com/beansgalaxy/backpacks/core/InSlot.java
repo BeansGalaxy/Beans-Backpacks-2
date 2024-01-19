@@ -30,7 +30,7 @@ public class InSlot extends Slot {
                   return true;
 
             BackData backData = BackData.get(player);
-            ItemStack backStack = backData.getItem();
+            ItemStack backStack = backData.getStack();
             InventoryMenu inventoryMenu = player.inventoryMenu;
             BackpackInventory backpackInventory = backData.backpackInventory;
             Inventory playerInventory = player.getInventory();
@@ -179,7 +179,7 @@ public class InSlot extends Slot {
       @Override
       public boolean isActive() {
             boolean creative = backData.owner.isCreative();
-            boolean storage = Kind.isStorage(backData.getItem());
+            boolean storage = Kind.isStorage(backData.getStack());
             boolean empty = backData.backpackInventory.isEmpty();
             return !creative && storage || !empty;
       }

@@ -42,7 +42,7 @@ public class Constants {
 	}
 
 	public static ItemStack getTorsoWearables(Player player, Item item) {
-		ItemStack backSlot = BackData.get(player).getItem();
+		ItemStack backSlot = BackData.get(player).getStack();
 		ItemStack chestplate = player.getItemBySlot(EquipmentSlot.CHEST);
 		return backSlot.is(item) ? backSlot : chestplate;
 	}
