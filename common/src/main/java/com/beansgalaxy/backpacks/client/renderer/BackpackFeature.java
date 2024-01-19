@@ -25,6 +25,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
@@ -45,14 +46,14 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>>
     }
 
     @Override
-    public void render(PoseStack pose, MultiBufferSource mbs, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float yHeadRot, float headPitch) {
+    public void render(@NotNull PoseStack pose, @NotNull MultiBufferSource mbs, int light, @NotNull T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float yHeadRot, float headPitch) {
         BackpackModel<?> backpackModel = ((BackpackModel<?>) this.model);
         ModelPart backpackBody = backpackModel.body;
 
         if (entity instanceof AbstractClientPlayer player) {
             BackData backData = BackData.get(player);
             ItemStack backpackStack = backData.getItem();
-            Traits.LocalData traits = backData.getLocalData();
+            Traits.LocalData traits = backData.backpackInventory.getLocalData();
 
             if (!Kind.isBackpack(backpackStack))
                 return;

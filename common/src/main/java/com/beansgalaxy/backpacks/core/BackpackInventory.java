@@ -19,6 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
@@ -113,12 +114,12 @@ public interface BackpackInventory extends Container {
             this.getItemStacks().clear();
       }
 
-      @Override
+      @Override @NotNull
       default ItemStack getItem(int slot) {
             return getContainerSize() > slot ? this.getItemStacks().get(slot) : ItemStack.EMPTY;
       }
 
-      @Override
+      @Override @NotNull
       default ItemStack removeItem(int slot, int amount) {
             List<ItemStack> stacks = getItemStacks();
             ItemStack stack = stacks.get(slot).copyWithCount(amount);
@@ -135,7 +136,7 @@ public interface BackpackInventory extends Container {
             return Container.super.getMaxStackSize();
       }
 
-      @Override
+      @Override @NotNull
       default ItemStack removeItemNoUpdate(int slot) {
             ItemStack stack = removeItemSilent(slot);
             if (!stack.isEmpty())
@@ -186,7 +187,7 @@ public interface BackpackInventory extends Container {
       }
 
       default ItemStack insertItemSilent(ItemStack stack, int amount) {
-            if (!stack.isEmpty() && canPlaceItem(stack) && getLocalData() != null) {
+            if (!stack.isEmpty() && getLocalData() != null && !getLocalData().key.isEmpty() && canPlaceItem(stack)) {
                   boolean isServerSide = !getOwner().level().isClientSide();
                   int space = spaceLeft();
                   int weight = weightByItem(stack);
@@ -224,7 +225,7 @@ public interface BackpackInventory extends Container {
 
       default int weightByItem(ItemStack stack) {
             return 64 / stack.getMaxStackSize();
-      };
+      }
 
 
       private ItemStack mergeItem(ItemStack stack) {
@@ -232,11 +233,12 @@ public interface BackpackInventory extends Container {
                   ItemStack lookSlot = getItem(i);
                   if (!stack.isEmpty() && ItemStack.isSameItemSameTags(stack, lookSlot)) {
                         int count = stack.getCount() + lookSlot.getCount();
-                        int maxCount = getLocalData().kind() == Kind.POT ? Integer.MAX_VALUE : stack.getMaxStackSize();
+                        int maxCount = getLocalData().isPot() ? Integer.MAX_VALUE : stack.getMaxStackSize();
                         if (count > maxCount) {
                               lookSlot.setCount(maxCount);
                               count -= maxCount;
-                        } else getItemStacks().remove(i);
+                        } else
+                              getItemStacks().remove(i);
                         stack.setCount(count);
                   }
             }
@@ -251,7 +253,7 @@ public interface BackpackInventory extends Container {
                   ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation(nbtCompound.getString("id"))), nbtCompound.getInt("Count"));
                   if (nbtCompound.contains("tag", Tag.TAG_COMPOUND)) {
                         stack.setTag(nbtCompound.getCompound("tag"));
-                        stack.getItem().verifyTagAfterLoad(stack.getTag());
+                        if (stack.getTag() != null) stack.getItem().verifyTagAfterLoad(stack.getTag());
                   }
                   if (stack.isDamageableItem()) {
                         stack.setDamageValue(stack.getDamageValue());
@@ -271,7 +273,7 @@ public interface BackpackInventory extends Container {
                   nbtCompound.putByte("Slot", (byte)i);
 
                   ResourceLocation identifier = BuiltInRegistries.ITEM.getKey(itemStack.getItem());
-                  nbtCompound.putString("id", identifier == null ? "minecraft:air" : identifier.toString());
+                  nbtCompound.putString("id", identifier.toString());
                   nbtCompound.putInt("Count", itemStack.getCount());
                   if (itemStack.getTag() != null) {
                         nbtCompound.put("tag", itemStack.getTag().copy());
@@ -292,7 +294,7 @@ public interface BackpackInventory extends Container {
 
             boolean isEmpty = getItemStacks().isEmpty();
             ItemStack topStack = isEmpty ? ItemStack.EMPTY : getItemStacks().get(0);
-            if (getLocalData().kind() == Kind.POT)
+            if (getLocalData().isPot())
                   return isEmpty || inserted.is(topStack.getItem());
 
             boolean isFull = spaceLeft() < 1;
@@ -305,7 +307,7 @@ public interface BackpackInventory extends Container {
 
 
       @Override
-      default boolean stillValid(Player viewer) {
+      default boolean stillValid(@NotNull Player viewer) {
             Entity owner = getOwner();
             return !owner.isRemoved() && viewer.distanceTo(owner) < 5f;
       }

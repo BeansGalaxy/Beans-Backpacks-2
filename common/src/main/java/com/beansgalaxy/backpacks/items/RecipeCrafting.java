@@ -61,8 +61,8 @@ public class RecipeCrafting extends ShapedRecipe {
             return key != null && !key.isEmpty();
       }
 
-      @Override
-      public @NotNull ItemStack assemble(CraftingContainer container, RegistryAccess leve) {
+      @Override @NotNull
+      public ItemStack assemble(CraftingContainer container, RegistryAccess leve) {
             String key = Traits.keyFromIngredients(container.getItem(0).getItem(), container.getItem(1).getItem());
             if (key == null || key.isEmpty())
                   return ItemStack.EMPTY;
@@ -91,7 +91,7 @@ public class RecipeCrafting extends ShapedRecipe {
             return BackpackItem.stackFromKey(key);
       }
 
-      @Override
+      @Override @NotNull
       public NonNullList<Ingredient> getIngredients() {
             return getIngredients(this.key);
       }
@@ -111,8 +111,8 @@ public class RecipeCrafting extends ShapedRecipe {
                         mat, bin, mat);
       }
 
-      @Override
-      public @NotNull RecipeSerializer<RecipeCrafting> getSerializer() {
+      @Override @NotNull
+      public RecipeSerializer<RecipeCrafting> getSerializer() {
             return INSTANCE;
       }
 
@@ -123,7 +123,7 @@ public class RecipeCrafting extends ShapedRecipe {
                                           ).apply(in, RecipeCrafting::new)
             );
 
-            @Override
+            @Override @NotNull
             public Codec<RecipeCrafting> codec() {
                   return CODEC;
             }
@@ -133,7 +133,7 @@ public class RecipeCrafting extends ShapedRecipe {
                   buf.writeUtf(recipe.key);
             }
 
-            @Override
+            @Override @NotNull
             public RecipeCrafting fromNetwork(FriendlyByteBuf buf) {
                   String key = buf.readUtf();
                   return new RecipeCrafting(key);
