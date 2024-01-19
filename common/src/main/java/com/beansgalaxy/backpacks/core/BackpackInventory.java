@@ -186,7 +186,7 @@ public interface BackpackInventory extends Container {
       }
 
       default ItemStack insertItemSilent(ItemStack stack, int amount) {
-            if (!stack.isEmpty() && canPlaceItem(stack) && getLocalData() != null) {
+            if (!stack.isEmpty() && getLocalData() != null && !getLocalData().key.isEmpty() && canPlaceItem(stack)) {
                   boolean isServerSide = !getOwner().level().isClientSide();
                   int space = spaceLeft();
                   int weight = weightByItem(stack);
@@ -232,7 +232,7 @@ public interface BackpackInventory extends Container {
                   ItemStack lookSlot = getItem(i);
                   if (!stack.isEmpty() && ItemStack.isSameItemSameTags(stack, lookSlot)) {
                         int count = stack.getCount() + lookSlot.getCount();
-                        int maxCount = getLocalData().kind() == Kind.POT ? Integer.MAX_VALUE : stack.getMaxStackSize();
+                        int maxCount = getLocalData().isPot() ? Integer.MAX_VALUE : stack.getMaxStackSize();
                         if (count > maxCount) {
                               lookSlot.setCount(maxCount);
                               count -= maxCount;
@@ -292,7 +292,7 @@ public interface BackpackInventory extends Container {
 
             boolean isEmpty = getItemStacks().isEmpty();
             ItemStack topStack = isEmpty ? ItemStack.EMPTY : getItemStacks().get(0);
-            if (getLocalData().kind() == Kind.POT)
+            if (getLocalData().isPot())
                   return isEmpty || inserted.is(topStack.getItem());
 
             boolean isFull = spaceLeft() < 1;

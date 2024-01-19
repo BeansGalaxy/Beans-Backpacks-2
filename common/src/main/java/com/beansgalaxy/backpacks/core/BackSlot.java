@@ -88,9 +88,6 @@ public class BackSlot extends Slot {
             if (yawMatches && looking) { // INTERACT WITH BACKPACK CODE GOES HERE
                   Services.NETWORK.openBackpackMenu(viewer, owner);
 
-                  // ENABLE THIS LINE OF CODE BELOW TO SHOW WHEN THE BACKPACK IS INTERACTED WITH
-                  //owner.level().addParticle(ParticleTypes.FIREWORK, newX, viewer.getEyeY() + 0.1, newZ, 0, 0, 0);
-
                   PlaySound.OPEN.at(owner, Kind.fromStack(backpackStack));
                   return InteractionResult.sidedSuccess(!viewer.level().isClientSide);
             }

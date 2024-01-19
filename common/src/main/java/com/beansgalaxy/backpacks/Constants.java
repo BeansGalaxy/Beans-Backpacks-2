@@ -27,7 +27,6 @@ public class Constants {
 	public static final boolean SLOTS_MOD_ACTIVE = Services.COMPAT.anyModsLoaded(new String[]{CompatHelper.CURIOS, CompatHelper.TRINKETS});
 	public static HashSet<Item> CHESTPLATE_DISABLED = new HashSet<>();
 	public static HashSet<Item> DISABLES_BACK_SLOT = new HashSet<>();
-	public static int SLOT_INDEX;
 
 	public static Item itemFromString(String string) {
 		if (string == null)

@@ -52,7 +52,7 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>>
         if (entity instanceof AbstractClientPlayer player) {
             BackData backData = BackData.get(player);
             ItemStack backpackStack = backData.getItem();
-            Traits.LocalData traits = backData.getLocalData();
+            Traits.LocalData traits = backData.backpackInventory.getLocalData();
 
             if (!Kind.isBackpack(backpackStack))
                 return;

@@ -62,10 +62,6 @@ public class BackData {
             return backStack;
       }
 
-      public Traits.LocalData getLocalData() {
-            return localData;
-      }
-
       public boolean isEmpty() {
             return backStack.isEmpty();
       }
@@ -98,9 +94,9 @@ public class BackData {
 
             if (!Kind.isBackpack(backStack)) {
                   owner.spawnAtLocation(backStack.copy(), 0.5f);
-                  if (Kind.POT.is(Kind.fromStack(backStack))) {
+                  if (localData.isPot()) {
                         int iteration = 0;
-                        int maxIterations = 72;
+                        int maxIterations = 81;
                         while (!itemStacks.isEmpty() && iteration < maxIterations) {
                               ItemStack stack = itemStacks.remove(iteration);
                               if (stack.getMaxStackSize() == 64) {

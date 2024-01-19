@@ -11,18 +11,21 @@ import net.minecraft.world.item.Items;
 
 public class Traits {
       public static void register(String key, Traits traits) {
-            if (key.isEmpty())
+            if (key.isEmpty() || key.equals("pot"))
                   return;
 
             Constants.TRAITS_MAP.put(key, traits);
       }
 
       public static Traits get(String key) {
+            if (key.equals("pot"))
+                  return new Traits(Kind.POT, 999);
+
             Traits traits = Constants.TRAITS_MAP.get(key);
             if (traits == null)
             {
                   Constants.LOG.info("Requested Traits for key: \"" + key + "\" but Traits returned null");
-                  return new Traits();
+                  return new Traits(Kind.UPGRADED, 0);
             }
             return traits;
       }
@@ -40,10 +43,10 @@ public class Traits {
             Constants.TRAITS_MAP.clear();
       }
 
-      protected Traits() {
-            name = "";
-            kind = Kind.UPGRADED;
-            maxStacks = 0;
+      protected Traits(Kind kind, int maxStacks) {
+            this.name = "";
+            this.kind = kind;
+            this.maxStacks = maxStacks;
       }
 
       public Item template;
@@ -103,13 +106,12 @@ public class Traits {
       }
 
       public static class LocalData {
-            public static final LocalData POT = new LocalData(true);
+            public static final LocalData POT = new LocalData("pot");
             public static final LocalData EMPTY = new LocalData("");
 
             public String key;
             public int color;
             public CompoundTag trim;
-            private boolean isPot;
 
             public LocalData(String key, int color, CompoundTag trim) {
                   this.key = key;
@@ -117,11 +119,12 @@ public class Traits {
                   this.trim = trim == null ? new CompoundTag() : trim;
             }
 
-            LocalData(boolean isPot) {
-                  this.isPot = isPot;
-            }
             LocalData(String key) {
                   this.key = key;}
+
+            public boolean isPot() {
+                  return key.equals("pot");
+            }
 
             public static LocalData fromStack(ItemStack stack) {
                   if (stack.is(Items.DECORATED_POT))
@@ -148,11 +151,11 @@ public class Traits {
             }
 
             public Kind kind() {
-                  return isPot ? Kind.POT : traits().kind;
+                  return traits().kind;
             }
 
             public int maxStacks() {
-                  return isPot ? 999 : traits().maxStacks;
+                  return traits().maxStacks;
             }
       }
 }

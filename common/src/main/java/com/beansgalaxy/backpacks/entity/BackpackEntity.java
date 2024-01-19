@@ -81,7 +81,7 @@ public class BackpackEntity extends Backpack {
             stack.getOrCreateTag().put("display", display);
 
             CompoundTag trim = backpack.getTrim();
-            if (trim != null)
+            if (!trim.isEmpty())
                   stack.addTagElement("Trim", trim);
 
             int color = backpack.getColor();
