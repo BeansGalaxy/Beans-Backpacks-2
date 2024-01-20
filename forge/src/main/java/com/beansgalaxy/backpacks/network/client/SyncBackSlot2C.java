@@ -1,6 +1,6 @@
 package com.beansgalaxy.backpacks.network.client;
 
-import com.beansgalaxy.backpacks.client.network.SyncBackSlot;
+import com.beansgalaxy.backpacks.client.network.CommonAtClient;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
@@ -33,6 +33,6 @@ public class SyncBackSlot2C {
       }
 
       public void handle(CustomPayloadEvent.Context context) {
-            SyncBackSlot.receiveAtClient(uuid, stack);
+            CommonAtClient.syncBackSlot(uuid, stack);
       }
 }

@@ -1,12 +1,16 @@
 package com.beansgalaxy.backpacks.mixin.client;
 
 import com.beansgalaxy.backpacks.core.BackData;
+import com.beansgalaxy.backpacks.core.ClickAccessor;
+import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.platform.Services;
+import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -25,15 +29,27 @@ public class UpdateSprintKey {
                   sneakKey.setDown(keyBinding.isDown());
 
             InputConstants.Key key = InputConstants.getKey(keyBinding.saveString());
+            boolean isMouseKey = key.getType().equals(InputConstants.Type.MOUSE);
+
+
+            long window = instance.getWindow().getWindow();
+            int value = key.getValue();
 
             BackData backData = BackData.get(localPlayer);
-            boolean actionKeyPressed = InputConstants.isKeyDown(instance.getWindow().getWindow(), key.getValue());
+            boolean actionKeyPressed = isMouseKey ? GLFW.glfwGetMouseButton(window, value) == 1 : InputConstants.isKeyDown(window, value);
             boolean actionKeyPrevious = backData.actionKeyPressed;
 
-            if (actionKeyPressed != actionKeyPrevious) {
-                  backData.actionKeyPressed = actionKeyPressed;
-                  Services.NETWORK.SprintKey(actionKeyPressed);
+            if (actionKeyPressed == actionKeyPrevious)
+                  return;
+
+            backData.actionKeyPressed = actionKeyPressed;
+            Services.NETWORK.SprintKey(actionKeyPressed);
+
+            if (isMouseKey && actionKeyPressed) {
+                  if (instance.screen instanceof ClickAccessor clickAccessor)
+                        clickAccessor.beans_Backpacks_2$instantPlace();
+                  else if (!(instance.screen instanceof BackpackScreen))
+                        KeyPress.instantPlace(instance, localPlayer, backData);
             }
       }
-
 }

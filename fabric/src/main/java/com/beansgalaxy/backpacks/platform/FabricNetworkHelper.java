@@ -9,6 +9,7 @@ import com.beansgalaxy.backpacks.network.packages.SyncBackInventory2C;
 import com.beansgalaxy.backpacks.network.packages.SyncBackSlot2All;
 import com.beansgalaxy.backpacks.platform.services.NetworkHelper;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
@@ -21,6 +22,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -93,5 +95,14 @@ public class FabricNetworkHelper implements NetworkHelper {
       @Override
       public void backpackInventory2C(ServerPlayer owner) {
             SyncBackInventory2C.S2C(owner);
+      }
+
+      @Override
+      public void instantPlace(int i, BlockHitResult blockHitResult) {
+            FriendlyByteBuf buf = PacketByteBufs.create();
+            buf.writeInt(i);
+            if (blockHitResult != null)
+                  buf.writeBlockHitResult(blockHitResult);
+            ClientPlayNetworking.send(NetworkPackages.INSTANT_PLACE_2S, buf);
       }
 }

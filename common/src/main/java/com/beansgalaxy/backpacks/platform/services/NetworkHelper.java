@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.BlockHitResult;
 
 public interface NetworkHelper {
 
@@ -21,4 +22,6 @@ public interface NetworkHelper {
       void SyncBackSlot(ServerPlayer owner);
 
       void backpackInventory2C(ServerPlayer owner);
+
+      void instantPlace(int i, BlockHitResult blockHitResult);
 }

@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(value = SmithingScreen.class, priority = 1012)
+@Mixin(SmithingScreen.class)
 public abstract class SmithingScreenMixin extends ItemCombinerScreen<SmithingMenu> {
       @Unique public SmithingMenu smithingMenu;
       @Unique private Backpack backpackPreview;

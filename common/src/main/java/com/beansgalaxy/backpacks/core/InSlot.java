@@ -46,7 +46,7 @@ public class InSlot extends Slot {
             ItemStack cursorStack = inventoryMenu.getCarried();
 
             boolean selectedPlayerInventory = slotIndex < InventoryMenu.SHIELD_SLOT;
-            boolean selectedBackpackInventory = slotIndex == backData.inSlot.index && player.containerMenu == inventoryMenu;
+            boolean selectedBackpackInventory = slotIndex == backData.inSlot.slotIndex && player.containerMenu == inventoryMenu;
 
             if (selectedBackpackInventory && Kind.POT.is(backStack))
             {
