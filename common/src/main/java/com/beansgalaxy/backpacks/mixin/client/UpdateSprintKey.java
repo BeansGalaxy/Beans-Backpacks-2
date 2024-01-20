@@ -4,6 +4,7 @@ import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,15 +17,21 @@ public class UpdateSprintKey {
       @Inject(method = "tick", at = @At("TAIL"))
       public void tick(CallbackInfo ci) {
             LocalPlayer localPlayer = (LocalPlayer) (Object) this;
+            Minecraft instance = Minecraft.getInstance();
+            KeyMapping keyBinding = Tooltip.getKeyBinding();
 
-            long clientWindowHandle = Minecraft.getInstance().getWindow().getWindow();
-            String keyName = Tooltip.getKeyBinding().saveString();
-            int keyCode = InputConstants.getKey(keyName).getValue();
-            boolean actionKeyPressed = InputConstants.isKeyDown(clientWindowHandle, keyCode);
-            boolean actionKeyPrevious = BackData.get(localPlayer).actionKeyPressed;
+            KeyMapping sneakKey = instance.options.keyShift;
+            if (sneakKey.same(keyBinding))
+                  sneakKey.setDown(keyBinding.isDown());
+
+            InputConstants.Key key = InputConstants.getKey(keyBinding.saveString());
+
+            BackData backData = BackData.get(localPlayer);
+            boolean actionKeyPressed = InputConstants.isKeyDown(instance.getWindow().getWindow(), key.getValue());
+            boolean actionKeyPrevious = backData.actionKeyPressed;
 
             if (actionKeyPressed != actionKeyPrevious) {
-                  BackData.get(localPlayer).actionKeyPressed = actionKeyPressed;
+                  backData.actionKeyPressed = actionKeyPressed;
                   Services.NETWORK.SprintKey(actionKeyPressed);
             }
       }

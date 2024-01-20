@@ -165,29 +165,17 @@ public interface RendererHelper {
         return 40 < Math.round(hue) && 60 > Math.round(hue);
     }
 
-    static void renderBackpackForSmithing(GuiGraphics graphics, float x, float y, int scale, Quaternionf $$5, boolean switchRender, Entity renderedEntity) {
+    static void renderBackpackForSmithing(GuiGraphics graphics, float x, float y, Entity renderedEntity) {
           graphics.pose().pushPose();
 
-          Quaternionf rotation;
-          if (switchRender)
-          {
-                scale = 50;
-                graphics.pose().translate(x, y - 8, 50.0);
-                rotation = new Quaternionf().rotationXYZ(0.43633232F, 3.5f, (float) Math.PI);
-          } else {
-                graphics.pose().translate(x, y, 50.0);
-                rotation = new Quaternionf().rotationXYZ(0.43633232F, 0.0F, (float) Math.PI);
-          }
+          int scale = 50;
+          graphics.pose().translate(x, y - 8, 50.0);
+          Quaternionf rotation = new Quaternionf().rotationXYZ(0.43633232F, 3.5f, (float) Math.PI);
 
           graphics.pose().mulPoseMatrix(new Matrix4f().scaling((float) scale, (float) scale, (float)(-scale)));
-//          graphics.pose().translate(location.x, location.y, location.z);
           Lighting.setupForEntityInInventory();
           graphics.pose().mulPose(rotation);
           EntityRenderDispatcher $$8 = Minecraft.getInstance().getEntityRenderDispatcher();
-          if ($$5 != null) {
-                $$5.conjugate();
-                $$8.overrideCameraOrientation($$5);
-          }
 
           $$8.setRenderShadow(false);
           RenderSystem.runAsFancy(() -> $$8.render(renderedEntity, 0.0, 0.0, 0.0, 0.0F, 1.0F, graphics.pose(), graphics.bufferSource(), 15728880));

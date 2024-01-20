@@ -4,26 +4,22 @@ import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.entity.Backpack;
+import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.ItemCombinerScreen;
 import net.minecraft.client.gui.screens.inventory.SmithingScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.SmithingMenu;
 import net.minecraft.world.item.ItemStack;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(SmithingScreen.class)
+@Mixin(value = SmithingScreen.class, priority = 1012)
 public abstract class SmithingScreenMixin extends ItemCombinerScreen<SmithingMenu> {
       @Unique public SmithingMenu smithingMenu;
       @Unique private Backpack backpackPreview;
@@ -49,21 +45,29 @@ public abstract class SmithingScreenMixin extends ItemCombinerScreen<SmithingMen
             };
       }
 
-      @Redirect(method = "renderBg", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;renderEntityInInventory(Lnet/minecraft/client/gui/GuiGraphics;FFILorg/joml/Vector3f;Lorg/joml/Quaternionf;Lorg/joml/Quaternionf;Lnet/minecraft/world/entity/LivingEntity;)V"))
-      protected void renderEntityRedirect(GuiGraphics graphics, float x, float y, int scale, Vector3f vec, Quaternionf $$4, Quaternionf $$5, LivingEntity livingEntity) {
-            boolean switchRender = false;
-
-
-            if (smithingMenu != null) {
-                  boolean backpack = Kind.isBackpack(smithingMenu.getSlot(3).getItem());
-                  if (backpack) {
-                        boolean stack = backpackPreview.getLocalData().maxStacks() != 0;
-                        switchRender = stack;
-                  }
+      @Inject(method = "renderBg", cancellable = true, at = @At(value = "HEAD"))
+      protected void smithingCompatInject(GuiGraphics graphics, float f, int i1, int i2, CallbackInfo ci) {
+            if (Services.COMPAT.isModLoaded("bettersmithingtable") && beans_Backpacks_2$doesRenderBackpack(graphics, leftPos + 111, topPos + 65)) {
+                  super.renderBg(graphics, f, i1, i2);
+                  ci.cancel();
             }
-
-            Entity renderedEntity = switchRender ? backpackPreview : livingEntity;
-            RendererHelper.renderBackpackForSmithing(graphics, x, y, scale, $$5, switchRender, renderedEntity);
       }
 
+      @Inject(method = "renderBg", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;renderEntityInInventory(Lnet/minecraft/client/gui/GuiGraphics;FFILorg/joml/Vector3f;Lorg/joml/Quaternionf;Lorg/joml/Quaternionf;Lnet/minecraft/world/entity/LivingEntity;)V"))
+      protected void renderEntityRedirect(GuiGraphics graphics, float $$1, int $$2, int $$3, CallbackInfo ci) {
+            if (beans_Backpacks_2$doesRenderBackpack(graphics, leftPos + 142, topPos + 75))
+                  ci.cancel();
+      }
+
+      @Unique
+      private boolean beans_Backpacks_2$doesRenderBackpack(GuiGraphics graphics, int x, int y) {
+            if (smithingMenu != null
+                        && Kind.isBackpack(smithingMenu.getSlot(3).getItem())
+                        && backpackPreview.getLocalData().maxStacks() != 0)
+            {
+                  RendererHelper.renderBackpackForSmithing(graphics, (float) x, (float) y, backpackPreview);
+                  return true;
+            }
+            return false;
+      }
 }
