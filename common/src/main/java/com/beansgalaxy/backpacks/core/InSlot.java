@@ -29,23 +29,26 @@ public class InSlot extends Slot {
             if (slotIndex < 0)
                   return true;
 
+            InventoryMenu inventoryMenu = player.inventoryMenu;
+            if (slotIndex > inventoryMenu.slots.size())
+                  return true;
+
             BackData backData = BackData.get(player);
             ItemStack backStack = backData.getStack();
-            InventoryMenu inventoryMenu = player.inventoryMenu;
             BackpackInventory backpackInventory = backData.backpackInventory;
             Inventory playerInventory = player.getInventory();
-            ItemStack cursorStack = inventoryMenu.getCarried();
 
             ItemStack backpackStack = backpackInventory.getItem(0);
             int maxStack = backpackStack.getMaxStackSize();
 
             Slot slot = inventoryMenu.slots.get(slotIndex);
             ItemStack stack = slot.getItem();
+            ItemStack cursorStack = inventoryMenu.getCarried();
 
-            boolean selectedInventory = slotIndex < InventoryMenu.SHIELD_SLOT;
-            boolean selectedBackpack = slotIndex == backData.inSlot.index && player.containerMenu == inventoryMenu;
+            boolean selectedPlayerInventory = slotIndex < InventoryMenu.SHIELD_SLOT;
+            boolean selectedBackpackInventory = slotIndex == backData.inSlot.slotIndex && player.containerMenu == inventoryMenu;
 
-            if (selectedBackpack && Kind.POT.is(backStack))
+            if (selectedBackpackInventory && Kind.POT.is(backStack))
             {
                   if (actionType == ClickType.THROW && cursorStack.isEmpty())
                   {
@@ -95,24 +98,29 @@ public class InSlot extends Slot {
                   return true;
 
             if (actionType == ClickType.PICKUP_ALL)
-                  return !selectedBackpack;
+                  return !selectedBackpackInventory;
 
             if (backData.actionKeyPressed)
             {
-                  if (selectedInventory)
+                  if (selectedPlayerInventory)
                   {
                         if (backStack.isEmpty() && backData.backSlot.isActive() && !stack.isEmpty() && Kind.isWearable(stack)) {
                               slot.set(backData.backSlot.safeInsert(stack));
+                              return false;
                         }
-                        else
+                        if (Kind.isStorage(backStack)) {
                               slot.set(backpackInventory.insertItem(stack));
-                        return false;
+                              return false;
+                        }
+                        return true;
                   }
-                  if (selectedBackpack)
+                  if (actionType == ClickType.QUICK_MOVE && stack == backStack)
+                        selectedBackpackInventory = true;
+                  else if (selectedBackpackInventory)
                         actionType = ClickType.QUICK_MOVE;
             }
             else
-                  if (selectedBackpack && actionType != ClickType.QUICK_MOVE)
+                  if (selectedBackpackInventory && actionType != ClickType.QUICK_MOVE)
                   {
                         if (button == 1 && !cursorStack.is(backpackStack.getItem()) && !cursorStack.isEmpty())
                         {
@@ -128,7 +136,7 @@ public class InSlot extends Slot {
                         }
                   }
 
-            if (actionType == ClickType.QUICK_MOVE && selectedBackpack)
+            if (actionType == ClickType.QUICK_MOVE && selectedBackpackInventory)
             {
                   if (Kind.POT.is(backStack))
                         playerInventory.add(-2, backpackInventory.removeItemNoUpdate(0));

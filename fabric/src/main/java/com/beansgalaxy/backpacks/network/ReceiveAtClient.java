@@ -1,8 +1,6 @@
 package com.beansgalaxy.backpacks.network;
 
-import com.beansgalaxy.backpacks.client.network.SyncBackInventory;
-import com.beansgalaxy.backpacks.client.network.SyncBackSlot;
-import com.beansgalaxy.backpacks.client.network.SyncViewersPacket;
+import com.beansgalaxy.backpacks.client.network.CommonAtClient;
 import com.beansgalaxy.backpacks.core.Traits;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
@@ -17,19 +15,19 @@ import java.util.UUID;
 public class ReceiveAtClient {
       public static void SyncBackInventory(Minecraft minecraft, ClientPacketListener clientPacketListener, FriendlyByteBuf buf, PacketSender packetSender) {
             String stacks = buf.readUtf();
-            SyncBackInventory.receiveAtClient(stacks);
+            CommonAtClient.syncBackInventory(stacks);
       }
 
-      public static void SyncBackSlot(Minecraft minecraft, ClientPacketListener clientPacketListener, FriendlyByteBuf byteBuf, PacketSender packetSender) {
+      public static void syncBackSlot(Minecraft minecraft, ClientPacketListener clientPacketListener, FriendlyByteBuf byteBuf, PacketSender packetSender) {
             UUID id = byteBuf.readUUID();
             ItemStack stack = byteBuf.readItem();
-            SyncBackSlot.receiveAtClient(id, stack);
+            CommonAtClient.syncBackSlot(id, stack);
       }
 
       public static void SyncViewers(Minecraft minecraft, ClientPacketListener clientPacketListener, FriendlyByteBuf byteBuf, PacketSender packetSender) {
             int id = byteBuf.readInt();
             byte viewers = byteBuf.readByte();
-            SyncViewersPacket.receiveAtClient(id, viewers);
+            CommonAtClient.syncViewersPacket(id, viewers);
       }
 
       public static void ConfigBackpackData(Minecraft minecraft, ClientPacketListener clientPacketListener, FriendlyByteBuf buf, PacketSender packetSender) {

@@ -344,6 +344,17 @@ public class BackpackEntity extends Backpack {
       // PREFORMS THIS ACTION WHEN IT IS RIGHT-CLICKED
       @Override
       public InteractionResult interact(Player player, InteractionHand hand) {
+            InteractionResult interact = interact(player);
+            if (interact.consumesAction())
+                  return interact;
+
+            if (viewable.viewers < 1)
+                  PlaySound.OPEN.at(this, getKind());
+            Services.NETWORK.openBackpackMenu(player, this);
+            return InteractionResult.SUCCESS;
+      }
+
+      public InteractionResult interact(Player player) {
             BackData backData = BackData.get(player);
             boolean actionKeyPressed = backData.actionKeyPressed;
             ItemStack backStack = backData.getStack();
@@ -353,40 +364,38 @@ public class BackpackEntity extends Backpack {
             if (Kind.isBackpack(backpackStack))
                   return BackpackItem.useOnBackpack(player, this, backpackStack, actionKeyPressed);
 
-            if (!actionKeyPressed) {
-                  if (viewable.viewers < 1)
-                        PlaySound.OPEN.at(this, getKind());
-                  Services.NETWORK.openBackpackMenu(player, this);
-            } else
-                  attemptEquip(player, this);
-            return InteractionResult.SUCCESS;
-      }
-
-      public static boolean attemptEquip(Player player, BackpackEntity backpackEntity) {
-            BackData backSlot = BackData.get(player);
-            if (!backSlot.isEmpty() && !backpackEntity.isRemoved()) {
-                  PlaySound.HIT.at(backpackEntity, backpackEntity.getKind());
-                  return backpackEntity.hop(.1);
-            }
-            else {
+            if (actionKeyPressed)
+            {
+                  BackData backSlot = BackData.get(player);
+                  if (!backSlot.isEmpty() && !this.isRemoved())
+                  {
+                        PlaySound.HIT.at(this, this.getKind());
+                        this.hop(.1);
+                  }
+                  else
+                  {
 /*                  Equips Backpack only if...
                       - damage source is player.
                       - player is not creative.
                       - backSlot is not occupied */
-                  NonNullList<ItemStack> playerInventoryStacks = BackData.get(player).backpackInventory.getItemStacks();
-                  NonNullList<ItemStack> backpackEntityStacks = backpackEntity.getItemStacks();
-                  playerInventoryStacks.clear();
-                  playerInventoryStacks.addAll(backpackEntityStacks);
-                  backSlot.set(toStack(backpackEntity));
-                  PlaySound.EQUIP.at(player, backpackEntity.getKind());
-                  if (player instanceof ServerPlayer serverPlayer)
-                        Services.NETWORK.backpackInventory2C(serverPlayer);
+                        NonNullList<ItemStack> playerInventoryStacks = BackData.get(player).backpackInventory.getItemStacks();
+                        NonNullList<ItemStack> backpackEntityStacks = this.getItemStacks();
+                        playerInventoryStacks.clear();
+                        playerInventoryStacks.addAll(backpackEntityStacks);
+                        backSlot.set(toStack(this));
+                        PlaySound.EQUIP.at(player, this.getKind());
+                        if (player instanceof ServerPlayer serverPlayer)
+                              Services.NETWORK.backpackInventory2C(serverPlayer);
+                  }
+                  if (!this.isRemoved() && !player.level().isClientSide())
+                  {
+                        this.kill();
+                        this.markHurt();
+                  }
+                  return InteractionResult.SUCCESS;
             }
-            if (!backpackEntity.isRemoved() && !player.level().isClientSide()) {
-                  backpackEntity.kill();
-                  backpackEntity.markHurt();
-            }
-            return true;
+            else
+                  return InteractionResult.PASS;
       }
 
       @Override

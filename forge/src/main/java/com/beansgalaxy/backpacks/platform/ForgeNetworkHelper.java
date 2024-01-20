@@ -7,6 +7,7 @@ import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.network.client.SyncBackInventory2C;
 import com.beansgalaxy.backpacks.network.client.SyncBackSlot2C;
 import com.beansgalaxy.backpacks.network.client.SyncViewersPacket2C;
+import com.beansgalaxy.backpacks.network.packages.InstantPlace2S;
 import com.beansgalaxy.backpacks.network.packages.SprintKeyPacket2S;
 import com.beansgalaxy.backpacks.platform.services.NetworkHelper;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
@@ -18,6 +19,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
@@ -82,5 +84,10 @@ public class ForgeNetworkHelper implements NetworkHelper {
             backpackInventory.writeNbt(compound, backpackInventory.isEmpty());
             String stacks = compound.getAsString();
             NetworkPackages.S2C(new SyncBackInventory2C(stacks), owner);
+      }
+
+      @Override
+      public void instantPlace(int i, BlockHitResult blockHitResult) {
+            NetworkPackages.C2S(new InstantPlace2S(i, blockHitResult));
       }
 }

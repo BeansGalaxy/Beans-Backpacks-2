@@ -1,6 +1,6 @@
 package com.beansgalaxy.backpacks.network.client;
 
-import com.beansgalaxy.backpacks.client.network.SyncViewersPacket;
+import com.beansgalaxy.backpacks.client.network.CommonAtClient;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkDirection;
@@ -32,6 +32,6 @@ public class SyncViewersPacket2C {
       }
 
       public void handle(Supplier<NetworkEvent.Context> context) {
-            SyncViewersPacket.receiveAtClient(entityId, viewers);
+            CommonAtClient.syncViewersPacket(entityId, viewers);
       }
 }
