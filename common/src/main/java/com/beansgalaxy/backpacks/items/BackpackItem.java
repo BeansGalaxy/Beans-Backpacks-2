@@ -189,7 +189,8 @@ public class BackpackItem extends Item {
 
       @Override
       public Component getName(ItemStack stack) {
-            return Tooltip.name(stack);
+            String key = stack.getOrCreateTagElement("display").getString("key");
+            return Component.literal(Traits.get(key).name);
       }
 
       @Override
