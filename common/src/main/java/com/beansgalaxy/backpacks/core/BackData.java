@@ -97,7 +97,7 @@ public class BackData {
                   owner.spawnAtLocation(backStack.copy(), 0.5f);
                   if (localData.isPot()) {
                         int iteration = 0;
-                        int maxIterations = 81;
+                        int maxIterations = 108;
                         while (!itemStacks.isEmpty() && iteration < maxIterations) {
                               ItemStack stack = itemStacks.remove(iteration);
                               if (stack.getMaxStackSize() == 64) {

@@ -49,7 +49,7 @@ public class UpdateSprintKey {
                   if (instance.screen instanceof ClickAccessor clickAccessor)
                         clickAccessor.beans_Backpacks_2$instantPlace();
                   else if (!(instance.screen instanceof BackpackScreen))
-                        KeyPress.instantPlace(instance, localPlayer, backData);
+                        KeyPress.instantPlace(localPlayer);
             }
       }
 }

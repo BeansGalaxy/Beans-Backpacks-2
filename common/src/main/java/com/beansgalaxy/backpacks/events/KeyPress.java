@@ -1,6 +1,5 @@
 package com.beansgalaxy.backpacks.events;
 
-import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -26,8 +25,8 @@ public final class KeyPress {
                   GLFW.GLFW_KEY_UNKNOWN,
                   KeyMapping.CATEGORY_GAMEPLAY);
 
-      public static void instantPlace(Minecraft minecraft, LocalPlayer localPlayer, BackData backData) {
-            HitResult hitResult = minecraft.hitResult;
+      public static void instantPlace(LocalPlayer localPlayer) {
+            HitResult hitResult = Minecraft.getInstance().hitResult;
 
             if (hitResult == null || hitResult.getType() == HitResult.Type.MISS)
                   return;
