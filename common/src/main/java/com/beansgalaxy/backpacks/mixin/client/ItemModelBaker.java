@@ -19,8 +19,6 @@ import java.util.Map;
 public abstract class ItemModelBaker {
       @Shadow protected abstract void loadTopLevel(ModelResourceLocation resourceLocation);
 
-      // IF THERE IS A PROBLEM WRONG WITH FORGE INIT, THE STACK TRACE COMMONLY POINT HERE INSTEAD.
-      // BE AWARE THAT THIS CLASS *MIGHT* BE THE PROBLEM, BUT LIKELY ISN'T.
       @Redirect(method = "<init>", at = @At(value = "INVOKE", ordinal = 3,
             target = "Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V"))
       private void init(ProfilerFiller instance, String string) {

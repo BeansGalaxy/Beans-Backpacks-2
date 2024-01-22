@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.core;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
@@ -16,9 +17,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.ShulkerBoxBlock;
 
 import java.util.List;
 import java.util.Objects;
@@ -123,8 +122,7 @@ public interface BackpackInventory extends Container {
             List<ItemStack> stacks = getItemStacks();
             ItemStack stack = stacks.get(slot).copyWithCount(amount);
             stacks.get(slot).split(amount);
-            if (!stack.isEmpty())
-                  playSound(PlaySound.TAKE);
+            playSound(PlaySound.TAKE);
             if (stacks.get(slot).isEmpty())
                   stacks.remove(slot);
             return stack;
@@ -287,7 +285,7 @@ public interface BackpackInventory extends Container {
 
 
       default boolean canPlaceItem(ItemStack inserted) {
-            if (inserted.getItem() instanceof BlockItem block && block.getBlock() instanceof ShulkerBoxBlock)
+            if (Constants.BLACKLIST_ITEMS.contains(inserted.getItem()))
                   return false;
 
             boolean isEmpty = getItemStacks().isEmpty();

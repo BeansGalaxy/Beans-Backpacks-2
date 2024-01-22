@@ -1,7 +1,6 @@
 package com.beansgalaxy.backpacks.platform.services;
 
 import com.beansgalaxy.backpacks.core.BackData;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 public interface CompatHelper {
@@ -17,7 +16,7 @@ public interface CompatHelper {
             return false;
       }
 
-      void setBackSlotItem(BackData data, ItemStack stack, Player owner);
+      void setBackSlotItem(BackData data, ItemStack stack);
 
-      ItemStack getBackSlotItem(Player owner, ItemStack item);
+      ItemStack getBackSlotItem(BackData backData, ItemStack defaultItem);
 }

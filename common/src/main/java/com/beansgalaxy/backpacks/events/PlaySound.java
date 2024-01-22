@@ -43,7 +43,8 @@ public enum PlaySound {
             float pitch = random ? (rnd.nextFloat() / 4f) + 0.8f : 1f;
             boolean tookLeather = kind.is(Kind.LEATHER) && this.equals(PlaySound.TAKE);
             pitch += tookLeather ? 0.2f : 0;
-            world.playSound(null, entity.blockPosition(), Services.REGISTRY.getSound(kind, this), SoundSource.BLOCKS, volume, pitch);
+            SoundEvent soundEvent = Services.REGISTRY.getSound(kind, this);
+            world.playSound(null, entity.blockPosition(), soundEvent, SoundSource.BLOCKS, volume, pitch);
         }
     }
 }

@@ -4,7 +4,6 @@ import com.beansgalaxy.backpacks.compat.TrinketsRegistry;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 public class FabricCompatHelper implements CompatHelper {
@@ -15,17 +14,15 @@ public class FabricCompatHelper implements CompatHelper {
       }
 
       @Override
-      public void setBackSlotItem(BackData backData, ItemStack stack, Player owner) {
+      public void setBackSlotItem(BackData backData, ItemStack stack) {
             if (isModLoaded(TRINKETS))
-                  TrinketsRegistry.setBackStack(stack, owner);
-            else
-                  backData.backSlot.container.setItem(0, stack);
+                  TrinketsRegistry.setBackStack(stack, backData);
       }
 
       @Override
-      public ItemStack getBackSlotItem(Player owner, ItemStack stack) {
+      public ItemStack getBackSlotItem(BackData backData, ItemStack defaultItem) {
             if (isModLoaded(TRINKETS))
-                  return TrinketsRegistry.getBackStack(owner, stack);
-            return stack;
+                  return TrinketsRegistry.getBackStack(backData, defaultItem);
+            return defaultItem;
       }
 }

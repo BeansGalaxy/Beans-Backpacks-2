@@ -19,8 +19,8 @@ public class InSlot extends Slot {
       public final BackData backData;
       public int slotIndex = -1;
 
-      public InSlot(BackData backData, int x, int y) {
-            super(backData.backpackInventory, 0, x, y);
+      public InSlot(BackData backData) {
+            super(backData.backpackInventory, 0, BackData.UV[0], BackData.UV[1]);
             this.backData = backData;
       }
 

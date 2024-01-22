@@ -22,8 +22,8 @@ public class BackSlot extends Slot {
       public final BackData backData;
       public int slotIndex = -1;
 
-      public BackSlot(BackData backData, int x, int y) {
-            super(new SimpleContainer(1), 0, x, y);
+      public BackSlot(BackData backData) {
+            super(new SimpleContainer(1), 0, BackData.UV[0], BackData.UV[1]);
             this.backData = backData;
       }
 
@@ -49,7 +49,7 @@ public class BackSlot extends Slot {
 
       @Override
       public void setChanged() {
-            backData.set(this.getItem());
+            backData.update(this.getItem());
             super.setChanged();
       }
 

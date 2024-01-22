@@ -21,6 +21,11 @@ public class CurioItem implements ICurioItem {
       }
 
       @Override
+      public boolean canEquip(SlotContext slotContext, ItemStack stack) {
+            return ICurioItem.super.canEquip(slotContext, stack) && slotContext.index() == 0;
+      }
+
+      @Override
       public boolean canUnequip(SlotContext slotContext, ItemStack stack) {
             boolean b = ICurioItem.super.canUnequip(slotContext, stack);
             if (slotContext.entity() instanceof Player player)

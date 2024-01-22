@@ -16,59 +16,28 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+
+import static com.beansgalaxy.backpacks.Constants.readJsonItemList;
 
 @Mixin(ReloadableServerResources.class)
 public class DataResourcesMixin {
 
       @Inject(method = "loadResources", at = @At("HEAD"))
       private static void catchDataPacks(ResourceManager resourceManager, RegistryAccess.Frozen frozen, FeatureFlagSet flagSet, Commands.CommandSelection commandSelection, int $$4, Executor $$5, Executor $$6, CallbackInfoReturnable<CompletableFuture<ReloadableServerResources>> cir) {
-            Map<ResourceLocation, Resource> disableChestplate = resourceManager.listResources("modify",
-                        (in) -> in.getPath().endsWith("disable_chestplate"));
+            Constants.disableFromChestplate(
+                        readJsonItemList(resourceManager, "disable_chestplate"));
 
-            disableChestplate.forEach( (resourceLocation, resource) -> {
-                  try {
-                        InputStream open = resource.open();
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(open));
+            Constants.disablesBackSlot(
+                        readJsonItemList(resourceManager, "disables_back_slot"));
 
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                              String[] split = line.replaceAll(" ", "").split(",");
-                              for (String id: split) {
-                                    Constants.disableFromChestplate(id);
-                              }
-                        }
-                  } catch (IOException e) {
-                        throw new RuntimeException(e);
-                  }
-            });
-
-            Map<ResourceLocation, Resource> disablesBackSlot = resourceManager.listResources("modify",
-                        (in) -> in.getPath().endsWith("disables_back_slot"));
-
-            disablesBackSlot.forEach( (resourceLocation, resource) -> {
-                  try {
-                        InputStream open = resource.open();
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(open));
-
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                              String[] split = line.replaceAll(" ", "").split(",");
-                              for (String id: split) {
-                                    Constants.disablesBackSlot(id);
-                              }
-                        }
-                  } catch (IOException e) {
-                        throw new RuntimeException(e);
-                  }
-            });
+            Constants.blacklistItems(
+                        readJsonItemList(resourceManager, "blacklist_items"));
 
             Map<ResourceLocation, Resource> recipeKinds = resourceManager.listResources("recipes",
                         (in) -> in.getPath().endsWith(".json") && in.getNamespace().equals(Constants.MOD_ID));
@@ -89,4 +58,5 @@ public class DataResourcesMixin {
                   }
             }));
       }
+
 }

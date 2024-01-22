@@ -110,8 +110,8 @@ public class Traits {
             public static final LocalData EMPTY = new LocalData("");
 
             public String key;
-            public int color;
-            public CompoundTag trim;
+            public int color = 0xFFFFFF;
+            public CompoundTag trim = new CompoundTag();
 
             public LocalData(String key, int color, CompoundTag trim) {
                   this.key = key;
