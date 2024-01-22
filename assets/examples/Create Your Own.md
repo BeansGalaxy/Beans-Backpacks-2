@@ -5,8 +5,8 @@ If you are familiar with creating a resource pack then this guide will
 be very straight forward. The resource pack Json should familiar once
 we understand how to handle the data for the backpack. It helps to
 think of the resource pack as handling the client and the data pack 
-handling the server, therefore, we need to first describe what data 
-needs to go to the client.
+handling the server, therefore, we need to first describe the data on 
+the server before we send any to the client.
 
 <h2> Defining Your Data</h2>
 
@@ -78,9 +78,9 @@ Now your .json file should look something like this.
 }
 ```
 
-<h3> Adding and Disabling from BackSlot </h3>
+<h2> Configuring Backpacks and the Back Slot </h2>
 
-Under [`data/beansbackpacks/modify`](Copper%20Backpacks%20Data%2Fdata%2Fbeansbackpacks%2Fmodify) you'll find two files, <br>
+Under [`data/beansbackpacks/modify`](https://github.com/BeansGalaxy/Beans-Backpacks-2/tree/20.1/common/src/main/resources/data/beansbackpacks/modify) you'll find two files, <br>
 
 <dl>
 <code>disable_chestplate</code>
@@ -94,10 +94,14 @@ Under [`data/beansbackpacks/modify`](Copper%20Backpacks%20Data%2Fdata%2Fbeansbac
     If this item is worn in the Chestplate, it disables anything from being worn
     in the Back Slot. Good for mods that add larger custom armor models.
 </dd>
+<code>blacklist_items</code>
+<dd> 
+    Any items written into this file will no longer be able to be stored in any backpack inventory. This is        useful to stop other mod's portable storage to be kept in backpack.
+</dd>
 </dl>
 
-These files are simply a list of items. If I wanted the Iron and Golden Chestplate 
-to be worn in the BackSlot I would write in `disable_chestplate`
+These files are simply a list of items. If I wanted Iron and Golden Chestplates to 
+be stored in the Back Slot I would write in `disable_chestplate`
 
 ```
 minecraft:iron_chestplate, minecraft:golden_chestplate
