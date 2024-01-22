@@ -1,78 +1,84 @@
-<p align="center"><em><strong><span style="color: #ff9900;">!!!</span></strong></em> If you are looking for Version 1's Git, you can find it <a href="https://github.com/BeansGalaxy/BeansBackpacks">[here]</a><em><strong><span style="color: #ff9900;"> !!!</span></strong></em></p>
+<h1 align="center">Introducing Bean's Backpacks! </h1>
 
-<h1> Introducing Bean's Backpacks! <img align="right" src="assets/images/back_slot.gif" alt="Back Slot" style="margin:10px"> </h1>
+<h3> FYI <img align="right" src="assets/images/back_slot.gif" alt="Back Slot" style="margin:10px"> </h3>
 
-Babe wake up! A new slot just dropped! Opening your inventory you'll find the
-new "Back Slot". After equipping your Backpack, you can store items directly in
-it and display it for other players to see. Hold sprint (CTRL by default) + right-click on a block
-to place it into the world and to pick it up again.
+1.20.2 updates will come slower than 1.20.1 until a full release. If there are any critical bugs then they will be patched but 1.20.1 will be the most up to date version. Ports to 1.20.4 will come after we're out of beta.
 
-Storage in these backpacks, similar to bundles, are limited by the total number
-of Items. Leather backpacks can hold up to 256 unique items (4 Stacks). Iron
-and Gold hold up to 576 items (9 Stacks).
+### Mod Packs
+
+All the mod's config is handled by **Data Packs**, checkout <a href="https://github.com/BeansGalaxy/Beans-Backpacks-2/blob/master/assets/examples/Create%20Your%20Own.md">Creating Your Own</a> for how to disable the backslot when wearing an item or blacklisting items from backpack inventories. Creating mod packs is what got me into modding so if you have any suggestions for config leave it in the issues tab.
+
+<h2> Changelog  </h2>
+
+### 20.1-0.5-v2
+- Binding the Backpack's Action Key to a key on the mouse now instantly places it.
+- You can now blacklist items from the Backpack's Inventory using datapacks
+- backpacks will now not drop on death if Keep Inventory is set to true.
+- Dying with Curios/Trinkets installed would cause backpack to drop as an entity and item.
+- The backpack's back slot is now designated as the players first back slot when using Curios/Trinkets
+<br><br> Thanks to avilonlegends for the keybind suggestions 
+
+<h3> 20.2-0.10-v2 & 20.1-0.4-v2 <img align="right" src="assets/images/recipes.gif" alt="Back Slot" style="margin:10px"> </h3>
+
+- Re-binding the Backpack's action key now works if bound to sneak/shift
+- Added compatibility with jjblock21's Better Smithing Table
+- Fixed Crash when trinkets had added more slots.
+- Minor bugfixes
+ 
+### 20.2-0.9-v2 & 20.1-0.3-v2 
+- Fixed Bug where Back Slot was not appearing in the Inventory
+- Removed Insert Slot without curios installed.
+- You can now place items on top of the equipped backpack to place/take items from its inventory. (Use Hotkey + Click in place of Shift Click)
+- Decorated Pots now show their inventory in its tooltip while equipped
+ 
+### 20.2-0.8-v2 & 20.1-0.2-v2 
+- Re-wrote how backpack data is stored on the player
+- Simplified the inventory screen controls
+- Clicking an equipped backpack in the inventory screen will insert/take items to/from the backpack.
+- Punching the backpack if you are not the player that placed it takes one extra hit
+- Added compatibility with curios (un-tested with other mods)
+- Fixed backpacks dumping error into log if there was no trim
+- Fixed when moving items into pots, it would say no key was found in log
+
+### 20.2-0.7-v2 & 20.1-0.1-v2 
+- Added Unique Sounds for the 3 Levels of Backpacks
+- Added Recipes to REI & JEI
+- Fixed bug causing no REI/JEI crafting table recipes to load
+- Fixed crash when picking up an Item with a full inventory and no backpack equipped
+
+### 20.2-0.6-v2 & 20.1-0.0-v2
+- Backpacks now reference their traits from a global list. Updating data pack will update backpacks correctly
+- Shulker Boxes can no longer be stored in Backpacks
+- Added advancement screen (and it looks super cool too)
+
+### 20.2-0.5-v2 
+- Fixed looping class when quick moving item from Back Slot inventory using the backpack action key
+
+### 20.2-0.4-v2
+- Fixed crash when item was picked up
+- Added Backpacks to creative tab
+- Added Items to REI/JEI (No recipes)
+
+### 20.2-0.3-v2
+- Backpacks are now visible in Smithing Screen
+- Leather Backpacks are now more colorful and look closer to their item's color
+- Added the option to rebind the key to place Backpacks and move items.
+- Hovering over the rebind option explains how it works.
+- Empty and equipped Backpacks now display text on how to move items in inventory instead of an empty backpack inventory.
+- Added a bar on equipped backpacks that display how full its inventory is.
+<br><br>Big thanks to ApionXD for his suggestions. :)
 
 
-<h2 align="center">Show Your True Colors! </h2>
-<p align="center"><img src="assets/images/banners/customize_backpacks.png" alt="Customize Backpacks"></p>
+### 20.2-0.2-v2
+- Changing dimensions would de-sync the display inventory of an equipped Backpack
+- Returning from the end would delete everything in the Backpack and the Backpack itself (very sorry)
+- Forge players couldn't open Backpacks worn on other players
+- You could take off your Backpack with items still inside
 
-<p align="justify">
-Leather Backpacks can be dyed any color you can imagine and Iron and Gold Backpacks
-can be trimmed with anything you get your hands on.
-</p>
+### 20.2-0.1-v2
+- Complete overhaul of the code
+- Added support to create custom backpacks through data and resource packs.
+- Backpacks placed on snow, slabs, or any other block with unique hitboxes now are placed correctly.
+- Retextured placed Gold Backpacks.
+- Overhauled how storage on Players and placed Backpacks are handled
 
-<h3 align="center"> Crafting / Smithing </h3>
-<p align="center"><img src="assets/images/recipes.gif" alt="Recipes"></p>
-
-<h2 align="center">Fill 'er up! </h2>
-<p align="center"><img src="assets/images/banners/play_with_friends.png" alt="Play With Friends"></p>
-
-<p align="justify">
-New items are automatically put into the top of the backpack. Hovering over the backpack you
-have equipped shows you all the items you have inside. If you need to get the chapstick 
-that might've fallen to the bottom, ask your friend to help out and grab it for you. 
-Double-check your diamonds after they've been in there though.
-</p>
-
-<h3> Inventory Controls</h3>
-
-Holding CTRL while in your inventory has some added functionality to help move you items around. 
-Use CTRL as if you were shift clicking items into any other inventory. CTRL + LMB on a Backpack 
-you're wearing while items are inside drop it where you stand.
-
-<h2 align="center">More Than Meets The Eye! </h2>
-<p align="center"><img align="center" src="assets/images/banners/other_wearables.png" alt="Other Wearables"></p>
-
-<p align="justify">
-The Back Slot is used for more than just Backpacks. Equip a Decorated Pot and 
-get unlimited storage of a single item, great for transporting items from a farm 
-or quarry! Decorate the pot to show everyone what you're carrying. Sherds made with the
-decorated pot display on your back. Tell a story!
-</p>
-
-<h3> On Death</h3>
-
-Backpacks drop as if you placed them at your feet.
-If you are wearing a Pot, all of its items drop on the floor as long as they
-stack to 64.
-
->⚠️ If you die with a pot, items that do not stack to 64 such as Lava Buckets and Ender Pearls will get deleted after spawning 72+ stacks.
-
-<h2 align="center">Looking for More? </h2>
-<p align="center"><img align="center" src="assets/images/banners/adding_backpacks.png" alt="Other Wearables"></p>
-
-<p align="justify">
-A big feature in Version 2 is that you can add your own backpacks with custom properties by only 
-using data and resource packs. Start by downloading the example I have <a href="https://github.com/BeansGalaxy/Beans-Backpacks-2/tree/master/assets/examples">HERE</a> 
-and read along with "Creating Your Own" to add your own backpack.
-</p>
-
-
-<h2> FEEDBACK </h2>
-<a href="https://github.com/BeansGalaxy/Beans-Backpacks-2/labels/bug">Report a Bug </a>
-&nbsp; • &nbsp;
-<a href="https://github.com/BeansGalaxy/Beans-Backpacks-2/labels/compatibility">Compatibility Issues </a>
-&nbsp; • &nbsp;
-<a href="https://github.com/BeansGalaxy/Beans-Backpacks-2/labels/enhancement">Suggestions </a>
-
-This is my first mod so any feedback is appreciated. You are also free to use this mod
-in any modpack, let me know what other mods you use and if there are any compatibility issues.
