@@ -7,6 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameRules;
 
 import java.util.Map;
 import java.util.Optional;
@@ -15,6 +16,12 @@ public class TrinketsRegistry {
 
       public static void register() {
             Trinket trinket = new Trinket() {
+                  @Override
+                  public TrinketEnums.DropRule getDropRule(ItemStack stack, SlotReference slot, LivingEntity entity) {
+                        return entity.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) ?
+                                    TrinketEnums.DropRule.KEEP :
+                                    TrinketEnums.DropRule.DESTROY;
+                  }
 
                   @Override
                   public boolean canEquip(ItemStack stack, SlotReference slot, LivingEntity entity) {
