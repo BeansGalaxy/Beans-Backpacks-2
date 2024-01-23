@@ -7,13 +7,12 @@ they will be patched but 1.20.1 will be the most up to date version. Ports to 1.
 we're out of beta.
 
 ### Mod Packs
-
-All the mod's config is handled by **Data Packs**, checkout 
+<p>
+All the mod's config is handled by <b>Data Packs</b>, checkout 
 <a href="https://github.com/BeansGalaxy/Beans-Backpacks-2/blob/master/assets/examples/Create%20Your%20Own.md">Creating Your Own</a> 
 for how to disable the backslot when wearing an item or blacklisting items from backpack inventories. 
 Creating mod packs is what got me into modding so if you have any suggestions for config leave it in 
-the issues tab.
-----
+the issues tab. </p>
 
 <br>
 
