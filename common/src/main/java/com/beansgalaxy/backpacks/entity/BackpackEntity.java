@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
@@ -30,6 +31,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
@@ -71,8 +73,8 @@ public class BackpackEntity extends Backpack {
       }
 
       public static ItemStack toStack(BackpackEntity backpack) {
-            Kind kind = backpack.getLocalData().kind();
-            Item item = kind.getItem();
+            Traits.LocalData localData = backpack.getLocalData();
+            Item item = localData.kind().getItem();
             ItemStack stack = item.getDefaultInstance();
             String key = backpack.getKey();
 
@@ -88,13 +90,20 @@ public class BackpackEntity extends Backpack {
             if (color != DEFAULT_COLOR && stack.getItem() instanceof DyableBackpack)
                   stack.getOrCreateTagElement("display").putInt("color", color);
 
+            if (localData.hoverName.toString().equals("empty"))
+                  stack.resetHoverName();
+            else
+                  stack.setHoverName(localData.hoverName);
+
             return stack;
       }
 
-      protected float getEyeHeight(Pose p_31784_, EntityDimensions p_31785_) {
+      @Override
+      protected float getEyeHeight(@NotNull Pose p_31784_, @NotNull EntityDimensions p_31785_) {
             return 6F / 16;
       }
 
+      @Override @NotNull
       public Direction getDirection() {
             return this.direction;
       }
@@ -112,6 +121,7 @@ public class BackpackEntity extends Backpack {
             }
       }
 
+      @Override
       public void setPos(double x, double y, double z) {
             this.actualY = y;
             this.pos = BlockPos.containing(x, y, z);
@@ -151,6 +161,7 @@ public class BackpackEntity extends Backpack {
       }
 
       /** IMPLEMENTS GRAVITY WHEN HUNG BACKPACKS LOSES SUPPORTING BLOCK **/
+      @Override
       public void tick() {
             super.tick();
             this.updateGravity();
@@ -216,32 +227,38 @@ public class BackpackEntity extends Backpack {
             }
       }
 
+      @Override
       public boolean displayFireAnimation() {
             return this.isOnFire() && !this.isSpectator() && getLocalData().kind() != Kind.UPGRADED;
       }
 
+      @Override
       public boolean fireImmune() {
             return getLocalData().kind() == Kind.UPGRADED || this.getType().fireImmune();
       }
 
       /** DATA MANAGEMENT **/
       // CLIENT
+      @Override @NotNull
       public Packet<ClientGamePacketListener> getAddEntityPacket() {
             return new ClientboundAddEntityPacket(this, this.direction.get3DDataValue());
       }
 
-      public void recreateFromPacket(ClientboundAddEntityPacket p_149626_) {
-            super.recreateFromPacket(p_149626_);
-            this.setDirection(Direction.from3DDataValue(p_149626_.getData()));
+      @Override
+      public void recreateFromPacket(@NotNull ClientboundAddEntityPacket packet) {
+            super.recreateFromPacket(packet);
+            this.setDirection(Direction.from3DDataValue(packet.getData()));
       }
 
       // NBT
+      @Override
       protected void addAdditionalSaveData(CompoundTag tag) {
             super.addAdditionalSaveData(tag);
             tag.putByte("facing", (byte)this.direction.get3DDataValue());
             tag.put("display", getDisplay());
       }
 
+      @Override
       protected void readAdditionalSaveData(CompoundTag tag) {
             super.readAdditionalSaveData(tag);
             this.setDirection(Direction.from3DDataValue(tag.getByte("facing")));
@@ -253,13 +270,16 @@ public class BackpackEntity extends Backpack {
             CompoundTag tag = new CompoundTag();
             tag.putString("key", this.entityData.get(KEY));
             tag.putInt("color", this.entityData.get(COLOR));
-            if (TRIM != null)
-                  tag.put("Trim", this.entityData.get(TRIM));
+            tag.put("Trim", this.entityData.get(TRIM));
+            Component component = this.entityData.get(HOVER_NAME);
+            String json = Component.Serializer.toJson(component);
+            tag.putString("hover_name", json);
             return tag;
       }
 
       /** COLLISIONS AND INTERACTIONS **/
-      public boolean canCollideWith(Entity that) {
+      @Override
+      public boolean canCollideWith(@NotNull Entity that) {
             if (that instanceof LivingEntity livingEntity && !livingEntity.isAlive())
                   return false;
 
@@ -269,10 +289,12 @@ public class BackpackEntity extends Backpack {
             return (that.canBeCollidedWith() || that.isPushable());
       }
 
+      @Override
       public boolean canBeCollidedWith() {
             return true;
       }
 
+      @Override
       public boolean skipAttackInteraction(Entity attacker) {
             if (attacker instanceof Player player) {
                   return this.hurt(this.damageSources().playerAttack(player), 0.0f);
@@ -280,6 +302,7 @@ public class BackpackEntity extends Backpack {
             return false;
       }
 
+      @Override
       public boolean hurt(DamageSource damageSource, float amount) {
             if ((damageSource.is(DamageTypes.IN_FIRE) || damageSource.is(DamageTypes.ON_FIRE) || damageSource.is(DamageTypes.LAVA)) && this.fireImmune())
                   return false;
@@ -342,7 +365,7 @@ public class BackpackEntity extends Backpack {
       }
 
       // PREFORMS THIS ACTION WHEN IT IS RIGHT-CLICKED
-      @Override
+      @Override @NotNull
       public InteractionResult interact(Player player, InteractionHand hand) {
             InteractionResult interact = interact(player);
             if (interact.consumesAction())
@@ -403,14 +426,17 @@ public class BackpackEntity extends Backpack {
             return toStack(this);
       }
       /** REQUIRED FEILDS **/
+      @Override
       protected boolean repositionEntityAfterLoad() {
             return false;
       }
 
+      @Override
       public boolean isPickable() {
             return true;
       }
 
+      @Override @NotNull
       public Vec3 position() {
             return new Vec3(this.pos.getX(), this.actualY, this.pos.getZ());
       }
