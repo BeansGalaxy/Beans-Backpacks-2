@@ -16,7 +16,6 @@
     "client.DisableCape",
     "client.ElytraRenderer",
     "client.InventoryScreenMixin",
-    "client.ItemModelBaker",
     "client.ItemRendererMixin",
     "client.KeyBindTooltip",
     "client.RenderBackpackLayer",

@@ -9,11 +9,12 @@ import com.beansgalaxy.backpacks.client.renderer.PotModel;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -50,8 +51,9 @@ public class ClientModEvents {
       }
 
       @SubscribeEvent
-      public static void registerCreativeTab(BuildCreativeModeTabContentsEvent event) {
-
+      public static void loadItemModels(ModelEvent.RegisterAdditional event) {
+            for(ModelResourceLocation modelId : ModelResources.get())
+                  event.register(modelId);
       }
 
 }
