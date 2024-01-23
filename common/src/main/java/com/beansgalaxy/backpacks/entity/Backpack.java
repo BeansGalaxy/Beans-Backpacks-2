@@ -6,6 +6,8 @@ import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -19,6 +21,7 @@ public class Backpack extends Entity {
       public static final EntityDataAccessor<String> KEY = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.STRING);
       public static final EntityDataAccessor<Integer> COLOR = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.INT);
       public static final EntityDataAccessor<CompoundTag> TRIM = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.COMPOUND_TAG);
+      public static final EntityDataAccessor<Component> HOVER_NAME = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.COMPONENT);
       public static final int DEFAULT_COLOR = 9062433;
 
       public final BackpackInventory.Viewable viewable = new BackpackInventory.Viewable();
@@ -60,7 +63,7 @@ public class Backpack extends Entity {
       }
 
       public Traits.LocalData getLocalData() {
-            return new Traits.LocalData(entityData.get(KEY), entityData.get(COLOR), entityData.get(TRIM));
+            return new Traits.LocalData(entityData.get(KEY), entityData.get(COLOR), entityData.get(TRIM), entityData.get(HOVER_NAME));
       }
 
       public boolean isMirror() {
@@ -101,12 +104,14 @@ public class Backpack extends Entity {
             this.entityData.define(KEY, "");
             this.entityData.define(COLOR, DEFAULT_COLOR);
             this.entityData.define(TRIM, new CompoundTag());
+            this.entityData.define(HOVER_NAME, Component.empty());
       }
 
       public void initDisplay(Traits.LocalData data) {
             this.entityData.set(KEY, data.key);
             this.entityData.set(COLOR, data.color);
             this.entityData.set(TRIM, data.trim);
+            this.entityData.set(HOVER_NAME, data.hoverName);
       }
 
       @Override
@@ -123,5 +128,9 @@ public class Backpack extends Entity {
             this.entityData.set(KEY, display.getString("key"));
             this.entityData.set(COLOR, display.getInt("color"));
             this.entityData.set(TRIM, display.getCompound("Trim"));
+            MutableComponent hoverName = Component.Serializer.fromJson(display.getString("hover_name"));
+            if (hoverName != null && !hoverName.toString().equals("empty"))
+                  this.entityData.set(HOVER_NAME, hoverName);
+
       }
 }

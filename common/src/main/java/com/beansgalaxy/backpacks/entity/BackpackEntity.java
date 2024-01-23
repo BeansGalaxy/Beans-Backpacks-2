@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
@@ -72,8 +73,8 @@ public class BackpackEntity extends Backpack {
       }
 
       public static ItemStack toStack(BackpackEntity backpack) {
-            Kind kind = backpack.getLocalData().kind();
-            Item item = kind.getItem();
+            Traits.LocalData localData = backpack.getLocalData();
+            Item item = localData.kind().getItem();
             ItemStack stack = item.getDefaultInstance();
             String key = backpack.getKey();
 
@@ -88,6 +89,11 @@ public class BackpackEntity extends Backpack {
             int color = backpack.getColor();
             if (color != DEFAULT_COLOR && stack.getItem() instanceof DyableBackpack)
                   stack.getOrCreateTagElement("display").putInt("color", color);
+
+            if (localData.hoverName.toString().equals("empty"))
+                  stack.resetHoverName();
+            else
+                  stack.setHoverName(localData.hoverName);
 
             return stack;
       }
@@ -265,6 +271,9 @@ public class BackpackEntity extends Backpack {
             tag.putString("key", this.entityData.get(KEY));
             tag.putInt("color", this.entityData.get(COLOR));
             tag.put("Trim", this.entityData.get(TRIM));
+            Component component = this.entityData.get(HOVER_NAME);
+            String json = Component.Serializer.toJson(component);
+            tag.putString("hover_name", json);
             return tag;
       }
 

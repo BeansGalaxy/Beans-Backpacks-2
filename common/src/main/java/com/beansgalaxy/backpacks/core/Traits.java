@@ -4,6 +4,7 @@ import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -108,11 +109,13 @@ public class Traits {
             public String key;
             public int color;
             public CompoundTag trim;
+            public Component hoverName;
 
-            public LocalData(String key, int color, CompoundTag trim) {
+            public LocalData(String key, int color, CompoundTag trim, Component hoverName) {
                   this.key = key;
                   this.color = color;
-                  this.trim = trim == null ? new CompoundTag() : trim;
+                  this.trim = trim == null ? new CompoundTag(): trim;
+                  this.hoverName = hoverName == null ? Component.empty(): hoverName;
             }
 
             LocalData(String key) {
@@ -134,8 +137,9 @@ public class Traits {
                   String key = display.getString("key");
                   int itemColor = stack.getItem() instanceof DyableBackpack dyableBackpack ? dyableBackpack.getColor(stack) : 0xFFFFFF;
                   CompoundTag trim = stack.getTagElement("Trim");
+                  Component hoverName = stack.hasCustomHoverName() ? stack.getHoverName(): Component.empty();
 
-                  return new LocalData(key, itemColor, trim);
+                  return new LocalData(key, itemColor, trim, hoverName);
             }
 
             public Traits traits() {
