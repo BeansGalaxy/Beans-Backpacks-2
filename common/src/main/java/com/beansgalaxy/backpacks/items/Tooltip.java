@@ -82,62 +82,65 @@ public class Tooltip {
       }
 
       /** LORE AND NAME **/
-      private static String key;
-
       public static Component name(ItemStack stack) {
             String key = stack.getOrCreateTagElement("display").getString("key");
             return Component.literal(Traits.get(key).name);
       }
 
-      public static void lore(ItemStack stack, List<Component> components) {
+      private static final MutableComponent empty = Component.literal("");
+      private static String keyBind = "§6" + getKeyBinding().getTranslatedKeyMessage().getString()
+                  .replace("Left ", "L")
+                  .replace("Right ", "R")
+                  .replace("Control", "Ctrl");
+
+      private static void addLoreConstants(List<Component> components, String k0, String k1) {
+            if (Services.COMPAT.isModLoaded(CompatHelper.CURIOS))
+                  components.add(empty);
+
+            components.add(Component.translatable("tooltip.beansbackpacks.constant_0", k0));
+            components.add(Component.translatable("tooltip.beansbackpacks.constant_1", keyBind));
+            components.add(empty);
+            components.add(Component.translatable("tooltip.beansbackpacks.constant_2", keyBind));
+            components.add(Component.translatable("tooltip.beansbackpacks.constant_3", k1));
+            components.add(empty);
+      }
+
+      public static List<Component> loreBackpack(List<Component> components) {
             Minecraft instance = Minecraft.getInstance();
-            LocalPlayer player = instance.player;
-            if (player == null)
-                  return;
+            addLoreConstants(components, "§7backpack", "§7backpack");
 
-            BackData backData = BackData.get(player);
-            ItemStack backStack = backData.getStack();
-            if (stack == backStack && backData.backpackInventory.isEmpty()) {
-                  key = "§6" + getKeyBinding().getTranslatedKeyMessage().getString()
-                              .replace("Left ", "L")
-                              .replace("Right ", "R")
-                              .replace("Control", "Ctrl");
+            String useKey = "§6" + instance.options.keyUse.getTranslatedKeyMessage().getString()
+                        .replace("Right Button", "RClick")
+                        .replace("Left Button", "LClick")
+                        .replace("Left ", "L")
+                        .replace("Right ", "R");
 
-                  if (backData.actionKeyPressed) {
-                        String useKey = "§6" + instance.options.keyUse.getTranslatedKeyMessage().getString()
-                                    .replace("Right Button", "RClick")
-                                    .replace("Left Button", "LClick")
-                                    .replace("Left ", "L")
-                                    .replace("Right ", "R");
+            components.add(Component.translatable("tooltip.beansbackpacks.backpack_0", keyBind, useKey));
+            components.add(Component.translatable("tooltip.beansbackpacks.backpack_1", keyBind, useKey));
+            if (Services.COMPAT.isModLoaded(CompatHelper.TRINKETS))
+                  components.add(empty);
 
-                        MutableComponent empty = Component.literal("");
-                        if (Services.COMPAT.isModLoaded(CompatHelper.CURIOS))
-                              components.add(empty);
+            return components;
+      }
 
-                        components.add(Component.translatable("tooltip.beansbackpacks.empty_0", key));
-                        components.add(Component.translatable("tooltip.beansbackpacks.empty_1", key));
-                        components.add(empty);
-                        components.add(Component.translatable("tooltip.beansbackpacks.empty_2", key));
-                        MutableComponent e3 = Component.translatable("tooltip.beansbackpacks.empty_3", key);
-                        if (!e3.getString().isEmpty())
-                              components.add(e3);
-                        components.add(empty);
-                        components.add(Component.translatable("tooltip.beansbackpacks.empty_4", key, useKey));
-                        components.add(Component.translatable("tooltip.beansbackpacks.empty_5", key, useKey));
-                        MutableComponent e5 = Component.translatable("tooltip.beansbackpacks.empty_6", key, useKey);
-                        if (!e5.getString().isEmpty())
-                              components.add(e5);
-                        if (Services.COMPAT.isModLoaded(CompatHelper.TRINKETS))
-                              components.add(empty);
+      public static void loreTitle(List<Component> components) {
+            components.add(Component.translatable("tooltip.beansbackpacks.empty_title_1", keyBind));
+            MutableComponent t2 = Component.translatable("tooltip.beansbackpacks.empty_title_2", keyBind);
+            if (!t2.getString().isEmpty()) components.add(t2);
+      }
 
-                  } else {
-                        components.add(Component.translatable("tooltip.beansbackpacks.empty_title_1", key));
-                        MutableComponent t2 = Component.translatable("tooltip.beansbackpacks.empty_title_2", key);
-                        if (!t2.getString().isEmpty()) components.add(t2);
-                  }
-            }
+      public static List<Component> loreDecoratedPot(List<Component> components) {
+            addLoreConstants(components, "§7pot", "§7this pot");
 
+            components.add(Component.translatable("tooltip.beansbackpacks.pot_0"));
+            components.add(Component.translatable("tooltip.beansbackpacks.pot_1"));
+            components.add(empty);
+            components.add(Component.translatable("tooltip.beansbackpacks.pot_2"));
+            components.add(Component.translatable("tooltip.beansbackpacks.pot_3"));
+            if (Services.COMPAT.isModLoaded(CompatHelper.TRINKETS))
+                  components.add(empty);
 
+            return components;
       }
 
       public static KeyMapping getKeyBinding() {
