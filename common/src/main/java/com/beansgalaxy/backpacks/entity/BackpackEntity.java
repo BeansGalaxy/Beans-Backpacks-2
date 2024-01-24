@@ -387,10 +387,8 @@ public class BackpackEntity extends Backpack {
             if (Kind.isBackpack(backpackStack))
                   return BackpackItem.useOnBackpack(player, this, backpackStack, actionKeyPressed);
 
-            if (actionKeyPressed)
-            {
-                  BackData backSlot = BackData.get(player);
-                  if (!backSlot.isEmpty() && !this.isRemoved())
+            if (actionKeyPressed) {
+                  if (!backData.isEmpty() && !this.isRemoved())
                   {
                         PlaySound.HIT.at(this, this.getKind());
                         this.hop(.1);
@@ -405,20 +403,20 @@ public class BackpackEntity extends Backpack {
                         NonNullList<ItemStack> backpackEntityStacks = this.getItemStacks();
                         playerInventoryStacks.clear();
                         playerInventoryStacks.addAll(backpackEntityStacks);
-                        backSlot.set(toStack(this));
+                        backData.set(toStack(this));
                         PlaySound.EQUIP.at(player, this.getKind());
                         if (player instanceof ServerPlayer serverPlayer)
                               Services.NETWORK.backpackInventory2C(serverPlayer);
-                  }
-                  if (!this.isRemoved() && !player.level().isClientSide())
-                  {
-                        this.kill();
-                        this.markHurt();
+
+                        if (!this.isRemoved() && !player.level().isClientSide())
+                        {
+                              this.kill();
+                              this.markHurt();
+                        }
                   }
                   return InteractionResult.SUCCESS;
             }
-            else
-                  return InteractionResult.PASS;
+            return InteractionResult.PASS;
       }
 
       @Override

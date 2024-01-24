@@ -1,16 +1,23 @@
 {
   "key.beansbackpacks.action": "Place/Pick up Backpack",
   "key.beansbackpacks.description": "Leave unbound to pair this action with the key bound to sprint.",
-  "tooltip.beansbackpacks.empty_title_1": "§7Hold %d §7for quick actions",
-  "tooltip.beansbackpacks.empty_title_2": "",
-  "tooltip.beansbackpacks.empty_0": "§7Click onto this backpack",
-  "tooltip.beansbackpacks.empty_1": "§7to insert/take items.",
-  "tooltip.beansbackpacks.empty_2": "§7Hold %d §7to move items",
-  "tooltip.beansbackpacks.empty_3": "§7quickly to/from backpack.",
-  "tooltip.beansbackpacks.empty_4": "%d §7+ %d §7backpacks or",
-  "tooltip.beansbackpacks.empty_5": "§7blocks to equip and place.",
-  "tooltip.beansbackpacks.empty_6": "",
   "itemGroup.beansbackpacks": "Backpacks",
+
+  "tooltip.beansbackpacks.empty_title_1": "%d §7for backpack info.",
+  "tooltip.beansbackpacks.empty_title_2": "",
+
+  "tooltip.beansbackpacks.constant_0": "§7Click onto this %d",
+  "tooltip.beansbackpacks.constant_1": "§7to insert/take items.",
+  "tooltip.beansbackpacks.constant_2": "§7Hold %d §7to move items",
+  "tooltip.beansbackpacks.constant_3": "§7quickly to/from %d§7.",
+
+  "tooltip.beansbackpacks.backpack_0": "%d §7+ %d §7backpacks or",
+  "tooltip.beansbackpacks.backpack_1": "§7blocks to equip and place.",
+
+  "tooltip.beansbackpacks.pot_0": "§7Pots store an unlimited",
+  "tooltip.beansbackpacks.pot_1": "§7amount of one item.",
+  "tooltip.beansbackpacks.pot_2": "§7You cannot un-equip a",
+  "tooltip.beansbackpacks.pot_3": "§7pot while storing items.",
 
   "sounds.beansbackpacks.place": "Backpack Placed",
   "sounds.beansbackpacks.equip": "Backpack Equipped",
