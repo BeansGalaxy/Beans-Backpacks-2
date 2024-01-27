@@ -30,7 +30,7 @@ public class InSlot extends Slot {
                   return true;
 
             InventoryMenu inventoryMenu = player.inventoryMenu;
-            if (slotIndex > inventoryMenu.slots.size())
+            if (inventoryMenu.slots.size() < slotIndex)
                   return true;
 
             BackData backData = BackData.get(player);
@@ -81,7 +81,7 @@ public class InSlot extends Slot {
                                           return false;
                                     }
                               playerInventory.setItem(button, backpackInventory.removeItemNoUpdate(0));
-                              backpackInventory.insertItem(itemStack);
+                              backpackInventory.insertItem(itemStack, itemStack.getCount());
                         }
                         return false;
                   }
@@ -109,7 +109,7 @@ public class InSlot extends Slot {
                               return false;
                         }
                         if (Kind.isStorage(backStack)) {
-                              slot.set(backpackInventory.insertItem(stack));
+                              slot.set(backpackInventory.insertItem(stack, stack.getCount()));
                               return false;
                         }
                         return true;
@@ -119,22 +119,22 @@ public class InSlot extends Slot {
                   else if (selectedBackpackInventory)
                         actionType = ClickType.QUICK_MOVE;
             }
-            else
-                  if (selectedBackpackInventory && actionType != ClickType.QUICK_MOVE)
+            else if (selectedBackpackInventory && actionType != ClickType.QUICK_MOVE)
+            {
+                  if (button == 1 && !cursorStack.is(backpackStack.getItem()) && !cursorStack.isEmpty())
                   {
-                        if (button == 1 && !cursorStack.is(backpackStack.getItem()) && !cursorStack.isEmpty())
-                        {
-                              backpackInventory.insertItem(cursorStack, 1);
-                              return false;
-                        }
-                        if (button == 0)
-                        {
-                              inventoryMenu.setRemoteCarried(cursorStack);
-                              ItemStack returnStack = backpackInventory.returnItem(0, cursorStack);
-                              inventoryMenu.setCarried(returnStack);
-                              return false;
-                        }
+                        backpackInventory.insertItem(cursorStack, 1);
+                        return false;
                   }
+                  if (button == 0)
+                  {
+                        inventoryMenu.setRemoteCarried(cursorStack);
+                        ItemStack returnStack = backpackInventory.returnItem(0, cursorStack);
+                        inventoryMenu.setCarried(returnStack);
+                        return false;
+                  }
+            }
+
 
             if (actionType == ClickType.QUICK_MOVE && selectedBackpackInventory)
             {

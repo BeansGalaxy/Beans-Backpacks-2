@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.core;
 
+import com.beansgalaxy.backpacks.access.BackAccessor;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;

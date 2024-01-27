@@ -89,8 +89,6 @@ public interface BackpackInventory extends Container {
       /**
        * CONTAINER METHODS BELOW
        **/
-
-
       NonNullList<ItemStack> getItemStacks();
 
       default void playSound(PlaySound sound) {
@@ -166,14 +164,14 @@ public interface BackpackInventory extends Container {
       }
 
       default ItemStack returnItem(int slot, ItemStack stack) {
-            if (!stack.isEmpty())
-                  return insertItem(stack);
-            else
-                  return removeItemNoUpdate(slot);
+            return returnItem(slot, stack, stack.getCount());
       }
 
-      default ItemStack insertItem(ItemStack stack) {
-            return insertItem(stack, stack.getCount());
+      default ItemStack returnItem(int slot, ItemStack stack, int amount) {
+            if (!stack.isEmpty())
+                  return insertItem(stack, amount);
+            else
+                  return removeItemNoUpdate(slot);
       }
 
       default ItemStack insertItem(ItemStack stack, int amount) {
@@ -186,10 +184,8 @@ public interface BackpackInventory extends Container {
       default ItemStack insertItemSilent(ItemStack stack, int amount) {
             if (!stack.isEmpty() && getLocalData() != null && !getLocalData().key.isEmpty() && canPlaceItem(stack)) {
                   boolean isServerSide = !getOwner().level().isClientSide();
-                  int space = spaceLeft();
-                  int weight = weightByItem(stack);
-                  int weightedSpace = space / weight;
-                  int count = Math.min(weightedSpace, amount);
+                  int spaceLeft = spaceLeft();
+                  int count = Math.min(spaceLeft / weightByItem(stack), amount);
                   if (count > 0)
                   {
                         if (isServerSide && stack.getItem() instanceof BackpackItem)
@@ -197,7 +193,7 @@ public interface BackpackInventory extends Container {
                         this.getItemStacks().add(0, mergeItem(stack.copyWithCount(count)));
                         stack.setCount(stack.getCount() - count);
                   }
-                  if (isServerSide && Objects.equals(getLocalData().key, "leather") && spaceLeft() < 1)
+                  if (isServerSide && Objects.equals(getLocalData().key, "leather") && spaceLeft < 1)
                         triggerAdvancements(SpecialCriterion.Special.FILLED_LEATHER);
             }
             return stack;

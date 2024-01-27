@@ -53,6 +53,9 @@ public abstract class ItemStackMixin {
       @Inject(method = "getTooltipLines", at = @At(value = "INVOKE", ordinal = 0, shift = At.Shift.AFTER,
                   target = "Ljava/util/List;add(Ljava/lang/Object;)Z"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
       private void redirectBackSlotTooltip(Player player, TooltipFlag flag, CallbackInfoReturnable<List<Component>> cir, List<Component> components, MutableComponent name) {
+            if (player == null)
+                  return;
+
             BackData backData = BackData.get(player);
             if (instance == backData.getStack() && backData.backpackInventory.isEmpty())
             {

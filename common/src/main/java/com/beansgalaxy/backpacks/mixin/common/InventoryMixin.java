@@ -1,6 +1,6 @@
 package com.beansgalaxy.backpacks.mixin.common;
 
-import com.beansgalaxy.backpacks.core.BackAccessor;
+import com.beansgalaxy.backpacks.access.BackAccessor;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -96,9 +97,11 @@ public class InventoryMixin implements BackAccessor {
             {
                   BackData backData = BackData.get(player);
                   BackpackInventory backpackInventory = backData.backpackInventory;
+                  ItemStack backStack = backData.getStack();
 
-                  if (Kind.isStorage(backData.getStack()) && backpackInventory.canPlaceItem(stack))
+                  if (Kind.isStorage(backStack) && backpackInventory.canPlaceItem(stack))
                   {
+
                         instance.items.forEach(stacks -> {
                               if (ItemStack.isSameItemSameTags(stacks, stack)) {
                                     int present = stacks.getCount();
@@ -141,7 +144,11 @@ public class InventoryMixin implements BackAccessor {
       @Inject(method = "add(ILnet/minecraft/world/item/ItemStack;)Z", at = @At("RETURN"), cancellable = true)
       public void insertBackpack(int $$0, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
             if (!cir.getReturnValue()) {
-                  BackpackInventory backpackInventory = BackData.get(player).backpackInventory;
+                  BackData backData = BackData.get(player);
+                  BackpackInventory backpackInventory = backData.backpackInventory;
+                  if (backData.getStack().is(Items.DECORATED_POT) && backpackInventory.isEmpty())
+                        return;
+
                   cir.setReturnValue(backpackInventory.insertItemSilent(stack, stack.getCount()).isEmpty());
             }
       }

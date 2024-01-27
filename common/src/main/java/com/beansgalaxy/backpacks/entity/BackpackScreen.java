@@ -114,9 +114,4 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
 
             return inventory && backpackRender && backpackSlots;
       }
-
-      @Override
-      public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            return super.mouseClicked(mouseX, mouseY, button);
-      }
 }

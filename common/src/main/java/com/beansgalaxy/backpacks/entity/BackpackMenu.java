@@ -1,11 +1,12 @@
 package com.beansgalaxy.backpacks.entity;
 
+import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Traits;
+import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
@@ -17,9 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class BackpackMenu extends AbstractContainerMenu {
-      private static final ResourceLocation BACKPACK_ATLAS = new ResourceLocation("textures/atlas/blocks.png");
-      private static final ResourceLocation INPUT = new ResourceLocation("sprites/empty_slot_input_large");
-      private static int FIRST_SLOT_INDEX;
+      public static int FIRST_SLOT_INDEX;
       public final BackpackInventory backpackInventory;
       protected final Backpack mirror;
       protected final Player viewer;
@@ -101,22 +100,40 @@ public class BackpackMenu extends AbstractContainerMenu {
       }
 
       public void clicked(int slotIndex, int button, ClickType actionType, Player player) {
-            if (slotIndex >= FIRST_SLOT_INDEX && actionType != ClickType.QUICK_MOVE) {
+            int backpackSlot = slotIndex - FIRST_SLOT_INDEX;
+            if (actionType == ClickType.THROW) {
+                  super.clicked(slotIndex, button, actionType, player);
+                  return;
+            }
+
+            if (actionType == ClickType.PICKUP_ALL) {
+                  if (!(backpackSlot > -1))
+                        super.clicked(slotIndex, button, actionType, player);
+                  return;
+            }
+
+            if (BackData.get(player).actionKeyPressed)
+                  actionType = ClickType.QUICK_MOVE;
+
+
+            if (actionType != ClickType.QUICK_MOVE && backpackSlot > -1) {
                   ItemStack cursorStack = this.getCarried();
-                  if (button == 0 && !cursorStack.isEmpty()) {
-                        this.setRemoteCarried(cursorStack);
-                        ItemStack stack = backpackInventory.insertItem(cursorStack);
-                        this.setCarried(stack);
-                        return;
-                  }
-                  if (button == 1 && !cursorStack.isEmpty()) {
-                        this.setRemoteCarried(cursorStack);
-                        ItemStack stack = backpackInventory.insertItem(cursorStack, 1);
-                        this.setCarried(stack);
-                        return;
-                  }
+                  setCarried(menuInsert(button, cursorStack, backpackSlot, backpackInventory));
+                  return;
             }
             super.clicked(slotIndex, button, actionType, player);
+      }
+
+      public static ItemStack menuInsert(int button, ItemStack cursorStack, int slot, BackpackInventory backpackInventory) {
+            if (button == 1) {
+                  if (cursorStack.isEmpty()) {
+                        ItemStack stack = backpackInventory.getItem(slot);
+                        int count = Math.max(1, Math.min(stack.getCount(), stack.getMaxStackSize()) / 2);
+                        return backpackInventory.removeItem(slot, count);
+                  } else
+                        return backpackInventory.returnItem(slot, cursorStack, 1);
+            } else
+                  return backpackInventory.returnItem(slot, cursorStack);
       }
 
       @Override
@@ -128,12 +145,15 @@ public class BackpackMenu extends AbstractContainerMenu {
             if (slotId < FIRST_SLOT_INDEX) { // HANDLES INSERT TO BACKPACK
                   if (backpackInventory.spaceLeft() < 1)
                         return ItemStack.EMPTY;
-                  backpackInventory.insertItem(clickedStack);
+                  backpackInventory.insertItem(clickedStack, clickedStack.getCount());
                   clickedSlot.set(clickedStack);
             } else { // HANDLES INSERT TO INVENTORY
                   clickedStack = backpackInventory.getItemStacks().get(slotId - FIRST_SLOT_INDEX);
                   this.moveItemStackTo(clickedStack, 0, FIRST_SLOT_INDEX, true);
-                  if (clickedStack.isEmpty()) backpackInventory.getItemStacks().remove(slotId - FIRST_SLOT_INDEX);
+                  if (clickedStack.isEmpty()) {
+                        backpackInventory.getItemStacks().remove(slotId - FIRST_SLOT_INDEX);
+                        backpackInventory.playSound(PlaySound.TAKE);
+                  }
             }
             return ItemStack.EMPTY;
       }

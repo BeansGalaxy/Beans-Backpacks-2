@@ -11,7 +11,6 @@ public class Sounds {
       public static final SoundEvent HIT_LEATHER = registerSoundEvent("hit_leather");
       public static final SoundEvent BREAK_LEATHER = registerSoundEvent("break_leather");
       public static final SoundEvent INSERT_LEATHER = registerSoundEvent("insert_leather");
-      public static final SoundEvent TAKE_LEATHER = registerSoundEvent("take_leather");
       public static final SoundEvent OPEN_LEATHER = registerSoundEvent("open_leather");
       public static final SoundEvent CLOSE_LEATHER = registerSoundEvent("close_leather");
 
