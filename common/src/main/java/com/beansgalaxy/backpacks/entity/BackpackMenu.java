@@ -70,14 +70,13 @@ public class BackpackMenu extends AbstractContainerMenu {
 
 
       private void createBackpackSlots(Container inventory) {
-            final int columns = Math.min(5 + (max_stacks / 4), 11);
+            final int columns = Math.min(4 + (max_stacks / 3), 11);
             final int rows = 4;
             final int spacing = 17;
             int bpCenter = (columns / 2) * spacing;
             int x = 80 - bpCenter;
             x += spacing / 2 * -((columns % 2) - 1);
             int y = invOffset - rows * spacing + 35;
-
 
             for(int r = 0; r < rows; ++r)
                   for(int c = 0; c < columns; ++c)
