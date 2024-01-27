@@ -6,7 +6,6 @@ import dev.emi.trinkets.api.*;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameRules;
 
 import java.util.Map;
@@ -39,7 +38,7 @@ public class TrinketsRegistry {
             for (Kind kind: Kind.values())
                   TrinketsApi.registerTrinket(kind.getItem(), trinket);
 
-            TrinketsApi.registerTrinket(Items.ELYTRA.asItem(), trinket);
+            //TrinketsApi.registerTrinket(Items.ELYTRA.asItem(), trinket);
       }
 
       public static void setBackStack(ItemStack stack, BackData backData) {

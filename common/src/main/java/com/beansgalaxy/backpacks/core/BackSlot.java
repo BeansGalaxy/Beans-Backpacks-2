@@ -3,7 +3,6 @@ package com.beansgalaxy.backpacks.core;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
-import net.minecraft.advancements.AdvancementList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
@@ -11,6 +10,7 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.Vec3;
 
@@ -54,10 +54,12 @@ public class BackSlot extends Slot {
       }
 
       public static List<ResourceLocation> getTextures() {
-            AdvancementList manager = Minecraft.getInstance().getConnection().getAdvancements().getAdvancements();
-            boolean hasEndGoal = manager.get(ResourceLocation.tryParse("end/root")) != null;
-            if (hasEndGoal)
+            if (Constants.CHESTPLATE_DISABLED.contains(Items.ELYTRA.asItem())
+                  && Minecraft.getInstance().getConnection().getAdvancements().getAdvancements()
+                        .get(ResourceLocation.tryParse("end/root")) != null)
+            {
                   return List.of(SLOT_ELYTRA, SLOT_BACKPACK);
+            }
 
             return List.of(SLOT_BACKPACK);
       }

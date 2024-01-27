@@ -93,10 +93,13 @@ public class Tooltip {
                   .replace("Right ", "R")
                   .replace("Control", "Ctrl");
 
-      private static void addLoreConstants(List<Component> components, String k0, String k1) {
-            if (Services.COMPAT.isModLoaded(CompatHelper.CURIOS))
-                  components.add(empty);
+      public static void loreTitle(List<Component> components) {
+            components.add(Component.translatable("tooltip.beansbackpacks.empty_title_1", keyBind));
+            MutableComponent t2 = Component.translatable("tooltip.beansbackpacks.empty_title_2", keyBind);
+            if (!t2.getString().isEmpty()) components.add(t2);
+      }
 
+      private static void addLoreConstants(List<Component> components, String k0, String k1) {
             components.add(Component.translatable("tooltip.beansbackpacks.constant_0", k0));
             components.add(Component.translatable("tooltip.beansbackpacks.constant_1", keyBind));
             components.add(empty);
@@ -117,16 +120,8 @@ public class Tooltip {
 
             components.add(Component.translatable("tooltip.beansbackpacks.backpack_0", keyBind, useKey));
             components.add(Component.translatable("tooltip.beansbackpacks.backpack_1", keyBind, useKey));
-            if (Services.COMPAT.isModLoaded(CompatHelper.TRINKETS))
-                  components.add(empty);
 
             return components;
-      }
-
-      public static void loreTitle(List<Component> components) {
-            components.add(Component.translatable("tooltip.beansbackpacks.empty_title_1", keyBind));
-            MutableComponent t2 = Component.translatable("tooltip.beansbackpacks.empty_title_2", keyBind);
-            if (!t2.getString().isEmpty()) components.add(t2);
       }
 
       public static List<Component> loreDecoratedPot(List<Component> components) {

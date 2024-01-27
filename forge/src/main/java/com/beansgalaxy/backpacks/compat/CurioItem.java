@@ -31,10 +31,9 @@ public class CurioItem implements ICurioItem {
 
       @Override
       public boolean canUnequip(SlotContext slotContext, ItemStack stack) {
-            boolean b = ICurioItem.super.canUnequip(slotContext, stack);
             if (slotContext.entity() instanceof Player player)
-                  return BackData.get(player).backpackInventory.isEmpty() && b;
-            return b;
+                  return BackData.get(player).backpackInventory.isEmpty();
+            return true;
       }
 
       @Override

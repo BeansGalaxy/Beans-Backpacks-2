@@ -120,7 +120,7 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
             ItemStack stack = slot.getItem();
 
             boolean selectedPlayerInventory = slotIndex < InventoryMenu.SHIELD_SLOT;
-            boolean selectedBackpackInventory = slotIndex == backData.inSlot.slotIndex && player.containerMenu == (InventoryMenu) (Object) this;
+            boolean selectedBackpackInventory = slotIndex == backData.inSlot.slotIndex && player.containerMenu == player.inventoryMenu;
 
             if (selectedBackpackInventory && Kind.POT.is(backStack) && beans_Backpacks_2$potClick(slotIndex, button, actionType, stack, backpackInventory, playerInventory))
                   return;
@@ -157,7 +157,7 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
             }
 
             if (actionType == ClickType.QUICK_MOVE && selectedBackpackInventory) {
-                  BackpackItem.handleQuickMove(backStack, playerInventory, backpackInventory);
+                  BackpackItem.handleQuickMove(playerInventory, backpackInventory);
                   return;
             }
 

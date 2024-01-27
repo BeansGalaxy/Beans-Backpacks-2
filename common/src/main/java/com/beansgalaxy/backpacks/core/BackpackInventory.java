@@ -102,7 +102,7 @@ public interface BackpackInventory extends Container {
 
       @Override
       default boolean isEmpty() {
-            return getItemStacks().isEmpty();
+            return getItemStacks().isEmpty() || getItemStacks().stream().allMatch(ItemStack::isEmpty);
       }
 
       @Override
@@ -176,7 +176,7 @@ public interface BackpackInventory extends Container {
 
       default ItemStack insertItem(ItemStack stack, int amount) {
             ItemStack insertedStack = stack.copy();
-            if (insertItemSilent(stack, amount) != insertedStack)
+            if (insertItemSilent(stack, amount).getCount() != insertedStack.getCount())
                   playSound(stack.isEmpty() ? PlaySound.INSERT : PlaySound.TAKE);
             return stack.isEmpty() ? ItemStack.EMPTY : stack;
       }
@@ -251,7 +251,8 @@ public interface BackpackInventory extends Container {
                         stack.setDamageValue(stack.getDamageValue());
                   }
 
-                  this.getItemStacks().add(stack);
+                  if (!stack.isEmpty())
+                        this.getItemStacks().add(stack);
             }
       }
 

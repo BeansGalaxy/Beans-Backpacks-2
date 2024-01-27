@@ -66,7 +66,7 @@ public class BackpackItem extends Item {
                         return false;
 
             if (backData.actionKeyPressed && clickAction != ClickAction.SECONDARY) {
-                  handleQuickMove(backStack, player.getInventory(), backpackInventory);
+                  handleQuickMove(player.getInventory(), backpackInventory);
                   return true;
             }
 
@@ -74,7 +74,7 @@ public class BackpackItem extends Item {
                         cursorStack, 0, backpackInventory));
       }
 
-      public static void handleQuickMove(ItemStack backStack, Inventory playerInventory, BackpackInventory backpackInventory) {
+      public static void handleQuickMove(Inventory playerInventory, BackpackInventory backpackInventory) {
             ItemStack stack = backpackInventory.getItem(0);
             if (stack.isEmpty())
                   return;
