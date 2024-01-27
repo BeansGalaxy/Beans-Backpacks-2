@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.core;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
@@ -16,9 +17,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.ShulkerBoxBlock;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -91,8 +90,6 @@ public interface BackpackInventory extends Container {
       /**
        * CONTAINER METHODS BELOW
        **/
-
-
       NonNullList<ItemStack> getItemStacks();
 
       default void playSound(PlaySound sound) {
@@ -106,7 +103,7 @@ public interface BackpackInventory extends Container {
 
       @Override
       default boolean isEmpty() {
-            return getItemStacks().isEmpty();
+            return getItemStacks().isEmpty() || getItemStacks().stream().allMatch(ItemStack::isEmpty);
       }
 
       @Override
@@ -124,8 +121,7 @@ public interface BackpackInventory extends Container {
             List<ItemStack> stacks = getItemStacks();
             ItemStack stack = stacks.get(slot).copyWithCount(amount);
             stacks.get(slot).split(amount);
-            if (!stack.isEmpty())
-                  playSound(PlaySound.TAKE);
+            playSound(PlaySound.TAKE);
             if (stacks.get(slot).isEmpty())
                   stacks.remove(slot);
             return stack;
@@ -169,19 +165,19 @@ public interface BackpackInventory extends Container {
       }
 
       default ItemStack returnItem(int slot, ItemStack stack) {
+            return returnItem(slot, stack, stack.getCount());
+      }
+
+      default ItemStack returnItem(int slot, ItemStack stack, int amount) {
             if (!stack.isEmpty())
-                  return insertItem(stack);
+                  return insertItem(stack, amount);
             else
                   return removeItemNoUpdate(slot);
       }
 
-      default ItemStack insertItem(ItemStack stack) {
-            return insertItem(stack, stack.getCount());
-      }
-
       default ItemStack insertItem(ItemStack stack, int amount) {
             ItemStack insertedStack = stack.copy();
-            if (insertItemSilent(stack, amount) != insertedStack)
+            if (insertItemSilent(stack, amount).getCount() != insertedStack.getCount())
                   playSound(stack.isEmpty() ? PlaySound.INSERT : PlaySound.TAKE);
             return stack.isEmpty() ? ItemStack.EMPTY : stack;
       }
@@ -189,10 +185,8 @@ public interface BackpackInventory extends Container {
       default ItemStack insertItemSilent(ItemStack stack, int amount) {
             if (!stack.isEmpty() && getLocalData() != null && !getLocalData().key.isEmpty() && canPlaceItem(stack)) {
                   boolean isServerSide = !getOwner().level().isClientSide();
-                  int space = spaceLeft();
-                  int weight = weightByItem(stack);
-                  int weightedSpace = space / weight;
-                  int count = Math.min(weightedSpace, amount);
+                  int spaceLeft = spaceLeft();
+                  int count = Math.min(spaceLeft / weightByItem(stack), amount);
                   if (count > 0)
                   {
                         if (isServerSide && stack.getItem() instanceof BackpackItem)
@@ -200,7 +194,7 @@ public interface BackpackInventory extends Container {
                         this.getItemStacks().add(0, mergeItem(stack.copyWithCount(count)));
                         stack.setCount(stack.getCount() - count);
                   }
-                  if (isServerSide && Objects.equals(getLocalData().key, "leather") && spaceLeft() < 1)
+                  if (isServerSide && Objects.equals(getLocalData().key, "leather") && spaceLeft < 1)
                         triggerAdvancements(SpecialCriterion.Special.FILLED_LEATHER);
             }
             return stack;
@@ -259,7 +253,8 @@ public interface BackpackInventory extends Container {
                         stack.setDamageValue(stack.getDamageValue());
                   }
 
-                  this.getItemStacks().add(stack);
+                  if (!stack.isEmpty())
+                        this.getItemStacks().add(stack);
             }
       }
 
@@ -273,7 +268,7 @@ public interface BackpackInventory extends Container {
                   nbtCompound.putByte("Slot", (byte)i);
 
                   ResourceLocation identifier = BuiltInRegistries.ITEM.getKey(itemStack.getItem());
-                  nbtCompound.putString("id", identifier.toString());
+                  nbtCompound.putString("id", identifier == null ? "minecraft:air" : identifier.toString());
                   nbtCompound.putInt("Count", itemStack.getCount());
                   if (itemStack.getTag() != null) {
                         nbtCompound.put("tag", itemStack.getTag().copy());
@@ -289,7 +284,7 @@ public interface BackpackInventory extends Container {
 
 
       default boolean canPlaceItem(ItemStack inserted) {
-            if (inserted.getItem() instanceof BlockItem block && block.getBlock() instanceof ShulkerBoxBlock)
+            if (Constants.BLACKLIST_ITEMS.contains(inserted.getItem()))
                   return false;
 
             boolean isEmpty = getItemStacks().isEmpty();

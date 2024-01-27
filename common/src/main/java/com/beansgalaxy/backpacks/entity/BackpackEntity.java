@@ -17,6 +17,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -172,13 +173,23 @@ public class BackpackEntity extends Backpack {
 
       private void wobble() {
             Kind kind = getLocalData().kind();
-            if (!Kind.UPGRADED.is(kind) && isInLava() || !Kind.METAL.is(kind) && isOnFire()) {
-                  wobble += 2;
-            } else
-            if (wobble > 0)
+            boolean inLava = isInLava();
+            boolean isOnFire = isOnFire();
+            if (!Kind.UPGRADED.is(kind) && inLava || isOnFire)
+            {
+                  if (wobble % 12 == 0)
+                        playSound(SoundEvents.GENERIC_BURN);
+                  damage(1, true);
+            }
+            else if (wobble > 0)
                   wobble -= 1;
       }
 
+      @Override
+      public void setRemainingFireTicks(int i) {
+            int fireTicks = level().isClientSide ? i : Math.min(i, 30);
+            super.setRemainingFireTicks(fireTicks);
+      }
 
       private void updateGravity() {
             this.setNoGravity(this.isNoGravity() && !this.level().noCollision(this, this.getBoundingBox().inflate(0.1, -0.1, 0.1)));
@@ -229,7 +240,7 @@ public class BackpackEntity extends Backpack {
 
       @Override
       public boolean displayFireAnimation() {
-            return this.isOnFire() && !this.isSpectator() && getLocalData().kind() != Kind.UPGRADED;
+            return false;
       }
 
       @Override
@@ -304,9 +315,12 @@ public class BackpackEntity extends Backpack {
 
       @Override
       public boolean hurt(DamageSource damageSource, float amount) {
-            if ((damageSource.is(DamageTypes.IN_FIRE) || damageSource.is(DamageTypes.ON_FIRE) || damageSource.is(DamageTypes.LAVA)) && this.fireImmune())
-                  return false;
             double height = 0.1D;
+            if ((damageSource.is(DamageTypes.IN_FIRE) || damageSource.is(DamageTypes.ON_FIRE) || damageSource.is(DamageTypes.LAVA))) {
+                  if (fireImmune())
+                        return false;
+                  height = 0;
+            }
             if (damageSource.is(DamageTypes.EXPLOSION) || damageSource.is(DamageTypes.PLAYER_EXPLOSION)) {
                   height += Math.sqrt(amount) / 20;
                   return hop(height);
@@ -322,19 +336,23 @@ public class BackpackEntity extends Backpack {
                   }
                   else {
                         float damage = player.getUUID() == placedBy ? .8f : .5f;
-                        wobble += (int) (BREAK_TIMER * damage);
-                        if (wobble > BREAK_TIMER) {
-                              breakAndDropContents();
-                              return true;
-                        }
-                        else {
-                              PlaySound.HIT.at(this, getKind());
-                              return hop(height);
-                        }
+                        return damage((int) (BREAK_TIMER * damage), false);
                   }
             }
 
             hop(height);
+            return true;
+      }
+
+      private boolean damage(int damage, boolean silent) {
+            wobble += damage;
+            if (wobble > BREAK_TIMER)
+                  breakAndDropContents();
+            else if (!silent)
+            {
+                  PlaySound.HIT.at(this, getKind());
+                  return hop(0.1);
+            }
             return true;
       }
 

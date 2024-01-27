@@ -1,8 +1,7 @@
-package com.beansgalaxy.backpacks.screen;
+package com.beansgalaxy.backpacks.entity;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
-import com.beansgalaxy.backpacks.entity.Backpack;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
@@ -114,10 +113,5 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
                                     || mouseY >= (double)(top + this.imageHeight);
 
             return inventory && backpackRender && backpackSlots;
-      }
-
-      @Override
-      public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            return super.mouseClicked(mouseX, mouseY, button);
       }
 }

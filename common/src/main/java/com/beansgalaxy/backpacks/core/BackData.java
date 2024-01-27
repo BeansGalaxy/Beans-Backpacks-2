@@ -1,6 +1,6 @@
 package com.beansgalaxy.backpacks.core;
 
-import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.access.BackAccessor;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
@@ -44,8 +44,9 @@ public class BackData {
             }
       };
 
-      public final BackSlot backSlot = new BackSlot(this, 59, 62);
-      public final InSlot inSlot = new InSlot(this, 59, Constants.SLOTS_MOD_ACTIVE ? 62 : 45);
+      protected static final int[] UV = {59, 62};
+      public final BackSlot backSlot = new BackSlot(this);
+      public final InSlot inSlot = new InSlot(this);
       public boolean actionKeyPressed = false;
       private ItemStack backStack = ItemStack.EMPTY;
       private Traits.LocalData localData = Traits.LocalData.EMPTY;
@@ -59,7 +60,7 @@ public class BackData {
       }
 
       public ItemStack getStack() {
-            return backStack;
+            return Services.COMPAT.getBackSlotItem(this, backStack);
       }
 
       public boolean isEmpty() {
@@ -67,8 +68,8 @@ public class BackData {
       }
 
       public void set(ItemStack backStack) {
-            update(backStack);
-            Services.COMPAT.setBackSlotItem(this, backStack, owner);
+            Services.COMPAT.setBackSlotItem(this, backStack);
+            backSlot.set(backStack);
       }
 
       public void update(ItemStack backStack) {
@@ -92,11 +93,12 @@ public class BackData {
 
             NonNullList<ItemStack> itemStacks = backpackInventory.getItemStacks();
 
+            ItemStack backStack = getStack();
             if (!Kind.isBackpack(backStack)) {
                   owner.spawnAtLocation(backStack.copy(), 0.5f);
                   if (localData.isPot()) {
                         int iteration = 0;
-                        int maxIterations = 81;
+                        int maxIterations = 108;
                         while (!itemStacks.isEmpty() && iteration < maxIterations) {
                               ItemStack stack = itemStacks.remove(iteration);
                               if (stack.getMaxStackSize() == 64) {

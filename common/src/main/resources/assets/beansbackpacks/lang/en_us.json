@@ -1,5 +1,6 @@
 {
-  "key.beansbackpacks.action": "Place/Pick up Backpack",
+  "key.beansbackpacks.category" : "Beans' Backpacks",
+  "key.beansbackpacks.action": "Backpack Action",
   "key.beansbackpacks.description": "Leave unbound to pair this action with the key bound to sprint.",
   "itemGroup.beansbackpacks": "Backpacks",
 

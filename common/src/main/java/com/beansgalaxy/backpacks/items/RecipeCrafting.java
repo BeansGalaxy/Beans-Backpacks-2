@@ -61,8 +61,8 @@ public class RecipeCrafting extends ShapedRecipe {
             return key != null && !key.isEmpty();
       }
 
-      @Override @NotNull
-      public ItemStack assemble(CraftingContainer container, RegistryAccess leve) {
+      @Override
+      public @NotNull ItemStack assemble(CraftingContainer container, RegistryAccess leve) {
             String key = Traits.keyFromIngredients(container.getItem(0).getItem(), container.getItem(1).getItem());
             if (key == null || key.isEmpty())
                   return ItemStack.EMPTY;

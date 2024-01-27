@@ -1,10 +1,12 @@
 package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.core.BackAccessor;
+import com.beansgalaxy.backpacks.access.BackAccessor;
 import com.beansgalaxy.backpacks.core.BackData;
-import com.beansgalaxy.backpacks.core.InSlot;
+import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
+import com.beansgalaxy.backpacks.entity.BackpackMenu;
+import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.mojang.datafixers.util.Pair;
@@ -104,7 +106,113 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
       @Unique
       @Override
       public void clicked(int slotIndex, int button, ClickType actionType, Player player) {
-            if (InSlot.continueSlotClick(slotIndex, button, actionType, player))
+            if (slotIndex < 0 || slots.size() < slotIndex) {
                   super.clicked(slotIndex, button, actionType, player);
+                  return;
+            }
+
+            BackData backData = BackData.get(player);
+            ItemStack backStack = backData.getStack();
+            BackpackInventory backpackInventory = backData.backpackInventory;
+            Inventory playerInventory = player.getInventory();
+            Slot slot = slots.get(slotIndex);
+            ItemStack stack = slot.getItem();
+
+            boolean selectedPlayerInventory = slotIndex < InventoryMenu.SHIELD_SLOT;
+            boolean selectedBackpackInventory = slotIndex == backData.inSlot.slotIndex && player.containerMenu == player.inventoryMenu;
+
+            if (selectedBackpackInventory && Kind.POT.is(backStack) && beans_Backpacks_2$potClick(slotIndex, button, actionType, stack, backpackInventory, playerInventory))
+                  return;
+
+            if (actionType == ClickType.THROW) {
+                  super.clicked(slotIndex, button, actionType, player);
+                  return;
+            }
+
+            if (actionType == ClickType.PICKUP_ALL) {
+                  if (!selectedBackpackInventory)
+                        super.clicked(slotIndex, button, actionType, player);
+                  return;
+            }
+
+            if (backData.actionKeyPressed) {
+                  if (selectedPlayerInventory) {
+                        if (backStack.isEmpty() && backData.backSlot.isActive() && !stack.isEmpty() && Kind.isWearable(stack))
+                              slot.set(backData.backSlot.safeInsert(stack));
+                        else if (Kind.isStorage(backStack))
+                              slot.set(backpackInventory.insertItem(stack, stack.getCount()));
+                        else
+                              super.clicked(slotIndex, button, actionType, player);
+                        return;
+                  }
+                  if (selectedBackpackInventory || actionType == ClickType.QUICK_MOVE && stack == backStack) {
+                        actionType = ClickType.QUICK_MOVE;
+                        selectedBackpackInventory = true;
+                  }
+            }
+            else if (selectedBackpackInventory && actionType != ClickType.QUICK_MOVE) {
+                  setCarried(BackpackMenu.menuInsert(button, getCarried(), 0, backpackInventory));
+                  return;
+            }
+
+            if (actionType == ClickType.QUICK_MOVE && selectedBackpackInventory) {
+                  BackpackItem.handleQuickMove(playerInventory, backpackInventory);
+                  return;
+            }
+
+            super.clicked(slotIndex, button, actionType, player);
+      }
+
+      @Unique
+      private boolean beans_Backpacks_2$potClick(int slotIndex, int button, ClickType actionType, ItemStack stack,
+                              BackpackInventory backpackInventory, Inventory playerInventory) {
+            ItemStack cursorStack = getCarried();
+            ItemStack backpackStack = backpackInventory.getItem(0);
+            int maxStack = backpackStack.getMaxStackSize();
+            if (actionType == ClickType.THROW && cursorStack.isEmpty())
+            {
+                  int count = button == 0 ? 1 : Math.min(stack.getCount(), maxStack);
+                  ItemStack itemStack = backpackInventory.removeItem(0, count);
+                  owner.drop(itemStack, true);
+                  return true;
+            }
+            if (actionType == ClickType.SWAP)
+            {
+                  ItemStack itemStack = playerInventory.getItem(button);
+                  if (itemStack.isEmpty()) {
+                        if (backpackStack.getCount() > maxStack)
+                        {
+                              playerInventory.setItem(button, backpackStack.copyWithCount(maxStack));
+                              backpackStack.shrink(maxStack);
+                              return true;
+                        }
+                        playerInventory.setItem(button, backpackInventory.removeItemNoUpdate(0));
+                  }
+                  else
+                  {
+                        if (backpackStack.isEmpty()) {
+                              super.clicked(slotIndex, button, actionType, owner);
+                              return true;
+                        }
+                        if (backpackStack.getCount() > maxStack)
+                              if (playerInventory.add(-2, itemStack))
+                              {
+                                    playerInventory.setItem(button, backpackStack.copyWithCount(maxStack));
+                                    backpackStack.shrink(maxStack);
+                                    return true;
+                              }
+                        playerInventory.setItem(button, backpackInventory.removeItemNoUpdate(0));
+                        backpackInventory.insertItem(itemStack, itemStack.getCount());
+                  }
+                  return true;
+            }
+            if (button == 1 && cursorStack.isEmpty() && backpackStack.getCount() > maxStack)
+            {
+                  int count = Math.max(1, maxStack / 2);
+                  ItemStack splitStack = backpackInventory.removeItem(0, count);
+                  setCarried(splitStack);
+                  return true;
+            }
+            return false;
       }
 }

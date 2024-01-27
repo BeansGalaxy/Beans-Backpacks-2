@@ -15,6 +15,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameRules;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -52,25 +53,25 @@ public class CommonForgeEvents {
 
       @SubscribeEvent
       public static void LivingEntityDeath(LivingDeathEvent event) {
-            if (event.getEntity() instanceof Player player)
+            if (event.getEntity() instanceof Player player && !player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
                   BackData.get(player).drop();
       }
 
       @SubscribeEvent
       public static void PlayerCloneEvent(PlayerEvent.Clone event) {
-            if (!event.isWasDeath()) {
+            Player oldPlayer = event.getOriginal();
+            if (!event.isWasDeath() || oldPlayer.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
                   Player newPlayer = event.getEntity();
-                  Player oldPlayer = event.getOriginal();
 
                   BackData.get(oldPlayer).copyTo(BackData.get(newPlayer));
-                  if (newPlayer instanceof ServerPlayer serverPlayer)
+                  if (oldPlayer instanceof ServerPlayer serverPlayer)
                         Services.NETWORK.SyncBackSlot(serverPlayer);
             }
       }
 
-      @SubscribeEvent
+      @SubscribeEvent // INVENTORY CANNOT SYNC DURING PLAYER CLONE EVENT, I THINK DUE TO CLIENT PLAYER IN THE OLD BODY
       public static void PlayerRespawnEvent(PlayerEvent.PlayerRespawnEvent event) {
-            if (event.isEndConquered() && event.getEntity() instanceof ServerPlayer serverPlayer)
+            if (event.getEntity() instanceof ServerPlayer serverPlayer)
                   Services.NETWORK.backpackInventory2C(serverPlayer);
 
       }

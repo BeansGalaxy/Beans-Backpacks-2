@@ -107,9 +107,9 @@ public class Traits {
             public static final LocalData EMPTY = new LocalData("");
 
             public String key;
-            public int color;
-            public CompoundTag trim;
-            public Component hoverName;
+            public int color = 0xFFFFFF;
+            public CompoundTag trim = new CompoundTag();
+            public Component hoverName = Component.empty();
 
             public LocalData(String key, int color, CompoundTag trim, Component hoverName) {
                   this.key = key;

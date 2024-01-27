@@ -38,7 +38,7 @@ public abstract class ItemStackMixin {
       private final ItemStack instance = ((ItemStack) (Object) this);
 
       @Inject(method = "overrideOtherStackedOnMe", at = @At("HEAD"), cancellable = true)
-      private void stackedOnMe(ItemStack stack, Slot $$1, ClickAction clickAction, Player player, SlotAccess access, CallbackInfoReturnable<Boolean> cir) {
+      private void stackedOnMe(ItemStack stack, Slot slot, ClickAction clickAction, Player player, SlotAccess access, CallbackInfoReturnable<Boolean> cir) {
             if (BackpackItem.stackedOnMe(instance, stack, clickAction, player, access))
                   cir.setReturnValue(true);
       }
@@ -53,6 +53,9 @@ public abstract class ItemStackMixin {
       @Inject(method = "getTooltipLines", at = @At(value = "INVOKE", ordinal = 0, shift = At.Shift.AFTER,
                   target = "Ljava/util/List;add(Ljava/lang/Object;)Z"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
       private void redirectBackSlotTooltip(Player player, TooltipFlag flag, CallbackInfoReturnable<List<Component>> cir, List<Component> components, MutableComponent name) {
+            if (player == null)
+                  return;
+
             BackData backData = BackData.get(player);
             if (instance == backData.getStack() && backData.backpackInventory.isEmpty())
             {

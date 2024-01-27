@@ -5,6 +5,7 @@ import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
+import com.beansgalaxy.backpacks.entity.BackpackMenu;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
@@ -49,46 +50,97 @@ public class BackpackItem extends Item {
             return InteractionResult.PASS;
       }
 
-      public static boolean stackedOnMe(ItemStack thisStack, ItemStack thatStack, ClickAction clickAction, Player player, SlotAccess access) {
-            Kind kind = Kind.fromStack(thisStack);
+      public static boolean stackedOnMe(ItemStack backStack, ItemStack cursorStack, ClickAction clickAction, Player player, SlotAccess access) {
+            Kind kind = Kind.fromStack(backStack);
             if (kind == null)
                   return false;
 
             BackData backData = BackData.get(player);
             BackpackInventory backpackInventory = backData.backpackInventory;
 
-            if (thisStack != backData.getStack())
+            if (backStack != backData.getStack())
                   return false;
 
             if (backpackInventory.isEmpty())
-                  if (thatStack.isEmpty() || Kind.isWearable(thatStack))
+                  if (cursorStack.isEmpty() || Kind.isWearable(cursorStack))
                         return false;
 
-            ItemStack backpackStack = backpackInventory.getItem(0);
-            if (clickAction == ClickAction.SECONDARY) {
-                  if (thatStack.isEmpty()) {
-                        int count = Math.max(1, backpackStack.getCount() / 2);
-                        access.set(backpackInventory.removeItem(0, count));
-                  }
-                  else {
-                        backpackInventory.insertItem(thatStack, 1);
-                  }
+            if (backData.actionKeyPressed && clickAction != ClickAction.SECONDARY) {
+                  handleQuickMove(player.getInventory(), backpackInventory);
                   return true;
             }
 
-            Inventory playerInventory = player.getInventory();
-            if (backData.actionKeyPressed && thatStack.isEmpty() && playerInventory.getFreeSlot() != -1) {
-                  if (Kind.POT.is(thisStack))
-                        playerInventory.add(-2, backpackInventory.removeItemNoUpdate(0));
+            return access.set(BackpackMenu.menuInsert(clickAction == ClickAction.SECONDARY ? 1 : 0,
+                        cursorStack, 0, backpackInventory));
+      }
+
+      public static void handleQuickMove(Inventory playerInventory, BackpackInventory backpackInventory) {
+            ItemStack stack = backpackInventory.getItem(0);
+            if (stack.isEmpty())
+                  return;
+
+            ItemStack backpackStack = backpackInventory.removeItemSilent(0);
+            ItemStack stack1 = backpackInventory.getItem(1);
+            int count = backpackStack.getCount();
+            int maxStackSize = backpackStack.getMaxStackSize();
+            if (maxStackSize > count && ItemStack.isSameItemSameTags(backpackStack, stack1)) {
+                  int normalizedCount = count - maxStackSize;
+                  stack1.shrink(normalizedCount);
+                  backpackStack.grow(normalizedCount);
+            }
+
+            boolean inserted = false;
+            boolean canceled = false;
+            while (!canceled)
+            {
+                  int i = playerInventory.getSlotWithRemainingSpace(stack);
+                  if (i == -1)
+                        i = playerInventory.getFreeSlot();
+
+                  if (i == -1)
+                        canceled = true;
                   else {
-                        playerInventory.add(-2, backpackStack);
+                        ItemStack clickedStack = playerInventory.getItem(i);
+                        if (ItemStack.isSameItemSameTags(backpackStack, clickedStack))
+                        {
+                              int count1 = backpackStack.getCount();
+                              int total = count1 + clickedStack.getCount();
+                              if (total < maxStackSize)
+                              {
+                                    clickedStack.grow(count1);
+                                    backpackStack.shrink(count1);
+                              }
+                              else {
+                                    clickedStack.setCount(maxStackSize);
+                                    backpackStack.setCount(total - maxStackSize);
+                              }
+                        }
+                        else {
+                              if (backpackStack.getCount() > maxStackSize)
+                              {
+                                    playerInventory.setItem(i, backpackStack.copyWithCount(maxStackSize));
+                                    backpackStack.shrink(maxStackSize);
+                              }
+                              else
+                                    playerInventory.setItem(i, backpackStack.copyAndClear());
+                        }
+
                         if (backpackStack.isEmpty())
-                              backpackInventory.removeItemNoUpdate(0);
+                        {
+                              canceled = true;
+                              inserted = true;
+                        }
                   }
-                  return true;
             }
 
-            return access.set(backpackInventory.returnItem(0, thatStack));
+            if (inserted)
+                  backpackInventory.playSound(PlaySound.TAKE);
+
+            if (!backpackStack.isEmpty())
+                  backpackInventory.insertItemSilent(backpackStack, backpackStack.getCount());
+
+            if (!backpackInventory.isEmpty() && backpackInventory.getItem(0).isEmpty())
+                  backpackInventory.removeItemNoUpdate(0);
       }
 
       public static InteractionResult hotkeyOnBlock(Player player, Direction direction, BlockPos clickedPos) {
@@ -186,7 +238,8 @@ public class BackpackItem extends Item {
 
       @Override
       public Component getName(ItemStack stack) {
-            return Tooltip.name(stack);
+            String key = stack.getOrCreateTagElement("display").getString("key");
+            return Component.literal(Traits.get(key).name);
       }
 
       @Override

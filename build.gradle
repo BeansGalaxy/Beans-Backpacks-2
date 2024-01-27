@@ -48,7 +48,8 @@ subprojects {
         }
         // REI FABRIC
         maven {
-            url "https://maven.shedaniel.me"
+            name = "REI Libs"
+            url = "https://maven.shedaniel.me"
         }
         // TRINKETS FABRIC
         maven {

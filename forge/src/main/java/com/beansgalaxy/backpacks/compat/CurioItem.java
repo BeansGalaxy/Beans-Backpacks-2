@@ -1,9 +1,13 @@
 package com.beansgalaxy.backpacks.compat;
 
 import com.beansgalaxy.backpacks.core.BackData;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameRules;
+import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.SlotContext;
+import top.theillusivec4.curios.api.type.capability.ICurio;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 public class CurioItem implements ICurioItem {
@@ -21,11 +25,15 @@ public class CurioItem implements ICurioItem {
       }
 
       @Override
+      public boolean canEquip(SlotContext slotContext, ItemStack stack) {
+            return ICurioItem.super.canEquip(slotContext, stack) && slotContext.index() == 0;
+      }
+
+      @Override
       public boolean canUnequip(SlotContext slotContext, ItemStack stack) {
-            boolean b = ICurioItem.super.canUnequip(slotContext, stack);
             if (slotContext.entity() instanceof Player player)
-                  return BackData.get(player).backpackInventory.isEmpty() && b;
-            return b;
+                  return BackData.get(player).backpackInventory.isEmpty();
+            return true;
       }
 
       @Override
@@ -36,5 +44,13 @@ public class CurioItem implements ICurioItem {
                         backSlot.update(stack);
                   }
             }
+      }
+
+      @NotNull
+      @Override
+      public ICurio.DropRule getDropRule(SlotContext slotContext, DamageSource source, int lootingLevel, boolean recentlyHit, ItemStack stack) {
+            return slotContext.entity().level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) ?
+                        ICurio.DropRule.ALWAYS_KEEP :
+                        ICurio.DropRule.DESTROY;
       }
 }

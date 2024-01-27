@@ -1,8 +1,8 @@
 package com.beansgalaxy.backpacks.mixin.client;
 
+import com.beansgalaxy.backpacks.access.ClickAccessor;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackSlot;
-import com.beansgalaxy.backpacks.core.ClickAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.CyclingSlotBackground;
