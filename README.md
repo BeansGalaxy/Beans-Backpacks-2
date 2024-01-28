@@ -4,7 +4,7 @@
 
 1.20.2 updates will come slower than 1.20.1 until a full release. If there are any critical bugs then 
 they will be patched but 1.20.1 will be the most up to date version. Ports to 1.20.4 will come after 
-we're out of beta.
+we're out of beta. Ports to 1.19 and earlier is TBD
 
 ### Mod Packs
 <p>
@@ -17,6 +17,14 @@ the issues tab. </p>
 <br>
 
 <h1 align="center"> Changelog </h1>
+
+### 20.1-0.7-v2 & 20.2-0.12-v2
+- Hovering over an empty and equipped Decorated Pot shows a help tooltip.
+- Added Backpack Action to a new category in the Keybind Menu
+- Insert sounds and logic now work consistently.
+- Iron and Gold backpacks have had their max stacks reduced to 7 and Netherite reduced to 9
+- Removed Elytra functionality when Curios/Trinkets are installed _(Check out [Elytra Slot](https://modrinth.com/mod/elytra-slot/version/6uCj1VmZ))_
+- Fixed crash when clicking a specific slot with curios installed.
 
 ### 20.1-0.6-v2 & 20.2-0.11-v2
 - Increased # of stacked dropped when dying with a Pot to 108 Stacks. (4 Chests)

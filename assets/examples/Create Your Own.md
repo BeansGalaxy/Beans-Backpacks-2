@@ -47,8 +47,8 @@ Finally, define the data. You'll need to define all of these fields for either `
 </dd>
 <strong>Note on <code>"max_stacks"</code></strong>
 <dd> 
-    Remember that 4 stacks doesn't seem like much but 256 unique items is almost 10 shulker boxes. 
-    If a backpack is too good it could limit creativity.
+    Remember that 4 stacks doesn't seem like much but 256 unique items is almost 
+    10 shulker boxes.If a backpack is too good it could limit creativity.
 </dd>
 </dl>
 
@@ -62,7 +62,7 @@ Now your .json file should look something like this.
   "name": "Iron Backpack",
   "key": "iron",
   "kind": "METAL",
-  "max_stacks": 9
+  "max_stacks": 7
 }
 ```
 ```json
@@ -74,7 +74,7 @@ Now your .json file should look something like this.
   "name": "Netherite Backpack",
   "key": "netherite",
   "kind": "UPGRADED",
-  "max_stacks": 12
+  "max_stacks": 9
 }
 ```
 
@@ -86,8 +86,8 @@ Under [`data/beansbackpacks/modify`](https://github.com/BeansGalaxy/Beans-Backpa
 <code>disable_chestplate</code>
 <dd>
     Enables item to be worn in the Back Slot, and disables it from the Chestplate,
-    <b><i>However</b></i>, items with any special attributes do not keep their functionality 
-    nor support their custom models.
+    <b><i>However</i></b>, items with any special attributes do not keep their 
+    functionality nor support their custom models.
 </dd>
 <code>disables_back_slot</code>
 <dd> 
@@ -96,7 +96,8 @@ Under [`data/beansbackpacks/modify`](https://github.com/BeansGalaxy/Beans-Backpa
 </dd>
 <code>blacklist_items</code>
 <dd> 
-    Any items written into this file will no longer be able to be stored in any backpack inventory. This is        useful to stop other mod's portable storage to be kept in backpack.
+    Any items written into this file will no longer be able to be stored in any backpack 
+    inventory. This is useful to stop other mod's portable storage to be kept in backpack.
 </dd>
 </dl>
 
@@ -106,6 +107,9 @@ be stored in the Back Slot I would write in `disable_chestplate`
 ```
 minecraft:iron_chestplate, minecraft:golden_chestplate
 ```
+
+If an Item listed in `disable_chestplate` is also in `disables_back_slot` it will be removed 
+from `disable_chestplate`. Useful if you no longer want the Elytra worn in the Back Slot.
 
 <h2> Setting Up Your Resources </h2>
 
