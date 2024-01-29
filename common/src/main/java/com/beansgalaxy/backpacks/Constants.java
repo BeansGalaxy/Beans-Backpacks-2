@@ -4,6 +4,7 @@ import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -31,11 +32,19 @@ public class Constants {
 	public static final String MOD_NAME = "Beans' Backpacks";
 	public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
 
+	public static final ModelLayerLocation BACKPACK_MODEL = new ModelLayerLocation(new ResourceLocation(MOD_ID, "backpack_model"), "main");
+	public static final ModelLayerLocation POT_MODEL = new ModelLayerLocation(new ResourceLocation(MOD_ID, "pot_player"), "main");
+	public static final ResourceLocation IN_LEATHER = new ResourceLocation(MOD_ID, "textures/entity/leather_interior.png");
+
 	public static final HashMap<String, Traits> TRAITS_MAP = new HashMap<>();
 	public static final boolean SLOTS_MOD_ACTIVE = Services.COMPAT.anyModsLoaded(new String[]{CompatHelper.CURIOS, CompatHelper.TRINKETS});
-	public static HashSet<Item> CHESTPLATE_DISABLED = new HashSet<>();
-	public static HashSet<Item> DISABLES_BACK_SLOT = new HashSet<>();
-	public static HashSet<Item> BLACKLIST_ITEMS = new HashSet<>();
+	public static final HashSet<Item> CHESTPLATE_DISABLED = new HashSet<>();
+	public static final HashSet<Item> DISABLES_BACK_SLOT = new HashSet<>();
+	public static final HashSet<Item> BLACKLIST_ITEMS = new HashSet<>();
+
+	protected static void register() {
+		LOG.info("Initializing Beans' Backpacks Constants");
+	}
 
 	public static Item itemFromString(String string) {
 		if (string == null)

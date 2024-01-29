@@ -1,7 +1,9 @@
 package com.beansgalaxy.backpacks.compat;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.Kind;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -17,13 +19,15 @@ public class CurioRegistry {
             for (Kind kind: Kind.values())
                   CuriosApi.registerCurio(kind.getItem(), new CurioItem());
             //CuriosApi.registerCurio(Items.ELYTRA, new CurioItem());
-
       }
 
       public static void setBackStack(ItemStack stack, Player owner) {
             Optional<ICuriosItemHandler> resolve = CuriosApi.getCuriosInventory(owner).resolve();
             if (resolve.isEmpty())
                   return;
+
+
+            //resolve.get().setEquippedCurio(); TODO: USE THIS METHOD INSTEAD TO SET BACK SLOT
 
             IDynamicStackHandler stacks = resolve.get().getCurios().get("back").getStacks();
             if (stacks.getSlots() > 0)
@@ -44,5 +48,16 @@ public class CurioRegistry {
                   backData.update(stackInSlot);
 
             return stackInSlot;
+      }
+
+      public static boolean backSlotDisabled(LivingEntity entity) {
+            Optional<ICuriosItemHandler> resolve = CuriosApi.getCuriosInventory(entity).resolve();
+            if (resolve.isEmpty())
+                  return false;
+
+            boolean present = resolve.get().findFirstCurio(stack ->
+                        Constants.DISABLES_BACK_SLOT.contains(stack.getItem())).isPresent();
+
+            return present;
       }
 }

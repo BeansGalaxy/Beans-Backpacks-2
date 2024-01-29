@@ -6,7 +6,9 @@ import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.entity.BackpackMenu;
+import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.items.BackpackItem;
+import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.mojang.datafixers.util.Pair;
@@ -122,6 +124,18 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
             boolean selectedPlayerInventory = slotIndex < InventoryMenu.SHIELD_SLOT;
             boolean selectedBackpackInventory = slotIndex == backData.inSlot.slotIndex && player.containerMenu == player.inventoryMenu;
 
+            boolean selectedSlotAddition = !selectedBackpackInventory && Constants.SLOTS_MOD_ACTIVE && slotIndex > InventoryMenu.SHIELD_SLOT;
+
+            ItemStack cursorStack = getCarried();
+            if (selectedSlotAddition && !slot.hasItem()
+                        && !cursorStack.isEmpty()
+                        && !backStack.isEmpty()
+                        && Constants.DISABLES_BACK_SLOT.contains(cursorStack.getItem())) {
+                  if (player.level().isClientSide)
+                        Tooltip.playSound(Kind.fromStack(backStack), PlaySound.HIT);
+                  return;
+            }
+
             if (selectedBackpackInventory && Kind.POT.is(backStack) && beans_Backpacks_2$potClick(slotIndex, button, actionType, stack, backpackInventory, playerInventory))
                   return;
 
@@ -152,7 +166,7 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                   }
             }
             else if (selectedBackpackInventory && actionType != ClickType.QUICK_MOVE) {
-                  setCarried(BackpackMenu.menuInsert(button, getCarried(), 0, backpackInventory));
+                  setCarried(BackpackMenu.menuInsert(button, cursorStack, 0, backpackInventory));
                   return;
             }
 

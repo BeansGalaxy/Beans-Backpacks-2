@@ -10,7 +10,7 @@
     "common.ElytraItemMixin",
     "common.InteractWithPlayer",
     "common.InventoryMenuMixin",
-    "common.InventoryMixin",
+    "common.InventoryContainerMixin",
     "common.ItemStackMixin",
     "common.ServerPlayMixin"
   ],

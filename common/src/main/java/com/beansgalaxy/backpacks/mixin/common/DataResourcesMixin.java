@@ -37,10 +37,12 @@ public class DataResourcesMixin {
             Constants.disableFromChestplate(
                         readJsonItemList(resourceManager, "disable_chestplate"));
 
+            NonNullList<Item> items = NonNullList.create();
+            items.add(Items.ELYTRA.asItem());
             if (!Constants.SLOTS_MOD_ACTIVE) {
-                  NonNullList<Item> objects = NonNullList.create();
-                  objects.add(Items.ELYTRA.asItem());
-                  Constants.disableFromChestplate(objects);
+                  Constants.disableFromChestplate(items);
+            } else {
+                  Constants.disablesBackSlot(items);
             }
 
             Constants.disablesBackSlot(

@@ -2,7 +2,6 @@ package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.ForgeMain;
-import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.client.renderer.BackpackModel;
 import com.beansgalaxy.backpacks.client.renderer.BackpackRenderer;
 import com.beansgalaxy.backpacks.client.renderer.PotModel;
@@ -29,14 +28,14 @@ public class ClientModEvents {
       }
 
       @SubscribeEvent
-      public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
-            event.registerLayerDefinition(RendererHelper.BACKPACK_MODEL, BackpackModel::getTexturedModelData);
-            event.registerLayerDefinition(RendererHelper.POT_MODEL, PotModel::getTexturedModelData);
+      public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+            event.registerEntityRenderer(ForgeMain.ENTITY.get(), BackpackRenderer::new);
       }
 
       @SubscribeEvent
-      public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-            event.registerEntityRenderer(ForgeMain.ENTITY.get(), BackpackRenderer::new);
+      public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
+            event.registerLayerDefinition(Constants.BACKPACK_MODEL, BackpackModel::getTexturedModelData);
+            event.registerLayerDefinition(Constants.POT_MODEL, PotModel::getTexturedModelData);
       }
 
       @SubscribeEvent

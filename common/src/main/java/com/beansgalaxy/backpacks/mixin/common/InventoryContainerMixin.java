@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mixin(Inventory.class)
-public class InventoryMixin implements BackAccessor {
+public class InventoryContainerMixin implements BackAccessor {
 
       @Shadow @Final public Player player;
       @Unique private BackData backData;

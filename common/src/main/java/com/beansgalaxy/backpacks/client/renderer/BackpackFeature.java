@@ -40,7 +40,7 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>>
 
     public BackpackFeature(RenderLayerParent<T, M> context, EntityModelSet loader, ModelManager modelManager) {
         super(context);
-        this.model = new BackpackModel<>(loader.bakeLayer(RendererHelper.BACKPACK_MODEL));
+        this.model = new BackpackModel<>(loader.bakeLayer(Constants.BACKPACK_MODEL));
         this.trimAtlas = modelManager.getAtlas(Sheets.ARMOR_TRIMS_SHEET);
     }
 

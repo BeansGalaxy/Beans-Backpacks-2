@@ -15,7 +15,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.SmithingScreen;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -37,11 +36,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public interface RendererHelper {
-    ModelLayerLocation BACKPACK_MODEL = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "backpack_model"), "main");
-    ModelLayerLocation POT_MODEL = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "pot_player"), "main");
-
-    ResourceLocation IN_LEATHER = new ResourceLocation(Constants.MOD_ID, "textures/entity/leather_interior.png");
-    Map<String, ResourceLocation> ButtonIdentifiers = ImmutableMap.of(
+      Map<String, ResourceLocation> ButtonIdentifiers = ImmutableMap.of(
                 "gold", new ResourceLocation(Constants.MOD_ID, "textures/entity/overlay/gold.png"),
                 "amethyst", new ResourceLocation(Constants.MOD_ID, "textures/entity/overlay/amethyst.png"),
                 "diamond", new ResourceLocation(Constants.MOD_ID, "textures/entity/overlay/diamond.png"),
@@ -113,7 +108,7 @@ public interface RendererHelper {
                 model.renderToBuffer(pose, overlayTexture, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 0.5f);
                 if (Objects.equals(key, "leather"))
                 {
-                      VertexConsumer interior = mbs.getBuffer(RenderType.entityTranslucent(IN_LEATHER));
+                      VertexConsumer interior = mbs.getBuffer(RenderType.entityTranslucent(Constants.IN_LEATHER));
                       model.renderToBuffer(pose, interior, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
                 }
           }

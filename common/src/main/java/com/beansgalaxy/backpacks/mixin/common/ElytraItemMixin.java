@@ -24,12 +24,17 @@ public class ElytraItemMixin {
       
       @Inject(method = "use", at = @At("HEAD"), cancellable = true)
       private void elytraUse(Level level, Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
-            if (!Constants.CHESTPLATE_DISABLED.contains(instance.asItem()))
-                  return;
-
             ItemStack stack = player.getItemInHand(hand);
             BackData backData = BackData.get(player);
             ItemStack backStack = backData.getStack();
+
+            if (Constants.DISABLES_BACK_SLOT.contains(instance.asItem()) && !backStack.isEmpty()) {
+                  cir.setReturnValue(InteractionResultHolder.fail(stack));
+                  return;
+            }
+
+            if (!Constants.CHESTPLATE_DISABLED.contains(instance.asItem()))
+                  return;
 
             if (backData.backSlot.mayPickup(player) && !ItemStack.matches(stack, backStack)) {
                   if (!level.isClientSide() && !player.isSilent()) {

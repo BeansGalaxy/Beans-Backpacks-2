@@ -28,6 +28,10 @@ public enum PlaySound {
         this.random = random;
     }
 
+    public boolean isRandom() {
+        return random;
+    }
+
     public SoundEvent getDefaultSoundEvent() {
         return soundEvent;
     }
