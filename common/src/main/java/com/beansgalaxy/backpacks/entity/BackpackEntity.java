@@ -406,7 +406,7 @@ public class BackpackEntity extends Backpack {
                   return BackpackItem.useOnBackpack(player, this, backpackStack, actionKeyPressed);
 
             if (actionKeyPressed) {
-                  if (!backData.isEmpty() && !this.isRemoved())
+                  if ((!backData.isEmpty() || Services.COMPAT.backSlotDisabled(player)) && !this.isRemoved())
                   {
                         PlaySound.HIT.at(this, this.getKind());
                         this.hop(.1);

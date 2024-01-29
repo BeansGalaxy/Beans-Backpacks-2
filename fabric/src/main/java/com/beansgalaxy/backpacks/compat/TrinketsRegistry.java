@@ -1,8 +1,12 @@
 package com.beansgalaxy.backpacks.compat;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.Kind;
+import com.beansgalaxy.backpacks.platform.Services;
 import dev.emi.trinkets.api.*;
+import net.fabricmc.fabric.api.util.TriState;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -12,7 +16,6 @@ import java.util.Map;
 import java.util.Optional;
 
 public class TrinketsRegistry {
-
       public static void register() {
             Trinket trinket = new Trinket() {
                   @Override
@@ -24,7 +27,10 @@ public class TrinketsRegistry {
 
                   @Override
                   public boolean canEquip(ItemStack stack, SlotReference slot, LivingEntity entity) {
-                        return Trinket.super.canEquip(stack, slot, entity) && slot.index() == 0;
+                        boolean b = Trinket.super.canEquip(stack, slot, entity) && slot.index() == 0;
+                        boolean b1 = !Services.COMPAT.backSlotDisabled(entity);
+                        return b && b1;
+
                   }
 
                   @Override
@@ -37,6 +43,17 @@ public class TrinketsRegistry {
 
             for (Kind kind: Kind.values())
                   TrinketsApi.registerTrinket(kind.getItem(), trinket);
+
+            TrinketsApi.registerTrinketPredicate(
+                        new ResourceLocation("trinkets", "all"), (stack, ref, entity) -> {
+                              if (entity instanceof Player player && !Kind.isBackpack(stack)) {
+                                    if (Kind.isWearable(BackData.get(player).getStack())
+                                                && Constants.DISABLES_BACK_SLOT.contains(stack.getItem())) {
+                                          return TriState.FALSE;
+                                    }
+                              }
+                              return TriState.TRUE;
+                        });
 
             //TrinketsApi.registerTrinket(Items.ELYTRA.asItem(), trinket);
       }
@@ -77,5 +94,10 @@ public class TrinketsRegistry {
                   backData.update(stackInSlot);
 
             return stackInSlot;
+      }
+
+      public static boolean backSlotDisabled(LivingEntity entity) {
+            return TrinketsApi.getTrinketComponent(entity).stream().anyMatch(in -> in.isEquipped(
+                        wornStack -> Constants.DISABLES_BACK_SLOT.contains(wornStack.getItem())));
       }
 }

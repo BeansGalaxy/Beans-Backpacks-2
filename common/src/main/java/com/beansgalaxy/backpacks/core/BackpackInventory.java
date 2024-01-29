@@ -20,7 +20,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Objects;
 
 public interface BackpackInventory extends Container {
@@ -118,12 +117,12 @@ public interface BackpackInventory extends Container {
 
       @Override @NotNull
       default ItemStack removeItem(int slot, int amount) {
-            List<ItemStack> stacks = getItemStacks();
-            ItemStack stack = stacks.get(slot).copyWithCount(amount);
-            stacks.get(slot).split(amount);
-            playSound(PlaySound.TAKE);
-            if (stacks.get(slot).isEmpty())
-                  stacks.remove(slot);
+            ItemStack stack = getItem(slot).split(amount);
+            if (stack.isEmpty()) {
+                  if (getContainerSize() > slot)
+                        getItemStacks().remove(slot);
+            } else
+                  playSound(PlaySound.TAKE);
             return stack;
       }
 

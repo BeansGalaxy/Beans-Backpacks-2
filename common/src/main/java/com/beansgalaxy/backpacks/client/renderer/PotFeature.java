@@ -33,7 +33,7 @@ public class PotFeature<T extends LivingEntity, M extends EntityModel<T>>
 
     public PotFeature(RenderLayerParent<T, M> context, EntityModelSet loader) {
         super(context);
-        this.model = new PotModel<>(loader.bakeLayer(RendererHelper.POT_MODEL));
+        this.model = new PotModel<>(loader.bakeLayer(Constants.POT_MODEL));
     }
 
     @Override

@@ -5,11 +5,13 @@ import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.events.KeyPress;
+import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -26,6 +28,7 @@ import net.minecraft.world.item.Items;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 public class Tooltip {
 
@@ -180,4 +183,10 @@ public class Tooltip {
       private static final int BAR_COLOR = Mth.color(0.4F, 0.4F, 1.0F);
       private static final int FULL_COLOR = Mth.color(0.9F, 0.2F, 0.3F);
       public static int barColor = BAR_COLOR;
+
+      public static void playSound(Kind kind, PlaySound playSound) {
+            Random rnd = new Random();
+            float pitch = playSound.isRandom() ? (rnd.nextFloat() / 4f) + 0.8f : 1f;
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(Services.REGISTRY.getSound(kind, playSound), pitch, 0.3f));
+      }
 }

@@ -38,6 +38,8 @@ public class ForgeMain {
     public static SpecialCriterion SPECIAL = CriteriaTriggers.register(Constants.MOD_ID + "/special", new SpecialCriterion());
 
     public ForgeMain() {
+        CommonClass.init();
+
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 
         ITEMS.register(bus);
@@ -51,8 +53,6 @@ public class ForgeMain {
 
         if (Services.COMPAT.isModLoaded(CompatHelper.CURIOS))
             bus.addListener(CurioRegistry::register);
-
-        CommonClass.init();
     }
 
     // REGISTER MENUS
@@ -61,8 +61,6 @@ public class ForgeMain {
 
     public static final RegistryObject<MenuType<BackpackMenu>> MENU = MENU_TYPES.register("backpack_menu",
                 () -> IForgeMenuType.create(BackpackMenu::new));
-
-
 
     // REGISTER ENTITIES
     public static final DeferredRegister<EntityType<?>> ENTITIES =

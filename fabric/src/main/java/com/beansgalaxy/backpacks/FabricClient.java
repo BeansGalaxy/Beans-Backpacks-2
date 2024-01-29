@@ -1,6 +1,5 @@
 package com.beansgalaxy.backpacks;
 
-import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.client.renderer.BackpackModel;
 import com.beansgalaxy.backpacks.client.renderer.BackpackRenderer;
 import com.beansgalaxy.backpacks.client.renderer.PotModel;
@@ -28,8 +27,8 @@ public class FabricClient implements ClientModInitializer {
       public void onInitializeClient() {
             NetworkPackages.registerS2CPackets();
 
-            EntityModelLayerRegistry.registerModelLayer(RendererHelper.POT_MODEL, PotModel::getTexturedModelData);
-            EntityModelLayerRegistry.registerModelLayer(RendererHelper.BACKPACK_MODEL, BackpackModel::getTexturedModelData);
+            EntityModelLayerRegistry.registerModelLayer(Constants.POT_MODEL, PotModel::getTexturedModelData);
+            EntityModelLayerRegistry.registerModelLayer(Constants.BACKPACK_MODEL, BackpackModel::getTexturedModelData);
             EntityRendererRegistry.register(FabricMain.BACKPACK_ENTITY, BackpackRenderer::new);
             MenuScreens.register(FabricMain.BACKPACK_MENU, BackpackScreen::new);
 

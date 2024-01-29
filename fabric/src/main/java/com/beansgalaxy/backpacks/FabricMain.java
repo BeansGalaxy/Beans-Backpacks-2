@@ -41,6 +41,8 @@ public class FabricMain implements ModInitializer {
     
     @Override
     public void onInitialize() {
+        CommonClass.init();
+
         NetworkPackages.registerC2SPackets();
 
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register(new SyncDataEvent());
@@ -50,7 +52,6 @@ public class FabricMain implements ModInitializer {
         UseBlockCallback.EVENT.register(new PlayerInteractEvent());
         Sounds.register();
         Constants.LOG.info("Initializing Beans' Backpacks Fabric");
-        CommonClass.init();
     }
 
     public static final Item LEATHER_BACKPACK = registerItem("backpack", new DyableBackpack());

@@ -1,10 +1,14 @@
 package com.beansgalaxy.backpacks.platform;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.compat.CurioRegistry;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModList;
+
+import java.util.Arrays;
 
 public class ForgeCompatHelper implements CompatHelper {
 
@@ -24,6 +28,16 @@ public class ForgeCompatHelper implements CompatHelper {
             if (isModLoaded(CURIOS))
                   return CurioRegistry.getBackStackItem(backData, defaultItem);
             return defaultItem;
+      }
+
+      @Override
+      public boolean backSlotDisabled(LivingEntity entity) {
+            boolean armorDisables = Arrays.stream(SLOT_IDS).anyMatch(
+                        slot -> Constants.DISABLES_BACK_SLOT.contains(
+                                    entity.getItemBySlot(slot).getItem()));
+            if (isModLoaded(TRINKETS))
+                  return CurioRegistry.backSlotDisabled(entity) || armorDisables;
+            return armorDisables;
       }
 
 }
