@@ -56,6 +56,7 @@ public class Constants {
 
 	public static void disableFromChestplate(NonNullList<Item> items) {
 		CHESTPLATE_DISABLED.addAll(items);
+		CHESTPLATE_DISABLED.remove(Items.AIR);
 	}
 
 	public static ItemStack getTorsoWearables(Player player, Item item) {
@@ -66,10 +67,12 @@ public class Constants {
 
 	public static void disablesBackSlot(NonNullList<Item> items) {
 		DISABLES_BACK_SLOT.addAll(items);
+		DISABLES_BACK_SLOT.remove(Items.AIR);
 	}
 
 	public static void blacklistItems(NonNullList<Item> items) {
 		BLACKLIST_ITEMS.addAll(items);
+		BLACKLIST_ITEMS.remove(Items.AIR);
 	}
 
 	public static NonNullList<Item> readJsonItemList(ResourceManager resourceManager, String disableChestplate1) {

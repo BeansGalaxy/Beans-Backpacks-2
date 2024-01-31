@@ -35,7 +35,7 @@ public class ForgeCompatHelper implements CompatHelper {
             boolean armorDisables = Arrays.stream(SLOT_IDS).anyMatch(
                         slot -> Constants.DISABLES_BACK_SLOT.contains(
                                     entity.getItemBySlot(slot).getItem()));
-            if (isModLoaded(TRINKETS))
+            if (isModLoaded(CURIOS))
                   return CurioRegistry.backSlotDisabled(entity) || armorDisables;
             return armorDisables;
       }
