@@ -39,7 +39,6 @@ public class ForgeMain {
 
     public ForgeMain() {
         CommonClass.init();
-
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 
         ITEMS.register(bus);

@@ -8,6 +8,7 @@ import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.platform.services.RegistryHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.MenuType;
@@ -137,6 +138,16 @@ public class FabricRegistryHelper implements RegistryHelper {
                               }
                               case CLOSE -> {
                                     return Sounds.CLOSE_UPGRADED;
+                              }
+                        }
+                  }
+                  case POT -> {
+                        switch (type) {
+                              case INSERT -> {
+                                    return SoundEvents.DECORATED_POT_HIT;
+                              }
+                              case TAKE -> {
+                                    return SoundEvents.DECORATED_POT_FALL;
                               }
                         }
                   }

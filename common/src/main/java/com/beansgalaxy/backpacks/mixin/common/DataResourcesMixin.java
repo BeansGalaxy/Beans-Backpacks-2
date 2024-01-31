@@ -39,11 +39,11 @@ public class DataResourcesMixin {
 
             NonNullList<Item> items = NonNullList.create();
             items.add(Items.ELYTRA.asItem());
-            if (!Constants.SLOTS_MOD_ACTIVE) {
+            if (!Constants.SLOTS_MOD_ACTIVE)
                   Constants.disableFromChestplate(items);
-            } else {
+            else
                   Constants.disablesBackSlot(items);
-            }
+
 
             Constants.disablesBackSlot(
                         readJsonItemList(resourceManager, "disables_back_slot"));

@@ -406,7 +406,10 @@ public class BackpackEntity extends Backpack {
                   return BackpackItem.useOnBackpack(player, this, backpackStack, actionKeyPressed);
 
             if (actionKeyPressed) {
-                  if ((!backData.isEmpty() || Services.COMPAT.backSlotDisabled(player)) && !this.isRemoved())
+                  boolean b = !backData.isEmpty();
+                  boolean b1 = Services.COMPAT.backSlotDisabled(player);
+                  boolean b2 = !this.isRemoved();
+                  if ((b || b1) && b2)
                   {
                         PlaySound.HIT.at(this, this.getKind());
                         this.hop(.1);
