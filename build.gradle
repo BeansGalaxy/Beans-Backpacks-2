@@ -43,32 +43,29 @@ subprojects {
             url = 'https://repo.spongepowered.org/repository/maven-public/'
         }
         maven {
-            name = 'BlameJared Maven (JEI / CraftTweaker / Bookshelf)'
-            url = 'https://maven.blamejared.com'
+            name = "Just Enough Items"
+            url = "https://maven.blamejared.com"
         }
-        // REI FABRIC
         maven {
-            name = "REI Libs"
+            name = "Roughly Enough Items"
             url = "https://maven.shedaniel.me"
         }
-        // TRINKETS FABRIC
         maven {
-            name = "TerraformersMC"
+            name = "Trinkets"
             url = "https://maven.terraformersmc.com/"
         }
         maven {
-            name = "Ladysnake Libs"
-            url = 'https://maven.ladysnake.org/releases'
+            name = "Cardinal Components"
+            url = "https://maven.ladysnake.org/releases"
         }
-        // CURIOS FORGE
         maven {
-            name = "Illusive Soulworks maven"
+            name = "Curios"
             url = "https://maven.theillusivec4.top/"
         }
     }
 
     tasks.withType(JavaCompile).configureEach {
-    
+
         it.options.encoding = 'UTF-8'
         it.options.getRelease().set(17)
     }
