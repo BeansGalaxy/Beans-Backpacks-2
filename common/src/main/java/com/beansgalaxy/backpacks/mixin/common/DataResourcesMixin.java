@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.Traits;
+import com.beansgalaxy.backpacks.platform.Services;
 import com.mojang.authlib.minecraft.client.ObjectMapper;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.NonNullList;
@@ -37,10 +38,13 @@ public class DataResourcesMixin {
             Constants.disableFromChestplate(
                         readJsonItemList(resourceManager, "disable_chestplate"));
 
-            // 20.2 ALWAYS INCLUDES ELYTRA FUNCTIONALITY BECAUSE ELYTRA SLOT IS NOT UPDATED
-                  NonNullList<Item> objects = NonNullList.create();
-                  objects.add(Items.ELYTRA.asItem());
-                  Constants.disableFromChestplate(objects);
+            NonNullList<Item> items = NonNullList.create();
+            items.add(Items.ELYTRA.asItem());
+            if (!Services.COMPAT.isModLoaded("elytraslot"))
+                  Constants.disableFromChestplate(items);
+            else
+                  Constants.disablesBackSlot(items);
+
 
             Constants.disablesBackSlot(
                         readJsonItemList(resourceManager, "disables_back_slot"));

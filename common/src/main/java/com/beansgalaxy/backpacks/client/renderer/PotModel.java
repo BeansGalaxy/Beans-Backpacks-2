@@ -20,17 +20,13 @@ import java.util.Objects;
 public class PotModel<T extends Entity>
 		extends EntityModel<T> {
 	public final ModelPart body;
-	public final ModelPart head;
 	public final ModelPart front;
-	public final ModelPart back;
 	public final ModelPart left;
 	public final ModelPart right;
 
 	public PotModel(ModelPart root) {
 		this.body = root.getChild("bottom");
-		this.head = root.getChild("head");
 		this.front = root.getChild("north");
-		this.back = root.getChild("south");
 		this.left = root.getChild("east");
 		this.right = root.getChild("west");
 	}
@@ -39,9 +35,7 @@ public class PotModel<T extends Entity>
 		NonNullList<ModelPart> modelParts = NonNullList.create();
 
 		modelParts.add(body);
-		modelParts.add(head);
 		modelParts.add(front);
-		modelParts.add(back);
 		modelParts.add(left);
 		modelParts.add(right);
 
@@ -49,33 +43,29 @@ public class PotModel<T extends Entity>
 	}
 
 	public static LayerDefinition getTexturedModelData() {
-		MeshDefinition modelData = new MeshDefinition();
-		PartDefinition modelPartData = modelData.getRoot();
-		PartDefinition north = modelPartData.addOrReplaceChild("north", CubeListBuilder.create(), PartPose.offset(0.0F, 12.0F, -5.0F));
+		MeshDefinition meshdefinition = new MeshDefinition();
+		PartDefinition partdefinition = meshdefinition.getRoot();
 
-		PartDefinition wall_r1 = north.addOrReplaceChild("wall_r1", CubeListBuilder.create().texOffs(0, 0).addBox(-3.0F, -11.0F, -3.0F, 6.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 12.0F, 5.0F, 0.0F, 3.1416F, 0.0F));
+		PartDefinition north = partdefinition.addOrReplaceChild("north", CubeListBuilder.create(), PartPose.offset(0.0F, 12.0F, -5.0F));
 
-		PartDefinition south = modelPartData.addOrReplaceChild("south", CubeListBuilder.create().texOffs(0, 0).addBox(-3.0F, 1.0F, 2.0F, 6.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 12.0F, -5.0F));
+		PartDefinition wall_r1 = north.addOrReplaceChild("wall_r1", CubeListBuilder.create().texOffs(1, 1).addBox(-3.0F, -11.0F, -3.0F, 6.0F, 7.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 12.0F, 5.0F, 0.0F, 3.1416F, 0.0F));
 
-		PartDefinition east = modelPartData.addOrReplaceChild("east", CubeListBuilder.create(), PartPose.offset(0.0F, 12.0F, -5.0F));
+		PartDefinition east = partdefinition.addOrReplaceChild("east", CubeListBuilder.create(), PartPose.offset(0.0F, 12.0F, -5.0F));
 
-		PartDefinition wall_r2 = east.addOrReplaceChild("wall_r2", CubeListBuilder.create().texOffs(0, 0).addBox(-3.0F, -11.0F, -3.0F, 6.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 12.0F, 5.0F, 0.0F, -1.5708F, 0.0F));
+		PartDefinition wall_r2 = east.addOrReplaceChild("wall_r2", CubeListBuilder.create().texOffs(1, 1).addBox(-3.0F, -11.0F, -3.0F, 6.0F, 7.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 12.0F, 5.0F, 0.0F, -1.5708F, 0.0F));
 
-		PartDefinition west = modelPartData.addOrReplaceChild("west", CubeListBuilder.create(), PartPose.offset(0.0F, 12.0F, -5.0F));
+		PartDefinition west = partdefinition.addOrReplaceChild("west", CubeListBuilder.create(), PartPose.offset(0.0F, 12.0F, -5.0F));
 
-		PartDefinition wall_r3 = west.addOrReplaceChild("wall_r3", CubeListBuilder.create().texOffs(0, 0).addBox(-3.0F, -11.0F, -3.0F, 6.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 12.0F, 5.0F, 0.0F, 1.5708F, 0.0F));
+		PartDefinition wall_r3 = west.addOrReplaceChild("wall_r3", CubeListBuilder.create().texOffs(1, 1).addBox(-3.0F, -11.0F, -3.0F, 6.0F, 7.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 12.0F, 5.0F, 0.0F, 1.5708F, 0.0F));
 
-		PartDefinition bottom = modelPartData.addOrReplaceChild("bottom", CubeListBuilder.create().texOffs(0, 19).addBox(-3.0F, 1.0F, 2.0F, 6.0F, 7.0F, 6.0F, new CubeDeformation(0.0F))
-				.texOffs(16, 0).addBox(-2.0F, 1.0F, 3.0F, 4.0F, 4.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 12.0F, -5.0F));
+		PartDefinition bottom = partdefinition.addOrReplaceChild("bottom", CubeListBuilder.create().texOffs(0, 0).addBox(-3.0F, 1.0F, 2.0F, 6.0F, 7.0F, 6.0F, new CubeDeformation(0.0F))
+				.texOffs(20, 0).mirror().addBox(-1.5F, -0.5F, 3.5F, 3.0F, 2.0F, 3.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(0.0F, 12.0F, -5.0F));
 
-		PartDefinition head = modelPartData.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-2.0F, 0.0F, 3.0F, 4.0F, 2.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 12.0F, -5.0F));
-		return LayerDefinition.create(modelData, 32, 32);
+		return LayerDefinition.create(meshdefinition, 32, 16);
 	}
 
-	public void renderBody(PoseStack matrices, VertexConsumer vertexConsumer, int light, int overlay, boolean renderHead) {
+	public void renderBody(PoseStack matrices, VertexConsumer vertexConsumer, int light, int overlay) {
 		body.render(matrices, vertexConsumer, light, overlay, 1, 1, 1, 1);
-		if (renderHead)
-			head.render(matrices, vertexConsumer, light, overlay, 1, 1, 1, 1);
 	}
 
 	public void renderDetail(PoseStack matrices, MultiBufferSource mbs, int light, int overlay, DecoratedPotBlockEntity.Decorations sherds) {
@@ -95,7 +85,6 @@ public class PotModel<T extends Entity>
 	@Override
 	public void renderToBuffer(PoseStack matrices, VertexConsumer vertexConsumer, int light, int overlay, float red, float green, float blue, float alpha) {
 		body.render(matrices, vertexConsumer, light, overlay, 1, 1, 1, 1);
-		head.render(matrices, vertexConsumer, light, overlay, 1, 1, 1, 1);
 	}
 
 	public enum SherdTexture {
