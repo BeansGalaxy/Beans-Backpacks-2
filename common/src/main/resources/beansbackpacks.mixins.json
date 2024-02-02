@@ -20,7 +20,6 @@
     "client.InventoryScreenMixin",
     "client.ItemRendererMixin",
     "client.KeyBindTooltip",
-    "client.RenderBackpackLayer",
     "client.SmithingScreenMixin",
     "client.UpdateSprintKey"
   ],
