@@ -14,6 +14,7 @@ import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -37,9 +38,9 @@ public class ClientModEvents {
 
       @SubscribeEvent
       public static void appendLayers(EntityRenderersEvent.AddLayers event) {
-            for (String skin : event.getSkins()) {
+            for (PlayerSkin.Model skin : event.getSkins()) {
                   LivingEntityRenderer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>>
-                          renderer = event.getSkin(skin);
+                          renderer = event.getPlayerSkin(skin);
 
                   if (renderer == null)
                         continue;

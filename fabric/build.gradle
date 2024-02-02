@@ -20,7 +20,8 @@ dependencies {
     modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}"
     // TRINKETS
     modImplementation "dev.emi:trinkets:${trinkets_version}"
-    modCompileOnly "dev.onyxstudios.cardinal-components-api:cardinal-components-base:${cardinal_components_version}"
+    modImplementation include("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${cardinal_components_version}")
+    modImplementation include("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${cardinal_components_version}")
 }
 
 loom {
