@@ -65,7 +65,7 @@ public class PotFeature<T extends LivingEntity, M extends EntityModel<T>>
 
         this.model.setupAnim(entity, limbAngle, limbDistance, tickDelta, animationProgress, yHeadRot);
         VertexConsumer vc = mbs.getBuffer(this.model.renderType(TEXTURE));
-        potModel.renderBody(pose, vc, light, OverlayTexture.NO_OVERLAY, true);
+        potModel.renderBody(pose, vc, light, OverlayTexture.NO_OVERLAY);
         potModel.renderDetail(pose, mbs, light, OverlayTexture.NO_OVERLAY, sherds);
 
         pose.popPose();

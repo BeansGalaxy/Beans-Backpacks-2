@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.Traits;
+import com.beansgalaxy.backpacks.platform.Services;
 import com.mojang.authlib.minecraft.client.ObjectMapper;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.NonNullList;
@@ -39,7 +40,7 @@ public class DataResourcesMixin {
 
             NonNullList<Item> items = NonNullList.create();
             items.add(Items.ELYTRA.asItem());
-            if (!Constants.SLOTS_MOD_ACTIVE)
+            if (!Services.COMPAT.isModLoaded("elytraslot"))
                   Constants.disableFromChestplate(items);
             else
                   Constants.disablesBackSlot(items);

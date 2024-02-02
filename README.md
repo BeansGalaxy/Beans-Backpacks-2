@@ -29,6 +29,7 @@ already equipped.
 - Pots use a different sound for inserting/taking items.
 - Backpacks Feature Renderers are registered through mod loader's 
 events, instead of Mixins.
+- Fixed Dupe from shift clicking items from result slot.
 
 ### 20.1-0.7-v2 & 20.2-0.12-v2
 - Hovering over an empty and equipped Decorated Pot shows a help tooltip.
