@@ -18,6 +18,18 @@ the issues tab. </p>
 
 <h1 align="center"> Changelog </h1>
 
+### 20.1-0.8-v2 & 20.2-0.13-v2
+- Crash when right-clicking an empty slot of a placed backpack (thanks Emery319)
+- Items declared in `disables_back_slot` now check all armor, Curio, and Trinket slots and cannot be 
+equipped while a backpack is worn, likewise, a backpack cannot be equipped if an item declared is 
+already equipped. 
+- If `disables_back_slot` stops an item from being equipped, the backpack hit sound plays.
+- Create mod's Copper and Netherite Backtanks are included in `disables_back_slot`
+- Forge 1.20.1 was not building correctly.
+- Pots use a different sound for inserting/taking items.
+- Backpacks Feature Renderers are registered through mod loader's 
+events, instead of Mixins.
+
 ### 20.1-0.7-v2 & 20.2-0.12-v2
 - Hovering over an empty and equipped Decorated Pot shows a help tooltip.
 - Added Backpack Action to a new category in the Keybind Menu

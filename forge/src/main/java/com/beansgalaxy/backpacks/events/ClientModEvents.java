@@ -2,13 +2,21 @@ package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.ForgeMain;
+import com.beansgalaxy.backpacks.client.renderer.BackpackFeature;
 import com.beansgalaxy.backpacks.client.renderer.BackpackModel;
 import com.beansgalaxy.backpacks.client.renderer.BackpackRenderer;
 import com.beansgalaxy.backpacks.client.renderer.PotModel;
 import com.beansgalaxy.backpacks.entity.BackpackScreen;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
@@ -25,6 +33,21 @@ public class ClientModEvents {
             event.enqueueWork(() -> {
                   MenuScreens.register(ForgeMain.MENU.get(), BackpackScreen::new);
             });
+      }
+
+      @SubscribeEvent
+      public static void appendLayers(EntityRenderersEvent.AddLayers event) {
+            for (String skin : event.getSkins()) {
+                  LivingEntityRenderer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>>
+                          renderer = event.getSkin(skin);
+
+                  if (renderer == null)
+                        continue;
+
+                  renderer.addLayer(new BackpackFeature<>(
+                          renderer, event.getEntityModels(), event.getContext().getModelManager()
+                  ));
+            }
       }
 
       @SubscribeEvent

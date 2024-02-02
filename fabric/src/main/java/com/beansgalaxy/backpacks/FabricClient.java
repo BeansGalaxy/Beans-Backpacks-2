@@ -5,6 +5,7 @@ import com.beansgalaxy.backpacks.client.renderer.BackpackRenderer;
 import com.beansgalaxy.backpacks.client.renderer.PotModel;
 import com.beansgalaxy.backpacks.compat.TrinketsRegistry;
 import com.beansgalaxy.backpacks.entity.BackpackScreen;
+import com.beansgalaxy.backpacks.events.AppendModelLayers;
 import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.events.LoadEntityEvent;
 import com.beansgalaxy.backpacks.events.LoadItemModels;
@@ -19,6 +20,7 @@ import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.minecraft.client.gui.screens.MenuScreens;
 
 public class FabricClient implements ClientModInitializer {
@@ -29,6 +31,8 @@ public class FabricClient implements ClientModInitializer {
 
             EntityModelLayerRegistry.registerModelLayer(Constants.POT_MODEL, PotModel::getTexturedModelData);
             EntityModelLayerRegistry.registerModelLayer(Constants.BACKPACK_MODEL, BackpackModel::getTexturedModelData);
+            LivingEntityFeatureRendererRegistrationCallback.EVENT.register(new AppendModelLayers());
+
             EntityRendererRegistry.register(FabricMain.BACKPACK_ENTITY, BackpackRenderer::new);
             MenuScreens.register(FabricMain.BACKPACK_MENU, BackpackScreen::new);
 
