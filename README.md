@@ -18,6 +18,13 @@ the issues tab. </p>
 
 <h1 align="center"> Changelog </h1>
 
+### 20.1-0.10-v2 & 20.2-0.14-v2
+- Server crashed while trying to access client only classes.
+
+### 20.1-0.9-v2 & 20.2-0.14-v2
+- New Pot textures and Updated Model to look closer to a placed pot.
+- Elytra functionality only is disabled while [Elytra Slot](https://modrinth.com/mod/elytra-slot/version/6uCj1VmZ) is installed. (Elytra support is always enabled)
+
 ### 20.1-0.8-v2 & 20.2-0.13-v2
 - Crash when right-clicking an empty slot of a placed backpack (thanks Emery319)
 - Items declared in `disables_back_slot` now check all armor, Curio, and Trinket slots and cannot be 
