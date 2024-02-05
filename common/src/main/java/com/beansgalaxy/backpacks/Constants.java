@@ -4,7 +4,6 @@ import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
-import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -31,9 +30,6 @@ public class Constants {
 	public static final String MOD_ID = "beansbackpacks";
 	public static final String MOD_NAME = "Beans' Backpacks";
 	public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
-
-	public static final ModelLayerLocation BACKPACK_MODEL = new ModelLayerLocation(new ResourceLocation(MOD_ID, "backpack_model"), "main");
-	public static final ModelLayerLocation POT_MODEL = new ModelLayerLocation(new ResourceLocation(MOD_ID, "pot_player"), "main");
 	public static final ResourceLocation IN_LEATHER = new ResourceLocation(MOD_ID, "textures/entity/leather_interior.png");
 
 	public static final HashMap<String, Traits> TRAITS_MAP = new HashMap<>();
