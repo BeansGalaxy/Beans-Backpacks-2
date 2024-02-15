@@ -76,6 +76,7 @@ public class Constants {
 				(in) -> in.getPath().endsWith(disableChestplate1));
 
 		NonNullList<Item> items = NonNullList.create();
+		NonNullList<Item> removedItems = NonNullList.create();
 		disableChestplate.forEach( (resourceLocation, resource) -> {
 			try {
 				InputStream open = resource.open();
@@ -85,13 +86,19 @@ public class Constants {
 				while ((line = reader.readLine()) != null) {
 					String[] split = line.replaceAll(" ", "").split(",");
 					for (String id: split) {
-						items.add(itemFromString(id));
+						if (id.startsWith("!"))
+							removedItems.add(itemFromString(id.replace("!", "")));
+						else
+							items.add(itemFromString(id));
 					}
 				}
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
 		});
+
+		removedItems.add(Items.AIR.asItem());
+		items.removeAll(removedItems);
 		return items;
 	}
 }
