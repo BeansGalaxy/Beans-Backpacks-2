@@ -182,20 +182,27 @@ public interface BackpackInventory extends Container {
       }
 
       default ItemStack insertItemSilent(ItemStack stack, int amount) {
-            if (!stack.isEmpty() && getLocalData() != null && !getLocalData().key.isEmpty() && canPlaceItem(stack)) {
-                  boolean isServerSide = !getOwner().level().isClientSide();
-                  int spaceLeft = spaceLeft();
-                  int count = Math.min(spaceLeft / weightByItem(stack), amount);
-                  if (count > 0)
-                  {
-                        if (isServerSide && stack.getItem() instanceof BackpackItem)
-                              triggerAdvancements(SpecialCriterion.Special.LAYERED);
-                        this.getItemStacks().add(0, mergeItem(stack.copyWithCount(count)));
-                        stack.setCount(stack.getCount() - count);
-                  }
-                  if (isServerSide && Objects.equals(getLocalData().key, "leather") && spaceLeft < 1)
-                        triggerAdvancements(SpecialCriterion.Special.FILLED_LEATHER);
+            if (stack.isEmpty() || !canPlaceItem(stack))
+                  return stack;
+
+            int weight = weightByItem(stack);
+            Traits.LocalData localData = getLocalData();
+            if (weight == 0 || localData == null || localData.key.isEmpty())
+                  return stack;
+
+            boolean isServerSide = !getOwner().level().isClientSide();
+            int spaceLeft = spaceLeft();
+            int count = Math.min(spaceLeft / weight, amount);
+            if (count > 0)
+            {
+                  if (isServerSide && stack.getItem() instanceof BackpackItem)
+                        triggerAdvancements(SpecialCriterion.Special.LAYERED);
+                  this.getItemStacks().add(0, mergeItem(stack.copyWithCount(count)));
+                  stack.setCount(stack.getCount() - count);
             }
+            if (isServerSide && Objects.equals(localData.key, "leather") && spaceLeft < 1)
+                  triggerAdvancements(SpecialCriterion.Special.FILLED_LEATHER);
+
             return stack;
       }
 
