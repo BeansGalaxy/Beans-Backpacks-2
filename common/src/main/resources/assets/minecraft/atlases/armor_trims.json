@@ -3,22 +3,7 @@
     {
       "type": "paletted_permutations",
       "textures": [
-        "beansbackpacks/trims/coast",
-        "beansbackpacks/trims/sentry",
-        "beansbackpacks/trims/dune",
-        "beansbackpacks/trims/wild",
-        "beansbackpacks/trims/ward",
-        "beansbackpacks/trims/eye",
-        "beansbackpacks/trims/vex",
-        "beansbackpacks/trims/tide",
-        "beansbackpacks/trims/snout",
-        "beansbackpacks/trims/rib",
-        "beansbackpacks/trims/spire",
-        "beansbackpacks/trims/wayfinder",
-        "beansbackpacks/trims/shaper",
-        "beansbackpacks/trims/silence",
-        "beansbackpacks/trims/raiser",
-        "beansbackpacks/trims/host"
+        "beansbackpacks/trims"
       ],
       "palette_key": "trims/color_palettes/trim_palette",
       "permutations": {
