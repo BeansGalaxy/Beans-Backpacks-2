@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.client;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -34,9 +35,10 @@ public class TrimHelper extends ArmorTrim {
         super(material, pattern);
         this.material = material;
         this.backpackTexture = Util.memoize(armorMaterial -> {
-            ResourceLocation identifier = pattern.value().assetId();
-            String string = this.getMaterialAssetNameFor(armorMaterial);
-            return identifier.withPath(path -> "beansbackpacks/trims/" + path + "_" + string);
+            String patternString = pattern.value().assetId().getPath();
+            String materialString = this.getMaterialAssetNameFor(armorMaterial);
+            ResourceLocation resourceLocation = new ResourceLocation(Constants.MOD_ID, "trims/" + patternString + "_" + materialString);
+            return resourceLocation;
         });
     }
 

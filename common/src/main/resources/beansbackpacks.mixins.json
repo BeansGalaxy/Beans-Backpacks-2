@@ -9,8 +9,8 @@
     "common.DataResourcesMixin",
     "common.ElytraItemMixin",
     "common.InteractWithPlayer",
-    "common.InventoryMenuMixin",
     "common.InventoryContainerMixin",
+    "common.InventoryMenuMixin",
     "common.ItemStackMixin",
     "common.ServerPlayMixin"
   ],
@@ -21,6 +21,7 @@
     "client.ItemRendererMixin",
     "client.KeyBindTooltip",
     "client.SmithingScreenMixin",
+    "client.TrimsAtlasMixin",
     "client.UpdateSprintKey"
   ],
   "server": [
