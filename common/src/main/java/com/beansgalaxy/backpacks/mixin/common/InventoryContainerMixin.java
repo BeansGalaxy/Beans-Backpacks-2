@@ -50,7 +50,7 @@ public class InventoryContainerMixin implements BackAccessor {
                   if (Kind.isStorage(backStack)) {
                         CompoundTag backTag1 = new CompoundTag();
                         BackpackInventory backpackInventory = backData.backpackInventory;
-                        backpackInventory.writeNbt(backTag1, backpackInventory.isEmpty());
+                        backpackInventory.writeNbt(backTag1);
                         compoundTag.put("Contents", backTag1);
                   }
                   tag.add(compoundTag);

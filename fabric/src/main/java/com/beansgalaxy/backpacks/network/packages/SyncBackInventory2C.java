@@ -17,7 +17,7 @@ public class SyncBackInventory2C {
             BackpackInventory backpackInventory = BackData.get(owner).backpackInventory;
             FriendlyByteBuf buf = PacketByteBufs.create();
             CompoundTag compound = new CompoundTag();
-            backpackInventory.writeNbt(compound, backpackInventory.isEmpty());
+            backpackInventory.writeNbt(compound);
             String stacks = compound.getAsString();
             buf.writeUtf(stacks);
             ServerPlayNetworking.send(owner, NetworkPackages.SYNC_BACK_INV_2C, buf);

@@ -8,6 +8,7 @@
     "common.ArmorItemMixin",
     "common.DataResourcesMixin",
     "common.ElytraItemMixin",
+    "common.HopperEntityMixin",
     "common.InteractWithPlayer",
     "common.InventoryContainerMixin",
     "common.InventoryMenuMixin",

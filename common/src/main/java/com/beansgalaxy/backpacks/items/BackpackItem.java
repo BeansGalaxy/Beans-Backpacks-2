@@ -167,7 +167,7 @@ public class BackpackItem extends Item {
 
             int y = blockPos.getY();
             AABB box = BackpackEntity.newBox(blockPos, y, 9 / 16d, direction);
-            double yOffset = 2d / 16;
+            double yOffset = (direction.getAxis().isHorizontal() ? 2 : 1) / 16d;
 
             if (isVertical) {
                   boolean isRelative = !Objects.equals(blockPos, clickedPos);
@@ -192,7 +192,7 @@ public class BackpackItem extends Item {
 
             int invert = player.isCrouching() ? -1 : 1;
             int x = Mth.floor(pos.x);
-            double y = pos.y + 11d / 16 * invert;
+            double y = pos.y + ((direction.getAxis().isHorizontal() ? 11 : 10) / 16d) * invert;
             int z = Mth.floor(pos.z);
 
             AABB box = backpackEntity.getBoundingBox().move(0, 10d / 16 * invert, 0);

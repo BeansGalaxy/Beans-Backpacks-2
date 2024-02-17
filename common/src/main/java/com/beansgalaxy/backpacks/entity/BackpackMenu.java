@@ -13,9 +13,12 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerSynchronizer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+
+import java.util.function.Supplier;
 
 public class BackpackMenu extends AbstractContainerMenu {
       public static int FIRST_SLOT_INDEX;
@@ -42,6 +45,11 @@ public class BackpackMenu extends AbstractContainerMenu {
             createBackpackSlots(backpackInventory);
       }
 
+      @Override
+      public void broadcastChanges() {
+            super.broadcastChanges();
+      }
+
       private Backpack createMirror(Level level) {
             Backpack backpack = new Backpack(level) {
 
@@ -56,6 +64,11 @@ public class BackpackMenu extends AbstractContainerMenu {
                   }
             };
             return backpack;
+      }
+
+      @Override
+      public void slotsChanged(Container $$0) {
+            super.slotsChanged($$0);
       }
 
       // CLIENT CONSTRUCTOR

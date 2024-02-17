@@ -80,7 +80,7 @@ public class ForgeNetworkHelper implements NetworkHelper {
       public void backpackInventory2C(ServerPlayer owner) {
             BackpackInventory backpackInventory = BackData.get(owner).backpackInventory;
             CompoundTag compound = new CompoundTag();
-            backpackInventory.writeNbt(compound, backpackInventory.isEmpty());
+            backpackInventory.writeNbt(compound);
             String stacks = compound.getAsString();
             NetworkPackages.S2C(new SyncBackInventory2C(stacks), owner);
       }
