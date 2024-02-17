@@ -43,7 +43,7 @@ public class BackpackEntity extends Backpack {
       protected BlockPos pos;
       public double actualY;
       private static final int BREAK_TIMER = 25;
-      public int wobble = 0;
+      public int wobble = 9;
 
       public BackpackEntity(EntityType<? extends Entity> type, Level level) {
             super(type, level);
@@ -58,6 +58,7 @@ public class BackpackEntity extends Backpack {
             this.setDirection(direction);
             this.initDisplay(traits);
             this.placedBy = player.getUUID();
+            this.blocksBuilding = true;
 
             if (!direction.getAxis().isHorizontal())
                   this.setYRot(yaw);
@@ -71,6 +72,7 @@ public class BackpackEntity extends Backpack {
                   this.getInventory().getItemStacks().addAll(stacks);
                   stacks.clear();
             }
+
       }
 
       public static ItemStack toStack(BackpackEntity backpack) {

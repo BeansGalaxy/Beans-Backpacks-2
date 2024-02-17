@@ -18,6 +18,8 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.Hopper;
 
 import java.util.Objects;
 
@@ -116,12 +118,18 @@ public interface BackpackInventory extends Container {
 
       @Override
       default ItemStack removeItem(int slot, int amount) {
+            ItemStack stack = removeItemSilent(slot, amount);
+            if (!stack.isEmpty())
+                  playSound(PlaySound.TAKE);
+            return stack;
+      }
+
+      default ItemStack removeItemSilent(int slot, int amount) {
             ItemStack stack = getItem(slot).split(amount);
             if (stack.isEmpty()) {
                   if (getContainerSize() > slot)
                         getItemStacks().remove(slot);
-            } else
-                  playSound(PlaySound.TAKE);
+            }
             return stack;
       }
 
@@ -153,12 +161,13 @@ public interface BackpackInventory extends Container {
 
       @Override
       default void setItem(int slot, ItemStack stack) {
+            int containerSize = getContainerSize();
             if (!stack.isEmpty())
                   if (getContainerSize() > slot)
                         getItemStacks().set(slot, stack);
                   else getItemStacks().add(slot, stack);
             else
-                  if (getContainerSize() > slot)
+                  if (containerSize > slot)
                         getItemStacks().remove(slot);
       }
 
@@ -262,7 +271,7 @@ public interface BackpackInventory extends Container {
             }
       }
 
-      default CompoundTag writeNbt(CompoundTag nbt, boolean setIfEmpty) {
+      default CompoundTag writeNbt(CompoundTag nbt) {
             ListTag nbtList = new ListTag();
             NonNullList<ItemStack> stacks = getItemStacks();
             for (int i = 0; i < stacks.size(); ++i) {
@@ -280,7 +289,7 @@ public interface BackpackInventory extends Container {
 
                   nbtList.add(nbtCompound);
             }
-            if (!nbtList.isEmpty() || setIfEmpty) {
+            if (!nbtList.isEmpty() || isEmpty()) {
                   nbt.put("Items", nbtList);
             }
             return nbt;
@@ -330,4 +339,45 @@ public interface BackpackInventory extends Container {
       default MenuProvider getMenuProvider() {
             return Services.NETWORK.getMenuProvider(getOwner());
       }
+
+      default boolean hopperTakeOne(Container hopper) {
+            if (isEmpty())
+                  return false;
+
+            for (int i = 0; i < hopper.getContainerSize(); i++) {
+                  ItemStack hopperItem = hopper.getItem(i);
+                  int matchSlot = matchesSlot(hopperItem);
+                  if (matchSlot != -1 && hopperItem.getCount() < hopperItem.getMaxStackSize() && !getItem(matchSlot).isEmpty()) {
+                        hopperItem.grow(1);
+                        removeItemSilent(matchSlot, 1);
+                        return true;
+                  }
+                  if (hopperItem.isEmpty() && !isEmpty()) {
+                        hopper.setItem(i, removeItemSilent(getContainerSize() - 1, 1));
+                        return true;
+                  }
+            }
+            return false;
+      }
+
+      default boolean hopperInsertOne(Container hopper) {
+            for (int i = 0; i < hopper.getContainerSize(); i++) {
+                  ItemStack hopperItem = hopper.getItem(i);
+                  if (!hopperItem.isEmpty()) {
+                        insertItem(hopperItem, 1);
+                        return true;
+                  }
+            }
+            return false;
+      }
+
+      private int matchesSlot(ItemStack stack) {
+            for (int j = getContainerSize() -1; j >= 0; j--) {
+                  ItemStack item = getItem(j);
+                  if (ItemStack.isSameItemSameTags(item, stack))
+                        return j;
+            }
+            return -1;
+      }
+
 }

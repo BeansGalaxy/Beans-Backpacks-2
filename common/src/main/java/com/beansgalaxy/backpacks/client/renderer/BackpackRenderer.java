@@ -45,7 +45,7 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
       private float renderWobble(Entity entity, float yaw) {
             if (entity instanceof BackpackEntity backpack) {
                   double breakTime = backpack.wobble;
-                  return (float) (0.5 * breakTime * Math.sin(breakTime / Math.PI * 4));
+                  return (float) (breakTime * Math.sin(breakTime / Math.PI * 4));
             }
             return 0;
       }
