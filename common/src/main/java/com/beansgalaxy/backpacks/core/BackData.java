@@ -75,6 +75,7 @@ public class BackData {
       public void update(ItemStack backStack) {
             this.backStack = backStack;
             this.localData = Traits.LocalData.fromStack(backStack);
+            this.setChanged();
       }
 
       public void setChanged() {

@@ -111,6 +111,13 @@ public class BackpackEntity extends Backpack {
             return this.direction;
       }
 
+      public Player getPlacedBy() {
+          if (placedBy != null)
+                return level().getPlayerByUUID(placedBy);
+
+          return null;
+      }
+
       protected void setDirection(Direction direction) {
             if (direction != null) {
                   this.direction = direction;

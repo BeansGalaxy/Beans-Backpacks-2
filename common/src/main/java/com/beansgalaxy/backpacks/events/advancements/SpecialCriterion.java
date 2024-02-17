@@ -44,6 +44,7 @@ public class SpecialCriterion extends SimpleCriterionTrigger<SpecialCriterion.Co
       public enum Special {
             HOP,
             LAYERED,
-            FILLED_LEATHER
+            FILLED_LEATHER,
+            HOPPER
       }
 }

@@ -4,6 +4,7 @@
     "beansbackpacks:backpack",
     "beansbackpacks:metal_backpack",
     "beansbackpacks:upgraded_backpack",
-    "minecraft:decorated_pot"
+    "minecraft:decorated_pot",
+    "minecraft:elytra"
   ]
 }

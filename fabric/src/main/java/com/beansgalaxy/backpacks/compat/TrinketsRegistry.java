@@ -86,7 +86,7 @@ public class TrinketsRegistry {
                   return stack;
 
             TrinketInventory slots = back.get("back");
-            if (slots == null || slots.isEmpty())
+            if (slots == null)
                   return stack;
 
             ItemStack stackInSlot = slots.getItem(0);
