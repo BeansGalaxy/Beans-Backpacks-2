@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.core;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.entity.Backpack;
+import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.items.BackpackItem;
@@ -219,6 +220,12 @@ public interface BackpackInventory extends Container {
                   Services.REGISTRY.triggerSpecial(otherPlayers, special);
       }
 
+      private void triggerHopper() {
+            if (getOwner() instanceof BackpackEntity backpackEntity &&
+                        backpackEntity.getPlacedBy() instanceof ServerPlayer serverPlayer)
+                  Services.REGISTRY.triggerSpecial(serverPlayer, SpecialCriterion.Special.HOPPER);
+      }
+
       default int spaceLeft() {
             if (getLocalData().kind() == null)
                   return 0;
@@ -348,10 +355,12 @@ public interface BackpackInventory extends Container {
                   if (matchSlot != -1 && hopperItem.getCount() < hopperItem.getMaxStackSize() && !getItem(matchSlot).isEmpty()) {
                         hopperItem.grow(1);
                         removeItemSilent(matchSlot, 1);
+                        triggerHopper();
                         return true;
                   }
                   if (hopperItem.isEmpty() && !isEmpty()) {
                         hopper.setItem(i, removeItemSilent(getContainerSize() - 1, 1));
+                        triggerHopper();
                         return true;
                   }
             }
@@ -363,6 +372,7 @@ public interface BackpackInventory extends Container {
                   ItemStack hopperItem = hopper.getItem(i);
                   if (!hopperItem.isEmpty()) {
                         insertItem(hopperItem, 1);
+                        triggerHopper();
                         return true;
                   }
             }
