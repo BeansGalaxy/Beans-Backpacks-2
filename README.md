@@ -18,6 +18,10 @@ the issues tab. </p>
 
 <h1 align="center"> Changelog </h1>
 
+### 20.1-0.11-v2b
+
+- Forge version crashed on launch due to mixin errors
+
 ### 20.1-0.11-v2 & 20.2-0.15-v2
 - Added Hopper Functionality (visual de-sync issues)
 - Item lists in the modify folder of a datapack now supports !namespace:id 
@@ -25,6 +29,7 @@ the issues tab. </p>
 - Added new advancement gained by moving items with a hopper.
 - Using a backpack item on a cauldron clears it's color.
 - Simplified the process to add backpack trims. _([How To Add Trims](https://github.com/BeansGalaxy/Beans-Backpacks-2/wiki/Configurations#adding-modded-trims))_
+- Placing backpacks now have a little shake animation.
 - Fixed unequipping backpacks did not update the renderer.
 - Fixed curios/trinkets input slot appearing in creative menu.
 
