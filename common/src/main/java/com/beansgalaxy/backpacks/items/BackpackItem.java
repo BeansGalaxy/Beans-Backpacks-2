@@ -240,7 +240,7 @@ public class BackpackItem extends Item {
       @Override
       public Component getName(ItemStack stack) {
             String key = stack.getOrCreateTagElement("display").getString("key");
-            return Component.literal(Traits.get(key).name);
+            return Component.translatableWithFallback("tooltip.beansbackpacks.name." + key , Traits.get(key).name);
       }
 
       @Override
