@@ -146,7 +146,11 @@ public class InventoryContainerMixin implements BackAccessor {
             if (!cir.getReturnValue()) {
                   BackData backData = BackData.get(player);
                   BackpackInventory backpackInventory = backData.backpackInventory;
-                  if (backData.getStack().is(Items.DECORATED_POT) && backpackInventory.isEmpty())
+                  ItemStack backStack = backData.getStack();
+                  if (backStack.is(Items.DECORATED_POT) && backpackInventory.isEmpty())
+                        return;
+
+                  if (!Kind.isStorage(backStack))
                         return;
 
                   cir.setReturnValue(backpackInventory.insertItemSilent(stack, stack.getCount()).isEmpty());

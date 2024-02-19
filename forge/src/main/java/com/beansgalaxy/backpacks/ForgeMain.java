@@ -22,6 +22,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -97,6 +98,7 @@ public class ForgeMain {
                             .displayItems((params, output) -> {
                                 Constants.TRAITS_MAP.keySet().forEach(key ->
                                             output.accept(BackpackItem.stackFromKey(key)));
+                                output.accept(Items.DECORATED_POT);
                             })
                             .build());
 

@@ -32,6 +32,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
 public class FabricMain implements ModInitializer {
@@ -77,6 +78,7 @@ public class FabricMain implements ModInitializer {
                 .displayItems((params, output) -> {
                     Constants.TRAITS_MAP.keySet().forEach(key ->
                                 output.accept(BackpackItem.stackFromKey(key)));
+                    output.accept(Items.DECORATED_POT);
                 }).build();
 
     public static final CreativeModeTab CREATIVE_TAB =

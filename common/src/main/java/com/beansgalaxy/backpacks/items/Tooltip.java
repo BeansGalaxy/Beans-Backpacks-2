@@ -7,7 +7,6 @@ import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
-import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -102,41 +101,20 @@ public class Tooltip {
             if (!t2.getString().isEmpty()) components.add(t2);
       }
 
-      private static void addLoreConstants(List<Component> components, String k0, String k1) {
-            components.add(Component.translatable("tooltip.beansbackpacks.constant_0", k0));
-            components.add(Component.translatable("tooltip.beansbackpacks.constant_1", keyBind));
-            components.add(empty);
-            components.add(Component.translatable("tooltip.beansbackpacks.constant_2", keyBind));
-            components.add(Component.translatable("tooltip.beansbackpacks.constant_3", k1));
-            components.add(empty);
-      }
-
-      public static List<Component> loreBackpack(List<Component> components) {
+      public static List<Component> addLore(List<Component> components, String kind, int lines) {
             Minecraft instance = Minecraft.getInstance();
-            addLoreConstants(components, "§7backpack", "§7backpack");
-
             String useKey = "§6" + instance.options.keyUse.getTranslatedKeyMessage().getString()
-                        .replace("Right Button", "RClick")
-                        .replace("Left Button", "LClick")
-                        .replace("Left ", "L")
-                        .replace("Right ", "R");
+                    .replace("Right Button", "RClick")
+                    .replace("Left Button", "LClick")
+                    .replace("Left ", "L")
+                    .replace("Right ", "R");
 
-            components.add(Component.translatable("tooltip.beansbackpacks.backpack_0", keyBind, useKey));
-            components.add(Component.translatable("tooltip.beansbackpacks.backpack_1", keyBind, useKey));
+            for (int i = 0; i <= lines; i++) {
+                  components.add(Component.translatable("tooltip.beansbackpacks.help." + kind + i, keyBind, useKey));
 
-            return components;
-      }
-
-      public static List<Component> loreDecoratedPot(List<Component> components) {
-            addLoreConstants(components, "§7pot", "§7this pot");
-
-            components.add(Component.translatable("tooltip.beansbackpacks.pot_0"));
-            components.add(Component.translatable("tooltip.beansbackpacks.pot_1"));
-            components.add(empty);
-            components.add(Component.translatable("tooltip.beansbackpacks.pot_2"));
-            components.add(Component.translatable("tooltip.beansbackpacks.pot_3"));
-            if (Services.COMPAT.isModLoaded(CompatHelper.TRINKETS))
-                  components.add(empty);
+                  if (i != lines && (i + 1) % 2 == 0)
+                        components.add(empty);
+            }
 
             return components;
       }

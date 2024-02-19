@@ -63,9 +63,9 @@ public abstract class ItemStackMixin {
                   boolean isPot = instance.is(Items.DECORATED_POT);
                   if (backData.actionKeyPressed) {
                         if (isBackpack)
-                              cir.setReturnValue(Tooltip.loreBackpack(components));
+                              cir.setReturnValue(Tooltip.addLore(components, "backpack", 5));
                         else if (isPot)
-                              cir.setReturnValue(Tooltip.loreDecoratedPot(components));
+                              cir.setReturnValue(Tooltip.addLore(components, "pot", 7));
                   }
                   else if (isBackpack || isPot)
                         Tooltip.loreTitle(components);
