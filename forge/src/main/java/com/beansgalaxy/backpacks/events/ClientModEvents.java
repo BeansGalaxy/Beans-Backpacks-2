@@ -4,6 +4,9 @@ import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.ForgeMain;
 import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.client.renderer.*;
+import com.beansgalaxy.backpacks.client.renderer.features.BackFeature;
+import com.beansgalaxy.backpacks.client.renderer.features.BackpackFeature;
+import com.beansgalaxy.backpacks.client.renderer.features.PotFeature;
 import com.beansgalaxy.backpacks.entity.BackpackScreen;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -38,11 +41,8 @@ public class ClientModEvents {
                   if (renderer == null)
                         continue;
 
-                  renderer.addLayer(new BackpackFeature<>(
+                  renderer.addLayer(new BackFeature<>(
                           renderer, event.getEntityModels(), event.getContext().getModelManager()
-                  ));
-                  renderer.addLayer(new PotFeature<>(
-                          renderer, event.getEntityModels()
                   ));
             }
       }
