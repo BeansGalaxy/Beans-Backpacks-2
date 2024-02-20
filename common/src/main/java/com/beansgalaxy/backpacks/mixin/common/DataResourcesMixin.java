@@ -40,9 +40,7 @@ public class DataResourcesMixin {
 
             NonNullList<Item> items = NonNullList.create();
             items.add(Items.ELYTRA.asItem());
-            if (!Services.COMPAT.isModLoaded("elytraslot"))
-                  Constants.disableFromChestplate(items);
-            else
+            if (Services.COMPAT.isModLoaded("elytraslot"))
                   Constants.disablesBackSlot(items);
 
 
