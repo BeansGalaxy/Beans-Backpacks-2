@@ -5,6 +5,7 @@ import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.platform.Services;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,9 +26,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mixin(Inventory.class)
-public class InventoryContainerMixin implements BackAccessor {
+public abstract class InventoryContainerMixin implements BackAccessor {
 
       @Shadow @Final public Player player;
+      @Shadow @Final public NonNullList<ItemStack> items;
+      @Shadow public int selected;
+
+      @Shadow public abstract int getSuitableHotbarSlot();
+
       @Unique private BackData backData;
 
       @Override
@@ -40,7 +46,6 @@ public class InventoryContainerMixin implements BackAccessor {
 
       @Inject(method = "save", at = @At("TAIL"))
       public void writeBackSlot(ListTag tag, CallbackInfoReturnable<ListTag> cir) {
-            BackData backData = BackData.get(player);
             ItemStack backStack = backData.getStack();
             if (!backStack.isEmpty()) {
                   CompoundTag compoundTag = new CompoundTag();
@@ -60,7 +65,6 @@ public class InventoryContainerMixin implements BackAccessor {
       @Inject(method = "load", at = @At("TAIL"))
       public void readMixin(ListTag tag, CallbackInfo info) {
             depricatedLoad(tag);
-            BackData backData = BackData.get(player);
             for (int i = 0; i < tag.size(); ++i) {
                   CompoundTag compoundTag = tag.getCompound(i);
                   ItemStack itemStack = ItemStack.of(compoundTag.getCompound("BackSlot"));
@@ -74,7 +78,6 @@ public class InventoryContainerMixin implements BackAccessor {
 
       @Unique
       private void depricatedLoad(ListTag tag) {
-            BackData backData = BackData.get(player);
             backData.set(ItemStack.EMPTY);
             for (int i = 0; i < tag.size(); ++i) {
                   CompoundTag compoundTag = tag.getCompound(i);
@@ -95,7 +98,6 @@ public class InventoryContainerMixin implements BackAccessor {
             Inventory instance = (Inventory) (Object) this;
             if (slot == -1 && !stack.isEmpty())
             {
-                  BackData backData = BackData.get(player);
                   BackpackInventory backpackInventory = backData.backpackInventory;
                   ItemStack backStack = backData.getStack();
 
@@ -144,7 +146,6 @@ public class InventoryContainerMixin implements BackAccessor {
       @Inject(method = "add(ILnet/minecraft/world/item/ItemStack;)Z", at = @At("RETURN"), cancellable = true)
       public void insertBackpack(int $$0, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
             if (!cir.getReturnValue()) {
-                  BackData backData = BackData.get(player);
                   BackpackInventory backpackInventory = backData.backpackInventory;
                   ItemStack backStack = backData.getStack();
                   if (backStack.is(Items.DECORATED_POT) && backpackInventory.isEmpty())
@@ -154,6 +155,15 @@ public class InventoryContainerMixin implements BackAccessor {
                         return;
 
                   cir.setReturnValue(backpackInventory.insertItemSilent(stack, stack.getCount()).isEmpty());
+            }
+      }
+
+      @Inject(method = "findSlotMatchingItem", at = @At("TAIL"), cancellable = true)
+      public void pickInBackpack(ItemStack inventoryStack, CallbackInfoReturnable<Integer> cir) {
+            for (int i = 0; i < backData.backpackInventory.getContainerSize(); i++) {
+                  ItemStack backpackStack = backData.backpackInventory.getItemStacks().get(i);
+                  if (ItemStack.isSameItemSameTags(inventoryStack, backpackStack))
+                        cir.setReturnValue((i * -1) - 100);
             }
       }
 }
