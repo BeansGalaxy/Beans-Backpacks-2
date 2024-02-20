@@ -1,7 +1,0 @@
-{
-  "pack": {
-    "pack_format": 26,
-    "supported_formats": {"min_inclusive": 15, "max_inclusive": 26},
-    "description": "Adds Copper Backpacks to Bean's Backpacks Mod"
-  }
-}
