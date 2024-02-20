@@ -18,8 +18,14 @@ the issues tab. </p>
 
 <h1 align="center"> Changelog </h1>
 
-### 20.1-0.11-v2b
+### 20.1-0.12-v2 & 20.2-0.15-v2
+- Added Decorated Pot to Creative Tab
+- Added Translation options for Backpack items
+- Cleaned up lang file.
+- Pick Block in survival now checks the Backpack Inventory
+- Fixed Pot was not rendering on players in Forge.
 
+### 20.1-0.11-v2b
 - Forge version crashed on launch due to mixin errors
 
 ### 20.1-0.11-v2 & 20.2-0.15-v2
