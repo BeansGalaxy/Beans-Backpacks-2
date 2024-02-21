@@ -20,9 +20,7 @@ public class TrinketsRegistry {
             Trinket trinket = new Trinket() {
                   @Override
                   public TrinketEnums.DropRule getDropRule(ItemStack stack, SlotReference slot, LivingEntity entity) {
-                        return entity.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) ?
-                                    TrinketEnums.DropRule.KEEP :
-                                    TrinketEnums.DropRule.DESTROY;
+                        return TrinketEnums.DropRule.KEEP;
                   }
 
                   @Override

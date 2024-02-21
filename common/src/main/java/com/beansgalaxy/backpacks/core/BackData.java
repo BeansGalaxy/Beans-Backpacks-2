@@ -131,6 +131,8 @@ public class BackData {
 
             new BackpackEntity(owner, owner.level(), x, y, z, Direction.UP,
                         localData, itemStacks, yRot);
+
+            set(ItemStack.EMPTY);
       }
 
       public void copyTo(BackData newBackData) {

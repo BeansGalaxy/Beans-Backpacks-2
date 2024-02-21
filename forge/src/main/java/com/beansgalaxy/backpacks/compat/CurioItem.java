@@ -51,8 +51,6 @@ public class CurioItem implements ICurioItem {
       @NotNull
       @Override
       public ICurio.DropRule getDropRule(SlotContext slotContext, DamageSource source, int lootingLevel, boolean recentlyHit, ItemStack stack) {
-            return slotContext.entity().level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) ?
-                        ICurio.DropRule.ALWAYS_KEEP :
-                        ICurio.DropRule.DESTROY;
+            return ICurio.DropRule.ALWAYS_KEEP;
       }
 }
