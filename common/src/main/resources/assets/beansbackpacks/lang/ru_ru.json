@@ -1,0 +1,39 @@
+{
+  "key.beansbackpacks.category" : "Beans' Backpacks",
+  "key.beansbackpacks.action": "Backpack Action",
+  "key.beansbackpacks.description": "Leave unbound to pair this action with the key bound to sprint.",
+  "itemGroup.beansbackpacks": "Backpacks",
+
+  "tooltip.beansbackpacks.name.leather": "Рюкзак",
+  "tooltip.beansbackpacks.name.iron": "Железный рюкзак",
+  "tooltip.beansbackpacks.name.gold": "Золотой рюкзак",
+  "tooltip.beansbackpacks.name.netherite": "Незеритовый рюкзак",
+
+  "tooltip.beansbackpacks.empty_title_1": "%d§7, чтобы узнать подробности.",
+  "tooltip.beansbackpacks.empty_title_2": "",
+
+  "tooltip.beansbackpacks.help.backpack0": "§7Нажмите на этот рюкзак,",
+  "tooltip.beansbackpacks.help.backpack1": "§7чтобы положить/взять предмет.",
+  "tooltip.beansbackpacks.help.backpack2": "§7Удерживайте %d§7, чтобы быстро",
+  "tooltip.beansbackpacks.help.backpack3": "§7переместить предмет в/из рюкзака.",
+  "tooltip.beansbackpacks.help.backpack4": "%d §7+ %d §7на рюкзаке или",
+  "tooltip.beansbackpacks.help.backpack5": "§7блоке, чтобы надеть/поставить.",
+
+  "tooltip.beansbackpacks.help.pot0": "§7Нажмите на эту вазу,",
+  "tooltip.beansbackpacks.help.pot1": "§7чтобы положить/взять предмет.",
+  "tooltip.beansbackpacks.help.pot2": "§7Удерживайте %d§7, чтобы быстро",
+  "tooltip.beansbackpacks.help.pot3": "§7переместить предмет в/из вазы.",
+  "tooltip.beansbackpacks.help.pot4": "§7Ваза может хранить неограниченное",
+  "tooltip.beansbackpacks.help.pot5": "§7количество одного предмета.",
+  "tooltip.beansbackpacks.help.pot6": "§7Вы не можете снять",
+  "tooltip.beansbackpacks.help.pot7": "§7вазу с предметами.",
+
+  "sounds.beansbackpacks.place": "Backpack Placed",
+  "sounds.beansbackpacks.equip": "Backpack Equipped",
+  "sounds.beansbackpacks.hit": "Hit Backpack",
+  "sounds.beansbackpacks.break": "Broke Backpack",
+  "sounds.beansbackpacks.insert": "Inserted into Backpack",
+  "sounds.beansbackpacks.take": "Took from Backpack",
+  "sounds.beansbackpacks.open": "Opened Backpack",
+  "sounds.beansbackpacks.close": "Closed Backpack"
+}
