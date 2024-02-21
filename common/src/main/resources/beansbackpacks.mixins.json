@@ -5,7 +5,7 @@
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "HopperEntityMixin",
+    "common.HopperEntityMixin",
     "common.ArmorItemMixin",
     "common.DataResourcesMixin",
     "common.ElytraItemMixin",
@@ -18,7 +18,6 @@
   ],
   "client": [
     "client.DisableCape",
-    "client.ElytraRenderer",
     "client.InventoryScreenMixin",
     "client.ItemRendererMixin",
     "client.KeyBindTooltip",

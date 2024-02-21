@@ -49,7 +49,8 @@ public class PotFeature<T extends LivingEntity, M extends EntityModel<T>> {
             RendererHelper.weld(modelPart, torso);
         }
 
-        backFeature.sneakInter = sneakInter(player, pose, backFeature.sneakInter);
+        float scale = backFeature.sneakInter / 3f;
+        pose.translate(0, (1 / 16f) * scale, (1 / 32f) * scale);
         VertexConsumer vc = mbs.getBuffer(potModel.renderType(TEXTURE));
         potModel.renderBody(pose, vc, light, OverlayTexture.NO_OVERLAY);
         potModel.renderDetail(pose, mbs, light, OverlayTexture.NO_OVERLAY, sherds);

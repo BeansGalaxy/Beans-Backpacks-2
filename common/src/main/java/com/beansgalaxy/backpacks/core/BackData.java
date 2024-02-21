@@ -64,6 +64,10 @@ public class BackData {
             return Services.COMPAT.getBackSlotItem(this, backStack);
       }
 
+      public Traits.LocalData getLocalData() {
+            return localData;
+      }
+
       public boolean isEmpty() {
             return backStack.isEmpty();
       }

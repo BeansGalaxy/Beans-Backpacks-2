@@ -18,6 +18,8 @@ public interface RegistryHelper {
 
       Item getUpgraded();
 
+      Item getWinged();
+
       EntityType<? extends Entity> getEntity();
 
       MenuType<?> getMenu();

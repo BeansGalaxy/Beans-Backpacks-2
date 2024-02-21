@@ -7,6 +7,7 @@ import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
+import com.beansgalaxy.backpacks.items.WingedBackpack;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -77,7 +78,8 @@ public class BackpackEntity extends Backpack {
 
       public static ItemStack toStack(BackpackEntity backpack) {
             Traits.LocalData localData = backpack.getLocalData();
-            Item item = localData.kind().getItem();
+            Kind kind = localData.kind();
+            Item item = kind.getItem();
             ItemStack stack = item.getDefaultInstance();
             String key = backpack.getKey();
 
@@ -90,7 +92,11 @@ public class BackpackEntity extends Backpack {
                   stack.addTagElement("Trim", trim);
 
             int color = backpack.getColor();
-            if (color != DEFAULT_COLOR && stack.getItem() instanceof DyableBackpack)
+            boolean hasDefaultColor =
+                    (Kind.LEATHER.is(kind) && color == DEFAULT_COLOR) ||
+                    (Kind.WINGED.is(kind) && color == WingedBackpack.WINGED_COLOR);
+
+            if (!hasDefaultColor && stack.getItem() instanceof DyableBackpack)
                   stack.getOrCreateTagElement("display").putInt("color", color);
 
             if (localData.hoverName.toString().equals("empty"))

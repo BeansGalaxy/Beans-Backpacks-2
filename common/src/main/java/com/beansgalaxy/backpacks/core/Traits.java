@@ -6,6 +6,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -135,7 +136,7 @@ public class Traits {
                   CompoundTag display = stack.getOrCreateTagElement("display");
 
                   String key = display.getString("key");
-                  int itemColor = stack.getItem() instanceof DyableBackpack dyableBackpack ? dyableBackpack.getColor(stack) : 0xFFFFFF;
+                  int itemColor = stack.getItem() instanceof DyeableLeatherItem dyable ? dyable.getColor(stack) : 0xFFFFFF;
                   CompoundTag trim = stack.getTagElement("Trim");
                   Component hoverName = stack.hasCustomHoverName() ? stack.getHoverName(): Component.empty();
 

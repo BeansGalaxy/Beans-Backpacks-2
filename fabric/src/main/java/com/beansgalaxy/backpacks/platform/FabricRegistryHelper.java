@@ -32,6 +32,11 @@ public class FabricRegistryHelper implements RegistryHelper {
       }
 
       @Override
+      public Item getWinged() {
+            return FabricMain.WINGED_BACKPACK.asItem();
+      }
+
+      @Override
       public EntityType<? extends Entity> getEntity() {
             return FabricMain.BACKPACK_ENTITY;
       }

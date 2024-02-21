@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -37,8 +38,9 @@ public class Constants {
 	public static final HashSet<Item> CHESTPLATE_DISABLED = new HashSet<>();
 	public static final HashSet<Item> DISABLES_BACK_SLOT = new HashSet<>();
 	public static final HashSet<Item> BLACKLIST_ITEMS = new HashSet<>();
+    public static final HashSet<Item> ELYTRA_ITEMS = new HashSet<>();
 
-	protected static void register() {
+    protected static void register() {
 		LOG.info("Initializing Beans' Backpacks Constants");
 	}
 
@@ -50,25 +52,20 @@ public class Constants {
             return BuiltInRegistries.ITEM.get(resourceLocation);
 	}
 
-	public static void disableFromChestplate(NonNullList<Item> items) {
-		CHESTPLATE_DISABLED.addAll(items);
-		CHESTPLATE_DISABLED.remove(Items.AIR);
+	public static void addToList(HashSet<Item> list, Collection<Item> items) {
+		list.addAll(items);
+		list.remove(Items.AIR);
+	}
+
+	public static void addToList(HashSet<Item> list, Item item) {
+		if (!item.equals(Items.AIR))
+			list.add(item);
 	}
 
 	public static ItemStack getTorsoWearables(Player player, Item item) {
 		ItemStack backSlot = BackData.get(player).getStack();
 		ItemStack chestplate = player.getItemBySlot(EquipmentSlot.CHEST);
 		return backSlot.is(item) ? backSlot : chestplate;
-	}
-
-	public static void disablesBackSlot(NonNullList<Item> items) {
-		DISABLES_BACK_SLOT.addAll(items);
-		DISABLES_BACK_SLOT.remove(Items.AIR);
-	}
-
-	public static void blacklistItems(NonNullList<Item> items) {
-		BLACKLIST_ITEMS.addAll(items);
-		BLACKLIST_ITEMS.remove(Items.AIR);
 	}
 
 	public static NonNullList<Item> readJsonItemList(ResourceManager resourceManager, String disableChestplate1) {

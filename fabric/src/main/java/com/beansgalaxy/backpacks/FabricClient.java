@@ -11,6 +11,7 @@ import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.events.LoadEntityEvent;
 import com.beansgalaxy.backpacks.events.LoadItemModels;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
+import com.beansgalaxy.backpacks.items.WingedBackpack;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
@@ -41,6 +42,8 @@ public class FabricClient implements ClientModInitializer {
             ClientEntityEvents.ENTITY_LOAD.register(new LoadEntityEvent());
             ColorProviderRegistry.ITEM.register((stack, layer) ->
                         (layer != 1 ? ((DyableBackpack) stack.getItem()).getColor(stack) : 16777215), FabricMain.LEATHER_BACKPACK);
+            ColorProviderRegistry.ITEM.register((stack, layer) ->
+                    (layer != 1 ? WingedBackpack.shiftColor(((WingedBackpack) stack.getItem()).getColor(stack)) : 16777215), FabricMain.WINGED_BACKPACK);
 
             ModelLoadingPlugin.register(new LoadItemModels());
 

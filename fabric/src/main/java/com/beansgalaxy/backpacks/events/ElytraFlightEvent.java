@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.BackData;
+import com.beansgalaxy.backpacks.core.Kind;
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,10 +16,14 @@ public class ElytraFlightEvent implements EntityElytraEvents.Custom {
       @Override
       public boolean useCustomElytra(LivingEntity entity, boolean tickElytra) {
 
-            if (Constants.CHESTPLATE_DISABLED.contains(Items.ELYTRA) && entity instanceof Player player)
+            if (entity instanceof Player player)
             {
                   ItemStack backStack = BackData.get(player).getStack();
-                  if (!backStack.is(Items.ELYTRA) || !ElytraItem.isFlyEnabled(backStack))
+                  int damageValue = backStack.getDamageValue();
+                  int maxDamage = backStack.getMaxDamage();
+                  boolean flyEnabled = damageValue < maxDamage - 1;
+                  boolean wings = Kind.isWings(backStack);
+                  if (!wings || !flyEnabled)
                         return false;
 
                   if (tickElytra)
@@ -32,7 +37,7 @@ public class ElytraFlightEvent implements EntityElytraEvents.Custom {
                               player.gameEvent(GameEvent.ELYTRA_GLIDE);
                         }
                   }
-                  return backStack.getItem() == Items.ELYTRA;
+                  return true;
             }
             return false;
       }

@@ -33,8 +33,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.Objects;
 
 public class BackpackItem extends Item {
-      public BackpackItem() {
-            super(new Item.Properties().stacksTo(1));
+      public BackpackItem(Item.Properties properties) {
+            super(properties);
       }
 
       @Override

@@ -24,7 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import static com.beansgalaxy.backpacks.Constants.readJsonItemList;
+import static com.beansgalaxy.backpacks.Constants.*;
 
 @Mixin(ReloadableServerResources.class)
 public class DataResourcesMixin {
@@ -35,24 +35,25 @@ public class DataResourcesMixin {
             Constants.DISABLES_BACK_SLOT.clear();
             Constants.BLACKLIST_ITEMS.clear();
 
-            Constants.disableFromChestplate(
+            Constants.addToList(Constants.BLACKLIST_ITEMS,
+                    readJsonItemList(resourceManager, "blacklist_items"));
+
+            Constants.addToList(Constants.ELYTRA_ITEMS,
+                    readJsonItemList(resourceManager, "elytra_items"));
+
+            Constants.addToList(Constants.CHESTPLATE_DISABLED,
                         readJsonItemList(resourceManager, "disable_chestplate"));
 
-            NonNullList<Item> items = NonNullList.create();
-            items.add(Items.ELYTRA.asItem());
-            if (!Services.COMPAT.isModLoaded("elytraslot"))
-                  Constants.disableFromChestplate(items);
-            else
-                  Constants.disablesBackSlot(items);
-
-
-            Constants.disablesBackSlot(
+            Constants.addToList(Constants.DISABLES_BACK_SLOT,
                         readJsonItemList(resourceManager, "disables_back_slot"));
+
+            if (Services.COMPAT.isModLoaded("elytraslot"))
+                  Constants.addToList(DISABLES_BACK_SLOT, ELYTRA_ITEMS);
+            else
+                  Constants.addToList(CHESTPLATE_DISABLED, ELYTRA_ITEMS);
 
             Constants.CHESTPLATE_DISABLED.removeAll(Constants.DISABLES_BACK_SLOT);
 
-            Constants.blacklistItems(
-                        readJsonItemList(resourceManager, "blacklist_items"));
 
             Traits.clear();
             resourceManager.listResources("recipes", (in) ->

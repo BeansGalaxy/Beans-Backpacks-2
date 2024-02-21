@@ -5,7 +5,9 @@ import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.client.renderer.BackpackModel;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
+import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.Traits;
+import com.beansgalaxy.backpacks.items.WingedBackpack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
@@ -21,6 +23,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 import java.awt.*;
 
@@ -48,9 +51,19 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
         BackpackInventory.Viewable viewable = backData.backpackInventory.getViewable();
         viewable.updateOpen();
         backpackModel.head.xRot = viewable.headPitch;
-        backFeature.sneakInter = sneakInter(player, pose, backFeature.sneakInter);
+        int color = traits.color;
 
-        Color tint = new Color(traits.color);
+        float scale = backFeature.sneakInter / 3f;
+        ItemStack backStack = backData.getStack();
+        if (backStack.getItem() instanceof WingedBackpack) {
+            color = WingedBackpack.shiftColor(color);
+            if (!player.isFallFlying())
+                backpackBody.xRot = 0.5f + ((scale - 1) / 5);
+            pose.translate(0, ((2 - scale) - (player.isFallFlying() ? 1 : 0)) / 16, (scale / 32));
+        } else
+            pose.translate(0, (1 / 16f) * scale, (1 / 32f) * scale);
+
+        Color tint = new Color(color);
         ResourceLocation texture = new ResourceLocation(Constants.MOD_ID, "textures/entity/" + traits.key + ".png");
         VertexConsumer vc = mbs.getBuffer(backpackModel.renderType(texture));
         backpackModel.mask.xScale = 0.999f;

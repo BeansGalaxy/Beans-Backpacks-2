@@ -12,7 +12,8 @@ public enum Kind {
       LEATHER(Services.REGISTRY.getLeather()),
       METAL(Services.REGISTRY.getMetal()),
       UPGRADED(Services.REGISTRY.getUpgraded()),
-      POT(Items.DECORATED_POT.asItem());
+      POT(Items.DECORATED_POT.asItem()),
+      WINGED(Services.REGISTRY.getWinged());
 
       final Item item;
 
@@ -44,6 +45,13 @@ public enum Kind {
 
             int maxStacks = Traits.LocalData.fromStack(stack).maxStacks();
             return maxStacks > 0;
+      }
+
+      public static boolean isWings(ItemStack backStack) {
+            if (backStack.is(Services.REGISTRY.getWinged()))
+                  return true;
+
+            return Constants.ELYTRA_ITEMS.contains(backStack.getItem());
       }
 
       public boolean isTrimmable() {

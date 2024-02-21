@@ -7,6 +7,7 @@ import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
+import com.beansgalaxy.backpacks.items.WingedBackpack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -80,8 +81,8 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
             if (!bEntity.isMirror())
                   renderHitbox(pose, mbs.getBuffer(RenderType.lines()), entity, yaw, light);
             pose.translate(0, -3 / 16f, 0);
-            this.model.setupAnim(entity, 0F, 0F, 0F, 50F, 0F);
-            Color tint = new Color(traits.color);
+            int colorInt = Kind.WINGED.is(kind) ? WingedBackpack.shiftColor(traits.color) : traits.color;
+            Color tint = new Color(colorInt);
             String key = traits.key;
             ResourceLocation texture = new ResourceLocation(Constants.MOD_ID, "textures/entity/" + key + ".png");
             VertexConsumer vc = mbs.getBuffer(this.model.renderType(texture));

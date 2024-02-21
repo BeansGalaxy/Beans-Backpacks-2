@@ -6,10 +6,7 @@ import com.beansgalaxy.backpacks.events.*;
 import com.beansgalaxy.backpacks.events.advancements.EquipAnyCriterion;
 import com.beansgalaxy.backpacks.events.advancements.PlaceCriterion;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
-import com.beansgalaxy.backpacks.items.BackpackItem;
-import com.beansgalaxy.backpacks.items.DyableBackpack;
-import com.beansgalaxy.backpacks.items.RecipeCrafting;
-import com.beansgalaxy.backpacks.items.RecipeSmithing;
+import com.beansgalaxy.backpacks.items.*;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents;
@@ -29,10 +26,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
 public class FabricMain implements ModInitializer {
@@ -55,9 +49,10 @@ public class FabricMain implements ModInitializer {
         Constants.LOG.info("Initializing Beans' Backpacks Fabric");
     }
 
-    public static final Item LEATHER_BACKPACK = registerItem("backpack", new DyableBackpack());
-    public static final Item METAL_BACKPACK = registerItem("metal_backpack", new BackpackItem());
-    public static final Item UPGRADED_BACKPACK = registerItem("upgraded_backpack", new BackpackItem());
+    public static final Item LEATHER_BACKPACK = registerItem("backpack", new DyableBackpack(new Item.Properties().stacksTo(1)));
+    public static final Item METAL_BACKPACK = registerItem("metal_backpack", new BackpackItem(new Item.Properties().stacksTo(1)));
+    public static final Item UPGRADED_BACKPACK = registerItem("upgraded_backpack", new BackpackItem(new Item.Properties().fireResistant().stacksTo(1)));
+    public static final Item WINGED_BACKPACK = registerItem("winged_backpack", new WingedBackpack(new Item.Properties().defaultDurability(432).rarity(Rarity.UNCOMMON)));
 
     private static Item registerItem(String name, Item item)
     {

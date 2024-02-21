@@ -15,17 +15,21 @@ import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
+import static com.beansgalaxy.backpacks.client.RendererHelper.sneakInter;
+
 public class BackFeature<T extends LivingEntity, M extends EntityModel<T>>
         extends RenderLayer<T, M> {
 
     private final BackpackFeature<T, M> backpackFeature;
     private final PotFeature<T, M> potFeature;
+    private final ElytraFeature<T, M> elytraFeature;
     protected float sneakInter = 0;
 
     public BackFeature(RenderLayerParent<T, M> context, EntityModelSet loader, ModelManager modelManager) {
         super(context);
         backpackFeature = new BackpackFeature<>(loader, modelManager, this);
         potFeature = new PotFeature<>(loader, this);
+        elytraFeature = new ElytraFeature<>(loader, this);
     }
 
     @Override
@@ -36,10 +40,15 @@ public class BackFeature<T extends LivingEntity, M extends EntityModel<T>>
             ModelPart torso = ((PlayerModel<?>) this.getParentModel()).body;
             Kind kind = Kind.fromStack(backStack);
 
+            sneakInter = sneakInter(player, sneakInter);
+
             if (Kind.isBackpack(backStack))
                 backpackFeature.render(pose, mbs, light, player, torso, backData);
             else if (Kind.POT.is(kind))
                 potFeature.render(pose, mbs, light, player, torso, backStack);
+
+            if (Kind.isWings(backStack))
+                elytraFeature.render(pose, mbs, light, entity, limbAngle, limbDistance, animationProgress, yHeadRot, headPitch, this.getParentModel(), backData);
         }
     }
 }

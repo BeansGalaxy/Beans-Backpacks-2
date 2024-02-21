@@ -63,9 +63,7 @@ public interface RendererHelper {
         welded.z = weldTo.z;
     }
 
-    static float sneakInter(Entity entity, PoseStack pose, float sneakInter) {
-        float scale = sneakInter / 3f;
-        pose.translate(0, (1 / 16f) * scale, (1 / 32f) * scale);
+    static float sneakInter(Entity entity, float sneakInter) {
         if (entity.isCrouching())
             sneakInter += sneakInter < 3 ? 1 : 0;
         else {
@@ -91,7 +89,7 @@ public interface RendererHelper {
           switch (b$kind) {
                 case METAL -> identifier = ButtonIdentifiers.get("diamond");
                 case UPGRADED -> identifier = ButtonIdentifiers.get("netherite");
-                case LEATHER ->
+                case LEATHER, WINGED ->
                 {
                       if (isYellow(tint))
                             identifier = ButtonIdentifiers.get("amethyst");
