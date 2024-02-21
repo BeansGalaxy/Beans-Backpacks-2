@@ -18,6 +18,9 @@ the issues tab. </p>
 
 <h1 align="center"> Changelog </h1>
 
+### 20.1-0.13-v2 & 20.2-0.16-v2
+- Fixed Backpacks disappearing on Death
+
 ### 20.1-0.12-v2 & 20.2-0.15-v2
 - Added Decorated Pot to Creative Tab
 - Added Translation options for Backpack items
