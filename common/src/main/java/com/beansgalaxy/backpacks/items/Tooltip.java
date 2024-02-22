@@ -163,6 +163,8 @@ public class Tooltip {
       public static int barColor = BAR_COLOR;
 
       public static void playSound(Kind kind, PlaySound playSound) {
+            if (kind == null)
+                  return;
             Random rnd = new Random();
             float pitch = playSound.isRandom() ? (rnd.nextFloat() / 4f) + 0.8f : 1f;
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(Services.REGISTRY.getSound(kind, playSound), pitch, 0.3f));

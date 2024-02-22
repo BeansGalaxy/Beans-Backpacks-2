@@ -63,7 +63,7 @@ public class Backpack extends Entity {
       }
 
       public Traits.LocalData getLocalData() {
-            return new Traits.LocalData(entityData.get(KEY), entityData.get(COLOR), entityData.get(TRIM), entityData.get(HOVER_NAME));
+            return new Traits.LocalData(entityData.get(KEY), entityData.get(COLOR), entityData.get(TRIM), entityData.get(HOVER_NAME), getDamage());
       }
 
       public boolean isMirror() {
@@ -97,6 +97,10 @@ public class Backpack extends Entity {
 
       public CompoundTag getTrim() {
             return this.entityData.get(TRIM);
+      }
+
+      public int getDamage() {
+            return 0;
       }
 
       @Override

@@ -36,6 +36,8 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
       @Shadow @Final private Player owner;
       @Shadow @Final private static EquipmentSlot[] SLOT_IDS;
 
+      @Shadow public abstract ItemStack quickMoveStack(Player player, int i);
+
       public InventoryMenuMixin(MenuType<?> $$0, int $$1) {
             super($$0, $$1);
       }
@@ -54,62 +56,22 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
             }
       }
 
-      @ModifyArg(method = "<init>", at = @At(value = "INVOKE", ordinal = 2, target = "Lnet/minecraft/world/inventory/InventoryMenu;addSlot(Lnet/minecraft/world/inventory/Slot;)Lnet/minecraft/world/inventory/Slot;"))
-      private Slot overrideChestplate(Slot par1) {
-            ResourceLocation[] EMPTY_ARMOR_SLOT_TEXTURES = new ResourceLocation[]{ InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS, InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS, InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_HELMET};
-            int index = par1.getContainerSlot();
-            final EquipmentSlot equipmentSlot = SLOT_IDS[39 - index];
-
-            return new Slot(par1.container, index, par1.x, par1.y) {
-
-                  @Override
-                  public void setByPlayer(ItemStack stack) {
-                        ItemStack previousStack = this.getItem();
-                        owner.onEquipItem(equipmentSlot, previousStack, stack);
-                        super.setByPlayer(stack);
-                  }
-
-                  @Override
-                  public int getMaxStackSize() {
-                        return 1;
-                  }
-
-                  @Override
-                  public boolean mayPlace(ItemStack stack) {
-                        boolean conflictsWithBackSlot = Constants.DISABLES_BACK_SLOT.contains(stack.getItem()) && !BackData.get(owner).isEmpty();
-                        return equipmentSlot == Mob.getEquipmentSlotForItem(stack) && !Constants.CHESTPLATE_DISABLED.contains(stack.getItem()) && !conflictsWithBackSlot;
-                  }
-
-                  @Override
-                  public boolean mayPickup(Player playerEntity) {
-                        ItemStack itemStack = this.getItem();
-                        if (!itemStack.isEmpty() && !playerEntity.isCreative() && EnchantmentHelper.hasBindingCurse(itemStack)) {
-                              return false;
-                        }
-                        return super.mayPickup(playerEntity);
-                  }
-
-                  @Override
-                  public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-                        return Pair.of(InventoryMenu.BLOCK_ATLAS, EMPTY_ARMOR_SLOT_TEXTURES[equipmentSlot.getIndex()]);
-                  }
-            };
-      }
-
-      @Inject(method = "quickMoveStack", at = @At("HEAD"))
-      private void quickMove(Player player, int slot, CallbackInfoReturnable<ItemStack> cir) {
+      @Inject(method = "quickMoveStack", cancellable = true, at = @At("HEAD"))
+      private void quickMove(Player player, int slotInt, CallbackInfoReturnable<ItemStack> cir) {
             BackData backData = ((BackAccessor) player.getInventory()).getBackData();
-            ItemStack stack = this.slots.get(slot).getItem();
-            if ((Kind.isWearable(stack)) && backData.isEmpty() && backData.backSlot.isActive()) {
-                  backData.set(stack.copy());
-                  stack.setCount(0);
+            Slot slot = this.slots.get(slotInt);
+            ItemStack stack = slot.getItem();
+            if ((Kind.isWearable(stack)) && backData.isEmpty() && !backData.backSlotDisabled()) {
+                  backData.set(stack);
+                  slot.set(ItemStack.EMPTY);
+                  cir.setReturnValue(ItemStack.EMPTY);
             }
       }
 
       @Unique
       @Override
       public void clicked(int slotIndex, int button, ClickType actionType, Player player) {
-            if (slotIndex < InventoryMenu.INV_SLOT_START || slots.size() < slotIndex || player.isCreative()) {
+            if (slotIndex < 0 || slots.size() < slotIndex || player.isCreative()) {
                   super.clicked(slotIndex, button, actionType, player);
                   return;
             }
@@ -121,18 +83,31 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
             Slot slot = slots.get(slotIndex);
             ItemStack stack = slot.getItem();
 
-            boolean selectedPlayerInventory = slotIndex < InventoryMenu.SHIELD_SLOT;
+            boolean selectedPlayerInventory = slotIndex < InventoryMenu.SHIELD_SLOT && slotIndex > 8;
             boolean selectedBackpackInventory = slotIndex == backData.inSlot.slotIndex && player.containerMenu == player.inventoryMenu;
 
-            boolean selectedSlotAddition = !selectedBackpackInventory && Constants.SLOTS_MOD_ACTIVE && slotIndex > InventoryMenu.SHIELD_SLOT;
+            boolean selectedEquipment = !selectedPlayerInventory && slotIndex > 4 && !selectedBackpackInventory;
 
             ItemStack cursorStack = getCarried();
-            if (selectedSlotAddition && !slot.hasItem()
-                        && !cursorStack.isEmpty()
-                        && !backStack.isEmpty()
-                        && Constants.DISABLES_BACK_SLOT.contains(cursorStack.getItem())) {
+            if (selectedEquipment && !slot.hasItem() && !cursorStack.isEmpty() && !backStack.isEmpty()
+                        && (Constants.DISABLES_BACK_SLOT.contains(cursorStack.getItem()) || Constants.ELYTRA_ITEMS.contains(cursorStack.getItem())))
+            {
                   if (player.level().isClientSide)
                         Tooltip.playSound(Kind.fromStack(backStack), PlaySound.HIT);
+                  return;
+            }
+
+            if (actionType == ClickType.QUICK_MOVE && !selectedBackpackInventory && !backData.isEmpty()) {
+                  if (Constants.DISABLES_BACK_SLOT.contains(stack.getItem()) || Constants.ELYTRA_ITEMS.contains(stack.getItem())) {
+                        if (player.level().isClientSide())
+                              Tooltip.playSound(Kind.fromStack(backData.getStack()), PlaySound.HIT);
+                        return;
+                  }
+            }
+
+
+            if (slotIndex < InventoryMenu.INV_SLOT_START) {
+                  super.clicked(slotIndex, button, actionType, player);
                   return;
             }
 

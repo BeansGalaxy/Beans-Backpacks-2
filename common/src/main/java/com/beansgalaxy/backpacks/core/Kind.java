@@ -27,10 +27,15 @@ public enum Kind {
       }
 
       public static boolean isWearable(ItemStack stack) {
+            return isWearable(stack.getItem());
+      }
+
+      public static boolean isWearable(Item item) {
             for(Kind kind: Kind.values())
-                  if(stack.is(kind.getItem()))
+                  if(item.equals(kind.getItem()))
                         return true;
-            return Constants.CHESTPLATE_DISABLED.contains(stack.getItem());
+            return Constants.CHESTPLATE_DISABLED.contains(item) || Constants.ELYTRA_ITEMS.contains(item);
+
       }
 
       public static boolean isStorage(ItemStack stack) {

@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.BackData;
+import com.beansgalaxy.backpacks.core.Kind;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,17 +24,15 @@ public class ArmorItemMixin {
                   BackData backData = BackData.get(player);
                   ItemStack backStack = backData.getStack();
                   Item item = stack.getItem();
-                  if (Constants.DISABLES_BACK_SLOT.contains(item) && !backStack.isEmpty()) {
-                        cir.setReturnValue(false);
-                  }
-                  else if (item instanceof ElytraItem elytraItem && Constants.CHESTPLATE_DISABLED.contains(Items.ELYTRA.asItem()))
+
+                  if (Kind.isWearable(item))
                   {
                         if (backStack.isEmpty() && backData.backSlot.mayPlace(stack))
                         {
                               backData.set(stack.split(1));
                               cir.setReturnValue(true);
-                              if (!player.level().isClientSide() && !player.isSilent())
-                                    player.level().playSound(null, player.getX(), player.getY(), player.getZ(), elytraItem.getEquipSound(), player.getSoundSource(), 1.0F, 1.0F);
+                              if (!player.level().isClientSide() && !player.isSilent() && item instanceof Equipable equipable)
+                                    player.level().playSound(null, player.getX(), player.getY(), player.getZ(), equipable.getEquipSound(), player.getSoundSource(), 1.0F, 1.0F);
                         } else
                               cir.setReturnValue(false);
 

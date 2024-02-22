@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.core;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.access.BackAccessor;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -91,6 +92,21 @@ public class BackData {
                   Services.REGISTRY.triggerEquipAny(serverPlayer);
                   Services.NETWORK.SyncBackSlot(serverPlayer);
             }
+      }
+
+      public boolean backSlotDisabled() {
+            if (owner.isCreative())
+                  return true;
+
+            NonNullList<ItemStack> equipped = owner.getInventory().armor;
+            Services.COMPAT.getEquipped(equipped, owner);
+
+            if (equipped.stream().anyMatch(stack -> !stack.isEmpty() && (
+                        Constants.DISABLES_BACK_SLOT.contains(stack.getItem()) ||
+                        Constants.ELYTRA_ITEMS.contains(stack.getItem()))))
+                  return true;
+
+            return false;
       }
 
       public void drop() {

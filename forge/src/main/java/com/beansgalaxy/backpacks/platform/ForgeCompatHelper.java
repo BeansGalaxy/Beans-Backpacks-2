@@ -4,7 +4,9 @@ import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.compat.CurioRegistry;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModList;
 
@@ -31,13 +33,9 @@ public class ForgeCompatHelper implements CompatHelper {
       }
 
       @Override
-      public boolean backSlotDisabled(LivingEntity entity) {
-            boolean armorDisables = Arrays.stream(SLOT_IDS).anyMatch(
-                        slot -> Constants.DISABLES_BACK_SLOT.contains(
-                                    entity.getItemBySlot(slot).getItem()));
+      public void getEquipped(NonNullList<ItemStack> equipped, Player player) {
             if (isModLoaded(CURIOS))
-                  return CurioRegistry.backSlotDisabled(entity) || armorDisables;
-            return armorDisables;
+                  CurioRegistry.getEquipped(equipped, player);
       }
 
 }

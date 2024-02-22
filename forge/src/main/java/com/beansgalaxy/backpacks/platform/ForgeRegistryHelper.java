@@ -31,6 +31,11 @@ public class ForgeRegistryHelper implements RegistryHelper {
       }
 
       @Override
+      public Item getWinged() {
+            return ForgeMain.WINGED_BACKPACK.get();
+      }
+
+      @Override
       public EntityType<BackpackEntity> getEntity() {
             return ForgeMain.ENTITY.get();
       }

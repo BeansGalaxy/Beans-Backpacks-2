@@ -3,10 +3,12 @@ package com.beansgalaxy.backpacks.compat;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.Kind;
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
@@ -50,14 +52,16 @@ public class CurioRegistry {
             return stackInSlot;
       }
 
-      public static boolean backSlotDisabled(LivingEntity entity) {
-            Optional<ICuriosItemHandler> resolve = CuriosApi.getCuriosInventory(entity).resolve();
+      public static void getEquipped(NonNullList<ItemStack> equipped, Player player) {
+            Optional<ICuriosItemHandler> resolve = CuriosApi.getCuriosInventory(player).resolve();
             if (resolve.isEmpty())
+                  return;
+
+            resolve.get().findCurios(stack -> {
+                  if (!stack.isEmpty())
+                        equipped.add(stack);
                   return false;
+            });
 
-            boolean present = resolve.get().findFirstCurio(stack ->
-                        Constants.DISABLES_BACK_SLOT.contains(stack.getItem())).isPresent();
-
-            return present;
       }
 }

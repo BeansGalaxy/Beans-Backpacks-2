@@ -29,9 +29,7 @@ public class BackSlot extends Slot {
 
       @Override
       public boolean isActive() {
-            ItemStack chestplateStack = backData.owner.inventoryMenu.slots.get(6).getItem();
-            boolean isDisabled = Constants.DISABLES_BACK_SLOT.contains(chestplateStack.getItem());
-            return !backData.owner.isCreative() && !isDisabled && !Constants.SLOTS_MOD_ACTIVE;
+            return !backData.backSlotDisabled() && !Constants.SLOTS_MOD_ACTIVE;
       }
 
       @Override
@@ -44,7 +42,7 @@ public class BackSlot extends Slot {
 
       @Override
       public boolean mayPlace(ItemStack stack) {
-            return Kind.isWearable(stack);
+            return Kind.isWearable(stack) && !backData.backSlotDisabled();
       }
 
       @Override

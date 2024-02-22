@@ -6,10 +6,7 @@ import com.beansgalaxy.backpacks.entity.BackpackMenu;
 import com.beansgalaxy.backpacks.events.advancements.EquipAnyCriterion;
 import com.beansgalaxy.backpacks.events.advancements.PlaceCriterion;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
-import com.beansgalaxy.backpacks.items.BackpackItem;
-import com.beansgalaxy.backpacks.items.DyableBackpack;
-import com.beansgalaxy.backpacks.items.RecipeCrafting;
-import com.beansgalaxy.backpacks.items.RecipeSmithing;
+import com.beansgalaxy.backpacks.items.*;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -19,10 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -83,9 +77,14 @@ public class ForgeMain {
     public static final DeferredRegister<Item> ITEMS =
                 DeferredRegister.create(ForgeRegistries.ITEMS, Constants.MOD_ID);
 
-    public static final RegistryObject<Item> LEATHER_BACKPACK = ITEMS.register("backpack", DyableBackpack::new);
-    public static final RegistryObject<Item> METAL_BACKPACK = ITEMS.register("metal_backpack", BackpackItem::new);
-    public static final RegistryObject<Item> UPGRADED_BACKPACK = ITEMS.register("upgraded_backpack", BackpackItem::new);
+    public static final RegistryObject<Item> LEATHER_BACKPACK = ITEMS.register("backpack", () ->
+                new DyableBackpack(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> METAL_BACKPACK = ITEMS.register("metal_backpack", () ->
+                new BackpackItem(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> UPGRADED_BACKPACK = ITEMS.register("upgraded_backpack", () ->
+                new BackpackItem(new Item.Properties().stacksTo(1).fireResistant()));
+    public static final RegistryObject<Item> WINGED_BACKPACK = ITEMS.register("winged_backpack", () ->
+                new WingedBackpack(new Item.Properties().defaultDurability(432).rarity(Rarity.UNCOMMON)));
 
     // REGISTER CREATIVE TAB
     public static final DeferredRegister<CreativeModeTab> CREATIVE_TABS =

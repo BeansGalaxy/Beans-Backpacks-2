@@ -3,6 +3,7 @@ package com.beansgalaxy.backpacks.items;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -13,6 +14,22 @@ public class WingedBackpack extends DyableBackpack {
 
     public WingedBackpack(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    public boolean isBarVisible(ItemStack stack) {
+        return stack.isDamaged();
+    }
+
+    @Override
+    public int getBarColor(ItemStack stack) {
+        float $$1 = Math.max(0.0F, ((float) this.getMaxDamage() - (float)stack.getDamageValue()) / (float) this.getMaxDamage());
+        return Mth.hsvToRgb($$1 / 3.0F, 1.0F, 1.0F);
+    }
+
+    @Override
+    public int getBarWidth(ItemStack stack) {
+        return Math.round(13.0F - stack.getDamageValue() * 13.0F / this.getMaxDamage());
     }
 
     @Override

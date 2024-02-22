@@ -112,11 +112,14 @@ public class Traits {
             public CompoundTag trim = new CompoundTag();
             public Component hoverName = Component.empty();
 
-            public LocalData(String key, int color, CompoundTag trim, Component hoverName) {
+            public int damage = 0;
+
+            public LocalData(String key, int color, CompoundTag trim, Component hoverName, int damage) {
                   this.key = key;
                   this.color = color;
                   this.trim = trim == null ? new CompoundTag(): trim;
                   this.hoverName = hoverName == null ? Component.empty(): hoverName;
+                  this.damage = damage;
             }
 
             LocalData(String key) {
@@ -139,8 +142,9 @@ public class Traits {
                   int itemColor = stack.getItem() instanceof DyeableLeatherItem dyable ? dyable.getColor(stack) : 0xFFFFFF;
                   CompoundTag trim = stack.getTagElement("Trim");
                   Component hoverName = stack.hasCustomHoverName() ? stack.getHoverName(): Component.empty();
+                  int damage = stack.getDamageValue();
 
-                  return new LocalData(key, itemColor, trim, hoverName);
+                  return new LocalData(key, itemColor, trim, hoverName, damage);
             }
 
             public Traits traits() {

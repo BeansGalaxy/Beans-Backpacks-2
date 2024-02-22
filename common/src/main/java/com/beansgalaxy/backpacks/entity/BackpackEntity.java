@@ -40,6 +40,8 @@ import java.util.UUID;
 
 public class BackpackEntity extends Backpack {
       private final UUID placedBy;
+
+      private final int damage;
       public Direction direction;
       protected BlockPos pos;
       public double actualY;
@@ -49,6 +51,7 @@ public class BackpackEntity extends Backpack {
       public BackpackEntity(EntityType<? extends Entity> type, Level level) {
             super(type, level);
             placedBy = null;
+            damage = 0;
       }
 
       public BackpackEntity(Player player, Level world, int x, double y, int z, Direction direction,
@@ -58,6 +61,7 @@ public class BackpackEntity extends Backpack {
             this.pos = BlockPos.containing(x, y, z);
             this.setDirection(direction);
             this.initDisplay(traits);
+            this.damage = traits.damage;
             this.placedBy = player.getUUID();
             this.blocksBuilding = true;
 
@@ -104,6 +108,8 @@ public class BackpackEntity extends Backpack {
             else
                   stack.setHoverName(localData.hoverName);
 
+            stack.setDamageValue(localData.damage);
+
             return stack;
       }
 
@@ -122,6 +128,11 @@ public class BackpackEntity extends Backpack {
                 return level().getPlayerByUUID(placedBy);
 
           return null;
+      }
+
+      @Override
+      public int getDamage() {
+            return damage;
       }
 
       protected void setDirection(Direction direction) {
@@ -422,7 +433,7 @@ public class BackpackEntity extends Backpack {
 
             if (actionKeyPressed) {
                   boolean b = !backData.isEmpty();
-                  boolean b1 = Services.COMPAT.backSlotDisabled(player);
+                  boolean b1 = backData.backSlotDisabled();
                   boolean b2 = !this.isRemoved();
                   if ((b || b1) && b2)
                   {

@@ -2,6 +2,8 @@ package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.BackData;
+import com.beansgalaxy.backpacks.events.PlaySound;
+import com.beansgalaxy.backpacks.items.Tooltip;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -28,13 +30,15 @@ public class ElytraItemMixin {
             BackData backData = BackData.get(player);
             ItemStack backStack = backData.getStack();
 
-            if (Constants.DISABLES_BACK_SLOT.contains(instance.asItem()) && !backStack.isEmpty()) {
+            if (!Constants.ELYTRA_ITEMS.contains(instance))
+                  return;
+
+            if (backData.backSlotDisabled() || !backStack.isEmpty()) {
                   cir.setReturnValue(InteractionResultHolder.fail(stack));
+                  if (level.isClientSide())
+                        Tooltip.playSound(backData.getLocalData().kind(), PlaySound.HIT);
                   return;
             }
-
-            if (!Constants.CHESTPLATE_DISABLED.contains(instance.asItem()))
-                  return;
 
             if (backData.backSlot.mayPickup(player) && !ItemStack.matches(stack, backStack)) {
                   if (!level.isClientSide() && !player.isSilent()) {

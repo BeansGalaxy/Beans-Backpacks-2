@@ -9,6 +9,7 @@ import com.beansgalaxy.backpacks.client.renderer.features.BackpackFeature;
 import com.beansgalaxy.backpacks.client.renderer.features.PotFeature;
 import com.beansgalaxy.backpacks.entity.BackpackScreen;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
+import com.beansgalaxy.backpacks.items.WingedBackpack;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -62,6 +63,8 @@ public class ClientModEvents {
       public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
             event.register((stack, layer) ->
                         (layer != 1 ? ((DyableBackpack) stack.getItem()).getColor(stack) : 16777215), ForgeMain.LEATHER_BACKPACK.get());
+            event.register((stack, layer) ->
+                        (layer != 1 ? WingedBackpack.shiftColor(((WingedBackpack) stack.getItem()).getColor(stack)) : 16777215), ForgeMain.WINGED_BACKPACK.get());
       }
 
       @SubscribeEvent

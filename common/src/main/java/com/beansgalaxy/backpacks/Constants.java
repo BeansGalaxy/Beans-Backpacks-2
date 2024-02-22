@@ -38,9 +38,9 @@ public class Constants {
 	public static final HashSet<Item> CHESTPLATE_DISABLED = new HashSet<>();
 	public static final HashSet<Item> DISABLES_BACK_SLOT = new HashSet<>();
 	public static final HashSet<Item> BLACKLIST_ITEMS = new HashSet<>();
-    public static final HashSet<Item> ELYTRA_ITEMS = new HashSet<>();
+	public static final HashSet<Item> ELYTRA_ITEMS = new HashSet<>();
 
-    protected static void register() {
+	protected static void register() {
 		LOG.info("Initializing Beans' Backpacks Constants");
 	}
 
@@ -54,7 +54,7 @@ public class Constants {
 
 	public static void addToList(HashSet<Item> list, Collection<Item> items) {
 		list.addAll(items);
-		list.remove(Items.AIR);
+		list.removeIf(item -> item.equals(Items.AIR));
 	}
 
 	public static void addToList(HashSet<Item> list, Item item) {
