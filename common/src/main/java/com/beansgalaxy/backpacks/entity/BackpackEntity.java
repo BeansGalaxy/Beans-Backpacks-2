@@ -1,6 +1,8 @@
 package com.beansgalaxy.backpacks.entity;
 
+import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.core.BackData;
+import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.events.PlaySound;
@@ -17,6 +19,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
@@ -39,45 +42,93 @@ import java.util.List;
 import java.util.UUID;
 
 public class BackpackEntity extends Backpack {
-      private final UUID placedBy;
-
+      protected final UUID placedBy;
       private final int damage;
       public Direction direction;
       protected BlockPos pos;
       public double actualY;
       private static final int BREAK_TIMER = 25;
       public int wobble = 9;
+      public final BackpackInventory backpackInventory = new BackpackInventory() {
 
+            public Entity getOwner() {
+                  return BackpackEntity.this;
+            }
+
+            NonNullList<ServerPlayer> playersViewing = NonNullList.create();
+
+            @Override
+            public Viewable getViewable() {
+                  return viewable;
+            }
+
+            @Override
+            public NonNullList<ServerPlayer> getPlayersViewing() {
+                  return playersViewing;
+            }
+
+            @Override
+            public NonNullList<ItemStack> getItemStacks() {
+                  return BackpackEntity.this.getItemStacks();
+            }
+
+            @Override
+            public Traits.LocalData getLocalData() {
+                  return BackpackEntity.this.getLocalData();
+            }
+
+            @Override
+            public void setChanged() {
+                  BackpackInventory.super.setChanged();
+                  BackpackEntity.this.setChanged();
+            }
+      };
+
+      // REGISTER BACKPACK CONSTRUCTOR
       public BackpackEntity(EntityType<? extends Entity> type, Level level) {
             super(type, level);
             placedBy = null;
             damage = 0;
       }
 
-      public BackpackEntity(Player player, Level world, int x, double y, int z, Direction direction,
-                            Traits.LocalData traits, NonNullList<ItemStack> stacks, float yaw) {
-            super(world);
+      // DEFAULT BACKPACK CONSTRUCTOR
+      public BackpackEntity(Player player, int x, double y, int z, Direction direction, Traits.LocalData traits, NonNullList<ItemStack> stacks, float yaw) {
+            super(player.level());
+            this.damage = traits.damage;
+            this.placedBy = player.getUUID();
+            setupDisplay(player, x, y, z, direction, traits, yaw);
+
+            if (stacks != null && !stacks.isEmpty()) {
+                  itemStacks.addAll(stacks);
+                  stacks.clear();
+            }
+      }
+
+      // ENDER BACKPACK CONSTRUCTOR
+      public BackpackEntity(Player player) {
+            super(player.level());
+            this.damage = 0;
+            this.placedBy = player.getUUID();
+      }
+
+      void setupDisplay(Player player, int x, double y, int z, Direction direction, Traits.LocalData traits, float yaw) {
             this.actualY = y;
             this.pos = BlockPos.containing(x, y, z);
             this.setDirection(direction);
-            this.initDisplay(traits);
-            this.damage = traits.damage;
-            this.placedBy = player.getUUID();
-            this.blocksBuilding = true;
+
+            this.entityData.set(KEY, traits.key);
+            this.entityData.set(COLOR, traits.color);
+            this.entityData.set(TRIM, traits.trim);
+            this.entityData.set(HOVER_NAME, traits.hoverName);
 
             if (!direction.getAxis().isHorizontal())
                   this.setYRot(yaw);
 
+            Level world = player.level();
             if (!world.isClientSide()) {
                   world.gameEvent(player, GameEvent.ENTITY_PLACE, this.position());
                   world.addFreshEntity(this);
             }
-
-            if (stacks != null && !stacks.isEmpty()) {
-                  this.getInventory().getItemStacks().addAll(stacks);
-                  stacks.clear();
-            }
-
       }
 
       public static ItemStack toStack(BackpackEntity backpack) {
@@ -113,6 +164,16 @@ public class BackpackEntity extends Backpack {
             return stack;
       }
 
+      public BackpackInventory getInventory() {
+            return backpackInventory;
+      }
+
+      protected NonNullList<ItemStack> itemStacks = NonNullList.create();
+
+      protected NonNullList<ItemStack> getItemStacks() {
+            return this.itemStacks;
+      }
+
       @Override
       protected float getEyeHeight(@NotNull Pose p_31784_, @NotNull EntityDimensions p_31785_) {
             return 6F / 16;
@@ -133,6 +194,9 @@ public class BackpackEntity extends Backpack {
       @Override
       public int getDamage() {
             return damage;
+      }
+
+      public void setChanged() {
       }
 
       protected void setDirection(Direction direction) {
@@ -290,14 +354,14 @@ public class BackpackEntity extends Backpack {
       // NBT
       @Override
       protected void addAdditionalSaveData(CompoundTag tag) {
-            super.addAdditionalSaveData(tag);
+            backpackInventory.writeNbt(tag);
             tag.putByte("facing", (byte)this.direction.get3DDataValue());
             tag.put("display", getDisplay());
       }
 
       @Override
       protected void readAdditionalSaveData(CompoundTag tag) {
-            super.readAdditionalSaveData(tag);
+            backpackInventory.readStackNbt(tag);
             this.setDirection(Direction.from3DDataValue(tag.getByte("facing")));
             this.setDisplay(tag.getCompound("display"));
       }
@@ -305,9 +369,9 @@ public class BackpackEntity extends Backpack {
       // LOCAL
       public CompoundTag getDisplay() {
             CompoundTag tag = new CompoundTag();
-            tag.putString("key", this.entityData.get(KEY));
-            tag.putInt("color", this.entityData.get(COLOR));
-            tag.put("Trim", this.entityData.get(TRIM));
+            tag.putString("key", getKey());
+            tag.putInt("color", getColor());
+            tag.put("Trim", getTrim());
             Component component = this.entityData.get(HOVER_NAME);
             String json = Component.Serializer.toJson(component);
             tag.putString("hover_name", json);
@@ -385,7 +449,7 @@ public class BackpackEntity extends Backpack {
       private void breakAndDropContents() {
             PlaySound.BREAK.at(this, getKind());
             boolean dropItems = level().getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS);
-            if (dropItems) {
+            if (dropItems && !Kind.ENDER.is(getKind())) {
                   while (!this.getItemStacks().isEmpty()) {
                         ItemStack stack = this.getItemStacks().remove(0);
                         this.spawnAtLocation(stack);
@@ -446,10 +510,12 @@ public class BackpackEntity extends Backpack {
                       - damage source is player.
                       - player is not creative.
                       - backSlot is not occupied */
-                        NonNullList<ItemStack> playerInventoryStacks = BackData.get(player).backpackInventory.getItemStacks();
-                        NonNullList<ItemStack> backpackEntityStacks = this.getItemStacks();
-                        playerInventoryStacks.clear();
-                        playerInventoryStacks.addAll(backpackEntityStacks);
+                        if (!Kind.ENDER.is(getKind())) {
+                              NonNullList<ItemStack> playerInventoryStacks = BackData.get(player).backpackInventory.getItemStacks();
+                              NonNullList<ItemStack> backpackEntityStacks = this.getItemStacks();
+                              playerInventoryStacks.clear();
+                              playerInventoryStacks.addAll(backpackEntityStacks);
+                        }
                         backData.set(toStack(this));
                         PlaySound.EQUIP.at(player, this.getKind());
                         if (player instanceof ServerPlayer serverPlayer)

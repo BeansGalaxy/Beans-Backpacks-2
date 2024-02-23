@@ -33,7 +33,7 @@ public class ElytraFeature<T extends LivingEntity, M extends EntityModel<T>> {
     private final BackFeature<T, M> backFeature;
 
     public ElytraFeature(EntityModelSet loader, BackFeature<T, M> backFeature) {
-        this.elytraModel = new ElytraModel(loader.bakeLayer(ModelLayers.ELYTRA));
+        this.elytraModel = new ElytraModel<>(loader.bakeLayer(ModelLayers.ELYTRA));
         this.backFeature = backFeature;
     }
 

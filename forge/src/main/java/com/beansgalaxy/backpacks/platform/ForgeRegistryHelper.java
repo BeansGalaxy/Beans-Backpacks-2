@@ -36,6 +36,11 @@ public class ForgeRegistryHelper implements RegistryHelper {
       }
 
       @Override
+      public Item getEnder() {
+            return ForgeMain.ENDER_BACKPACK.get();
+      }
+
+      @Override
       public EntityType<BackpackEntity> getEntity() {
             return ForgeMain.ENTITY.get();
       }

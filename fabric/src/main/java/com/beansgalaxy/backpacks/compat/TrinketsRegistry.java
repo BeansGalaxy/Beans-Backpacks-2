@@ -96,11 +96,6 @@ public class TrinketsRegistry {
 
       public static boolean backSlotDisabled(LivingEntity entity) {
             return TrinketsApi.getTrinketComponent(entity).stream().anyMatch(in -> in.isEquipped(
-                        wornStack -> Constants.DISABLES_BACK_SLOT.contains(wornStack.getItem())));
-      }
-
-      public static void getEquipped(NonNullList<ItemStack> equipped, Player player) {
-            TrinketsApi.getTrinketComponent(player).stream().forEach(stack ->
-                        stack.isEquipped(equipped::add));
+                        wornStack -> Constants.elytraOrDisables(wornStack.getItem())));
       }
 }

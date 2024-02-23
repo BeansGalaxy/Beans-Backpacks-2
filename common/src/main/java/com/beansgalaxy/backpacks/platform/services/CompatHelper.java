@@ -24,5 +24,5 @@ public interface CompatHelper {
 
       ItemStack getBackSlotItem(BackData backData, ItemStack defaultItem);
 
-      void getEquipped(NonNullList<ItemStack> equipped, Player player);
+      boolean backSlotDisabled(Player owner);
 }

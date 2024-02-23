@@ -13,7 +13,8 @@ public enum Kind {
       METAL(Services.REGISTRY.getMetal()),
       UPGRADED(Services.REGISTRY.getUpgraded()),
       POT(Items.DECORATED_POT.asItem()),
-      WINGED(Services.REGISTRY.getWinged());
+      WINGED(Services.REGISTRY.getWinged()),
+      ENDER(Services.REGISTRY.getEnder());
 
       final Item item;
 

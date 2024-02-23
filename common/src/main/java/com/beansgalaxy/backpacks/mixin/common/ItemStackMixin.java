@@ -39,7 +39,7 @@ public abstract class ItemStackMixin {
 
       @Inject(method = "overrideOtherStackedOnMe", at = @At("HEAD"), cancellable = true)
       private void stackedOnMe(ItemStack stack, Slot slot, ClickAction clickAction, Player player, SlotAccess access, CallbackInfoReturnable<Boolean> cir) {
-            if (BackpackItem.stackedOnMe(instance, stack, clickAction, player, access))
+            if (BackpackItem.interact(instance, clickAction, player, access, false))
                   cir.setReturnValue(true);
       }
 

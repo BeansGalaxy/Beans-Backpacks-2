@@ -33,8 +33,9 @@ public class FabricCompatHelper implements CompatHelper {
       }
 
       @Override
-      public void getEquipped(NonNullList<ItemStack> equipped, Player player) {
+      public boolean backSlotDisabled(Player owner) {
             if (isModLoaded(TRINKETS))
-                  TrinketsRegistry.getEquipped(equipped, player);
+                  return TrinketsRegistry.backSlotDisabled(owner);
+            return false;
       }
 }

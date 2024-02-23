@@ -13,8 +13,10 @@ import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
@@ -79,42 +81,41 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
             BackData backData = BackData.get(player);
             ItemStack backStack = backData.getStack();
             BackpackInventory backpackInventory = backData.backpackInventory;
-            Inventory playerInventory = player.getInventory();
             Slot slot = slots.get(slotIndex);
             ItemStack stack = slot.getItem();
 
             boolean selectedPlayerInventory = slotIndex < InventoryMenu.SHIELD_SLOT && slotIndex > 8;
-            boolean selectedBackpackInventory = slotIndex == backData.inSlot.slotIndex && player.containerMenu == player.inventoryMenu;
-
+            boolean selectedBackpackInventory = (stack == backStack && !stack.isEmpty()) ||
+                        (slotIndex == backData.inSlot.slotIndex && player.containerMenu == player.inventoryMenu);
             boolean selectedEquipment = !selectedPlayerInventory && slotIndex > 4 && !selectedBackpackInventory;
 
             ItemStack cursorStack = getCarried();
-            if (selectedEquipment && !slot.hasItem() && !cursorStack.isEmpty() && !backStack.isEmpty()
-                        && (Constants.DISABLES_BACK_SLOT.contains(cursorStack.getItem()) || Constants.ELYTRA_ITEMS.contains(cursorStack.getItem())))
+            if (!backData.isEmpty() && Constants.elytraOrDisables(cursorStack.getItem()))
             {
-                  if (player.level().isClientSide)
-                        Tooltip.playSound(Kind.fromStack(backStack), PlaySound.HIT);
-                  return;
-            }
-
-            if (actionType == ClickType.QUICK_MOVE && !selectedBackpackInventory && !backData.isEmpty()) {
-                  if (Constants.DISABLES_BACK_SLOT.contains(stack.getItem()) || Constants.ELYTRA_ITEMS.contains(stack.getItem())) {
+                  if (selectedEquipment && !slot.hasItem() && !cursorStack.isEmpty())
+                  {
+                        if (player.level().isClientSide)
+                              Tooltip.playSound(Kind.fromStack(backStack), PlaySound.HIT);
+                        return;
+                  }
+                  if (actionType == ClickType.QUICK_MOVE && !selectedBackpackInventory) {
                         if (player.level().isClientSide())
                               Tooltip.playSound(Kind.fromStack(backData.getStack()), PlaySound.HIT);
                         return;
                   }
             }
 
-
-            if (slotIndex < InventoryMenu.INV_SLOT_START) {
-                  super.clicked(slotIndex, button, actionType, player);
+            if (selectedBackpackInventory && actionType == ClickType.THROW && cursorStack.isEmpty() && Kind.POT.is(backStack))
+            {
+                  ItemStack backpackStack = backpackInventory.getItem(0);
+                  int maxStack = backpackStack.getMaxStackSize();
+                  int count = button == 0 ? 1 : Math.min(stack.getCount(), maxStack);
+                  ItemStack itemStack = backpackInventory.removeItem(0, count);
+                  owner.drop(itemStack, true);
                   return;
             }
 
-            if (selectedBackpackInventory && Kind.POT.is(backStack) && beans_Backpacks_2$potClick(slotIndex, button, actionType, stack, backpackInventory, playerInventory))
-                  return;
-
-            if (actionType == ClickType.THROW) {
+            if (slotIndex < InventoryMenu.INV_SLOT_START || actionType == ClickType.THROW) {
                   super.clicked(slotIndex, button, actionType, player);
                   return;
             }
@@ -125,30 +126,36 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                   return;
             }
 
-            if (backData.actionKeyPressed) {
-                  if (selectedPlayerInventory) {
-                        if (backStack.isEmpty() && backData.backSlot.isActive() && !stack.isEmpty() && Kind.isWearable(stack))
-                              slot.set(backData.backSlot.safeInsert(stack));
-                        else if (Kind.isStorage(backStack))
-                              slot.set(backpackInventory.insertItem(stack, stack.getCount()));
-                        else
-                              super.clicked(slotIndex, button, actionType, player);
+            if (selectedBackpackInventory) {
+                  if (actionType == ClickType.SWAP)
+                        return;
+
+                  ClickAction clickAction = button == 1 ? ClickAction.SECONDARY : ClickAction.PRIMARY;
+                  SlotAccess slotAccess = new SlotAccess() {
+                        public ItemStack get() {
+                              return getCarried();
+                        }
+
+                        public boolean set(ItemStack stack) {
+                              setCarried(stack);
+                              return true;
+                        }
+                  };
+                  if (BackpackItem.interact(backStack, clickAction, player, slotAccess, actionType == ClickType.QUICK_MOVE)) {
                         return;
                   }
-                  if (selectedBackpackInventory || actionType == ClickType.QUICK_MOVE && stack == backStack) {
-                        actionType = ClickType.QUICK_MOVE;
-                        selectedBackpackInventory = true;
-                  }
             }
-            else if (selectedBackpackInventory && actionType != ClickType.QUICK_MOVE) {
-                  setCarried(BackpackMenu.menuInsert(button, cursorStack, 0, backpackInventory));
+
+            if (backData.actionKeyPressed && selectedPlayerInventory) {
+                  if (backStack.isEmpty() && backData.backSlot.isActive() && !stack.isEmpty() && Kind.isWearable(stack))
+                        slot.set(backData.backSlot.safeInsert(stack));
+                  else if (Kind.isStorage(backStack))
+                        slot.set(backpackInventory.insertItem(stack, stack.getCount()));
+                  else
+                        super.clicked(slotIndex, button, actionType, player);
                   return;
             }
 
-            if (actionType == ClickType.QUICK_MOVE && selectedBackpackInventory) {
-                  BackpackItem.handleQuickMove(playerInventory, backpackInventory);
-                  return;
-            }
 
             super.clicked(slotIndex, button, actionType, player);
       }
@@ -159,50 +166,7 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
             ItemStack cursorStack = getCarried();
             ItemStack backpackStack = backpackInventory.getItem(0);
             int maxStack = backpackStack.getMaxStackSize();
-            if (actionType == ClickType.THROW && cursorStack.isEmpty())
-            {
-                  int count = button == 0 ? 1 : Math.min(stack.getCount(), maxStack);
-                  ItemStack itemStack = backpackInventory.removeItem(0, count);
-                  owner.drop(itemStack, true);
-                  return true;
-            }
-            if (actionType == ClickType.SWAP)
-            {
-                  ItemStack itemStack = playerInventory.getItem(button);
-                  if (itemStack.isEmpty()) {
-                        if (backpackStack.getCount() > maxStack)
-                        {
-                              playerInventory.setItem(button, backpackStack.copyWithCount(maxStack));
-                              backpackStack.shrink(maxStack);
-                              return true;
-                        }
-                        playerInventory.setItem(button, backpackInventory.removeItemNoUpdate(0));
-                  }
-                  else
-                  {
-                        if (backpackStack.isEmpty()) {
-                              super.clicked(slotIndex, button, actionType, owner);
-                              return true;
-                        }
-                        if (backpackStack.getCount() > maxStack)
-                              if (playerInventory.add(-2, itemStack))
-                              {
-                                    playerInventory.setItem(button, backpackStack.copyWithCount(maxStack));
-                                    backpackStack.shrink(maxStack);
-                                    return true;
-                              }
-                        playerInventory.setItem(button, backpackInventory.removeItemNoUpdate(0));
-                        backpackInventory.insertItem(itemStack, itemStack.getCount());
-                  }
-                  return true;
-            }
-            if (button == 1 && cursorStack.isEmpty() && backpackStack.getCount() > maxStack)
-            {
-                  int count = Math.max(1, maxStack / 2);
-                  ItemStack splitStack = backpackInventory.removeItem(0, count);
-                  setCarried(splitStack);
-                  return true;
-            }
+
             return false;
       }
 }

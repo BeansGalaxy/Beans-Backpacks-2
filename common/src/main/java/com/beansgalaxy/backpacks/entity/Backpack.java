@@ -25,37 +25,10 @@ public class Backpack extends Entity {
       public static final int DEFAULT_COLOR = 9062433;
 
       public final BackpackInventory.Viewable viewable = new BackpackInventory.Viewable();
-      public final BackpackInventory backpackInventory = new BackpackInventory() {
-
-            public Entity getOwner() {
-                  return Backpack.this;
-            }
-
-            NonNullList<ServerPlayer> playersViewing = NonNullList.create();
-
-            @Override
-            public Viewable getViewable() {
-                  return viewable;
-            }
-
-            @Override
-            public NonNullList<ServerPlayer> getPlayersViewing() {
-                  return playersViewing;
-            }
-
-            @Override
-            public NonNullList<ItemStack> getItemStacks() {
-                  return Backpack.this.getItemStacks();
-            }
-
-            @Override
-            public Traits.LocalData getLocalData() {
-                  return Backpack.this.getLocalData();
-            }
-      };
 
       public Backpack(Level $$1) {
             super(Services.REGISTRY.getEntity() , $$1);
+            this.blocksBuilding = true;
       }
 
       public Backpack(EntityType<? extends Entity> type, Level level) {
@@ -63,7 +36,11 @@ public class Backpack extends Entity {
       }
 
       public Traits.LocalData getLocalData() {
-            return new Traits.LocalData(entityData.get(KEY), entityData.get(COLOR), entityData.get(TRIM), entityData.get(HOVER_NAME), getDamage());
+            return new Traits.LocalData(getKey(), getColor(), getTrim(), entityData.get(HOVER_NAME), getDamage());
+      }
+
+      public BackpackInventory.Viewable getViewable() {
+            return viewable;
       }
 
       public boolean isMirror() {
@@ -71,19 +48,8 @@ public class Backpack extends Entity {
             return !notMirror;
       }
 
-      public BackpackInventory getInventory() {
-            return backpackInventory;
-      }
-
-      private final NonNullList<ItemStack> itemStacks = NonNullList.create();
-
-      protected NonNullList<ItemStack> getItemStacks() {
-            return this.itemStacks;
-      }
-
       public int getColor() {
-            int color = this.entityData.get(COLOR);
-            return color;
+            return this.entityData.get(COLOR);
       }
 
       public Kind getKind() {
@@ -111,21 +77,12 @@ public class Backpack extends Entity {
             this.entityData.define(HOVER_NAME, Component.empty());
       }
 
-      public void initDisplay(Traits.LocalData data) {
-            this.entityData.set(KEY, data.key);
-            this.entityData.set(COLOR, data.color);
-            this.entityData.set(TRIM, data.trim);
-            this.entityData.set(HOVER_NAME, data.hoverName);
+      @Override
+      protected void readAdditionalSaveData(CompoundTag compoundTag) {
       }
 
       @Override
-      protected void addAdditionalSaveData(CompoundTag tag) {
-            backpackInventory.writeNbt(tag);
-      }
-
-      @Override
-      protected void readAdditionalSaveData(CompoundTag tag) {
-            backpackInventory.readStackNbt(tag);
+      protected void addAdditionalSaveData(CompoundTag compoundTag) {
       }
 
       public void setDisplay(CompoundTag display) {

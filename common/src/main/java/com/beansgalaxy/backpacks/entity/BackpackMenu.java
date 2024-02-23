@@ -38,7 +38,15 @@ public class BackpackMenu extends AbstractContainerMenu {
             this.ownerPos = owner.blockPosition();
             this.ownerYaw = owner.getVisualRotationYInDegrees();
             this.viewer = playerInventory.player;
-            this.mirror = createMirror(playerInventory.player.level());
+            this.mirror = new Backpack(owner.level()) {
+                  @Override public BackpackInventory.Viewable getViewable() {
+                        return backpackInventory.getViewable();
+                  }
+
+                  @Override public Traits.LocalData getLocalData() {
+                        return backpackInventory.getLocalData();
+                  }
+            };
             this.max_stacks = backpackInventory.getLocalData().maxStacks();
             createInventorySlots(playerInventory);
             FIRST_SLOT_INDEX = slots.size();
@@ -48,22 +56,6 @@ public class BackpackMenu extends AbstractContainerMenu {
       @Override
       public void broadcastChanges() {
             super.broadcastChanges();
-      }
-
-      private Backpack createMirror(Level level) {
-            Backpack backpack = new Backpack(level) {
-
-                  @Override
-                  public BackpackInventory getInventory() {
-                        return BackpackMenu.this.backpackInventory;
-                  }
-
-                  @Override
-                  public Traits.LocalData getLocalData() {
-                        return this.getInventory().getLocalData();
-                  }
-            };
-            return backpack;
       }
 
       @Override

@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks;
 
+import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.entity.BackpackMenu;
 import com.beansgalaxy.backpacks.events.*;
@@ -15,11 +16,16 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -29,10 +35,13 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
+import java.util.UUID;
+
 public class FabricMain implements ModInitializer {
     public static EquipAnyCriterion EQUIP_ANY = CriteriaTriggers.register(new EquipAnyCriterion());
     public static PlaceCriterion PLACE = CriteriaTriggers.register(new PlaceCriterion());
     public static SpecialCriterion SPECIAL = CriteriaTriggers.register(new SpecialCriterion());
+    public static final ResourceLocation INITIAL_SYNC = new ResourceLocation(Constants.MOD_ID, "initial_sync");
     
     @Override
     public void onInitialize() {
@@ -46,6 +55,21 @@ public class FabricMain implements ModInitializer {
         EntityElytraEvents.CUSTOM.register(new ElytraFlightEvent());
         UseBlockCallback.EVENT.register(new PlayerInteractEvent());
         Sounds.register();
+
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            ServerSave.MAPPED_ENDER_DATA.forEach(((uuid, enderData) -> {
+                FriendlyByteBuf data = PacketByteBufs.create();
+                data.writeUUID(uuid);
+                data.writeNbt(enderData.getTrim());
+
+                CompoundTag tag = new CompoundTag();
+                BackpackInventory.writeNbt(tag, enderData.getItemStacks());
+                data.writeNbt(tag);
+
+                server.execute(() -> ServerPlayNetworking.send(handler.getPlayer(), INITIAL_SYNC, data));
+            }));
+        });
+
         Constants.LOG.info("Initializing Beans' Backpacks Fabric");
     }
 
@@ -53,6 +77,7 @@ public class FabricMain implements ModInitializer {
     public static final Item METAL_BACKPACK = registerItem("metal_backpack", new BackpackItem(new Item.Properties().stacksTo(1)));
     public static final Item UPGRADED_BACKPACK = registerItem("upgraded_backpack", new BackpackItem(new Item.Properties().fireResistant().stacksTo(1)));
     public static final Item WINGED_BACKPACK = registerItem("winged_backpack", new WingedBackpack(new Item.Properties().defaultDurability(432).rarity(Rarity.UNCOMMON)));
+    public static final Item ENDER_BACKPACK = registerItem("ender_backpack", new BackpackItem(new Item.Properties().stacksTo(1)));
 
     private static Item registerItem(String name, Item item)
     {

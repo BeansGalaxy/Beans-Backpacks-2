@@ -6,6 +6,7 @@ import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.entity.BackpackMenu;
+import com.beansgalaxy.backpacks.entity.EnderEntity;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
@@ -24,7 +25,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -51,7 +51,8 @@ public class BackpackItem extends Item {
             return InteractionResult.PASS;
       }
 
-      public static boolean stackedOnMe(ItemStack backStack, ItemStack cursorStack, ClickAction clickAction, Player player, SlotAccess access) {
+      public static boolean interact(ItemStack backStack, ClickAction clickAction, Player player, SlotAccess access, boolean shiftIsDown) {
+            ItemStack cursorStack = access.get();
             Kind kind = Kind.fromStack(backStack);
             if (kind == null)
                   return false;
@@ -66,7 +67,11 @@ public class BackpackItem extends Item {
                   if (cursorStack.isEmpty() || Kind.isWearable(cursorStack))
                         return false;
 
-            if (backData.actionKeyPressed && clickAction != ClickAction.SECONDARY) {
+            if (Kind.ENDER.is(kind) && player.level().isClientSide())
+                  return true;
+
+            boolean quickMove = backData.actionKeyPressed || shiftIsDown;
+            if (quickMove && clickAction != ClickAction.SECONDARY) {
                   handleQuickMove(player.getInventory(), backpackInventory);
                   return true;
             }
@@ -211,16 +216,18 @@ public class BackpackItem extends Item {
             if (traits == null || traits.key.isEmpty())
                   return false;
 
-            Level world = player.level();
-            BlockPos blockPos = BlockPos.containing(x, y, z);
-
             NonNullList<ItemStack> stacks = fromBackSlot ?
                         BackData.get(player).backpackInventory.getItemStacks() : NonNullList.create();
 
-            BackpackEntity backpackEntity = new BackpackEntity(player, world, x, y, z, direction,
-                        traits, stacks, rotFromBlock(blockPos, player) + 90);
+            BlockPos blockPos = BlockPos.containing(x, y, z);
+            float yaw = rotFromBlock(blockPos, player) + 90;
+            Kind kind = traits.kind();
 
-            PlaySound.PLACE.at(backpackEntity, traits.kind());
+            BackpackEntity backpackEntity = Kind.ENDER.is(kind) ?
+                        new EnderEntity(player, x, y, z, direction, traits, yaw) :
+                        new BackpackEntity(player, x, y, z, direction, traits, stacks, yaw);
+
+            PlaySound.PLACE.at(backpackEntity, kind);
             if (player instanceof ServerPlayer serverPlayer)
                   Services.REGISTRY.triggerPlace(serverPlayer, traits.key);
 

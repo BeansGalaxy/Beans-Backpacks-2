@@ -54,12 +54,12 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
       public void render(T entity, float yaw, float tickDelta, PoseStack pose, MultiBufferSource mbs, int light) {
             super.render(entity, yaw += renderWobble(entity, yaw), tickDelta, pose, mbs, light);
             Backpack bEntity = ((Backpack) entity);
-            Traits.LocalData traits = bEntity.getInventory().getLocalData();
+            Traits.LocalData traits = bEntity.getLocalData();
 
             if (traits.key.isEmpty())
                   return;
 
-            BackpackInventory.Viewable viewable = bEntity.getInventory().getViewable();
+            BackpackInventory.Viewable viewable = bEntity.getViewable();
             Kind kind = traits.kind();
 
             if (kind == null)

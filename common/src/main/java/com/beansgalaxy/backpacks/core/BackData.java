@@ -1,8 +1,10 @@
 package com.beansgalaxy.backpacks.core;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.access.BackAccessor;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
+import com.beansgalaxy.backpacks.entity.EnderEntity;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -11,7 +13,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -38,6 +39,8 @@ public class BackData {
             private final NonNullList<ItemStack> itemStacks = NonNullList.create();
 
             @Override public NonNullList<ItemStack> getItemStacks() {
+                  if (BackData.this.getStack().is(Services.REGISTRY.getEnder()))
+                        return ServerSave.getEnderData(owner.getUUID()).getItemStacks();
                   return this.itemStacks;
             }
 
@@ -95,18 +98,11 @@ public class BackData {
       }
 
       public boolean backSlotDisabled() {
-            if (owner.isCreative())
+            if (owner.isCreative() && !Constants.SLOTS_MOD_ACTIVE)
                   return true;
 
             NonNullList<ItemStack> equipped = owner.getInventory().armor;
-            Services.COMPAT.getEquipped(equipped, owner);
-
-            if (equipped.stream().anyMatch(stack -> !stack.isEmpty() && (
-                        Constants.DISABLES_BACK_SLOT.contains(stack.getItem()) ||
-                        Constants.ELYTRA_ITEMS.contains(stack.getItem()))))
-                  return true;
-
-            return false;
+            return Services.COMPAT.backSlotDisabled(owner) || equipped.stream().anyMatch(stack -> !stack.isEmpty() && Constants.elytraOrDisables(stack.getItem()));
       }
 
       public void drop() {
@@ -139,14 +135,17 @@ public class BackData {
             }
 
             BlockPos blockPos = owner.getOnPos();
-            float yRot = owner.yBodyRot + 180;
+            float yaw = owner.yBodyRot + 180;
 
             int x = blockPos.getX();
             double y = blockPos.getY() + 1.5;
             int z = blockPos.getZ();
 
-            new BackpackEntity(owner, owner.level(), x, y, z, Direction.UP,
-                        localData, itemStacks, yRot);
+            Direction direction = Direction.UP;
+
+            BackpackEntity backpackEntity = Kind.ENDER.is(backStack) ?
+                        new EnderEntity(owner, x, y, z, direction, localData, yaw) :
+                        new BackpackEntity(owner, x, y, z, direction, localData, itemStacks, yaw);
 
             set(ItemStack.EMPTY);
       }

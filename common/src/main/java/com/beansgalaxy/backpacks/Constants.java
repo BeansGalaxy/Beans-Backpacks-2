@@ -31,7 +31,6 @@ public class Constants {
 	public static final String MOD_ID = "beansbackpacks";
 	public static final String MOD_NAME = "Beans' Backpacks";
 	public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
-	public static final ResourceLocation IN_LEATHER = new ResourceLocation(MOD_ID, "textures/entity/leather_interior.png");
 
 	public static final HashMap<String, Traits> TRAITS_MAP = new HashMap<>();
 	public static final boolean SLOTS_MOD_ACTIVE = Services.COMPAT.anyModsLoaded(new String[]{CompatHelper.CURIOS, CompatHelper.TRINKETS});
@@ -39,6 +38,10 @@ public class Constants {
 	public static final HashSet<Item> DISABLES_BACK_SLOT = new HashSet<>();
 	public static final HashSet<Item> BLACKLIST_ITEMS = new HashSet<>();
 	public static final HashSet<Item> ELYTRA_ITEMS = new HashSet<>();
+
+	public static boolean elytraOrDisables(Item item) {
+		return DISABLES_BACK_SLOT.contains(item) || ELYTRA_ITEMS.contains(item);
+	}
 
 	protected static void register() {
 		LOG.info("Initializing Beans' Backpacks Constants");

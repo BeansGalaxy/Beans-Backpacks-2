@@ -20,6 +20,8 @@ public interface RegistryHelper {
 
       Item getWinged();
 
+      Item getEnder();
+
       EntityType<? extends Entity> getEntity();
 
       MenuType<?> getMenu();

@@ -1,7 +1,6 @@
 package com.beansgalaxy.backpacks.core;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
@@ -19,8 +18,6 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.Hopper;
 
 import java.util.Objects;
 
@@ -260,11 +257,16 @@ public interface BackpackInventory extends Container {
       }
 
       default void readStackNbt(CompoundTag nbt) {
+            readStackNbt(nbt, this.getItemStacks());
+      }
+
+      static void readStackNbt(CompoundTag nbt, NonNullList<ItemStack> itemStacks) {
             ListTag nbtList = nbt.getList("Items", Tag.TAG_COMPOUND);
             for (int i = 0; i < nbtList.size(); ++i) {
                   CompoundTag nbtCompound = nbtList.getCompound(i);
 
-                  ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation(nbtCompound.getString("id"))), nbtCompound.getInt("Count"));
+                  ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.get(
+                              new ResourceLocation(nbtCompound.getString("id"))), nbtCompound.getInt("Count"));
                   if (nbtCompound.contains("tag", Tag.TAG_COMPOUND)) {
                         stack.setTag(nbtCompound.getCompound("tag"));
                         stack.getItem().verifyTagAfterLoad(stack.getTag());
@@ -274,13 +276,17 @@ public interface BackpackInventory extends Container {
                   }
 
                   if (!stack.isEmpty())
-                        this.getItemStacks().add(stack);
+                        itemStacks.add(stack);
             }
+
       }
 
-      default CompoundTag writeNbt(CompoundTag nbt) {
+      default void writeNbt(CompoundTag nbt) {
+            writeNbt(nbt, getItemStacks());
+      }
+
+      static void writeNbt(CompoundTag nbt, NonNullList<ItemStack> stacks) {
             ListTag nbtList = new ListTag();
-            NonNullList<ItemStack> stacks = getItemStacks();
             for (int i = 0; i < stacks.size(); ++i) {
                   ItemStack itemStack = stacks.get(i);
                   if (itemStack.isEmpty()) continue;
@@ -288,7 +294,7 @@ public interface BackpackInventory extends Container {
                   nbtCompound.putByte("Slot", (byte)i);
 
                   ResourceLocation identifier = BuiltInRegistries.ITEM.getKey(itemStack.getItem());
-                  nbtCompound.putString("id", identifier == null ? "minecraft:air" : identifier.toString());
+                  nbtCompound.putString("id", identifier.toString());
                   nbtCompound.putInt("Count", itemStack.getCount());
                   if (itemStack.getTag() != null) {
                         nbtCompound.put("tag", itemStack.getTag().copy());
@@ -296,10 +302,9 @@ public interface BackpackInventory extends Container {
 
                   nbtList.add(nbtCompound);
             }
-            if (!nbtList.isEmpty() || isEmpty()) {
+            if (!nbtList.isEmpty() || stacks.isEmpty()) {
                   nbt.put("Items", nbtList);
             }
-            return nbt;
       }
 
 
@@ -336,7 +341,7 @@ public interface BackpackInventory extends Container {
       }
 
       static BackpackInventory get(Entity entity) {
-            if (entity instanceof Backpack backpack)
+            if (entity instanceof BackpackEntity backpack)
                   return backpack.getInventory();
             if (entity instanceof Player player)
                   return BackData.get(player).backpackInventory;

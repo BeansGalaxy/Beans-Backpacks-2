@@ -1,0 +1,9 @@
+{
+  "type": "beansbackpacks:backpack_crafting",
+  "material":  "minecraft:obsidian",
+  "binder": "minecraft:ender_eye",
+  "name": "Ender Backpack",
+  "key": "ender",
+  "kind": "ENDER",
+  "max_stacks": 4
+}

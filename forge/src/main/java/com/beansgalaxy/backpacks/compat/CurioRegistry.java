@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.SlotResult;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
 
@@ -52,16 +53,12 @@ public class CurioRegistry {
             return stackInSlot;
       }
 
-      public static void getEquipped(NonNullList<ItemStack> equipped, Player player) {
-            Optional<ICuriosItemHandler> resolve = CuriosApi.getCuriosInventory(player).resolve();
+      public static boolean backSlotDisables(Player owner) {
+            Optional<ICuriosItemHandler> resolve = CuriosApi.getCuriosInventory(owner).resolve();
             if (resolve.isEmpty())
-                  return;
-
-            resolve.get().findCurios(stack -> {
-                  if (!stack.isEmpty())
-                        equipped.add(stack);
                   return false;
-            });
 
+            Optional<SlotResult> firstCurio = resolve.get().findFirstCurio(stack -> Constants.elytraOrDisables(stack.getItem()));
+            return firstCurio.isPresent();
       }
 }

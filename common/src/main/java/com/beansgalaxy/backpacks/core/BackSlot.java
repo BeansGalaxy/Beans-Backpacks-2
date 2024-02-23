@@ -29,7 +29,7 @@ public class BackSlot extends Slot {
 
       @Override
       public boolean isActive() {
-            return !backData.backSlotDisabled() && !Constants.SLOTS_MOD_ACTIVE;
+            return !Constants.SLOTS_MOD_ACTIVE && !backData.backSlotDisabled();
       }
 
       @Override

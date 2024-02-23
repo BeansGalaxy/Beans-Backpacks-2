@@ -33,9 +33,10 @@ public class ForgeCompatHelper implements CompatHelper {
       }
 
       @Override
-      public void getEquipped(NonNullList<ItemStack> equipped, Player player) {
+      public boolean backSlotDisabled(Player owner) {
             if (isModLoaded(CURIOS))
-                  CurioRegistry.getEquipped(equipped, player);
+                  return CurioRegistry.backSlotDisables(owner);
+            return false;
       }
 
 }

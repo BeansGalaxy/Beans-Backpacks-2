@@ -91,6 +91,9 @@ public interface RendererHelper {
                 case UPGRADED -> identifier = ButtonIdentifiers.get("netherite");
                 case LEATHER, WINGED ->
                 {
+                      VertexConsumer interior = mbs.getBuffer(RenderType.entityTranslucent(new ResourceLocation(Constants.MOD_ID, "textures/entity/" + key +"_interior.png")));
+                      model.renderToBuffer(pose, interior, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+
                       if (isYellow(tint))
                             identifier = ButtonIdentifiers.get("amethyst");
                       else
@@ -107,11 +110,6 @@ public interface RendererHelper {
                 ResourceLocation overlayIdentifier = new ResourceLocation(Constants.MOD_ID, "textures/entity/" + key + "_overlay.png");
                 VertexConsumer overlayTexture = mbs.getBuffer(RenderType.entityTranslucent(overlayIdentifier));
                 model.renderToBuffer(pose, overlayTexture, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 0.5f);
-                if (Objects.equals(key, "leather"))
-                {
-                      VertexConsumer interior = mbs.getBuffer(RenderType.entityTranslucent(Constants.IN_LEATHER));
-                      model.renderToBuffer(pose, interior, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
-                }
           }
     }
 
