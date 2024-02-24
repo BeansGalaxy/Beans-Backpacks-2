@@ -49,9 +49,9 @@ public class WingedBackpack extends DyableBackpack {
         Color winged = new Color(WINGED_COLOR);
 
         Color out = new Color(
-                28 + (3 * color.getRed() + winged.getRed()) / 4,
-                28 + (3 * color.getGreen() + winged.getGreen()) / 4,
-                28 + (2 * color.getBlue() + winged.getBlue()) / 3,
+                20 + (3 * color.getRed() + winged.getRed()) / 4,
+                20 + (3 * color.getGreen() + winged.getGreen()) / 4,
+                20 + (2 * color.getBlue() + winged.getBlue()) / 3,
                 255);
 
         return out.getRGB();

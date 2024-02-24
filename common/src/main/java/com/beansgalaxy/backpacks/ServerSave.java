@@ -12,6 +12,7 @@ import net.minecraft.world.level.storage.DimensionDataStorage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 
 public class ServerSave extends SavedData {
@@ -46,7 +47,7 @@ public class ServerSave extends SavedData {
       @Override @NotNull
       public CompoundTag save(@NotNull CompoundTag tag) {
             MAPPED_ENDER_DATA.forEach(((uuid, enderData) -> {
-                  if (!enderData.itemStacks.isEmpty() && !enderData.trim.isEmpty()) {
+                  if (!enderData.itemStacks.isEmpty() && !enderData.trim.isEmpty() && uuid != null) {
                         CompoundTag data = new CompoundTag();
                         BackpackInventory.writeNbt(data, enderData.getItemStacks());
                         data.put("Trim", enderData.getTrim());
@@ -66,8 +67,10 @@ public class ServerSave extends SavedData {
 
                   EnderData enderData = new EnderData(itemStacks, trim);
                   UUID uuid = UUID.fromString(key);
-                  MAPPED_ENDER_DATA.put(uuid, enderData);
+                  if (!enderData.itemStacks.isEmpty() && !enderData.trim.isEmpty())
+                        MAPPED_ENDER_DATA.put(uuid, enderData);
             }
+            MAPPED_ENDER_DATA.remove(null);
             return save;
       }
 
@@ -82,6 +85,10 @@ public class ServerSave extends SavedData {
       }
 
       public static EnderData getEnderData(UUID uuid) {
+            if (uuid == null) {
+                  Constants.LOG.warn("Tried to get UUID of \"null\" --- Returning Empty Ender Data");
+                  return new EnderData();
+            }
             return MAPPED_ENDER_DATA.computeIfAbsent(uuid, uuid1 -> new EnderData());
       }
 }

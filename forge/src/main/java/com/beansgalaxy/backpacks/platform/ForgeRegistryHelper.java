@@ -10,6 +10,7 @@ import com.beansgalaxy.backpacks.platform.services.RegistryHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
@@ -43,6 +44,11 @@ public class ForgeRegistryHelper implements RegistryHelper {
       @Override
       public EntityType<BackpackEntity> getEntity() {
             return ForgeMain.ENTITY.get();
+      }
+
+      @Override
+      public EntityType<? extends Entity> getEnderEntity() {
+            return ForgeMain.ENDER_ENTITY.get();
       }
 
       @Override

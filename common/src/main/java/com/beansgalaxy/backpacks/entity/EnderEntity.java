@@ -5,25 +5,32 @@ import com.beansgalaxy.backpacks.core.Traits;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 public class EnderEntity extends BackpackEntity {
+
+      public EnderEntity(EntityType<? extends Entity> type, Level level) {
+            super(type, level);
+      }
 
       public EnderEntity(Player player, int x, double y, int z, Direction direction, Traits.LocalData traits, float yaw) {
             super(player);
             setupDisplay(player, x, y, z, direction, traits, yaw);
-            itemStacks = ServerSave.getEnderData(placedBy).getItemStacks();
+            itemStacks = ServerSave.getEnderData(getPlacedBy()).getItemStacks();
       }
 
       @Override
       public CompoundTag getTrim() {
-            return ServerSave.getEnderData(placedBy).getTrim();
+            return ServerSave.getEnderData(getPlacedBy()).getTrim();
       }
 
       @Override
       protected NonNullList<ItemStack> getItemStacks() {
-            return ServerSave.getEnderData(placedBy).getItemStacks();
+            return ServerSave.getEnderData(getPlacedBy()).getItemStacks();
       }
 
       @Override

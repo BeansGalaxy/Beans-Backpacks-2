@@ -17,6 +17,9 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
+import java.util.Optional;
+import java.util.UUID;
+
 public class Backpack extends Entity {
       public static final EntityDataAccessor<String> KEY = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.STRING);
       public static final EntityDataAccessor<Integer> COLOR = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.INT);
@@ -27,7 +30,7 @@ public class Backpack extends Entity {
       public final BackpackInventory.Viewable viewable = new BackpackInventory.Viewable();
 
       public Backpack(Level $$1) {
-            super(Services.REGISTRY.getEntity() , $$1);
+            super(Services.REGISTRY.getEntity(), $$1);
             this.blocksBuilding = true;
       }
 
@@ -83,15 +86,5 @@ public class Backpack extends Entity {
 
       @Override
       protected void addAdditionalSaveData(CompoundTag compoundTag) {
-      }
-
-      public void setDisplay(CompoundTag display) {
-            this.entityData.set(KEY, display.getString("key"));
-            this.entityData.set(COLOR, display.getInt("color"));
-            this.entityData.set(TRIM, display.getCompound("Trim"));
-            MutableComponent hoverName = Component.Serializer.fromJson(display.getString("hover_name"));
-            if (hoverName != null && !hoverName.toString().equals("empty"))
-                  this.entityData.set(HOVER_NAME, hoverName);
-
       }
 }

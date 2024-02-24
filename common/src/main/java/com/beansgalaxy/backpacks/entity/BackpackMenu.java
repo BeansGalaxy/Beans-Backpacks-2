@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.entity;
 
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
+import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -104,6 +105,10 @@ public class BackpackMenu extends AbstractContainerMenu {
       }
 
       public void clicked(int slotIndex, int button, ClickType actionType, Player player) {
+            Kind kind = backpackInventory.getLocalData().kind();
+            if (owner.level().isClientSide() && Kind.ENDER.is(kind))
+                  return;
+
             int backpackSlot = slotIndex - FIRST_SLOT_INDEX;
             if (actionType == ClickType.THROW) {
                   super.clicked(slotIndex, button, actionType, player);

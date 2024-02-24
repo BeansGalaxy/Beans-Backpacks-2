@@ -24,6 +24,8 @@ public interface RegistryHelper {
 
       EntityType<? extends Entity> getEntity();
 
+      EntityType<? extends Entity> getEnderEntity();
+
       MenuType<?> getMenu();
 
       void triggerEquipAny(ServerPlayer player);

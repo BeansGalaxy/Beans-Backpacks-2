@@ -3,6 +3,7 @@ package com.beansgalaxy.backpacks;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.entity.BackpackMenu;
+import com.beansgalaxy.backpacks.entity.EnderEntity;
 import com.beansgalaxy.backpacks.events.*;
 import com.beansgalaxy.backpacks.events.advancements.EquipAnyCriterion;
 import com.beansgalaxy.backpacks.events.advancements.PlaceCriterion;
@@ -50,6 +51,7 @@ public class FabricMain implements ModInitializer {
         NetworkPackages.registerC2SPackets();
 
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register(new SyncDataEvent());
+        ServerLifecycleEvents.SERVER_STARTED.register(new ServerStartEvent());
         ServerPlayerEvents.COPY_FROM.register(new CopyPlayerEvent());
         ServerLivingEntityEvents.AFTER_DEATH.register(new LivingEntityDeath());
         EntityElytraEvents.CUSTOM.register(new ElytraFlightEvent());
@@ -109,6 +111,11 @@ public class FabricMain implements ModInitializer {
                 Registry.register(BuiltInRegistries.ENTITY_TYPE,
                 new ResourceLocation(Constants.MOD_ID, "backpack"),
                 FabricEntityTypeBuilder.create(MobCategory.MISC, BackpackEntity::new).build());
+
+    public static final EntityType<Entity> ENDER_ENTITY =
+                Registry.register(BuiltInRegistries.ENTITY_TYPE,
+                new ResourceLocation(Constants.MOD_ID, "ender_backpack"),
+                FabricEntityTypeBuilder.create(MobCategory.MISC, EnderEntity::new).build());
 
     public static final MenuType<BackpackMenu> BACKPACK_MENU =
                 Registry.register(BuiltInRegistries.MENU,

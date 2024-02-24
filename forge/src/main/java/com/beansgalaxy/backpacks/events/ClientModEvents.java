@@ -51,6 +51,7 @@ public class ClientModEvents {
       @SubscribeEvent
       public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
             event.registerEntityRenderer(ForgeMain.ENTITY.get(), BackpackRenderer::new);
+            event.registerEntityRenderer(ForgeMain.ENDER_ENTITY.get(), BackpackRenderer::new);
       }
 
       @SubscribeEvent

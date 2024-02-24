@@ -147,13 +147,15 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
             }
 
             if (backData.actionKeyPressed && selectedPlayerInventory) {
-                  if (backStack.isEmpty() && backData.backSlot.isActive() && !stack.isEmpty() && Kind.isWearable(stack))
+                  if (backStack.isEmpty() && backData.backSlot.isActive() && !stack.isEmpty() && Kind.isWearable(stack)) {
                         slot.set(backData.backSlot.safeInsert(stack));
-                  else if (Kind.isStorage(backStack))
-                        slot.set(backpackInventory.insertItem(stack, stack.getCount()));
-                  else
-                        super.clicked(slotIndex, button, actionType, player);
-                  return;
+                        return;
+                  }
+                  else if (Kind.isStorage(backStack)) {
+                        if (!player.level().isClientSide() || !Kind.ENDER.is(backStack))
+                              slot.set(backpackInventory.insertItem(stack, stack.getCount()));
+                        return;
+                  }
             }
 
 

@@ -1,10 +1,7 @@
 package com.beansgalaxy.backpacks.network;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.network.client.ConfigureKeys2C;
-import com.beansgalaxy.backpacks.network.client.SyncBackInventory2C;
-import com.beansgalaxy.backpacks.network.client.SyncBackSlot2C;
-import com.beansgalaxy.backpacks.network.client.SyncViewersPacket2C;
+import com.beansgalaxy.backpacks.network.client.*;
 import com.beansgalaxy.backpacks.network.packages.CallBackInventory2S;
 import com.beansgalaxy.backpacks.network.packages.CallBackSlot2S;
 import com.beansgalaxy.backpacks.network.packages.InstantPlace2S;
@@ -29,6 +26,7 @@ public class NetworkPackages {
             InstantPlace2S.register(index++);
             SyncViewersPacket2C.register(index++);
             SyncBackSlot2C.register(index++);
+            SendEnderData2C.register(index++);
             CallBackSlot2S.register(index++);
             SyncBackInventory2C.register(index++);
             CallBackInventory2S.register(index++);

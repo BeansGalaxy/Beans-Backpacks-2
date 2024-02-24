@@ -44,6 +44,7 @@ public class FabricClient implements ClientModInitializer {
             LivingEntityFeatureRendererRegistrationCallback.EVENT.register(new AppendModelLayers());
 
             EntityRendererRegistry.register(FabricMain.BACKPACK_ENTITY, BackpackRenderer::new);
+            EntityRendererRegistry.register(FabricMain.ENDER_ENTITY, BackpackRenderer::new);
             MenuScreens.register(FabricMain.BACKPACK_MENU, BackpackScreen::new);
 
             KeyBindingHelper.registerKeyBinding(KeyPress.INSTANCE.ACTION_KEY);

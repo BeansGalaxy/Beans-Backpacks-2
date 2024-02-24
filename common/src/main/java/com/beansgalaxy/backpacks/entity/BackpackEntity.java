@@ -1,6 +1,6 @@
 package com.beansgalaxy.backpacks.entity;
 
-import com.beansgalaxy.backpacks.ServerSave;
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
@@ -16,10 +16,13 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
@@ -39,10 +42,11 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class BackpackEntity extends Backpack {
-      protected final UUID placedBy;
+      public static final EntityDataAccessor<Optional<UUID>> PLACED_BY = SynchedEntityData.defineId(BackpackEntity.class, EntityDataSerializers.OPTIONAL_UUID);
       private final int damage;
       public Direction direction;
       protected BlockPos pos;
@@ -87,7 +91,6 @@ public class BackpackEntity extends Backpack {
       // REGISTER BACKPACK CONSTRUCTOR
       public BackpackEntity(EntityType<? extends Entity> type, Level level) {
             super(type, level);
-            placedBy = null;
             damage = 0;
       }
 
@@ -95,7 +98,6 @@ public class BackpackEntity extends Backpack {
       public BackpackEntity(Player player, int x, double y, int z, Direction direction, Traits.LocalData traits, NonNullList<ItemStack> stacks, float yaw) {
             super(player.level());
             this.damage = traits.damage;
-            this.placedBy = player.getUUID();
             setupDisplay(player, x, y, z, direction, traits, yaw);
 
             if (stacks != null && !stacks.isEmpty()) {
@@ -106,9 +108,9 @@ public class BackpackEntity extends Backpack {
 
       // ENDER BACKPACK CONSTRUCTOR
       public BackpackEntity(Player player) {
-            super(player.level());
+            super(Services.REGISTRY.getEnderEntity(), player.level());
+            this.blocksBuilding = true;
             this.damage = 0;
-            this.placedBy = player.getUUID();
       }
 
       void setupDisplay(Player player, int x, double y, int z, Direction direction, Traits.LocalData traits, float yaw) {
@@ -120,6 +122,7 @@ public class BackpackEntity extends Backpack {
             this.entityData.set(COLOR, traits.color);
             this.entityData.set(TRIM, traits.trim);
             this.entityData.set(HOVER_NAME, traits.hoverName);
+            this.entityData.set(PLACED_BY, Optional.of(player.getUUID()));
 
             if (!direction.getAxis().isHorizontal())
                   this.setYRot(yaw);
@@ -129,6 +132,12 @@ public class BackpackEntity extends Backpack {
                   world.gameEvent(player, GameEvent.ENTITY_PLACE, this.position());
                   world.addFreshEntity(this);
             }
+      }
+
+      @Override
+      protected void defineSynchedData() {
+            this.entityData.define(PLACED_BY, Optional.empty());
+            super.defineSynchedData();
       }
 
       public static ItemStack toStack(BackpackEntity backpack) {
@@ -184,11 +193,9 @@ public class BackpackEntity extends Backpack {
             return this.direction;
       }
 
-      public Player getPlacedBy() {
-          if (placedBy != null)
-                return level().getPlayerByUUID(placedBy);
-
-          return null;
+      public UUID getPlacedBy() {
+            Optional<UUID> uuid = entityData.get(PLACED_BY);
+            return uuid.orElseGet(() -> this.uuid);
       }
 
       @Override
@@ -353,17 +360,17 @@ public class BackpackEntity extends Backpack {
 
       // NBT
       @Override
-      protected void addAdditionalSaveData(CompoundTag tag) {
-            backpackInventory.writeNbt(tag);
-            tag.putByte("facing", (byte)this.direction.get3DDataValue());
-            tag.put("display", getDisplay());
-      }
-
-      @Override
       protected void readAdditionalSaveData(CompoundTag tag) {
             backpackInventory.readStackNbt(tag);
             this.setDirection(Direction.from3DDataValue(tag.getByte("facing")));
             this.setDisplay(tag.getCompound("display"));
+      }
+      
+      @Override
+      protected void addAdditionalSaveData(CompoundTag tag) {
+            backpackInventory.writeNbt(tag);
+            tag.putByte("facing", (byte)this.direction.get3DDataValue());
+            tag.put("display", getDisplay());
       }
 
       // LOCAL
@@ -375,7 +382,24 @@ public class BackpackEntity extends Backpack {
             Component component = this.entityData.get(HOVER_NAME);
             String json = Component.Serializer.toJson(component);
             tag.putString("hover_name", json);
+            UUID placedBy = getPlacedBy();
+            if (placedBy != this.uuid)
+                  tag.putUUID("placed_by", placedBy);
             return tag;
+      }
+
+      public void setDisplay(CompoundTag display) {
+            this.entityData.set(KEY, display.getString("key"));
+            this.entityData.set(COLOR, display.getInt("color"));
+            this.entityData.set(TRIM, display.getCompound("Trim"));
+            MutableComponent hoverName = Component.Serializer.fromJson(display.getString("hover_name"));
+            if (hoverName != null && !hoverName.toString().equals("empty"))
+                  this.entityData.set(HOVER_NAME, hoverName);
+
+            if (!display.contains("placed_by"))
+                  Constants.LOG.warn("No \"Placed By\" UUID provided from -> " + this);
+            else
+                  this.entityData.set(PLACED_BY, Optional.of(display.getUUID("PlacedBy")));
       }
 
       /** COLLISIONS AND INTERACTIONS **/
@@ -425,7 +449,7 @@ public class BackpackEntity extends Backpack {
                         this.markHurt();
                   }
                   else {
-                        float damage = player.getUUID() == placedBy ? .8f : .5f;
+                        float damage = player.getUUID() == getPlacedBy() ? .8f : .5f;
                         return damage((int) (BREAK_TIMER * damage), false);
                   }
             }

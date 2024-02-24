@@ -3,6 +3,7 @@ package com.beansgalaxy.backpacks;
 import com.beansgalaxy.backpacks.compat.CurioRegistry;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.entity.BackpackMenu;
+import com.beansgalaxy.backpacks.entity.EnderEntity;
 import com.beansgalaxy.backpacks.events.advancements.EquipAnyCriterion;
 import com.beansgalaxy.backpacks.events.advancements.PlaceCriterion;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
@@ -62,6 +63,9 @@ public class ForgeMain {
 
     public static final RegistryObject<EntityType<BackpackEntity>> ENTITY = ENTITIES.register("backpack",
                 () -> EntityType.Builder.<BackpackEntity>of(BackpackEntity::new, MobCategory.MISC).build(new ResourceLocation(Constants.MOD_ID, "backpack").toString()));
+
+    public static final RegistryObject<EntityType<EnderEntity>> ENDER_ENTITY = ENTITIES.register("ender_backpack",
+                () -> EntityType.Builder.<EnderEntity>of(EnderEntity::new, MobCategory.MISC).build(new ResourceLocation(Constants.MOD_ID, "ender_backpack").toString()));
 
     // REGISTER RECIPES
     public static final DeferredRegister<RecipeSerializer<?>> RECIPES =

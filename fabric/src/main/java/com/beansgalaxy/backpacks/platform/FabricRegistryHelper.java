@@ -47,6 +47,11 @@ public class FabricRegistryHelper implements RegistryHelper {
       }
 
       @Override
+      public EntityType<? extends Entity> getEnderEntity() {
+            return FabricMain.ENDER_ENTITY;
+      }
+
+      @Override
       public MenuType<?> getMenu() {
             return FabricMain.BACKPACK_MENU;
       }
