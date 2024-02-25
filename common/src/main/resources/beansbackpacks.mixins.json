@@ -5,7 +5,6 @@
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "common.HopperEntityMixin",
     "common.ArmorItemMixin",
     "common.DataResourcesMixin",
     "common.ElytraItemMixin",
@@ -14,7 +13,8 @@
     "common.InventoryContainerMixin",
     "common.InventoryMenuMixin",
     "common.ItemStackMixin",
-    "common.ServerPlayMixin"
+    "common.ServerPlayMixin",
+    "common.SmithingMenuMixin"
   ],
   "client": [
     "client.DisableCape",
@@ -23,7 +23,8 @@
     "client.KeyBindTooltip",
     "client.SmithingScreenMixin",
     "client.TrimsAtlasMixin",
-    "client.UpdateSprintKey"
+    "client.UpdateSprintKey",
+    "client.ArmorTrimMixin"
   ],
   "server": [
   ],

@@ -60,15 +60,15 @@ public class FabricMain implements ModInitializer {
 
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             ServerSave.MAPPED_ENDER_DATA.forEach(((uuid, enderData) -> {
-                FriendlyByteBuf data = PacketByteBufs.create();
-                data.writeUUID(uuid);
-                data.writeNbt(enderData.getTrim());
+                FriendlyByteBuf buf = PacketByteBufs.create();
+                buf.writeUUID(uuid);
+                buf.writeNbt(enderData.getTrim());
 
                 CompoundTag tag = new CompoundTag();
                 BackpackInventory.writeNbt(tag, enderData.getItemStacks());
-                data.writeNbt(tag);
+                buf.writeNbt(tag);
 
-                server.execute(() -> ServerPlayNetworking.send(handler.getPlayer(), INITIAL_SYNC, data));
+                server.execute(() -> ServerPlayNetworking.send(handler.getPlayer(), INITIAL_SYNC, buf));
             }));
         });
 

@@ -1,15 +1,17 @@
 package com.beansgalaxy.backpacks.platform;
 
+import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
-import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.entity.BackpackMenu;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
+import com.beansgalaxy.backpacks.network.client.SendEnderData2C;
 import com.beansgalaxy.backpacks.network.client.SyncBackInventory2C;
 import com.beansgalaxy.backpacks.network.client.SyncBackSlot2C;
 import com.beansgalaxy.backpacks.network.client.SyncViewersPacket2C;
 import com.beansgalaxy.backpacks.network.packages.InstantPlace2S;
+import com.beansgalaxy.backpacks.network.packages.PickBackpack2S;
 import com.beansgalaxy.backpacks.network.packages.SprintKeyPacket2S;
 import com.beansgalaxy.backpacks.platform.services.NetworkHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -23,6 +25,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 public class ForgeNetworkHelper implements NetworkHelper {
       @Override
@@ -90,5 +94,15 @@ public class ForgeNetworkHelper implements NetworkHelper {
       @Override
       public void instantPlace(int i, BlockHitResult blockHitResult) {
             NetworkPackages.C2S(new InstantPlace2S(i, blockHitResult));
+      }
+
+      @Override
+      public void pickFromBackpack2S(int slot) {
+            NetworkPackages.C2S(new PickBackpack2S(slot));
+      }
+
+      @Override
+      public void sendEnderData2C(ServerPlayer player, UUID uuid) {
+            NetworkPackages.S2C(new SendEnderData2C(uuid, ServerSave.getEnderData(uuid)), player);
       }
 }

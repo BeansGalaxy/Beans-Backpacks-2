@@ -11,22 +11,29 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-public class RecipeCrafting extends ShapedRecipe {
+public class RecipeCrafting extends CustomRecipe {
       public static final String ID = "backpack_crafting";
       public static final ResourceLocation LOCATION = new ResourceLocation(Constants.MOD_ID, ID);
       public static final RecipeSerializer<RecipeCrafting> INSTANCE = new Serializer();
       private final String key;
 
       public RecipeCrafting(ResourceLocation id, String key) {
-            super(id, "backpack_" + key, CraftingBookCategory.EQUIPMENT, 3, 3, getIngredients(key), getResultItem(key));
+            super(id, CraftingBookCategory.EQUIPMENT);
             this.key = key;
+      }
+
+      @Override
+      public boolean isSpecial() {
+            return false;
+      }
+
+      @Override
+      public String getGroup() {
+            return Constants.MOD_ID + "_crafting";
       }
 
       @Override
@@ -61,7 +68,7 @@ public class RecipeCrafting extends ShapedRecipe {
       }
 
       @Override
-      public @NotNull ItemStack assemble(CraftingContainer container, RegistryAccess leve) {
+      public @NotNull ItemStack assemble(CraftingContainer container, RegistryAccess level) {
             String key = Traits.keyFromIngredients(container.getItem(0).getItem(), container.getItem(1).getItem());
             if (key == null || key.isEmpty())
                   return ItemStack.EMPTY;
@@ -70,13 +77,19 @@ public class RecipeCrafting extends ShapedRecipe {
       }
 
       @Override
-      public boolean isIncomplete() {
-            return false;
+      public boolean canCraftInDimensions(int $$0, int $$1) {
+            return true;
       }
 
       @Override
-      public boolean canCraftInDimensions(int $$0, int $$1) {
-            return true;
+      public boolean isIncomplete() {
+            NonNullList<Ingredient> $$0 = this.getIngredients();
+            boolean incomplete = $$0.isEmpty() || $$0.stream().filter(($$0x) -> {
+                  return !$$0x.isEmpty();
+            }).anyMatch(($$0x) -> {
+                  return $$0x.getItems().length == 0;
+            });
+            return incomplete;
       }
 
       @Override
@@ -96,8 +109,6 @@ public class RecipeCrafting extends ShapedRecipe {
       }
 
       public static NonNullList<Ingredient> getIngredients(String key) {
-            if (key == null || key.isEmpty())
-                  return NonNullList.create();
 
             Traits traits = Traits.get(key);
             Ingredient mat = Ingredient.of(traits.material);

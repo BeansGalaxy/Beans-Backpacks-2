@@ -10,7 +10,8 @@
     "PlayerEntityMixin"
   ],
   "client": [
-    "LocalPlayerMixin"
+    "LocalPlayerMixin",
+    "PickBlockMixin"
   ],
   "server": [
   ],

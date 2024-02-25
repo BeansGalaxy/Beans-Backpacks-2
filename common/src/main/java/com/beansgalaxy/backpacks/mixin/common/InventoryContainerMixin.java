@@ -30,9 +30,6 @@ public abstract class InventoryContainerMixin implements BackAccessor {
 
       @Shadow @Final public Player player;
       @Shadow @Final public NonNullList<ItemStack> items;
-      @Shadow public int selected;
-
-      @Shadow public abstract int getSuitableHotbarSlot();
 
       @Unique private BackData backData;
 
@@ -155,15 +152,6 @@ public abstract class InventoryContainerMixin implements BackAccessor {
                         return;
 
                   cir.setReturnValue(backpackInventory.insertItemSilent(stack, stack.getCount()).isEmpty());
-            }
-      }
-
-      @Inject(method = "findSlotMatchingItem", at = @At("TAIL"), cancellable = true)
-      public void pickInBackpack(ItemStack inventoryStack, CallbackInfoReturnable<Integer> cir) {
-            for (int i = 0; i < backData.backpackInventory.getContainerSize(); i++) {
-                  ItemStack backpackStack = backData.backpackInventory.getItemStacks().get(i);
-                  if (ItemStack.isSameItemSameTags(inventoryStack, backpackStack))
-                        cir.setReturnValue((i * -1) - 100);
             }
       }
 }

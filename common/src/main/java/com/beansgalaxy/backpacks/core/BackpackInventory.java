@@ -264,6 +264,7 @@ public interface BackpackInventory extends Container {
       }
 
       static void readStackNbt(CompoundTag nbt, NonNullList<ItemStack> itemStacks) {
+            itemStacks.clear();
             ListTag nbtList = nbt.getList("Items", Tag.TAG_COMPOUND);
             for (int i = 0; i < nbtList.size(); ++i) {
                   CompoundTag nbtCompound = nbtList.getCompound(i);

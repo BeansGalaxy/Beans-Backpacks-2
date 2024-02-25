@@ -47,8 +47,9 @@ public class ServerPlayMixin {
             return actionResult;
       }
 
-      @Inject(method = "handlePickItem", at = @At("HEAD"), cancellable = true)
+
       public void pickFromBackpack(ServerboundPickItemPacket packet, CallbackInfo ci) {
+
             int slot = packet.getSlot();
             if (slot < 0) {
                   int backpackSlot = (slot + 100) * -1;

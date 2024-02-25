@@ -37,6 +37,11 @@ public class ServerSave extends SavedData {
                   return trim;
             }
 
+            public void setTrim(CompoundTag trim) {
+                  if (trim != null)
+                        this.trim = trim;
+            }
+
             public NonNullList<ItemStack> getItemStacks() {
                   if (itemStacks == null)
                         itemStacks = NonNullList.create();

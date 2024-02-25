@@ -13,6 +13,7 @@ import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
@@ -80,6 +81,7 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
 
             BackData backData = BackData.get(player);
             ItemStack backStack = backData.getStack();
+            Kind kind = Kind.fromStack(backStack);
             BackpackInventory backpackInventory = backData.backpackInventory;
             Slot slot = slots.get(slotIndex);
             ItemStack stack = slot.getItem();
@@ -95,17 +97,17 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                   if (selectedEquipment && !slot.hasItem() && !cursorStack.isEmpty())
                   {
                         if (player.level().isClientSide)
-                              Tooltip.playSound(Kind.fromStack(backStack), PlaySound.HIT);
+                              Tooltip.playSound(kind, PlaySound.HIT);
                         return;
                   }
                   if (actionType == ClickType.QUICK_MOVE && !selectedBackpackInventory) {
                         if (player.level().isClientSide())
-                              Tooltip.playSound(Kind.fromStack(backData.getStack()), PlaySound.HIT);
+                              Tooltip.playSound(kind, PlaySound.HIT);
                         return;
                   }
             }
 
-            if (selectedBackpackInventory && actionType == ClickType.THROW && cursorStack.isEmpty() && Kind.POT.is(backStack))
+            if (selectedBackpackInventory && actionType == ClickType.THROW && cursorStack.isEmpty() && Kind.POT.is(kind))
             {
                   ItemStack backpackStack = backpackInventory.getItem(0);
                   int maxStack = backpackStack.getMaxStackSize();
@@ -142,6 +144,8 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                         }
                   };
                   if (BackpackItem.interact(backStack, clickAction, player, slotAccess, actionType == ClickType.QUICK_MOVE)) {
+                        if (player instanceof ServerPlayer serverPlayer && Kind.ENDER.is(kind))
+                              Services.NETWORK.sendEnderData2C(serverPlayer, serverPlayer.getUUID());
                         return;
                   }
             }
@@ -152,23 +156,15 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                         return;
                   }
                   else if (Kind.isStorage(backStack)) {
-                        if (!player.level().isClientSide() || !Kind.ENDER.is(backStack))
+                        if (!player.level().isClientSide() || !Kind.ENDER.is(kind))
                               slot.set(backpackInventory.insertItem(stack, stack.getCount()));
+                        if (player instanceof ServerPlayer serverPlayer && Kind.ENDER.is(kind))
+                              Services.NETWORK.sendEnderData2C(serverPlayer, serverPlayer.getUUID());
                         return;
                   }
             }
 
 
             super.clicked(slotIndex, button, actionType, player);
-      }
-
-      @Unique
-      private boolean beans_Backpacks_2$potClick(int slotIndex, int button, ClickType actionType, ItemStack stack,
-                              BackpackInventory backpackInventory, Inventory playerInventory) {
-            ItemStack cursorStack = getCarried();
-            ItemStack backpackStack = backpackInventory.getItem(0);
-            int maxStack = backpackStack.getMaxStackSize();
-
-            return false;
       }
 }

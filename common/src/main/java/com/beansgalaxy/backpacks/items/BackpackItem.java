@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.items;
 
+import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
@@ -272,6 +273,7 @@ public class BackpackItem extends Item {
 
             ItemStack stack = traits.kind.getItem().getDefaultInstance();
             stack.getOrCreateTag().put("display", display);
+
             return stack;
       }
 }

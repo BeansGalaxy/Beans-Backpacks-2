@@ -3,12 +3,14 @@ package com.beansgalaxy.backpacks.core;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.access.BackAccessor;
+import com.beansgalaxy.backpacks.client.TrimHelper;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.entity.EnderEntity;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -76,14 +78,19 @@ public class BackData {
             return backStack.isEmpty();
       }
 
-      public void set(ItemStack backStack) {
-            Services.COMPAT.setBackSlotItem(this, backStack);
-            backSlot.set(backStack);
+      public void set(ItemStack stack) {
+            Services.COMPAT.setBackSlotItem(this, stack);
+            backSlot.set(stack);
       }
 
-      public void update(ItemStack backStack) {
-            this.backStack = backStack;
-            this.localData = Traits.LocalData.fromStack(backStack);
+      public void update(ItemStack stack) {
+            if (Kind.ENDER.is(stack)) {
+                  CompoundTag trim = ServerSave.getEnderData(owner.getUUID()).getTrim();
+                  if (!trim.isEmpty())
+                        stack.getOrCreateTag().put("Trim", trim);
+            }
+            this.backStack = stack;
+            this.localData = Traits.LocalData.fromStack(stack);
             this.setChanged();
       }
 

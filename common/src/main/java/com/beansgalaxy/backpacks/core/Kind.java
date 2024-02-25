@@ -61,7 +61,7 @@ public enum Kind {
       }
 
       public boolean isTrimmable() {
-            return this == Kind.METAL || this == Kind.UPGRADED;
+            return this == Kind.METAL || this == Kind.UPGRADED || this == Kind.ENDER;
       }
 
 

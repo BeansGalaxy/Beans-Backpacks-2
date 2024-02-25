@@ -31,6 +31,8 @@ public class DataResourcesMixin {
 
       @Inject(method = "loadResources", at = @At("HEAD"))
       private static void catchDataPacks(ResourceManager resourceManager, RegistryAccess.Frozen frozen, FeatureFlagSet flagSet, Commands.CommandSelection commandSelection, int $$4, Executor $$5, Executor $$6, CallbackInfoReturnable<CompletableFuture<ReloadableServerResources>> cir) {
+            Constants.LOG.info("Reading Data for " + MOD_ID);
+
             Constants.CHESTPLATE_DISABLED.clear();
             Constants.DISABLES_BACK_SLOT.clear();
             Constants.BLACKLIST_ITEMS.clear();

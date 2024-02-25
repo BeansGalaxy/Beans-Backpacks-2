@@ -1,8 +1,9 @@
 package com.beansgalaxy.backpacks.platform;
 
+import com.beansgalaxy.backpacks.FabricMain;
+import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
-import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.entity.BackpackMenu;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
@@ -14,6 +15,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -27,6 +29,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.UUID;
 
 public class FabricNetworkHelper implements NetworkHelper {
       @Override
@@ -105,5 +108,26 @@ public class FabricNetworkHelper implements NetworkHelper {
             if (blockHitResult != null)
                   buf.writeBlockHitResult(blockHitResult);
             ClientPlayNetworking.send(NetworkPackages.INSTANT_PLACE_2S, buf);
+      }
+
+      @Override
+      public void pickFromBackpack2S(int slot) {
+            FriendlyByteBuf buf = PacketByteBufs.create();
+            buf.writeInt(slot);
+            ClientPlayNetworking.send(NetworkPackages.PICK_BACKPACK_2S, buf);
+      }
+
+      @Override
+      public void sendEnderData2C(ServerPlayer player, UUID uuid) {
+            ServerSave.EnderData enderData = ServerSave.getEnderData(uuid);
+            FriendlyByteBuf buf = PacketByteBufs.create();
+            buf.writeUUID(uuid);
+            buf.writeNbt(enderData.getTrim());
+
+            CompoundTag tag = new CompoundTag();
+            BackpackInventory.writeNbt(tag, enderData.getItemStacks());
+            buf.writeNbt(tag);
+
+            ServerPlayNetworking.send(player, FabricMain.INITIAL_SYNC, buf);
       }
 }

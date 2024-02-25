@@ -2,10 +2,7 @@ package com.beansgalaxy.backpacks.network;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.network.client.*;
-import com.beansgalaxy.backpacks.network.packages.CallBackInventory2S;
-import com.beansgalaxy.backpacks.network.packages.CallBackSlot2S;
-import com.beansgalaxy.backpacks.network.packages.InstantPlace2S;
-import com.beansgalaxy.backpacks.network.packages.SprintKeyPacket2S;
+import com.beansgalaxy.backpacks.network.packages.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkRegistry;
@@ -30,7 +27,8 @@ public class NetworkPackages {
             CallBackSlot2S.register(index++);
             SyncBackInventory2C.register(index++);
             CallBackInventory2S.register(index++);
-            ConfigureKeys2C.register(index);
+            ConfigureKeys2C.register(index++);
+            PickBackpack2S.register(index);
       }
 
       public static void C2S(Object mgs) {

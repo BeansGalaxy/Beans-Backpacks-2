@@ -64,7 +64,7 @@ public class RecipeSmithing implements SmithingRecipe {
 
       @Override
       public ResourceLocation getId() {
-            return LOCATION;
+            return LOCATION.withSuffix("_" + key);
       }
 
       @Override
@@ -90,11 +90,7 @@ public class RecipeSmithing implements SmithingRecipe {
 
             @Override
             public void toNetwork(FriendlyByteBuf buf, RecipeSmithing var2) {
-                  buf.writeUtf(var2.getKey());
+                  buf.writeUtf(var2.key);
             }
-      }
-
-      private String getKey() {
-            return this.key;
       }
 }

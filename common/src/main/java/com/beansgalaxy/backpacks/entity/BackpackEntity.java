@@ -365,7 +365,7 @@ public class BackpackEntity extends Backpack {
             this.setDirection(Direction.from3DDataValue(tag.getByte("facing")));
             this.setDisplay(tag.getCompound("display"));
       }
-      
+
       @Override
       protected void addAdditionalSaveData(CompoundTag tag) {
             backpackInventory.writeNbt(tag);
@@ -399,7 +399,7 @@ public class BackpackEntity extends Backpack {
             if (!display.contains("placed_by"))
                   Constants.LOG.warn("No \"Placed By\" UUID provided from -> " + this);
             else
-                  this.entityData.set(PLACED_BY, Optional.of(display.getUUID("PlacedBy")));
+                  this.entityData.set(PLACED_BY, Optional.of(display.getUUID("placed_by")));
       }
 
       /** COLLISIONS AND INTERACTIONS **/

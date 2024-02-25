@@ -10,6 +10,5 @@ public class SyncDataEvent implements ServerLifecycleEvents.SyncDataPackContents
       public void onSyncDataPackContents(ServerPlayer player, boolean joined) {
             ConfigureKeys2C.S2C(player);
             Constants.LOG.info("Syncing {} data to \"{}\"", Constants.MOD_ID, player.getDisplayName().getString());
-
       }
 }
