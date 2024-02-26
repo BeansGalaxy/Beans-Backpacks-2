@@ -9,6 +9,7 @@ import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
+import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.items.WingedBackpack;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
@@ -46,7 +47,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class BackpackEntity extends Backpack {
-      public static final EntityDataAccessor<Optional<UUID>> PLACED_BY = SynchedEntityData.defineId(BackpackEntity.class, EntityDataSerializers.OPTIONAL_UUID);
       private final int damage;
       public Direction direction;
       protected BlockPos pos;
@@ -79,6 +79,11 @@ public class BackpackEntity extends Backpack {
             @Override
             public Traits.LocalData getLocalData() {
                   return BackpackEntity.this.getLocalData();
+            }
+
+            @Override
+            public UUID getPlacedBy() {
+                  return BackpackEntity.this.getPlacedBy();
             }
 
             @Override
@@ -136,7 +141,6 @@ public class BackpackEntity extends Backpack {
 
       @Override
       protected void defineSynchedData() {
-            this.entityData.define(PLACED_BY, Optional.empty());
             super.defineSynchedData();
       }
 
@@ -151,9 +155,15 @@ public class BackpackEntity extends Backpack {
             display.putString("key", key);
             stack.getOrCreateTag().put("display", display);
 
-            CompoundTag trim = backpack.getTrim();
-            if (!trim.isEmpty())
-                  stack.addTagElement("Trim", trim);
+
+            if (item instanceof EnderBackpack enderBackpack) {
+                  enderBackpack.getOrCreateUUID(backpack.getPlacedBy(), stack);
+            } else {
+                  CompoundTag trim = backpack.getTrim();
+                  if (!trim.isEmpty())
+                        stack.addTagElement("Trim", trim);
+            }
+
 
             int color = backpack.getColor();
             boolean hasDefaultColor =
@@ -191,11 +201,6 @@ public class BackpackEntity extends Backpack {
       @Override @NotNull
       public Direction getDirection() {
             return this.direction;
-      }
-
-      public UUID getPlacedBy() {
-            Optional<UUID> uuid = entityData.get(PLACED_BY);
-            return uuid.orElseGet(() -> this.uuid);
       }
 
       @Override

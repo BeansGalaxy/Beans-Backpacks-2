@@ -1,6 +1,5 @@
 package com.beansgalaxy.backpacks.items;
 
-import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
@@ -213,7 +212,7 @@ public class BackpackItem extends Item {
       }
 
       public static boolean doesPlace(Player player, int x, double y, int z, Direction direction, ItemStack backpackStack, boolean fromBackSlot) {
-            Traits.LocalData traits = Traits.LocalData.fromStack(backpackStack);
+            Traits.LocalData traits = Traits.LocalData.fromstack(backpackStack);
             if (traits == null || traits.key.isEmpty())
                   return false;
 
@@ -224,8 +223,8 @@ public class BackpackItem extends Item {
             float yaw = rotFromBlock(blockPos, player) + 90;
             Kind kind = traits.kind();
 
-            BackpackEntity backpackEntity = Kind.ENDER.is(kind) ?
-                        new EnderEntity(player, x, y, z, direction, traits, yaw) :
+            BackpackEntity backpackEntity = backpackStack.getItem() instanceof EnderBackpack enderBackpack ?
+                        new EnderEntity(player, x, y, z, direction, traits, yaw, enderBackpack.getOrCreateUUID(player.getUUID(), backpackStack)) :
                         new BackpackEntity(player, x, y, z, direction, traits, stacks, yaw);
 
             PlaySound.PLACE.at(backpackEntity, kind);

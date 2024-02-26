@@ -127,6 +127,8 @@ public class FabricNetworkHelper implements NetworkHelper {
             CompoundTag tag = new CompoundTag();
             BackpackInventory.writeNbt(tag, enderData.getItemStacks());
             buf.writeNbt(tag);
+            String string = Component.Serializer.toJson(enderData.getPlayerName());
+            buf.writeUtf(string);
 
             ServerPlayNetworking.send(player, FabricMain.INITIAL_SYNC, buf);
       }

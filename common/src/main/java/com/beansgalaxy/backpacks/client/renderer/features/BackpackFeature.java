@@ -72,7 +72,7 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
         backpackModel.renderToBuffer(pose, vc, light, OverlayTexture.NO_OVERLAY, tint.getRed() / 255F, tint.getGreen() / 255F, tint.getBlue() / 255F, 1F);
 
         RegistryAccess registryAccess = player.getCommandSenderWorld().registryAccess();
-        RendererHelper.renderOverlays(pose, light, mbs, tint, registryAccess, traits, backpackModel, this.trimAtlas);
+        RendererHelper.renderOverlays(pose, light, mbs, tint, registryAccess, traits, backData.getTrim(), backpackModel, this.trimAtlas);
         pose.popPose();
     }
 }

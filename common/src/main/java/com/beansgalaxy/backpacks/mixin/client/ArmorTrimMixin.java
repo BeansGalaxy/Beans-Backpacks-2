@@ -1,7 +1,6 @@
 package com.beansgalaxy.backpacks.mixin.client;
 
 import com.beansgalaxy.backpacks.core.Kind;
-import com.beansgalaxy.backpacks.items.Tooltip;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -18,7 +17,7 @@ public class ArmorTrimMixin {
 
       @Inject(method = "appendUpgradeHoverText", at = @At("HEAD"), cancellable = true)
       private static void syncEnderTrim(ItemStack itemStack, RegistryAccess registryAccess, List<Component> list, CallbackInfo ci) {
-            if (Kind.ENDER.is(itemStack) && Tooltip.overrideEnderTrim(itemStack, registryAccess, list)) {
+            if (Kind.ENDER.is(itemStack)) {
                   ci.cancel();
             }
 

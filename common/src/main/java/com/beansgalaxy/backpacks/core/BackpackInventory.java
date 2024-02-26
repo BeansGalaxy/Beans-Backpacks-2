@@ -31,6 +31,8 @@ public interface BackpackInventory extends Container {
 
       Traits.LocalData getLocalData();
 
+      UUID getPlacedBy();
+
       class Viewable {
             public float headPitch = 0;
             public byte viewers = 0;
@@ -208,7 +210,7 @@ public interface BackpackInventory extends Container {
                   this.getItemStacks().add(0, mergeItem(stack.copyWithCount(count)));
                   stack.setCount(stack.getCount() - count);
             }
-            if (isServerSide && Objects.equals(localData.key, "leather") && spaceLeft < 1)
+            if (isServerSide && Objects.equals(localData.key, "leather") && spaceLeft - count < 1)
                   triggerAdvancements(SpecialCriterion.Special.FILLED_LEATHER);
 
             return stack;

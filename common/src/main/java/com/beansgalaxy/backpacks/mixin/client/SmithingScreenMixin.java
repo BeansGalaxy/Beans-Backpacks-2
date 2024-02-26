@@ -8,6 +8,7 @@ import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.ItemCombinerScreen;
 import net.minecraft.client.gui.screens.inventory.SmithingScreen;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -18,6 +19,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.UUID;
 
 @Mixin(SmithingScreen.class)
 public abstract class SmithingScreenMixin extends ItemCombinerScreen<SmithingMenu> {
@@ -36,11 +39,25 @@ public abstract class SmithingScreenMixin extends ItemCombinerScreen<SmithingMen
       @Inject(method = "subInit", at = @At("TAIL"))
       protected void subInit(CallbackInfo ci) {
             this.backpackPreview = new Backpack(this.minecraft.level) {
+                  @Override
+                  public UUID getPlacedBy() {
+                        return SmithingScreenMixin.this.minecraft.player.getUUID();
+                  }
+
+                  @Override
+                  public CompoundTag getTrim() {
+                        ItemStack stack = smithingMenu.getSlot(3).getItem();
+                        CompoundTag tag = stack.getTag();
+                        if (tag == null || !tag.contains("Trim"))
+                              return new CompoundTag();
+
+                        return tag.getCompound("Trim");
+                  }
 
                   @Override
                   public Traits.LocalData getLocalData() {
                         ItemStack stack = smithingMenu.getSlot(3).getItem();
-                        return Traits.LocalData.fromStack(stack);
+                        return Traits.LocalData.fromstack(stack);
                   }
             };
       }

@@ -45,9 +45,8 @@ public interface RendererHelper {
                 "diamond", new ResourceLocation(Constants.MOD_ID, "textures/entity/overlay/diamond.png"),
                 "netherite", new ResourceLocation(Constants.MOD_ID, "textures/entity/overlay/netherite.png"));
 
-    static void renderOverlays(PoseStack pose, int light, MultiBufferSource mbs, Color tint, RegistryAccess registryAccess, Traits.LocalData data, BackpackModel model, TextureAtlas atlas) {
+    static void renderOverlays(PoseStack pose, int light, MultiBufferSource mbs, Color tint, RegistryAccess registryAccess, Traits.LocalData data, CompoundTag trim, BackpackModel model, TextureAtlas atlas) {
         Kind kind = data.kind();
-        CompoundTag trim = data.trim;
         if (kind.isTrimmable() && trim.get("material") != null && trim.get("pattern") != null)
             TrimHelper.getBackpackTrim(registryAccess, trim).ifPresent((trim1) ->
                         renderTrim(model, pose, light, mbs, atlas.getSprite(trim1.backpackTexture(getMaterial(data.key)))));

@@ -190,25 +190,4 @@ public class Tooltip {
             float pitch = playSound.isRandom() ? (rnd.nextFloat() / 4f) + 0.8f : 1f;
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(Services.REGISTRY.getSound(kind, playSound), pitch, volume));
       }
-
-      public static boolean overrideEnderTrim(ItemStack itemStack, RegistryAccess registryAccess, List<Component> list) {
-            LocalPlayer player = Minecraft.getInstance().player;
-            if (player == null)
-                  return false;
-
-            ServerSave.EnderData enderData = ServerSave.getEnderData(player.getUUID());
-            CompoundTag trim = enderData.getTrim();
-            if (!trim.isEmpty()) {
-                  ItemStack copy = itemStack.copy();
-                  copy.getOrCreateTag().put("Trim", trim);
-                  Optional<ArmorTrim> trim1 = ArmorTrim.getTrim(registryAccess, copy);
-                  if (trim1.isPresent()) {
-                        ArmorTrim $$4 = trim1.get();
-                        list.add(Component.translatable(Util.makeDescriptionId("item", new ResourceLocation("smithing_template.upgrade"))).withStyle(ChatFormatting.GRAY));
-                        list.add(CommonComponents.space().append(((TrimPattern)$$4.pattern().value()).copyWithStyle($$4.material())));
-                        list.add(CommonComponents.space().append(((TrimMaterial)$$4.material().value()).description()));
-                  }
-            }
-            return true;
-      }
 }

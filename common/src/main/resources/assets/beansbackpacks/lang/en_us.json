@@ -28,6 +28,8 @@
   "tooltip.beansbackpacks.help.pot6": "§7You cannot un-equip a",
   "tooltip.beansbackpacks.help.pot7": "§7pot while storing items.",
 
+  "tooltip.beansbackpacks.ender.binding": "§7Bound to: %d",
+
   "sounds.beansbackpacks.place": "Backpack Placed",
   "sounds.beansbackpacks.equip": "Backpack Equipped",
   "sounds.beansbackpacks.hit": "Hit Backpack",

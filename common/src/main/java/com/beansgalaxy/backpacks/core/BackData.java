@@ -3,9 +3,9 @@ package com.beansgalaxy.backpacks.core;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.access.BackAccessor;
-import com.beansgalaxy.backpacks.client.TrimHelper;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.entity.EnderEntity;
+import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -17,6 +17,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.UUID;
 
 public class BackData {
       public final Player owner;
@@ -41,13 +43,23 @@ public class BackData {
             private final NonNullList<ItemStack> itemStacks = NonNullList.create();
 
             @Override public NonNullList<ItemStack> getItemStacks() {
-                  if (BackData.this.getStack().is(Services.REGISTRY.getEnder()))
-                        return ServerSave.getEnderData(owner.getUUID()).getItemStacks();
+                  ItemStack backStack = BackData.this.getStack();
+                  if (backStack.getItem() instanceof EnderBackpack enderBackpack) {
+                        UUID uuid = enderBackpack.getOrCreateUUID(owner.getUUID(), backStack);
+                        return ServerSave.getEnderData(uuid).getItemStacks();
+                  }
                   return this.itemStacks;
             }
 
             @Override public Traits.LocalData getLocalData() {
                   return localData;
+            }
+
+            @Override
+            public UUID getPlacedBy() {
+                  if (backStack.getItem() instanceof EnderBackpack enderBackpack)
+                        return enderBackpack.getOrCreateUUID(owner.getUUID(), backStack);
+                  return owner.getUUID();
             }
       };
 
@@ -78,19 +90,24 @@ public class BackData {
             return backStack.isEmpty();
       }
 
+      public CompoundTag getTrim() {
+            if (backStack.getItem() instanceof EnderBackpack enderBackpack) {
+                  UUID uuid = enderBackpack.getOrCreateUUID(owner.getUUID(), backStack);
+                  return ServerSave.getEnderData(uuid).getTrim();
+            }
+            return localData.trim;
+      }
+
       public void set(ItemStack stack) {
             Services.COMPAT.setBackSlotItem(this, stack);
             backSlot.set(stack);
       }
 
       public void update(ItemStack stack) {
-            if (Kind.ENDER.is(stack)) {
-                  CompoundTag trim = ServerSave.getEnderData(owner.getUUID()).getTrim();
-                  if (!trim.isEmpty())
-                        stack.getOrCreateTag().put("Trim", trim);
-            }
+            if (stack.getItem() instanceof EnderBackpack enderBackpack)
+                  enderBackpack.getOrCreateUUID(owner.getUUID(), stack);
             this.backStack = stack;
-            this.localData = Traits.LocalData.fromStack(stack);
+            this.localData = Traits.LocalData.fromstack(stack);
             this.setChanged();
       }
 
@@ -150,8 +167,8 @@ public class BackData {
 
             Direction direction = Direction.UP;
 
-            BackpackEntity backpackEntity = Kind.ENDER.is(backStack) ?
-                        new EnderEntity(owner, x, y, z, direction, localData, yaw) :
+            BackpackEntity backpackEntity = backStack.getItem() instanceof EnderBackpack enderBackpack ?
+                        new EnderEntity(owner, x, y, z, direction, localData, yaw, enderBackpack.getOrCreateUUID(owner.getUUID(), backStack)) :
                         new BackpackEntity(owner, x, y, z, direction, localData, itemStacks, yaw);
 
             set(ItemStack.EMPTY);

@@ -29,6 +29,7 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.UUID;
@@ -64,7 +65,9 @@ public class FabricClient implements ClientModInitializer {
                   CompoundTag trim = buf.readNbt();
                   NonNullList<ItemStack> itemStacks = NonNullList.create();
                   BackpackInventory.readStackNbt(buf.readNbt(), itemStacks);
-                  ServerSave.MAPPED_ENDER_DATA.put(uuid, new ServerSave.EnderData(itemStacks, trim));
+                  String string = buf.readUtf();
+                  MutableComponent playerName = Component.Serializer.fromJson(string);
+                  ServerSave.MAPPED_ENDER_DATA.put(uuid, new ServerSave.EnderData(itemStacks, trim, playerName));
             });
       }
 }

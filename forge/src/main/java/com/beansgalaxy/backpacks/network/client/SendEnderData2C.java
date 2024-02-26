@@ -7,6 +7,8 @@ import com.beansgalaxy.backpacks.network.NetworkPackages;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
@@ -29,7 +31,9 @@ public class SendEnderData2C {
             this.uuid = buf.readUUID();
             NonNullList<ItemStack> stacks = NonNullList.create();
             BackpackInventory.readStackNbt(buf.readNbt(), stacks);
-            this.enderData = new ServerSave.EnderData(stacks, buf.readNbt());
+            CompoundTag trim = buf.readNbt();
+            MutableComponent playerName = Component.Serializer.fromJson(buf.readUtf());
+            this.enderData = new ServerSave.EnderData(stacks, trim, playerName);
       }
 
       public SendEnderData2C(UUID uuid, ServerSave.EnderData enderData) {
@@ -45,6 +49,7 @@ public class SendEnderData2C {
             buf.writeNbt(tag);
 
             buf.writeNbt(enderData.getTrim());
+            buf.writeUtf(enderData.getPlayerName().toString());
       }
 
       public void handle(Supplier<NetworkEvent.Context> context) {

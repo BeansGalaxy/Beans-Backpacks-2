@@ -25,6 +25,7 @@ public class Backpack extends Entity {
       public static final EntityDataAccessor<Integer> COLOR = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.INT);
       public static final EntityDataAccessor<CompoundTag> TRIM = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.COMPOUND_TAG);
       public static final EntityDataAccessor<Component> HOVER_NAME = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.COMPONENT);
+      public static final EntityDataAccessor<Optional<UUID>> PLACED_BY = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.OPTIONAL_UUID);
       public static final int DEFAULT_COLOR = 9062433;
 
       public final BackpackInventory.Viewable viewable = new BackpackInventory.Viewable();
@@ -68,6 +69,11 @@ public class Backpack extends Entity {
             return this.entityData.get(TRIM);
       }
 
+      public UUID getPlacedBy() {
+            Optional<UUID> uuid = entityData.get(PLACED_BY);
+            return uuid.orElseGet(() -> this.uuid);
+      }
+
       public int getDamage() {
             return 0;
       }
@@ -78,6 +84,7 @@ public class Backpack extends Entity {
             this.entityData.define(COLOR, DEFAULT_COLOR);
             this.entityData.define(TRIM, new CompoundTag());
             this.entityData.define(HOVER_NAME, Component.empty());
+            this.entityData.define(PLACED_BY, Optional.empty());
       }
 
       @Override

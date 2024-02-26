@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.client.renderer;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
@@ -22,6 +23,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
@@ -29,6 +31,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
 import java.awt.*;
+import java.util.UUID;
 
 import static com.beansgalaxy.backpacks.client.RendererHelper.renderOverlays;
 
@@ -88,7 +91,10 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
             VertexConsumer vc = mbs.getBuffer(this.model.renderType(texture));
             this.model.renderToBuffer(pose, vc, light, OverlayTexture.NO_OVERLAY, tint.getRed() / 255F, tint.getGreen() / 255F, tint.getBlue() / 255F, 1F);
             RegistryAccess registryAccess = bEntity.getCommandSenderWorld().registryAccess();
-            renderOverlays(pose, light, mbs, tint, registryAccess, traits, this.model, this.trimAtlas);
+
+            CompoundTag trim = bEntity.getTrim();
+
+            renderOverlays(pose, light, mbs, tint, registryAccess, traits, trim, this.model, this.trimAtlas);
             pose.popPose();
       }
 

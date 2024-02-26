@@ -28,6 +28,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -35,8 +36,6 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-
-import java.util.UUID;
 
 public class FabricMain implements ModInitializer {
     public static EquipAnyCriterion EQUIP_ANY = CriteriaTriggers.register(new EquipAnyCriterion());
@@ -67,6 +66,8 @@ public class FabricMain implements ModInitializer {
                 CompoundTag tag = new CompoundTag();
                 BackpackInventory.writeNbt(tag, enderData.getItemStacks());
                 buf.writeNbt(tag);
+                String string = Component.Serializer.toJson(enderData.getPlayerName());
+                buf.writeUtf(string);
 
                 server.execute(() -> ServerPlayNetworking.send(handler.getPlayer(), INITIAL_SYNC, buf));
             }));
@@ -79,7 +80,7 @@ public class FabricMain implements ModInitializer {
     public static final Item METAL_BACKPACK = registerItem("metal_backpack", new BackpackItem(new Item.Properties().stacksTo(1)));
     public static final Item UPGRADED_BACKPACK = registerItem("upgraded_backpack", new BackpackItem(new Item.Properties().fireResistant().stacksTo(1)));
     public static final Item WINGED_BACKPACK = registerItem("winged_backpack", new WingedBackpack(new Item.Properties().defaultDurability(432).rarity(Rarity.UNCOMMON)));
-    public static final Item ENDER_BACKPACK = registerItem("ender_backpack", new BackpackItem(new Item.Properties().stacksTo(1)));
+    public static final Item ENDER_BACKPACK = registerItem("ender_backpack", new EnderBackpack(new Item.Properties().stacksTo(1)));
 
     private static Item registerItem(String name, Item item)
     {

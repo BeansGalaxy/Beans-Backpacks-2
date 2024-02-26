@@ -11,16 +11,20 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
+import java.util.Optional;
+import java.util.UUID;
+
 public class EnderEntity extends BackpackEntity {
 
       public EnderEntity(EntityType<? extends Entity> type, Level level) {
             super(type, level);
       }
 
-      public EnderEntity(Player player, int x, double y, int z, Direction direction, Traits.LocalData traits, float yaw) {
+      public EnderEntity(Player player, int x, double y, int z, Direction direction, Traits.LocalData traits, float yaw, UUID uuid) {
             super(player);
             setupDisplay(player, x, y, z, direction, traits, yaw);
             itemStacks = ServerSave.getEnderData(getPlacedBy()).getItemStacks();
+            entityData.set(PLACED_BY, Optional.of(uuid));
       }
 
       @Override

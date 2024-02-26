@@ -5,7 +5,7 @@
       "nbt": "{display:{color:11546150,key:leather}}"
     },
     "title": "My New Duds",
-    "description": "Dye a Leather Backpack",
+    "description": "Equip a Dyed Backpack",
     "show_toast": true,
     "announce_to_chat": true
   },

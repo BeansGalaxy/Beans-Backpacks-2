@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.core;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.items.DyableBackpack;
+import com.beansgalaxy.backpacks.ServerSave;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -9,7 +9,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+
+import java.util.UUID;
 
 public class Traits {
       public static void register(String key, Traits traits) {
@@ -60,7 +61,7 @@ public class Traits {
       public Kind kind;
       public int maxStacks;
 
-      public Traits(Traits.Raw raw) {
+      public Traits(Raw raw) {
             this.template = Constants.itemFromString(raw.template);
             this.base = Constants.itemFromString(raw.base);
             this.material = Constants.itemFromString(raw.material);
@@ -106,6 +107,7 @@ public class Traits {
       public static class LocalData {
             public static final LocalData POT = new LocalData("pot");
             public static final LocalData EMPTY = new LocalData("");
+            public static final LocalData ENDER = new LocalData("ender");
 
             public String key;
             public int color = 0xFFFFFF;
@@ -123,18 +125,24 @@ public class Traits {
             }
 
             LocalData(String key) {
-                  this.key = key;}
+                  this.key = key;
+            }
 
             public boolean isPot() {
                   return key.equals("pot");
             }
 
-            public static LocalData fromStack(ItemStack stack) {
-                  if (stack.is(Items.DECORATED_POT))
+            public static LocalData fromstack(ItemStack stack) {
+                  Kind kind = Kind.fromStack(stack);
+                  if (Kind.POT.is(kind))
                         return POT;
+
+                  if (Kind.ENDER.is(kind))
+                        return ENDER;
 
                   if (!Kind.isBackpack(stack))
                         return EMPTY;
+
 
                   CompoundTag display = stack.getOrCreateTagElement("display");
 

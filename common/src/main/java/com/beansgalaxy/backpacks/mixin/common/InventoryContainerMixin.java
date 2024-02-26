@@ -49,7 +49,7 @@ public abstract class InventoryContainerMixin implements BackAccessor {
                   CompoundTag backItem = new CompoundTag();
                   backStack.save(backItem);
                   compoundTag.put("BackSlot", backItem);
-                  if (Kind.isStorage(backStack)) {
+                  if (Kind.isStorage(backStack) && !Kind.ENDER.is(backStack)) {
                         CompoundTag backTag1 = new CompoundTag();
                         BackpackInventory backpackInventory = backData.backpackInventory;
                         backpackInventory.writeNbt(backTag1);
@@ -67,7 +67,7 @@ public abstract class InventoryContainerMixin implements BackAccessor {
                   ItemStack itemStack = ItemStack.of(compoundTag.getCompound("BackSlot"));
                   if (!itemStack.isEmpty()) {
                         backData.set(itemStack);
-                        if (Kind.isStorage(itemStack))
+                        if (Kind.isStorage(itemStack) && !Kind.ENDER.is(backData.getStack()))
                               backData.backpackInventory.readStackNbt(compoundTag.getCompound("Contents"));
                   }
             }

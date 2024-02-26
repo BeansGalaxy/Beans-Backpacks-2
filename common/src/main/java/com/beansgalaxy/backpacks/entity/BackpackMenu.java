@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.entity;
 
+import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
@@ -7,6 +8,7 @@ import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
@@ -18,7 +20,9 @@ import net.minecraft.world.inventory.ContainerSynchronizer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.apache.logging.log4j.core.jmx.Server;
 
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public class BackpackMenu extends AbstractContainerMenu {
@@ -40,6 +44,20 @@ public class BackpackMenu extends AbstractContainerMenu {
             this.ownerYaw = owner.getVisualRotationYInDegrees();
             this.viewer = playerInventory.player;
             this.mirror = new Backpack(owner.level()) {
+                  @Override
+                  public UUID getPlacedBy() {
+                        return backpackInventory.getPlacedBy();
+                  }
+
+                  @Override
+                  public CompoundTag getTrim() {
+                        Traits.LocalData localData = getLocalData();
+                        if (Kind.ENDER.is(localData.kind()))
+                              return ServerSave.getEnderData(getPlacedBy()).getTrim();
+
+                        return localData.trim;
+                  }
+
                   @Override public BackpackInventory.Viewable getViewable() {
                         return backpackInventory.getViewable();
                   }

@@ -109,7 +109,6 @@ public class RecipeCrafting extends CustomRecipe {
       }
 
       public static NonNullList<Ingredient> getIngredients(String key) {
-
             Traits traits = Traits.get(key);
             Ingredient mat = Ingredient.of(traits.material);
             Ingredient bin = Ingredient.of(traits.binder);

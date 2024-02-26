@@ -12,19 +12,19 @@
     "common.InteractWithPlayer",
     "common.InventoryContainerMixin",
     "common.InventoryMenuMixin",
+    "common.ItemCombinerMixin",
     "common.ItemStackMixin",
-    "common.ServerPlayMixin",
-    "common.SmithingMenuMixin"
+    "common.ServerPlayMixin"
   ],
   "client": [
+    "client.ArmorTrimMixin",
     "client.DisableCape",
     "client.InventoryScreenMixin",
     "client.ItemRendererMixin",
     "client.KeyBindTooltip",
     "client.SmithingScreenMixin",
     "client.TrimsAtlasMixin",
-    "client.UpdateSprintKey",
-    "client.ArmorTrimMixin"
+    "client.UpdateSprintKey"
   ],
   "server": [
   ],

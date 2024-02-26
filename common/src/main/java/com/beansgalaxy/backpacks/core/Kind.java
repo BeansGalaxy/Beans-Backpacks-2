@@ -43,13 +43,13 @@ public enum Kind {
             if (stack.isEmpty())
                   return false;
 
-            if (stack.is(Items.DECORATED_POT))
+            if (stack.is(Items.DECORATED_POT) || stack.is(Services.REGISTRY.getEnder()))
                   return true;
 
             CompoundTag tag = stack.getTag();
             if (tag == null || !isBackpack(stack)) return false;
 
-            int maxStacks = Traits.LocalData.fromStack(stack).maxStacks();
+            int maxStacks = Traits.LocalData.fromstack(stack).maxStacks();
             return maxStacks > 0;
       }
 
