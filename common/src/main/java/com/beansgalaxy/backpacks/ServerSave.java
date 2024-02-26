@@ -10,6 +10,7 @@ import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -93,7 +94,7 @@ public class ServerSave extends SavedData {
 
                   EnderData enderData = new EnderData(itemStacks, trim, playerName);
                   UUID uuid = UUID.fromString(key);
-                  if (!enderData.itemStacks.isEmpty() && !enderData.trim.isEmpty())
+                  if (!enderData.itemStacks.isEmpty() || !enderData.trim.isEmpty())
                         MAPPED_ENDER_DATA.put(uuid, enderData);
             }
             MAPPED_ENDER_DATA.remove(null);
@@ -106,6 +107,16 @@ public class ServerSave extends SavedData {
             save.setDirty();
 
             return save;
+      }
+
+      public static EnderData getEnderData(UUID uuid, Level level) {
+            EnderData enderData = getEnderData(uuid);
+            Player player = level.getPlayerByUUID(uuid);
+            if (player != null) {
+                  MutableComponent copy = player.getName().copy();
+                  enderData.setPlayerName(copy);
+            }
+            return enderData;
       }
 
       public static EnderData getEnderData(UUID uuid) {

@@ -46,7 +46,7 @@ public class BackData {
                   ItemStack backStack = BackData.this.getStack();
                   if (backStack.getItem() instanceof EnderBackpack enderBackpack) {
                         UUID uuid = enderBackpack.getOrCreateUUID(owner.getUUID(), backStack);
-                        return ServerSave.getEnderData(uuid).getItemStacks();
+                        return ServerSave.getEnderData(uuid, owner.level()).getItemStacks();
                   }
                   return this.itemStacks;
             }
@@ -93,7 +93,7 @@ public class BackData {
       public CompoundTag getTrim() {
             if (backStack.getItem() instanceof EnderBackpack enderBackpack) {
                   UUID uuid = enderBackpack.getOrCreateUUID(owner.getUUID(), backStack);
-                  return ServerSave.getEnderData(uuid).getTrim();
+                  return ServerSave.getEnderData(uuid, owner.level()).getTrim();
             }
             return localData.trim;
       }

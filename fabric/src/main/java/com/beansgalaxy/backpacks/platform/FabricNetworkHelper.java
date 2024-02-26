@@ -119,7 +119,7 @@ public class FabricNetworkHelper implements NetworkHelper {
 
       @Override
       public void sendEnderData2C(ServerPlayer player, UUID uuid) {
-            ServerSave.EnderData enderData = ServerSave.getEnderData(uuid);
+            ServerSave.EnderData enderData = ServerSave.getEnderData(uuid, player.level());
             FriendlyByteBuf buf = PacketByteBufs.create();
             buf.writeUUID(uuid);
             buf.writeNbt(enderData.getTrim());

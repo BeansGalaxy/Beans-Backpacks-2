@@ -9,6 +9,7 @@ import net.minecraft.world.inventory.ItemCombinerMenu;
 import net.minecraft.world.inventory.SmithingMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -24,13 +25,21 @@ public class EnderBackpack extends BackpackItem {
             super.verifyTagAfterLoad(tag);
       }
 
-      public UUID getOrCreateUUID(UUID fallback, ItemStack stack) {
-            CompoundTag tag = stack.getOrCreateTagElement("display");
+      @Nullable
+      private static UUID getUuid(CompoundTag tag) {
             if (tag.contains("placed_by")) {
                   UUID uuid = tag.getUUID("placed_by");
                   if (ServerSave.MAPPED_ENDER_DATA.containsKey(uuid))
                         return uuid;
             }
+            return null;
+      }
+
+      public UUID getOrCreateUUID(UUID fallback, ItemStack stack) {
+            CompoundTag tag = stack.getOrCreateTagElement("display");
+            UUID uuid = getUuid(tag);
+            if (uuid != null)
+                  return uuid;
 
             tag.putUUID("placed_by", fallback);
             return fallback;
@@ -46,7 +55,7 @@ public class EnderBackpack extends BackpackItem {
             if (player instanceof ServerPlayer serverPlayer) {
                   UUID uuid = player.getUUID();
                   setUUID(uuid, stack);
-                  ServerSave.EnderData enderData = ServerSave.getEnderData(uuid);
+                  ServerSave.EnderData enderData = ServerSave.getEnderData(uuid, level);
                   enderData.setPlayerName(player.getName().copy());
                   CompoundTag tag = stack.getTag();
                   if (player.containerMenu instanceof ItemCombinerMenu && tag != null) {

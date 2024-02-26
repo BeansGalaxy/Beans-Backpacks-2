@@ -103,6 +103,6 @@ public class ForgeNetworkHelper implements NetworkHelper {
 
       @Override
       public void sendEnderData2C(ServerPlayer player, UUID uuid) {
-            NetworkPackages.S2C(new SendEnderData2C(uuid, ServerSave.getEnderData(uuid)), player);
+            NetworkPackages.S2C(new SendEnderData2C(uuid, ServerSave.getEnderData(uuid, player.level())), player);
       }
 }

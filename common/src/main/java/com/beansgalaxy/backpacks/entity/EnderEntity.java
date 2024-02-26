@@ -23,18 +23,18 @@ public class EnderEntity extends BackpackEntity {
       public EnderEntity(Player player, int x, double y, int z, Direction direction, Traits.LocalData traits, float yaw, UUID uuid) {
             super(player);
             setupDisplay(player, x, y, z, direction, traits, yaw);
-            itemStacks = ServerSave.getEnderData(getPlacedBy()).getItemStacks();
+            itemStacks = ServerSave.getEnderData(getPlacedBy(), level()).getItemStacks();
             entityData.set(PLACED_BY, Optional.of(uuid));
       }
 
       @Override
       public CompoundTag getTrim() {
-            return ServerSave.getEnderData(getPlacedBy()).getTrim();
+            return ServerSave.getEnderData(getPlacedBy(), level()).getTrim();
       }
 
       @Override
       protected NonNullList<ItemStack> getItemStacks() {
-            return ServerSave.getEnderData(getPlacedBy()).getItemStacks();
+            return ServerSave.getEnderData(getPlacedBy(), level()).getItemStacks();
       }
 
       @Override

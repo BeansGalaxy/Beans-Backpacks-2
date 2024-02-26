@@ -82,7 +82,7 @@ public abstract class ItemStackMixin {
 
             if (getItem() instanceof EnderBackpack enderBackpack) {
                   UUID uuid = enderBackpack.getOrCreateUUID(player.getUUID(), instance);
-                  ServerSave.EnderData enderData = ServerSave.getEnderData(uuid);
+                  ServerSave.EnderData enderData = ServerSave.getEnderData(uuid, player.level());
                   ItemStack copy = instance.copy();
                   copy.getOrCreateTag().put("Trim", enderData.getTrim());
 
