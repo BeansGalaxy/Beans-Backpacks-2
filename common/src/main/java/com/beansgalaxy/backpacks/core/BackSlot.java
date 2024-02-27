@@ -52,7 +52,7 @@ public class BackSlot extends Slot {
       }
 
       public static List<ResourceLocation> getTextures() {
-            if (Constants.CHESTPLATE_DISABLED.contains(Items.ELYTRA.asItem())
+            if (Constants.ELYTRA_ITEMS.contains(Items.ELYTRA.asItem())
                   && Minecraft.getInstance().getConnection().getAdvancements().getAdvancements()
                         .get(ResourceLocation.tryParse("end/root")) != null)
             {
