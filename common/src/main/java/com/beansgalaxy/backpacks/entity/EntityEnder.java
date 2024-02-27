@@ -8,12 +8,16 @@ import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.scores.PlayerTeam;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -80,5 +84,21 @@ public class EntityEnder extends EntityAbstract {
       @Override
       protected NonNullList<ItemStack> getItemStacks() {
             return ServerSave.getEnderData(getPlacedBy(), level()).getItemStacks();
+      }
+
+      @Override @NotNull
+      public Component getDisplayName() {
+            ServerSave.EnderData enderData = ServerSave.getEnderData(getPlacedBy());
+            return enderData.getPlayerName();
+      }
+
+      @Override
+      public boolean shouldShowName() {
+            return true;
+      }
+
+      @Override
+      public boolean hasCustomName() {
+            return true;
       }
 }

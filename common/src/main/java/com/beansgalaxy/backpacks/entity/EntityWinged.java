@@ -90,4 +90,9 @@ public class EntityWinged extends EntityAbstract {
       public int getDamage() {
             return damage;
       }
+
+      @Override
+      public boolean isCustomNameVisible() {
+            return hasCustomName();
+      }
 }

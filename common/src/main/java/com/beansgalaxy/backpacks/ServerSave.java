@@ -1,17 +1,17 @@
 package com.beansgalaxy.backpacks;
 
 import com.beansgalaxy.backpacks.core.BackpackInventory;
+import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentContents;
-import net.minecraft.network.chat.ComponentUtils;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
@@ -20,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
+
+import static net.minecraft.world.item.armortrim.ArmorTrim.getTrim;
 
 public class ServerSave extends SavedData {
 
@@ -57,16 +59,34 @@ public class ServerSave extends SavedData {
                   return itemStacks;
             }
 
-            public MutableComponent getPlayerName() {
-                  return playerName;
-            }
-
             public EnderData setPlayerName(MutableComponent name) {
                   if (!name.equals(ComponentContents.EMPTY)) {
                         playerName = name;
                   }
                   return this;
             }
+
+            public MutableComponent getPlayerName() {
+                  return playerName;
+            }
+
+            public MutableComponent getPlayerNameColored(RegistryAccess access) {
+                  Style style = Style.EMPTY;
+
+                  if (!trim.isEmpty())
+                  {
+                        ItemStack copy = Services.REGISTRY.getEnder().getDefaultInstance();
+                        copy.getOrCreateTag().put("Trim", trim);
+
+                        Optional<ArmorTrim> armorTrim = ArmorTrim.getTrim(access, copy);
+                        if (armorTrim.isPresent())
+                              style = armorTrim.get().material().value().description().getStyle();
+                  }
+
+                  return playerName.copy().withStyle(style);
+            }
+
+
       }
 
       @Override @NotNull

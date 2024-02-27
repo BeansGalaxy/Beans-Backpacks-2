@@ -5,10 +5,8 @@ import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.items.Tooltip;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
@@ -18,7 +16,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.armortrim.ArmorTrim;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -32,8 +30,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import static net.minecraft.world.item.armortrim.ArmorTrim.getTrim;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
@@ -72,21 +68,9 @@ public abstract class ItemStackMixin {
 
             if (getItem() instanceof EnderBackpack enderBackpack) {
                   UUID uuid = enderBackpack.getOrCreateUUID(player.getUUID(), instance);
-                  ServerSave.EnderData enderData = ServerSave.getEnderData(uuid, player.level());
-                  CompoundTag trim = enderData.getTrim();
-                  Style style = Style.EMPTY;
-
-                  if (!trim.isEmpty())
-                  {
-                        ItemStack copy = instance.copy();
-                        copy.getOrCreateTag().put("Trim", trim);
-
-                        Optional<ArmorTrim> armorTrim = getTrim(player.level().registryAccess(), copy);
-                        if (armorTrim.isPresent())
-                              style = armorTrim.get().material().value().description().getStyle();
-                  }
-
-                  MutableComponent playerName = enderData.getPlayerName().withStyle(style);
+                  Level level = player.level();
+                  ServerSave.EnderData enderData = ServerSave.getEnderData(uuid, level);
+                  MutableComponent playerName = enderData.getPlayerNameColored(level.registryAccess());
 
                   if (showHelpTooltip && actionKeyPressed) {
                         cir.setReturnValue(Tooltip.addLoreEnder(components, playerName));
@@ -111,7 +95,6 @@ public abstract class ItemStackMixin {
                   else if (isBackpack || isPot)
                         Tooltip.loreTitle(components);
             }
-
-
       }
+
 }

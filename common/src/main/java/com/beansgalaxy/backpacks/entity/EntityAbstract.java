@@ -37,6 +37,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.PlayerTeam;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -88,7 +89,9 @@ public abstract class EntityAbstract extends Backpack {
             backpack.entityData.set(KEY, traits.key);
             backpack.entityData.set(COLOR, traits.color);
             backpack.entityData.set(TRIM, traits.trim);
-            backpack.entityData.set(HOVER_NAME, traits.hoverName);
+
+            Component hoverName = backpackStack.hasCustomHoverName() ? backpackStack.getHoverName(): null;
+            backpack.setCustomName(hoverName);
 
             if (!direction.getAxis().isHorizontal())
                   backpack.setYRot(yaw);
@@ -122,7 +125,6 @@ public abstract class EntityAbstract extends Backpack {
             display.putString("key", key);
             stack.getOrCreateTag().put("display", display);
 
-
             if (item instanceof EnderBackpack enderBackpack) {
                   enderBackpack.getOrCreateUUID(backpack.getPlacedBy(), stack);
             } else {
@@ -139,10 +141,16 @@ public abstract class EntityAbstract extends Backpack {
             if (!hasDefaultColor && stack.getItem() instanceof DyableBackpack)
                   stack.getOrCreateTagElement("display").putInt("color", color);
 
-            if (localData.hoverName.toString().equals("empty"))
-                  stack.resetHoverName();
-            else
-                  stack.setHoverName(localData.hoverName);
+
+            Component customName = backpack.getCustomName();
+            if (customName != null)
+                  stack.setHoverName(customName);
+            else { // TODO: REMOVE "else" BEFORE RELEASE
+                  if (localData.hoverName.toString().equals("empty"))
+                        stack.resetHoverName();
+                  else
+                        stack.setHoverName(localData.hoverName);
+            }
 
             if (item instanceof WingedBackpack)
                   stack.setDamageValue(localData.damage);
@@ -153,6 +161,23 @@ public abstract class EntityAbstract extends Backpack {
       public abstract BackpackInventory getInventory();
 
       abstract NonNullList<ItemStack> getItemStacks();
+
+      @Override
+      public Component getName() {
+            return Component.translatableWithFallback("tooltip.beansbackpacks.name." + getKey(), getLocalData().name());
+      }
+
+      @Override
+      public Component getDisplayName() {
+            Component customName = this.getCustomName() == null ? getName() : getCustomName();
+            return PlayerTeam.formatNameForTeam(this.getTeam(), customName).withStyle(($$0) ->
+                        $$0.withHoverEvent(this.createHoverEvent()).withInsertion(this.getStringUUID()));
+      }
+
+      @Override
+      public float getNameTagOffsetY() {
+            return onGround() || direction.getAxis().isVertical() ? 13/16f : 3/16f;
+      }
 
       @Override
       protected float getEyeHeight(@NotNull Pose p_31784_, @NotNull EntityDimensions p_31785_) {
