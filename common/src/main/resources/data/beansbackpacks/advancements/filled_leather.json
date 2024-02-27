@@ -17,5 +17,11 @@
         "special": "FILLED_LEATHER"
       }
     }
+  },
+  "rewards": {
+    "recipes": [
+      "beansbackpacks:gold_backpack",
+      "beansbackpacks:iron_backpack"
+    ]
   }
 }

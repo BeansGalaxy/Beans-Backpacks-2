@@ -45,6 +45,7 @@ public class SpecialCriterion extends SimpleCriterionTrigger<SpecialCriterion.Co
             HOP,
             LAYERED,
             FILLED_LEATHER,
-            HOPPER
+            HOPPER,
+            ENDER_HOPPER
       }
 }

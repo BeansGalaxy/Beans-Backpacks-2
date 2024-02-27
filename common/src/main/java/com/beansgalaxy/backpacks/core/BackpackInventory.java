@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.core;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.entity.BackpackEntity;
+import com.beansgalaxy.backpacks.entity.EnderEntity;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.items.BackpackItem;
@@ -210,7 +211,7 @@ public interface BackpackInventory extends Container {
                   this.getItemStacks().add(0, mergeItem(stack.copyWithCount(count)));
                   stack.setCount(stack.getCount() - count);
             }
-            if (isServerSide && Objects.equals(localData.key, "leather") && spaceLeft - count < 1)
+            if (isServerSide && Objects.equals(localData.key, "leather") && spaceLeft - weight < 1)
                   triggerAdvancements(SpecialCriterion.Special.FILLED_LEATHER);
 
             return stack;
@@ -225,8 +226,11 @@ public interface BackpackInventory extends Container {
 
       private void triggerHopper() {
             if (getOwner() instanceof BackpackEntity backpackEntity) {
-                  if (backpackEntity.level().getPlayerByUUID(backpackEntity.getPlacedBy()) instanceof ServerPlayer serverPlayer)
+                  if (backpackEntity.level().getPlayerByUUID(backpackEntity.getPlacedBy()) instanceof ServerPlayer serverPlayer) {
                         Services.REGISTRY.triggerSpecial(serverPlayer, SpecialCriterion.Special.HOPPER);
+                        if (backpackEntity instanceof EnderEntity)
+                              Services.REGISTRY.triggerSpecial(serverPlayer, SpecialCriterion.Special.ENDER_HOPPER);
+                  }
             }
       }
 

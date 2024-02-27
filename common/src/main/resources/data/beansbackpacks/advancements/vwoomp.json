@@ -1,0 +1,21 @@
+{
+  "display": {
+    "icon": {
+      "item": "beansbackpacks:ender_backpack"
+    },
+    "title": "VWOOMP",
+    "description": "Use a Hopper on your Ender Backpack",
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "beansbackpacks:this_sucks",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:beansbackpacks/special",
+      "conditions": {
+        "special": "ENDER_HOPPER"
+      }
+    }
+  }
+}

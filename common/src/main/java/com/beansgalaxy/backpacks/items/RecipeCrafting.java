@@ -33,7 +33,7 @@ public class RecipeCrafting extends CustomRecipe {
 
       @Override
       public String getGroup() {
-            return Constants.MOD_ID + "_crafting";
+            return Constants.MOD_ID + "_crafting_" + Traits.get(key).kind.name().toLowerCase();
       }
 
       @Override

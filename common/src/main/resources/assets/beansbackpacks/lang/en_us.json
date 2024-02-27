@@ -8,6 +8,8 @@
   "tooltip.beansbackpacks.name.iron": "Iron Backpack",
   "tooltip.beansbackpacks.name.gold": "Gold Backpack",
   "tooltip.beansbackpacks.name.netherite": "Netherite Backpack",
+  "tooltip.beansbackpacks.name.winged": "Winged Backpack",
+  "tooltip.beansbackpacks.name.ender": "Ender Backpack",
 
   "tooltip.beansbackpacks.empty_title_1": "%d §7for backpack info.",
   "tooltip.beansbackpacks.empty_title_2": "",
