@@ -18,6 +18,17 @@ the issues tab. </p>
 
 <h1 align="center"> Changelog </h1>
 
+<h3> 20.1-0.14-v2 & 20.2-0.16-v2 <img align="right" src="assets/images/new_backpacks.png" alt="Back Slot" style="margin:10px;width:600px"> </h3>
+
+- Added Winged Backpacks
+- Added Ender Backpacks
+- Added `elytra_items` in Data-Pack's `modify` folder *([more info](https://github.com/BeansGalaxy/Beans-Backpacks-2/wiki/Configurations))*
+- Renamed *New Duds* Advancement description to *Equip a Dyed Backpack*
+- Many changes to Backpack Entities and Inventories
+
+### 20.1-0.13-v2 & 20.2-0.15-v2
+- Fixed Backpacks disappearing on Death
+
 ### 20.1-0.12-v2 & 20.2-0.15-v2
 - Added Decorated Pot to Creative Tab
 - Added Translation options for Backpack items

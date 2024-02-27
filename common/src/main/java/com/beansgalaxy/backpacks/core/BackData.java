@@ -176,6 +176,8 @@ public class BackData {
 
       public void copyTo(BackData newBackData) {
             newBackData.set(this.backStack);
+            if (getStack().getItem() instanceof EnderBackpack)
+                  return;
 
             NonNullList<ItemStack> stacks = this.backpackInventory.getItemStacks();
             newBackData.backpackInventory.getItemStacks().addAll(stacks);
