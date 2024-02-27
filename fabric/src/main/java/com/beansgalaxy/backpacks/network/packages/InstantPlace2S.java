@@ -1,6 +1,6 @@
 package com.beansgalaxy.backpacks.network.packages;
 
-import com.beansgalaxy.backpacks.entity.BackpackEntity;
+import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.network.FriendlyByteBuf;
@@ -18,7 +18,7 @@ public class InstantPlace2S {
                   BlockHitResult blockHitResult = buf.readBlockHitResult();
                   BackpackItem.hotkeyOnBlock(serverPlayer, blockHitResult.getDirection(), blockHitResult.getBlockPos());
             }
-            else if (serverPlayer.level().getEntity(entityId) instanceof BackpackEntity backpack)
+            else if (serverPlayer.level().getEntity(entityId) instanceof EntityAbstract backpack)
             {
                   backpack.interact(serverPlayer);
             }

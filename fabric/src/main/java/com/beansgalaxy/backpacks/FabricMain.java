@@ -1,9 +1,7 @@
 package com.beansgalaxy.backpacks;
 
 import com.beansgalaxy.backpacks.core.BackpackInventory;
-import com.beansgalaxy.backpacks.entity.BackpackEntity;
-import com.beansgalaxy.backpacks.entity.BackpackMenu;
-import com.beansgalaxy.backpacks.entity.EnderEntity;
+import com.beansgalaxy.backpacks.entity.*;
 import com.beansgalaxy.backpacks.events.*;
 import com.beansgalaxy.backpacks.events.advancements.EquipAnyCriterion;
 import com.beansgalaxy.backpacks.events.advancements.PlaceCriterion;
@@ -28,7 +26,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -111,12 +108,17 @@ public class FabricMain implements ModInitializer {
     public static final EntityType<Entity> BACKPACK_ENTITY =
                 Registry.register(BuiltInRegistries.ENTITY_TYPE,
                 new ResourceLocation(Constants.MOD_ID, "backpack"),
-                FabricEntityTypeBuilder.create(MobCategory.MISC, BackpackEntity::new).build());
+                FabricEntityTypeBuilder.create(MobCategory.MISC, EntityGeneral::new).build());
 
     public static final EntityType<Entity> ENDER_ENTITY =
                 Registry.register(BuiltInRegistries.ENTITY_TYPE,
                 new ResourceLocation(Constants.MOD_ID, "ender_backpack"),
-                FabricEntityTypeBuilder.create(MobCategory.MISC, EnderEntity::new).build());
+                FabricEntityTypeBuilder.create(MobCategory.MISC, EntityEnder::new).build());
+
+    public static final EntityType<Entity> WINGED_ENTITY =
+                Registry.register(BuiltInRegistries.ENTITY_TYPE,
+                            new ResourceLocation(Constants.MOD_ID, "winged_backpack"),
+                            FabricEntityTypeBuilder.create(MobCategory.MISC, EntityWinged::new).build());
 
     public static final MenuType<BackpackMenu> BACKPACK_MENU =
                 Registry.register(BuiltInRegistries.MENU,

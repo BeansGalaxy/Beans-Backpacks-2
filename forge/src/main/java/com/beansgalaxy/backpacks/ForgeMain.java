@@ -1,9 +1,10 @@
 package com.beansgalaxy.backpacks;
 
 import com.beansgalaxy.backpacks.compat.CurioRegistry;
-import com.beansgalaxy.backpacks.entity.BackpackEntity;
 import com.beansgalaxy.backpacks.entity.BackpackMenu;
-import com.beansgalaxy.backpacks.entity.EnderEntity;
+import com.beansgalaxy.backpacks.entity.EntityEnder;
+import com.beansgalaxy.backpacks.entity.EntityGeneral;
+import com.beansgalaxy.backpacks.entity.EntityWinged;
 import com.beansgalaxy.backpacks.events.advancements.EquipAnyCriterion;
 import com.beansgalaxy.backpacks.events.advancements.PlaceCriterion;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
@@ -61,11 +62,14 @@ public class ForgeMain {
     public static final DeferredRegister<EntityType<?>> ENTITIES =
                 DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, Constants.MOD_ID);
 
-    public static final RegistryObject<EntityType<BackpackEntity>> ENTITY = ENTITIES.register("backpack",
-                () -> EntityType.Builder.<BackpackEntity>of(BackpackEntity::new, MobCategory.MISC).build(new ResourceLocation(Constants.MOD_ID, "backpack").toString()));
+    public static final RegistryObject<EntityType<EntityGeneral>> ENTITY_GENERAL = ENTITIES.register("backpack",
+                () -> EntityType.Builder.<EntityGeneral>of(EntityGeneral::new, MobCategory.MISC).build(new ResourceLocation(Constants.MOD_ID, "backpack").toString()));
 
-    public static final RegistryObject<EntityType<EnderEntity>> ENDER_ENTITY = ENTITIES.register("ender_backpack",
-                () -> EntityType.Builder.<EnderEntity>of(EnderEntity::new, MobCategory.MISC).build(new ResourceLocation(Constants.MOD_ID, "ender_backpack").toString()));
+    public static final RegistryObject<EntityType<EntityEnder>> ENTITY_ENDER = ENTITIES.register("ender_backpack",
+                () -> EntityType.Builder.<EntityEnder>of(EntityEnder::new, MobCategory.MISC).build(new ResourceLocation(Constants.MOD_ID, "ender_backpack").toString()));
+
+    public static final RegistryObject<EntityType<EntityWinged>> ENTITY_WINGED = ENTITIES.register("winged_backpack",
+                () -> EntityType.Builder.<EntityWinged>of(EntityWinged::new, MobCategory.MISC).build(new ResourceLocation(Constants.MOD_ID, "winged_backpack").toString()));
 
     // REGISTER RECIPES
     public static final DeferredRegister<RecipeSerializer<?>> RECIPES =

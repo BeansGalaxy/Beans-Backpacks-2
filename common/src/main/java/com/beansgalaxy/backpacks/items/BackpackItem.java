@@ -4,9 +4,10 @@ import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.Traits;
-import com.beansgalaxy.backpacks.entity.BackpackEntity;
+import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.entity.BackpackMenu;
-import com.beansgalaxy.backpacks.entity.EnderEntity;
+import com.beansgalaxy.backpacks.entity.EntityEnder;
+import com.beansgalaxy.backpacks.entity.EntityGeneral;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
@@ -172,7 +173,7 @@ public class BackpackItem extends Item {
                   blockPos =  clickedPos.relative(direction);
 
             int y = blockPos.getY();
-            AABB box = BackpackEntity.newBox(blockPos, y, 9 / 16d, direction);
+            AABB box = EntityAbstract.newBox(blockPos, y, 9 / 16d, direction);
             double yOffset = (direction.getAxis().isHorizontal() ? 2 : 1) / 16d;
 
             if (isVertical) {
@@ -192,16 +193,16 @@ public class BackpackItem extends Item {
             return spaceEmpty && doesPlace(player, blockPos.getX(), y + yOffset, blockPos.getZ(), direction, backpackStack, fromBackSlot);
       }
 
-      public static InteractionResult useOnBackpack(Player player, BackpackEntity backpackEntity, ItemStack backpackStack, boolean fromBackSlot) {
-            Vec3 pos = backpackEntity.position();
-            Direction direction = backpackEntity.direction;
+      public static InteractionResult useOnBackpack(Player player, EntityAbstract entityAbstract, ItemStack backpackStack, boolean fromBackSlot) {
+            Vec3 pos = entityAbstract.position();
+            Direction direction = entityAbstract.direction;
 
             int invert = player.isCrouching() ? -1 : 1;
             int x = Mth.floor(pos.x);
             double y = pos.y + ((direction.getAxis().isHorizontal() ? 11 : 10) / 16d) * invert;
             int z = Mth.floor(pos.z);
 
-            AABB box = backpackEntity.getBoundingBox().move(0, 10d / 16 * invert, 0);
+            AABB box = entityAbstract.getBoundingBox().move(0, 10d / 16 * invert, 0);
             boolean spaceEmpty = player.level().noCollision(box);
             if (spaceEmpty && doesPlace(player, x, y, z, direction, backpackStack, fromBackSlot)) {
                   BackData.get(player).setChanged();
@@ -221,18 +222,11 @@ public class BackpackItem extends Item {
 
             BlockPos blockPos = BlockPos.containing(x, y, z);
             float yaw = rotFromBlock(blockPos, player) + 90;
-            Kind kind = traits.kind();
 
-            BackpackEntity backpackEntity = backpackStack.getItem() instanceof EnderBackpack enderBackpack ?
-                        new EnderEntity(player, x, y, z, direction, traits, yaw, enderBackpack.getOrCreateUUID(player.getUUID(), backpackStack)) :
-                        new BackpackEntity(player, x, y, z, direction, traits, stacks, yaw);
+            EntityAbstract entityAbstract =
+                        EntityAbstract.create(backpackStack, x, y, z, yaw, direction, player, stacks);
 
-            PlaySound.PLACE.at(backpackEntity, kind);
-            if (player instanceof ServerPlayer serverPlayer)
-                  Services.REGISTRY.triggerPlace(serverPlayer, traits.key);
-
-            backpackStack.shrink(1);
-            return true;
+            return entityAbstract != null;
       }
 
       private static float rotFromBlock(BlockPos blockPos, Player player) {

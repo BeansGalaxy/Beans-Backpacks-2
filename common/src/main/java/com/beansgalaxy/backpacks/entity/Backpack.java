@@ -4,17 +4,13 @@ import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.platform.Services;
-import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import java.util.Optional;
@@ -31,8 +27,7 @@ public class Backpack extends Entity {
       public final BackpackInventory.Viewable viewable = new BackpackInventory.Viewable();
 
       public Backpack(Level $$1) {
-            super(Services.REGISTRY.getEntity(), $$1);
-            this.blocksBuilding = true;
+            super(Services.REGISTRY.getGeneralEntity(), $$1);
       }
 
       public Backpack(EntityType<? extends Entity> type, Level level) {
@@ -40,7 +35,7 @@ public class Backpack extends Entity {
       }
 
       public Traits.LocalData getLocalData() {
-            return new Traits.LocalData(getKey(), getColor(), getTrim(), entityData.get(HOVER_NAME), getDamage());
+            return new Traits.LocalData(getKey(), getColor(), getTrim(), getCustomName(), getDamage());
       }
 
       public BackpackInventory.Viewable getViewable() {
@@ -48,7 +43,7 @@ public class Backpack extends Entity {
       }
 
       public boolean isMirror() {
-            boolean notMirror = this instanceof BackpackEntity;
+            boolean notMirror = this instanceof EntityAbstract;
             return !notMirror;
       }
 

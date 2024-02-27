@@ -1,6 +1,6 @@
 package com.beansgalaxy.backpacks.events;
 
-import com.beansgalaxy.backpacks.entity.BackpackEntity;
+import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.client.KeyMapping;
@@ -32,11 +32,11 @@ public final class KeyPress {
             if (hitResult == null || hitResult.getType() == HitResult.Type.MISS)
                   return;
 
-            if (hitResult instanceof EntityHitResult entityHitResult && entityHitResult.getEntity() instanceof BackpackEntity backpackEntity)
+            if (hitResult instanceof EntityHitResult entityHitResult && entityHitResult.getEntity() instanceof EntityAbstract entityAbstract)
             {
-                  InteractionResult interact = backpackEntity.interact(localPlayer);
+                  InteractionResult interact = entityAbstract.interact(localPlayer);
                   if (interact.consumesAction())
-                        Services.NETWORK.instantPlace(backpackEntity.getId(), null);
+                        Services.NETWORK.instantPlace(entityAbstract.getId(), null);
             }
 
             if (hitResult instanceof BlockHitResult blockHitResult)

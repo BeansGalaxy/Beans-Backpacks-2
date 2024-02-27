@@ -4,7 +4,7 @@ import com.beansgalaxy.backpacks.FabricMain;
 import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
-import com.beansgalaxy.backpacks.entity.BackpackEntity;
+import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.entity.BackpackMenu;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.network.packages.SprintKeyPacket2S;
@@ -52,7 +52,7 @@ public class FabricNetworkHelper implements NetworkHelper {
       }
 
       @Override
-      public void openBackpackMenu(Player viewer, BackpackEntity owner) {
+      public void openBackpackMenu(Player viewer, EntityAbstract owner) {
                   viewer.openMenu(owner.getInventory().getMenuProvider());
       }
 

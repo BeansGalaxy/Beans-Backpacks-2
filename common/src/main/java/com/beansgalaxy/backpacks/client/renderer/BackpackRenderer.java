@@ -1,13 +1,12 @@
 package com.beansgalaxy.backpacks.client.renderer;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.entity.Backpack;
-import com.beansgalaxy.backpacks.entity.BackpackEntity;
+import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.items.WingedBackpack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -31,7 +30,6 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
 import java.awt.*;
-import java.util.UUID;
 
 import static com.beansgalaxy.backpacks.client.RendererHelper.renderOverlays;
 
@@ -47,7 +45,7 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
       }
 
       private float renderWobble(Entity entity, float yaw) {
-            if (entity instanceof BackpackEntity backpack) {
+            if (entity instanceof EntityAbstract backpack) {
                   double breakTime = backpack.wobble;
                   return (float) (breakTime * Math.sin(breakTime / Math.PI * 4));
             }

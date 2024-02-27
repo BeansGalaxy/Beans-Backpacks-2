@@ -3,7 +3,7 @@ package com.beansgalaxy.backpacks.platform;
 import com.beansgalaxy.backpacks.ForgeMain;
 import com.beansgalaxy.backpacks.Sounds;
 import com.beansgalaxy.backpacks.core.Kind;
-import com.beansgalaxy.backpacks.entity.BackpackEntity;
+import com.beansgalaxy.backpacks.entity.EntityGeneral;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.platform.services.RegistryHelper;
@@ -42,13 +42,18 @@ public class ForgeRegistryHelper implements RegistryHelper {
       }
 
       @Override
-      public EntityType<BackpackEntity> getEntity() {
-            return ForgeMain.ENTITY.get();
+      public EntityType<EntityGeneral> getGeneralEntity() {
+            return ForgeMain.ENTITY_GENERAL.get();
       }
 
       @Override
       public EntityType<? extends Entity> getEnderEntity() {
-            return ForgeMain.ENDER_ENTITY.get();
+            return ForgeMain.ENTITY_ENDER.get();
+      }
+
+      @Override
+      public EntityType<? extends Entity> getWingedEntity() {
+            return ForgeMain.ENTITY_WINGED.get();
       }
 
       @Override

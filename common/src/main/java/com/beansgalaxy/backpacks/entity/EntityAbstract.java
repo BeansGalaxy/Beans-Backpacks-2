@@ -21,9 +21,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
@@ -46,97 +43,67 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class BackpackEntity extends Backpack {
-      private final int damage;
+public abstract class EntityAbstract extends Backpack {
       public Direction direction;
-      protected BlockPos pos;
-      public double actualY;
+      private BlockPos pos;
+      private double actualY;
       private static final int BREAK_TIMER = 25;
       public int wobble = 9;
-      public final BackpackInventory backpackInventory = new BackpackInventory() {
-
-            public Entity getOwner() {
-                  return BackpackEntity.this;
-            }
-
-            NonNullList<ServerPlayer> playersViewing = NonNullList.create();
-
-            @Override
-            public Viewable getViewable() {
-                  return viewable;
-            }
-
-            @Override
-            public NonNullList<ServerPlayer> getPlayersViewing() {
-                  return playersViewing;
-            }
-
-            @Override
-            public NonNullList<ItemStack> getItemStacks() {
-                  return BackpackEntity.this.getItemStacks();
-            }
-
-            @Override
-            public Traits.LocalData getLocalData() {
-                  return BackpackEntity.this.getLocalData();
-            }
-
-            @Override
-            public UUID getPlacedBy() {
-                  return BackpackEntity.this.getPlacedBy();
-            }
-
-            @Override
-            public void setChanged() {
-                  BackpackInventory.super.setChanged();
-                  BackpackEntity.this.setChanged();
-            }
-      };
 
       // REGISTER BACKPACK CONSTRUCTOR
-      public BackpackEntity(EntityType<? extends Entity> type, Level level) {
+      public EntityAbstract(EntityType<? extends Entity> type, Level level) {
             super(type, level);
-            damage = 0;
-      }
-
-      // DEFAULT BACKPACK CONSTRUCTOR
-      public BackpackEntity(Player player, int x, double y, int z, Direction direction, Traits.LocalData traits, NonNullList<ItemStack> stacks, float yaw) {
-            super(player.level());
-            this.damage = traits.damage;
-            setupDisplay(player, x, y, z, direction, traits, yaw);
-
-            if (stacks != null && !stacks.isEmpty()) {
-                  itemStacks.addAll(stacks);
-                  stacks.clear();
-            }
-      }
-
-      // ENDER BACKPACK CONSTRUCTOR
-      public BackpackEntity(Player player) {
-            super(Services.REGISTRY.getEnderEntity(), player.level());
             this.blocksBuilding = true;
-            this.damage = 0;
       }
 
-      void setupDisplay(Player player, int x, double y, int z, Direction direction, Traits.LocalData traits, float yaw) {
+      public EntityAbstract(EntityType<? extends Entity> type, Level level, int x, double y, int z) {
+            super(type, level);
+            this.blocksBuilding = true;
             this.actualY = y;
             this.pos = BlockPos.containing(x, y, z);
-            this.setDirection(direction);
+      }
 
-            this.entityData.set(KEY, traits.key);
-            this.entityData.set(COLOR, traits.color);
-            this.entityData.set(TRIM, traits.trim);
-            this.entityData.set(HOVER_NAME, traits.hoverName);
-            this.entityData.set(PLACED_BY, Optional.of(player.getUUID()));
+      public static EntityAbstract create(ItemStack backpackStack, int x, double y, int z, float yaw,
+                                          Direction direction, Player player, NonNullList<ItemStack> stacks)
+      {
+            Traits.LocalData traits = Traits.LocalData.fromstack(backpackStack);
+            if (traits == null || traits.key.isEmpty() || traits.isPot())
+                  return null;
+
+            EntityAbstract backpack;
+            if (backpackStack.getItem() instanceof EnderBackpack ender) {
+                  UUID uuid = ender.getOrCreateUUID(player.getUUID(), backpackStack);
+                  backpack = new EntityEnder(player, uuid);
+            }
+            else if (backpackStack.getItem() instanceof WingedBackpack winged) {
+                  int damage = backpackStack.getDamageValue();
+                  backpack = new EntityWinged(player, stacks, damage);
+            }
+            else backpack = new EntityGeneral(player, stacks);
+
+            backpack.actualY = y;
+            backpack.pos = BlockPos.containing(x, y, z);
+
+            backpack.setDirection(direction);
+            backpack.entityData.set(KEY, traits.key);
+            backpack.entityData.set(COLOR, traits.color);
+            backpack.entityData.set(TRIM, traits.trim);
+            backpack.entityData.set(HOVER_NAME, traits.hoverName);
 
             if (!direction.getAxis().isHorizontal())
-                  this.setYRot(yaw);
+                  backpack.setYRot(yaw);
 
-            Level world = player.level();
-            if (!world.isClientSide()) {
-                  world.gameEvent(player, GameEvent.ENTITY_PLACE, this.position());
-                  world.addFreshEntity(this);
+            PlaySound.PLACE.at(backpack, traits.kind());
+            if (player instanceof ServerPlayer serverPlayer) {
+                  Services.REGISTRY.triggerPlace(serverPlayer, traits.key);
+
+                  Level level = serverPlayer.level();
+                  level.gameEvent(player, GameEvent.ENTITY_PLACE, backpack.position());
+                  level.addFreshEntity(backpack);
             }
+
+            backpackStack.shrink(1);
+            return backpack;
       }
 
       @Override
@@ -144,7 +111,7 @@ public class BackpackEntity extends Backpack {
             super.defineSynchedData();
       }
 
-      public static ItemStack toStack(BackpackEntity backpack) {
+      public static ItemStack toStack(EntityAbstract backpack) {
             Traits.LocalData localData = backpack.getLocalData();
             Kind kind = localData.kind();
             Item item = kind.getItem();
@@ -164,7 +131,6 @@ public class BackpackEntity extends Backpack {
                         stack.addTagElement("Trim", trim);
             }
 
-
             int color = backpack.getColor();
             boolean hasDefaultColor =
                     (Kind.LEATHER.is(kind) && color == DEFAULT_COLOR) ||
@@ -178,20 +144,15 @@ public class BackpackEntity extends Backpack {
             else
                   stack.setHoverName(localData.hoverName);
 
-            stack.setDamageValue(localData.damage);
+            if (item instanceof WingedBackpack)
+                  stack.setDamageValue(localData.damage);
 
             return stack;
       }
 
-      public BackpackInventory getInventory() {
-            return backpackInventory;
-      }
+      public abstract BackpackInventory getInventory();
 
-      protected NonNullList<ItemStack> itemStacks = NonNullList.create();
-
-      protected NonNullList<ItemStack> getItemStacks() {
-            return this.itemStacks;
-      }
+      abstract NonNullList<ItemStack> getItemStacks();
 
       @Override
       protected float getEyeHeight(@NotNull Pose p_31784_, @NotNull EntityDimensions p_31785_) {
@@ -201,14 +162,6 @@ public class BackpackEntity extends Backpack {
       @Override @NotNull
       public Direction getDirection() {
             return this.direction;
-      }
-
-      @Override
-      public int getDamage() {
-            return damage;
-      }
-
-      public void setChanged() {
       }
 
       protected void setDirection(Direction direction) {
@@ -366,14 +319,14 @@ public class BackpackEntity extends Backpack {
       // NBT
       @Override
       protected void readAdditionalSaveData(CompoundTag tag) {
-            backpackInventory.readStackNbt(tag);
+            getInventory().readStackNbt(tag);
             this.setDirection(Direction.from3DDataValue(tag.getByte("facing")));
             this.setDisplay(tag.getCompound("display"));
       }
 
       @Override
       protected void addAdditionalSaveData(CompoundTag tag) {
-            backpackInventory.writeNbt(tag);
+            getInventory().writeNbt(tag);
             tag.putByte("facing", (byte)this.direction.get3DDataValue());
             tag.put("display", getDisplay());
       }

@@ -3,7 +3,7 @@ package com.beansgalaxy.backpacks.platform;
 import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
-import com.beansgalaxy.backpacks.entity.BackpackEntity;
+import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.entity.BackpackMenu;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.network.client.SendEnderData2C;
@@ -41,7 +41,7 @@ public class ForgeNetworkHelper implements NetworkHelper {
       }
 
       @Override
-      public void openBackpackMenu(Player viewer, BackpackEntity owner) {
+      public void openBackpackMenu(Player viewer, EntityAbstract owner) {
             if (viewer instanceof ServerPlayer serverPlayer) {
                   NetworkHooks.openScreen(serverPlayer, owner.getInventory().getMenuProvider(), buf -> buf.writeInt(owner.getId()));
             }

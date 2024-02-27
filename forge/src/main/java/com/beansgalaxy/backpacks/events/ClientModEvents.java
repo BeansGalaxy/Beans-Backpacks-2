@@ -1,14 +1,10 @@
 package com.beansgalaxy.backpacks.events;
 
-import com.beansgalaxy.backpacks.CommonClass;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.ForgeMain;
-import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.client.renderer.*;
 import com.beansgalaxy.backpacks.client.renderer.features.BackFeature;
-import com.beansgalaxy.backpacks.client.renderer.features.BackpackFeature;
-import com.beansgalaxy.backpacks.client.renderer.features.PotFeature;
 import com.beansgalaxy.backpacks.entity.BackpackScreen;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.beansgalaxy.backpacks.items.WingedBackpack;
@@ -49,8 +45,9 @@ public class ClientModEvents {
 
       @SubscribeEvent
       public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-            event.registerEntityRenderer(ForgeMain.ENTITY.get(), BackpackRenderer::new);
-            event.registerEntityRenderer(ForgeMain.ENDER_ENTITY.get(), BackpackRenderer::new);
+            event.registerEntityRenderer(ForgeMain.ENTITY_GENERAL.get(), BackpackRenderer::new);
+            event.registerEntityRenderer(ForgeMain.ENTITY_ENDER.get(), BackpackRenderer::new);
+            event.registerEntityRenderer(ForgeMain.ENTITY_WINGED.get(), BackpackRenderer::new);
       }
 
       @SubscribeEvent

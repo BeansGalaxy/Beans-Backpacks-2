@@ -1,6 +1,6 @@
 package com.beansgalaxy.backpacks.network.packages;
 
-import com.beansgalaxy.backpacks.entity.BackpackEntity;
+import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import net.minecraft.network.FriendlyByteBuf;
@@ -43,7 +43,7 @@ public class InstantPlace2S {
             {
                   BackpackItem.hotkeyOnBlock(sender, blockHitResult.getDirection(), blockHitResult.getBlockPos());
             }
-            else if (sender != null && sender.level().getEntity(entityId) instanceof BackpackEntity backpack)
+            else if (sender != null && sender.level().getEntity(entityId) instanceof EntityAbstract backpack)
             {
                   backpack.interact(sender);
             }

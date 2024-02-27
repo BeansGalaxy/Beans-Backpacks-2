@@ -3,8 +3,9 @@ package com.beansgalaxy.backpacks.core;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.access.BackAccessor;
-import com.beansgalaxy.backpacks.entity.BackpackEntity;
-import com.beansgalaxy.backpacks.entity.EnderEntity;
+import com.beansgalaxy.backpacks.entity.EntityAbstract;
+import com.beansgalaxy.backpacks.entity.EntityEnder;
+import com.beansgalaxy.backpacks.entity.EntityGeneral;
 import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
@@ -165,11 +166,7 @@ public class BackData {
             double y = blockPos.getY() + 1.5;
             int z = blockPos.getZ();
 
-            Direction direction = Direction.UP;
-
-            BackpackEntity backpackEntity = backStack.getItem() instanceof EnderBackpack enderBackpack ?
-                        new EnderEntity(owner, x, y, z, direction, localData, yaw, enderBackpack.getOrCreateUUID(owner.getUUID(), backStack)) :
-                        new BackpackEntity(owner, x, y, z, direction, localData, itemStacks, yaw);
+            EntityAbstract.create(backStack, x, y, z, yaw, Direction.UP, owner, itemStacks);
 
             set(ItemStack.EMPTY);
       }

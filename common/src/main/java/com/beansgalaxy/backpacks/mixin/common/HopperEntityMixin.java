@@ -1,20 +1,14 @@
 package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.core.BackpackInventory;
-import com.beansgalaxy.backpacks.entity.BackpackEntity;
-import com.beansgalaxy.backpacks.events.PlaySound;
-import net.minecraft.core.BlockPos;
+import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.Hopper;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -30,10 +24,10 @@ public class HopperEntityMixin {
             at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
     private static void getContainerAt(Level level, double x, double y, double z, CallbackInfoReturnable<Container> cir, Container container) {
         if (container == null) {
-            List<Entity> $$9 = level.getEntities((Entity)null, new AABB(x - 0.5, y - 0.5, z - 0.5, x + 0.5, y + 0.5, z + 0.5), in -> in instanceof BackpackEntity);
+            List<Entity> $$9 = level.getEntities((Entity)null, new AABB(x - 0.5, y - 0.5, z - 0.5, x + 0.5, y + 0.5, z + 0.5), in -> in instanceof EntityAbstract);
             if (!$$9.isEmpty()) {
-                BackpackEntity backpackEntity = (BackpackEntity) $$9.get(level.random.nextInt($$9.size()));
-                cir.setReturnValue(backpackEntity.backpackInventory);
+                EntityAbstract entityAbstract = (EntityAbstract) $$9.get(level.random.nextInt($$9.size()));
+                cir.setReturnValue(entityAbstract.getInventory());
             }
         }
     }

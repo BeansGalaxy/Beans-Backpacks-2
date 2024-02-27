@@ -22,9 +22,11 @@ public interface RegistryHelper {
 
       Item getEnder();
 
-      EntityType<? extends Entity> getEntity();
+      EntityType<? extends Entity> getGeneralEntity();
 
       EntityType<? extends Entity> getEnderEntity();
+
+      EntityType<? extends Entity> getWingedEntity();
 
       MenuType<?> getMenu();
 

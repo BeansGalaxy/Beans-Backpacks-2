@@ -3,7 +3,7 @@ package com.beansgalaxy.backpacks.client.network;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
-import com.beansgalaxy.backpacks.entity.BackpackEntity;
+import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -56,8 +56,8 @@ public class CommonAtClient {
             if (level == null) return;
 
             Entity entity = level.getEntity(id);
-            if (entity instanceof BackpackEntity backpackEntity)
-                  backpackEntity.viewable.viewers = viewers;
+            if (entity instanceof EntityAbstract entityAbstract)
+                  entityAbstract.viewable.viewers = viewers;
             else if (entity instanceof Player player) {
                   BackData.get(player).backpackInventory.getViewable().viewers = viewers;
             }
