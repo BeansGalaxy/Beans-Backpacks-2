@@ -30,6 +30,13 @@
   "tooltip.beansbackpacks.help.pot6": "§7You cannot un-equip a",
   "tooltip.beansbackpacks.help.pot7": "§7pot while storing items.",
 
+  "tooltip.beansbackpacks.help.ender0": "§7These items are present",
+  "tooltip.beansbackpacks.help.ender1": "§7in all bound backpacks.",
+  "tooltip.beansbackpacks.help.ender2": "§7Unbind this backpack by",
+  "tooltip.beansbackpacks.help.ender3": "§7trimming or destroying.",
+  "tooltip.beansbackpacks.help.ender4": "§7This backpack is bound",
+  "tooltip.beansbackpacks.help.ender5": "§7to %d§7.",
+
   "tooltip.beansbackpacks.ender.binding": "§7Bound to: %d",
 
   "sounds.beansbackpacks.place": "Backpack Placed",

@@ -138,6 +138,18 @@ public class Tooltip {
             return components;
       }
 
+      public static List<Component> addLoreEnder(List<Component> components, MutableComponent playerName) {
+            int lines = 5;
+            for (int i = 0; i <= lines; i++) {
+                  components.add(Component.translatable("tooltip.beansbackpacks.help.ender" + i, playerName));
+
+                  if (i != lines && (i + 1) % 2 == 0)
+                        components.add(empty);
+            }
+
+            return components;
+      }
+
       public static KeyMapping getKeyBinding() {
             Minecraft instance = Minecraft.getInstance();
             KeyMapping sprintKey = instance.options.keySprint;

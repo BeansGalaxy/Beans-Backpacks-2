@@ -5,6 +5,7 @@ import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.items.Tooltip;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -66,11 +67,42 @@ public abstract class ItemStackMixin {
                   return;
 
             BackData backData = BackData.get(player);
-            if (instance == backData.getStack() && backData.backpackInventory.isEmpty())
+            boolean showHelpTooltip = instance == backData.getStack() && backData.backpackInventory.isEmpty();
+            boolean actionKeyPressed = backData.actionKeyPressed;
+
+            if (getItem() instanceof EnderBackpack enderBackpack) {
+                  UUID uuid = enderBackpack.getOrCreateUUID(player.getUUID(), instance);
+                  ServerSave.EnderData enderData = ServerSave.getEnderData(uuid, player.level());
+                  CompoundTag trim = enderData.getTrim();
+                  Style style = Style.EMPTY;
+
+                  if (!trim.isEmpty())
+                  {
+                        ItemStack copy = instance.copy();
+                        copy.getOrCreateTag().put("Trim", trim);
+
+                        Optional<ArmorTrim> armorTrim = getTrim(player.level().registryAccess(), copy);
+                        if (armorTrim.isPresent())
+                              style = armorTrim.get().material().value().description().getStyle();
+                  }
+
+                  MutableComponent playerName = enderData.getPlayerName().withStyle(style);
+
+                  if (showHelpTooltip && actionKeyPressed) {
+                        cir.setReturnValue(Tooltip.addLoreEnder(components, playerName));
+                  } else {
+                        if (showHelpTooltip)
+                              Tooltip.loreTitle(components);
+                        components.add(Component.translatableWithFallback("tooltip.beansbackpacks.ender.binding", "§7Bound to: ", playerName));
+                  }
+            } else
+                  if (showHelpTooltip)
             {
                   boolean isBackpack = getItem() instanceof BackpackItem;
                   boolean isPot = instance.is(Items.DECORATED_POT);
-                  if (backData.actionKeyPressed) {
+
+                  if (actionKeyPressed)
+                  {
                         if (isBackpack)
                               cir.setReturnValue(Tooltip.addLore(components, "backpack", 5));
                         else if (isPot)
@@ -80,21 +112,6 @@ public abstract class ItemStackMixin {
                         Tooltip.loreTitle(components);
             }
 
-            if (getItem() instanceof EnderBackpack enderBackpack) {
-                  UUID uuid = enderBackpack.getOrCreateUUID(player.getUUID(), instance);
-                  ServerSave.EnderData enderData = ServerSave.getEnderData(uuid, player.level());
-                  ItemStack copy = instance.copy();
-                  copy.getOrCreateTag().put("Trim", enderData.getTrim());
 
-                  Optional<ArmorTrim> $$3 = getTrim(player.level().registryAccess(), copy);
-                  Style style = Style.EMPTY;
-                  if ($$3.isPresent()) {
-                        ArmorTrim $$4 = $$3.get();
-                        style = $$4.material().value().description().getStyle();
-                  }
-
-                  MutableComponent playerName = enderData.getPlayerName().withStyle(style);
-                  components.add(Component.translatableWithFallback("tooltip.beansbackpacks.ender.binding", "§7Bound to: ", playerName));
-            }
       }
 }
