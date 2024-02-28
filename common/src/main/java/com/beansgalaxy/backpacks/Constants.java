@@ -43,6 +43,10 @@ public class Constants {
 		return DISABLES_BACK_SLOT.contains(item) || ELYTRA_ITEMS.contains(item);
 	}
 
+	public static boolean canEquipWithBackpack(Item item) {
+		return DISABLES_BACK_SLOT.contains(item) || ELYTRA_ITEMS.contains(item) || CHESTPLATE_DISABLED.contains(item);
+	}
+
 	protected static void register() {
 		LOG.info("Initializing Beans' Backpacks Constants");
 	}

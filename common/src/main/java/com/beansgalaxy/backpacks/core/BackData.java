@@ -6,7 +6,9 @@ import com.beansgalaxy.backpacks.access.BackAccessor;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.beansgalaxy.backpacks.entity.EntityGeneral;
+import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.items.EnderBackpack;
+import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -17,6 +19,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.UUID;
@@ -100,6 +104,7 @@ public class BackData {
       }
 
       public void set(ItemStack stack) {
+
             Services.COMPAT.setBackSlotItem(this, stack);
             backSlot.set(stack);
       }
@@ -107,6 +112,7 @@ public class BackData {
       public void update(ItemStack stack) {
             if (stack.getItem() instanceof EnderBackpack enderBackpack)
                   enderBackpack.getOrCreateUUID(owner.getUUID(), stack);
+
             this.backStack = stack;
             this.localData = Traits.LocalData.fromstack(stack);
             this.setChanged();
@@ -120,6 +126,15 @@ public class BackData {
                   Services.REGISTRY.triggerEquipAny(serverPlayer);
                   Services.NETWORK.SyncBackSlot(serverPlayer);
             }
+      }
+
+      public void playEquipSound(ItemStack stack) {
+            Kind kind = Kind.fromStack(stack);
+            if (owner.level().isClientSide() && kind != null) {
+                  Tooltip.playSound(kind, PlaySound.EQUIP);
+            }
+            if (stack.getItem() instanceof Equipable equipable)
+                  owner.level().playSound(null, owner.getX(), owner.getY(), owner.getZ(), equipable.getEquipSound(), owner.getSoundSource(), 1.0F, 1.0F);
       }
 
       public boolean backSlotDisabled() {

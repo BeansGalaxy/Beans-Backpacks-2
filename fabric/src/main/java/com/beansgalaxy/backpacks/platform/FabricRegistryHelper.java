@@ -79,6 +79,9 @@ public class FabricRegistryHelper implements RegistryHelper {
       @Override
       public SoundEvent getSound(Kind kind, PlaySound type) {
             SoundEvent sound = type.getDefaultSoundEvent();
+            if (kind == null)
+                  return sound;
+
             switch (kind) {
                   case LEATHER -> {
                         switch (type) {

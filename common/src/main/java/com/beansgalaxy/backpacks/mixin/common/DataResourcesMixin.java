@@ -49,13 +49,7 @@ public class DataResourcesMixin {
             Constants.addToList(Constants.DISABLES_BACK_SLOT,
                         readJsonItemList(resourceManager, "disables_back_slot"));
 
-            if (Services.COMPAT.isModLoaded("elytraslot"))
-                  Constants.addToList(DISABLES_BACK_SLOT, ELYTRA_ITEMS);
-            else
-                  Constants.addToList(CHESTPLATE_DISABLED, ELYTRA_ITEMS);
-
             Constants.CHESTPLATE_DISABLED.removeAll(Constants.DISABLES_BACK_SLOT);
-
 
             Traits.clear();
             resourceManager.listResources("recipes", (in) ->
