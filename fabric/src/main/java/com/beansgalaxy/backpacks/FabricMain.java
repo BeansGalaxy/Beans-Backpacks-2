@@ -9,6 +9,7 @@ import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.items.*;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
@@ -21,6 +22,8 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.Commands;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -47,12 +50,16 @@ public class FabricMain implements ModInitializer {
         NetworkPackages.registerC2SPackets();
 
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register(new SyncDataEvent());
-        ServerLifecycleEvents.SERVER_STARTED.register(new ServerStartEvent());
+        ServerLifecycleEvents.SERVER_STARTED.register(new ServerLifecycleEvent());
+        ServerLifecycleEvents.SERVER_STOPPING.register(new ServerLifecycleEvent());
         ServerPlayerEvents.COPY_FROM.register(new CopyPlayerEvent());
         ServerLivingEntityEvents.AFTER_DEATH.register(new LivingEntityDeath());
         EntityElytraEvents.CUSTOM.register(new ElytraFlightEvent());
         UseBlockCallback.EVENT.register(new PlayerInteractEvent());
         Sounds.register();
+
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
+                    RegisterCommands.register(dispatcher));
 
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             ServerSave.MAPPED_ENDER_DATA.forEach(((uuid, enderData) -> {
@@ -118,7 +125,7 @@ public class FabricMain implements ModInitializer {
     public static final EntityType<Entity> WINGED_ENTITY =
                 Registry.register(BuiltInRegistries.ENTITY_TYPE,
                             new ResourceLocation(Constants.MOD_ID, "winged_backpack"),
-                            FabricEntityTypeBuilder.create(MobCategory.MISC, EntityWinged::new).build());
+                            FabricEntityTypeBuilder.create(MobCategory.MISC, EntityFlight::new).build());
 
     public static final MenuType<BackpackMenu> BACKPACK_MENU =
                 Registry.register(BuiltInRegistries.MENU,

@@ -68,7 +68,10 @@ public class FabricClient implements ClientModInitializer {
                   BackpackInventory.readStackNbt(buf.readNbt(), itemStacks);
                   String string = buf.readUtf();
                   MutableComponent playerName = Component.Serializer.fromJson(string);
-                  ServerSave.MAPPED_ENDER_DATA.put(uuid, new ServerSave.EnderData(itemStacks, trim, playerName));
+
+                  ServerSave.EnderData computed = ServerSave.MAPPED_ENDER_DATA.computeIfAbsent(uuid, in -> new ServerSave.EnderData());
+                  computed.setPlayerName(playerName).setTrim(trim).setItemStacks(itemStacks);
+
             });
       }
 }

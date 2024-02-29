@@ -108,9 +108,12 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
             Minecraft minecraft = Minecraft.getInstance();
             if (minecraft.hitResult instanceof EntityHitResult hitResult && hitResult.getEntity() == entity && !minecraft.options.hideGui) {
                   if (this.shouldShowName(entity)) {
-                        pose.pushPose();
-                        renderNameTag(entity, entity.getDisplayName(), pose, mbs, light);
-                        pose.popPose();
+                        Component displayName = entity.getDisplayName();
+                        if (!displayName.getContents().toString().equals("empty")) {
+                              pose.pushPose();
+                              renderNameTag(entity, displayName, pose, mbs, light);
+                              pose.popPose();
+                        }
                   }
 
                   pose.pushPose();

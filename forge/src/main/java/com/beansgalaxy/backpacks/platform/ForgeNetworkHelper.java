@@ -6,10 +6,7 @@ import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.entity.BackpackMenu;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
-import com.beansgalaxy.backpacks.network.client.SendEnderData2C;
-import com.beansgalaxy.backpacks.network.client.SyncBackInventory2C;
-import com.beansgalaxy.backpacks.network.client.SyncBackSlot2C;
-import com.beansgalaxy.backpacks.network.client.SyncViewersPacket2C;
+import com.beansgalaxy.backpacks.network.client.*;
 import com.beansgalaxy.backpacks.network.packages.InstantPlace2S;
 import com.beansgalaxy.backpacks.network.packages.PickBackpack2S;
 import com.beansgalaxy.backpacks.network.packages.SprintKeyPacket2S;
@@ -104,5 +101,10 @@ public class ForgeNetworkHelper implements NetworkHelper {
       @Override
       public void sendEnderData2C(ServerPlayer player, UUID uuid) {
             NetworkPackages.S2C(new SendEnderData2C(uuid, ServerSave.getEnderData(uuid, player.level())), player);
+      }
+
+      @Override
+      public void sendEnderLocations2C(ServerPlayer serverPlayer, BackData backData) {
+            NetworkPackages.S2C(new ReceiveEnderPos(backData.getEnderLocations()), serverPlayer);
       }
 }

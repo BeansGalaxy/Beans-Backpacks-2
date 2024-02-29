@@ -10,20 +10,18 @@ import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.inventory.ContainerSynchronizer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.apache.logging.log4j.core.jmx.Server;
 
 import java.util.UUID;
-import java.util.function.Supplier;
 
 public class BackpackMenu extends AbstractContainerMenu {
       public static int FIRST_SLOT_INDEX;
@@ -35,6 +33,7 @@ public class BackpackMenu extends AbstractContainerMenu {
       protected final float ownerYaw;
       private final int max_stacks;
       public int invOffset = 108;
+
       // SERVER CONSTRUCTOR
       public BackpackMenu(int id, Inventory playerInventory, BackpackInventory backpackInventory) {
             super(Services.REGISTRY.getMenu(), id);
@@ -70,6 +69,10 @@ public class BackpackMenu extends AbstractContainerMenu {
             createInventorySlots(playerInventory);
             FIRST_SLOT_INDEX = slots.size();
             createBackpackSlots(backpackInventory);
+
+            if (owner instanceof EntityEnder ender && viewer instanceof ServerPlayer serverPlayer) {
+                  ServerSave.updateLocations(ender.getPlacedBy(), serverPlayer.serverLevel());
+            }
       }
 
       @Override

@@ -23,6 +23,8 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.UUID;
 
 public class BackData {
@@ -71,9 +73,21 @@ public class BackData {
       protected static final int[] UV = {59, 62};
       public final BackSlot backSlot = new BackSlot(this);
       public final InSlot inSlot = new InSlot(this);
-      public boolean actionKeyPressed = false;
-      private ItemStack backStack = ItemStack.EMPTY;
+      private final HashSet<ServerSave.EnderLocation> enderLocations = new HashSet<>();
       private Traits.LocalData localData = Traits.LocalData.EMPTY;
+      private ItemStack backStack = ItemStack.EMPTY;
+      public boolean actionKeyPressed = false;
+
+      public void setEnderLocations(HashSet<ServerSave.EnderLocation> newLocations) {
+            ServerSave.EnderData enderData = ServerSave.MAPPED_ENDER_DATA.get(owner.getUUID());
+            this.enderLocations.clear();
+            this.enderLocations.addAll(newLocations);
+      }
+
+      public HashSet<ServerSave.EnderLocation> getEnderLocations() {
+            ServerSave.EnderData enderData = ServerSave.MAPPED_ENDER_DATA.get(owner.getUUID());
+            return new HashSet<>(enderLocations);
+      }
 
       public BackData(Player owner) {
             this.owner = owner;
@@ -104,7 +118,6 @@ public class BackData {
       }
 
       public void set(ItemStack stack) {
-
             Services.COMPAT.setBackSlotItem(this, stack);
             backSlot.set(stack);
       }
@@ -181,7 +194,9 @@ public class BackData {
             double y = blockPos.getY() + 1.5;
             int z = blockPos.getZ();
 
-            EntityAbstract.create(backStack, x, y, z, yaw, Direction.UP, owner, itemStacks);
+            EntityAbstract entityAbstract = EntityAbstract.create(backStack, x, y, z, yaw, Direction.UP, owner, itemStacks);
+            if (entityAbstract instanceof EntityEnder ender)
+                  ender.setPlacedBy(null);
 
             set(ItemStack.EMPTY);
       }

@@ -78,7 +78,7 @@ public abstract class EntityAbstract extends Backpack {
             }
             else if (backpackStack.getItem() instanceof WingedBackpack winged) {
                   int damage = backpackStack.getDamageValue();
-                  backpack = new EntityWinged(player, stacks, damage);
+                  backpack = new EntityFlight(player, stacks, damage);
             }
             else backpack = new EntityGeneral(player, stacks);
 
@@ -366,7 +366,7 @@ public abstract class EntityAbstract extends Backpack {
             String json = Component.Serializer.toJson(component);
             tag.putString("hover_name", json);
             UUID placedBy = getPlacedBy();
-            if (placedBy != this.uuid)
+            if (placedBy != this.uuid && placedBy != null)
                   tag.putUUID("placed_by", placedBy);
             return tag;
       }

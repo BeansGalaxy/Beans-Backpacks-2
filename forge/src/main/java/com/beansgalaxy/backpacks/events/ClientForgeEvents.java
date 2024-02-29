@@ -12,8 +12,7 @@ import net.minecraftforge.fml.common.Mod;
 public class ClientForgeEvents {
 
       @SubscribeEvent
-      public static void clientLogOut(ClientPlayerNetworkEvent.LoggingIn event) {
-            ServerSave.MAPPED_ENDER_DATA.clear();
+      public static void clientLogOut(ClientPlayerNetworkEvent.LoggingOut event) {
       }
 
 }

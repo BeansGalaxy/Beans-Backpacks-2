@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.platform.services;
 
+import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
@@ -30,4 +31,6 @@ public interface NetworkHelper {
       void pickFromBackpack2S(int slot);
 
       void sendEnderData2C(ServerPlayer player, UUID uuid);
+
+      void sendEnderLocations2C(ServerPlayer serverPlayer, BackData backData);
 }

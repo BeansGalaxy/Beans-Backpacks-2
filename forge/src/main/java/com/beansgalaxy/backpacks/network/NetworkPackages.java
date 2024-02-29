@@ -28,6 +28,7 @@ public class NetworkPackages {
             SyncBackInventory2C.register(index++);
             CallBackInventory2S.register(index++);
             ConfigureKeys2C.register(index++);
+            ReceiveEnderPos.register(index++);
             PickBackpack2S.register(index);
       }
 

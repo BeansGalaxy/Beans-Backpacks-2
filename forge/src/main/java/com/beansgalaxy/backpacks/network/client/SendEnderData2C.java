@@ -54,6 +54,7 @@ public class SendEnderData2C {
       }
 
       public void handle(Supplier<NetworkEvent.Context> context) {
-            ServerSave.MAPPED_ENDER_DATA.put(uuid, enderData);
+            ServerSave.EnderData computed = ServerSave.MAPPED_ENDER_DATA.computeIfAbsent(uuid, in -> new ServerSave.EnderData());
+            computed.setPlayerName(enderData.getPlayerName()).setTrim(enderData.getTrim()).setItemStacks(enderData.getItemStacks());
       }
 }

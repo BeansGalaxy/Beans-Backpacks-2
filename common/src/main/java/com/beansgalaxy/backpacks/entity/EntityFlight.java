@@ -3,7 +3,6 @@ package com.beansgalaxy.backpacks.entity;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.platform.Services;
-import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -15,12 +14,12 @@ import net.minecraft.world.level.Level;
 import java.util.Optional;
 import java.util.UUID;
 
-public class EntityWinged extends EntityAbstract {
+public class EntityFlight extends EntityAbstract {
 
       private final BackpackInventory inventory = new BackpackInventory() {
 
             public Entity getOwner() {
-                  return EntityWinged.this;
+                  return EntityFlight.this;
             }
 
             NonNullList<ServerPlayer> playersViewing = NonNullList.create();
@@ -37,17 +36,17 @@ public class EntityWinged extends EntityAbstract {
 
             @Override
             public NonNullList<ItemStack> getItemStacks() {
-                  return EntityWinged.this.getItemStacks();
+                  return EntityFlight.this.getItemStacks();
             }
 
             @Override
             public Traits.LocalData getLocalData() {
-                  return EntityWinged.this.getLocalData();
+                  return EntityFlight.this.getLocalData();
             }
 
             @Override
             public UUID getPlacedBy() {
-                  return EntityWinged.this.getPlacedBy();
+                  return EntityFlight.this.getPlacedBy();
             }
 
             @Override
@@ -58,12 +57,12 @@ public class EntityWinged extends EntityAbstract {
 
       private final int damage;
 
-      public EntityWinged(EntityType<? extends Entity> type, Level level) {
+      public EntityFlight(EntityType<? extends Entity> type, Level level) {
             super(type, level);
             this.damage = 0;
       }
 
-      public EntityWinged(Player player, NonNullList<ItemStack> stacks, int damage) {
+      public EntityFlight(Player player, NonNullList<ItemStack> stacks, int damage) {
             super(Services.REGISTRY.getWingedEntity(), player.level());
             this.damage = damage;
             this.entityData.set(PLACED_BY, Optional.of(player.getUUID()));

@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.client.network;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
@@ -14,6 +15,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.HashSet;
 import java.util.UUID;
 
 public class CommonAtClient {
@@ -61,5 +63,15 @@ public class CommonAtClient {
             else if (entity instanceof Player player) {
                   BackData.get(player).backpackInventory.getViewable().viewers = viewers;
             }
+      }
+
+      public static void receiveEnderPos(HashSet<ServerSave.EnderLocation> enderLocations) {
+            LocalPlayer player = Minecraft.getInstance().player;
+
+            if (player == null)
+                  return;
+
+            BackData backSlot = BackData.get(player);
+            backSlot.setEnderLocations(enderLocations);
       }
 }

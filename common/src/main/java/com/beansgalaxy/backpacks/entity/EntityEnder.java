@@ -9,7 +9,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -74,6 +79,10 @@ public class EntityEnder extends EntityAbstract {
       public EntityEnder(Player player, UUID uuid) {
             super(Services.REGISTRY.getEnderEntity(), player.level());
             entityData.set(PLACED_BY, Optional.of(uuid));
+
+            if (level() instanceof ServerLevel serverLevel) {
+                  ServerSave.setLocation(getPlacedBy(), this.uuid, blockPosition(), serverLevel);
+            }
       }
 
       @Override
@@ -93,6 +102,28 @@ public class EntityEnder extends EntityAbstract {
       }
 
       @Override
+      public UUID getPlacedBy() {
+            Optional<UUID> uuid = entityData.get(PLACED_BY);
+            return uuid.orElse(null);
+      }
+
+      @Override
+      public void kill() {
+            ServerSave.removeLocation(getPlacedBy(), getUUID());
+            super.kill();
+      }
+
+      @Override
+      public InteractionResult interact(Player player) {
+            if (getPlacedBy() == null) {
+                  entityData.set(PLACED_BY, Optional.of(player.getUUID()));
+                  ServerSave.getEnderData(player);
+            }
+
+            return super.interact(player);
+      }
+
+      @Override
       public boolean shouldShowName() {
             return true;
       }
@@ -100,5 +131,21 @@ public class EntityEnder extends EntityAbstract {
       @Override
       public boolean hasCustomName() {
             return true;
+      }
+
+      public void setPlacedBy(UUID uuid) {
+            entityData.set(PLACED_BY, Optional.of(uuid));
+      }
+
+      @Override
+      protected void readAdditionalSaveData(CompoundTag tag) {
+            this.setDirection(Direction.from3DDataValue(tag.getByte("facing")));
+            this.setDisplay(tag.getCompound("display"));
+      }
+
+      @Override
+      protected void addAdditionalSaveData(CompoundTag tag) {
+            tag.putByte("facing", (byte)this.direction.get3DDataValue());
+            tag.put("display", getDisplay());
       }
 }

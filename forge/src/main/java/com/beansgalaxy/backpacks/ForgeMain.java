@@ -4,7 +4,7 @@ import com.beansgalaxy.backpacks.compat.CurioRegistry;
 import com.beansgalaxy.backpacks.entity.BackpackMenu;
 import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.beansgalaxy.backpacks.entity.EntityGeneral;
-import com.beansgalaxy.backpacks.entity.EntityWinged;
+import com.beansgalaxy.backpacks.entity.EntityFlight;
 import com.beansgalaxy.backpacks.events.advancements.EquipAnyCriterion;
 import com.beansgalaxy.backpacks.events.advancements.PlaceCriterion;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
@@ -68,8 +68,8 @@ public class ForgeMain {
     public static final RegistryObject<EntityType<EntityEnder>> ENTITY_ENDER = ENTITIES.register("ender_backpack",
                 () -> EntityType.Builder.<EntityEnder>of(EntityEnder::new, MobCategory.MISC).build(new ResourceLocation(Constants.MOD_ID, "ender_backpack").toString()));
 
-    public static final RegistryObject<EntityType<EntityWinged>> ENTITY_WINGED = ENTITIES.register("winged_backpack",
-                () -> EntityType.Builder.<EntityWinged>of(EntityWinged::new, MobCategory.MISC).build(new ResourceLocation(Constants.MOD_ID, "winged_backpack").toString()));
+    public static final RegistryObject<EntityType<EntityFlight>> ENTITY_WINGED = ENTITIES.register("winged_backpack",
+                () -> EntityType.Builder.<EntityFlight>of(EntityFlight::new, MobCategory.MISC).build(new ResourceLocation(Constants.MOD_ID, "winged_backpack").toString()));
 
     // REGISTER RECIPES
     public static final DeferredRegister<RecipeSerializer<?>> RECIPES =

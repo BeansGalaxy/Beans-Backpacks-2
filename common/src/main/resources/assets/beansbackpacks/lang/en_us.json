@@ -46,5 +46,9 @@
   "sounds.beansbackpacks.insert": "Inserted into Backpack",
   "sounds.beansbackpacks.take": "Took from Backpack",
   "sounds.beansbackpacks.open": "Opened Backpack",
-  "sounds.beansbackpacks.close": "Closed Backpack"
+  "sounds.beansbackpacks.close": "Closed Backpack",
+
+  "command.beansbackpacks.enderdata.clear.success": "Successfully removed %d.",
+  "command.beansbackpacks.enderdata.list.success": "%d entries found: ",
+  "command.beansbackpacks.enderdata.fail": "No entries found."
 }

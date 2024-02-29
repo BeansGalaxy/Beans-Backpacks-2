@@ -1,7 +1,10 @@
 package com.beansgalaxy.backpacks.entity;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.ServerSave;
+import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
+import com.beansgalaxy.backpacks.core.Kind;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
@@ -12,10 +15,16 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.joml.Vector3f;
+
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.UUID;
 
 public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
       private static final Component TITLE = Component.literal("");
@@ -67,6 +76,22 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
             RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
             RenderSystem.setShaderTexture(0, TEXTURE);
             int j = this.handler.invOffset + topPos;
+
+//minecraft.options.renderDebug &&
+            if (handler.owner instanceof EntityEnder ender) {
+                  UUID placedBy = ender.getPlacedBy();
+                  UUID uuid = handler.viewer.getUUID();
+                  if (Objects.equals(placedBy.toString(), uuid.toString())) {
+                        HashSet<ServerSave.EnderLocation> enderLocations = BackData.get(handler.viewer).getEnderLocations();
+                        int i = 12;
+                        for (ServerSave.EnderLocation location : enderLocations) {
+                              MutableComponent component = location.toComponent();
+                              context.drawString(this.font, component, 3, height - i, 0xFFFFFF, false);
+                              i += 10;
+                        }
+                  }
+            }
+
             context.blit(TEXTURE, leftPos, j - 123, 0, 0, 0, imageWidth, imageHeight, 256, 256);
             drawBackpack(context, width / 2, j, 202, this.handler.mirror, mouseX, mouseY);
       }

@@ -16,6 +16,7 @@ public class NetworkPackages {
       public static final ResourceLocation CONFIG_DATA_2C = new ResourceLocation(Constants.MOD_ID, "backpack_config_c");
       public static final ResourceLocation INSTANT_PLACE_2S = new ResourceLocation(Constants.MOD_ID, "instant_place_s");
       public static final ResourceLocation PICK_BACKPACK_2S = new ResourceLocation(Constants.MOD_ID, "pick_backpack_s");
+      public static final ResourceLocation ENDER_POS_2C = new ResourceLocation(Constants.MOD_ID, "ender_pos_c");
 
       public static void registerC2SPackets() {
             ServerPlayNetworking.registerGlobalReceiver(SPRINT_KEY_2S, SprintKeyPacket2S::receiveAtServer);
@@ -30,5 +31,6 @@ public class NetworkPackages {
             ClientPlayNetworking.registerGlobalReceiver(SYNC_BACK_SLOT_2C, ReceiveAtClient::syncBackSlot);
             ClientPlayNetworking.registerGlobalReceiver(SYNC_BACK_INV_2C, ReceiveAtClient::SyncBackInventory);
             ClientPlayNetworking.registerGlobalReceiver(CONFIG_DATA_2C, ReceiveAtClient::ConfigBackpackData);
+            ClientPlayNetworking.registerGlobalReceiver(ENDER_POS_2C, ReceiveAtClient::recieveEnderPos);
       }
 }

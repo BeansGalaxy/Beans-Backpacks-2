@@ -164,6 +164,8 @@ public class Traits {
             }
 
             public Kind kind() {
+                  if (key == null || key.isEmpty())
+                        return null;
                   return traits().kind;
             }
 

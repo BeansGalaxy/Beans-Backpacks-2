@@ -28,6 +28,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -131,5 +132,17 @@ public class FabricNetworkHelper implements NetworkHelper {
             buf.writeUtf(string);
 
             ServerPlayNetworking.send(player, FabricMain.INITIAL_SYNC, buf);
+      }
+
+      @Override
+      public void sendEnderLocations2C(ServerPlayer serverPlayer, BackData backData) {
+            FriendlyByteBuf buf = PacketByteBufs.create();
+
+            HashSet<ServerSave.EnderLocation> locations = backData.getEnderLocations();
+            buf.writeInt(locations.size());
+            for (ServerSave.EnderLocation location : locations)
+                  location.writeBuf(buf);
+
+            ServerPlayNetworking.send(serverPlayer, NetworkPackages.ENDER_POS_2C, buf);
       }
 }

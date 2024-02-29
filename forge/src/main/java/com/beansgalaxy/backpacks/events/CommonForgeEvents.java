@@ -10,8 +10,10 @@ import com.beansgalaxy.backpacks.network.client.ConfigureKeys2C;
 import com.beansgalaxy.backpacks.network.client.SendEnderData2C;
 import com.beansgalaxy.backpacks.network.client.SyncBackSlot2C;
 import com.beansgalaxy.backpacks.platform.Services;
+import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
@@ -22,10 +24,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraftforge.event.OnDatapackSyncEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -100,6 +104,8 @@ public class CommonForgeEvents {
                   ServerSave.MAPPED_ENDER_DATA.forEach(((uuid, enderData) -> {
                         NetworkPackages.S2C(new SendEnderData2C(uuid, enderData), player);
                   }));
+
+                  ServerSave.updateLocations(player.getUUID(), player.serverLevel());
             }
       }
 
@@ -134,5 +140,16 @@ public class CommonForgeEvents {
       public static void serverStartedEvent(ServerStartedEvent event) {
             MinecraftServer server = event.getServer();
             ServerSave.getServerState(server);
+      }
+
+      @SubscribeEvent
+      public static void serverStoppingEvent(ServerStoppingEvent event) {
+            MinecraftServer server = event.getServer();
+            ServerSave.getServerState(server);
+      }
+
+      @SubscribeEvent
+      public static void registerCommands(RegisterCommandsEvent event) {
+            RegisterCommands.register(event.getDispatcher());
       }
 }
