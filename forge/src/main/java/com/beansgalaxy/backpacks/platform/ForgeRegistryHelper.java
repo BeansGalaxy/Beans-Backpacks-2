@@ -83,7 +83,7 @@ public class ForgeRegistryHelper implements RegistryHelper {
                   return sound;
 
             switch (kind) {
-                  case LEATHER -> {
+                  case LEATHER, WINGED -> {
                         switch (type) {
                               case PLACE -> {
                                     return Sounds.PLACE_LEATHER.get();
@@ -171,6 +171,19 @@ public class ForgeRegistryHelper implements RegistryHelper {
                               }
                               case TAKE -> {
                                     return SoundEvents.DECORATED_POT_FALL;
+                              }
+                        }
+                  }
+                  case ENDER -> {
+                        switch (type) {
+                              case OPEN -> {
+                                    return SoundEvents.ENDER_CHEST_OPEN;
+                              }
+                              case CLOSE -> {
+                                    return SoundEvents.ENDER_CHEST_CLOSE;
+                              }
+                              case TAKE, INSERT -> {
+                                    return SoundEvents.ENDERMAN_TELEPORT;
                               }
                         }
                   }

@@ -45,8 +45,22 @@ public enum PlaySound {
         if (!world.isClientSide) {
             Random rnd = new Random();
             float pitch = random ? (rnd.nextFloat() / 4f) + 0.8f : 1f;
-            boolean tookLeather = kind.is(Kind.LEATHER) && this.equals(PlaySound.TAKE);
-            pitch += tookLeather ? 0.2f : 0;
+
+            if (Kind.LEATHER.is(kind) && this.equals(PlaySound.TAKE))
+                pitch += 0.2f;
+
+            if (Kind.ENDER.is(kind))
+                switch (this) {
+                    case INSERT -> {
+                        volume *= 0.1f;
+                        pitch += 0.1f;
+                }
+                    case TAKE -> {
+                        volume *= 0.1f;
+                        pitch -= 0.2f;
+                    }
+                }
+
             SoundEvent soundEvent = Services.REGISTRY.getSound(kind, this);
             world.playSound(null, entity.blockPosition(), soundEvent, SoundSource.BLOCKS, volume, pitch);
         }
