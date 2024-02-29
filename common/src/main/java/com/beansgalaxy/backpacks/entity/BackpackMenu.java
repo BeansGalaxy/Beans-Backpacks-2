@@ -52,7 +52,7 @@ public class BackpackMenu extends AbstractContainerMenu {
                   public CompoundTag getTrim() {
                         Traits.LocalData localData = getLocalData();
                         if (Kind.ENDER.is(localData.kind()))
-                              return ServerSave.getEnderData(getPlacedBy(), level()).getTrim();
+                              return ServerSave.getTrim(getPlacedBy(), level());
 
                         return localData.trim;
                   }

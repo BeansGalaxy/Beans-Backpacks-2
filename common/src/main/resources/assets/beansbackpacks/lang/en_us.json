@@ -49,6 +49,6 @@
   "sounds.beansbackpacks.close": "Closed Backpack",
 
   "command.beansbackpacks.enderdata.clear.success": "Successfully removed %d.",
-  "command.beansbackpacks.enderdata.list.success": "%d entries found: ",
+  "command.beansbackpacks.enderdata.list.success": "%d entries found",
   "command.beansbackpacks.enderdata.fail": "No entries found."
 }

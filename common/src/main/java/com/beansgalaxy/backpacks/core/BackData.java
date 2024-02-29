@@ -25,6 +25,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.UUID;
 
 public class BackData {
@@ -112,7 +113,7 @@ public class BackData {
       public CompoundTag getTrim() {
             if (backStack.getItem() instanceof EnderBackpack enderBackpack) {
                   UUID uuid = enderBackpack.getOrCreateUUID(owner.getUUID(), backStack);
-                  return ServerSave.getEnderData(uuid, owner.level()).getTrim();
+                  return ServerSave.getTrim(uuid, owner.level());
             }
             return localData.trim;
       }
@@ -194,9 +195,7 @@ public class BackData {
             double y = blockPos.getY() + 1.5;
             int z = blockPos.getZ();
 
-            EntityAbstract entityAbstract = EntityAbstract.create(backStack, x, y, z, yaw, Direction.UP, owner, itemStacks);
-            if (entityAbstract instanceof EntityEnder ender)
-                  ender.setPlacedBy(null);
+            EntityAbstract.create(backStack, x, y, z, yaw, true, Direction.UP, owner, itemStacks);
 
             set(ItemStack.EMPTY);
       }

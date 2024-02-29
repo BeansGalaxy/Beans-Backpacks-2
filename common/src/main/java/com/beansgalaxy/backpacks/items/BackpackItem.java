@@ -224,7 +224,7 @@ public class BackpackItem extends Item {
             float yaw = rotFromBlock(blockPos, player) + 90;
 
             EntityAbstract entityAbstract =
-                        EntityAbstract.create(backpackStack, x, y, z, yaw, direction, player, stacks);
+                        EntityAbstract.create(backpackStack, x, y, z, yaw, false, direction, player, stacks);
 
             return entityAbstract != null;
       }

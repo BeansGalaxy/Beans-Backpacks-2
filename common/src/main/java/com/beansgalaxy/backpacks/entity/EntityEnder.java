@@ -3,6 +3,7 @@ package com.beansgalaxy.backpacks.entity;
 import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Traits;
+import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.Direction;
@@ -14,6 +15,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -76,9 +78,9 @@ public class EntityEnder extends EntityAbstract {
             return inventory;
       }
 
-      public EntityEnder(Player player, UUID uuid) {
+      public EntityEnder(Player player, Optional<UUID> uuid) {
             super(Services.REGISTRY.getEnderEntity(), player.level());
-            entityData.set(PLACED_BY, Optional.of(uuid));
+            entityData.set(PLACED_BY, uuid);
 
             if (level() instanceof ServerLevel serverLevel) {
                   ServerSave.setLocation(getPlacedBy(), this.uuid, blockPosition(), serverLevel);
@@ -87,7 +89,7 @@ public class EntityEnder extends EntityAbstract {
 
       @Override
       public CompoundTag getTrim() {
-            return ServerSave.getEnderData(getPlacedBy(), level()).getTrim();
+            return ServerSave.getTrim(getPlacedBy(), level());
       }
 
       @Override
@@ -108,19 +110,21 @@ public class EntityEnder extends EntityAbstract {
       }
 
       @Override
-      public void kill() {
-            ServerSave.removeLocation(getPlacedBy(), getUUID());
-            super.kill();
+      public @NotNull InteractionResult interact(Player player, InteractionHand hand) {
+            UUID placedBy = getPlacedBy();
+            if (placedBy != null && level().getPlayerByUUID(placedBy) == null) {
+                  PlaySound.HIT.at(this, this.getKind());
+                  this.hop(.1);
+                  return InteractionResult.SUCCESS;
+            }
+
+            return super.interact(player, hand);
       }
 
       @Override
-      public InteractionResult interact(Player player) {
-            if (getPlacedBy() == null) {
-                  entityData.set(PLACED_BY, Optional.of(player.getUUID()));
-                  ServerSave.getEnderData(player);
-            }
-
-            return super.interact(player);
+      public void kill() {
+            ServerSave.removeLocation(getPlacedBy(), getUUID());
+            super.kill();
       }
 
       @Override
@@ -133,8 +137,8 @@ public class EntityEnder extends EntityAbstract {
             return true;
       }
 
-      public void setPlacedBy(UUID uuid) {
-            entityData.set(PLACED_BY, Optional.of(uuid));
+      public void setPlacedBy(Optional<UUID> uuid) {
+            entityData.set(PLACED_BY, uuid);
       }
 
       @Override

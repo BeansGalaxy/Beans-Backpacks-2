@@ -158,12 +158,19 @@ public class ServerSave extends SavedData {
 
       public static EnderData getEnderData(UUID uuid, Level level) {
             EnderData enderData = getEnderData(uuid);
-            Player player = level.getPlayerByUUID(uuid);
-            if (player != null) {
+            Player player;
+            if (uuid != null && (player = level.getPlayerByUUID(uuid)) != null) {
                   MutableComponent copy = player.getName().copy();
                   enderData.setPlayerName(copy);
             }
             return enderData;
+      }
+
+      public static CompoundTag getTrim(UUID uuid, Level level) {
+            if (uuid == null)
+                  return new CompoundTag();
+
+            return getEnderData(uuid, level).getTrim();
       }
 
       public static EnderData getEnderData(UUID uuid) {
@@ -175,6 +182,9 @@ public class ServerSave extends SavedData {
       }
 
       public static void setLocation(UUID owner, UUID backpack, BlockPos location, ServerLevel level) {
+            if (owner == null)
+                  return;
+
             EnderData enderData = getEnderData(owner, level);
             enderData.locations.put(backpack, location);
       }

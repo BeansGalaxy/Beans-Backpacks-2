@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.entity;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
@@ -64,7 +65,7 @@ public abstract class EntityAbstract extends Backpack {
             this.pos = BlockPos.containing(x, y, z);
       }
 
-      public static EntityAbstract create(ItemStack backpackStack, int x, double y, int z, float yaw,
+      public static EntityAbstract create(ItemStack backpackStack, int x, double y, int z, float yaw, boolean onDeath,
                                           Direction direction, Player player, NonNullList<ItemStack> stacks)
       {
             Traits.LocalData traits = Traits.LocalData.fromstack(backpackStack);
@@ -73,7 +74,7 @@ public abstract class EntityAbstract extends Backpack {
 
             EntityAbstract backpack;
             if (backpackStack.getItem() instanceof EnderBackpack ender) {
-                  UUID uuid = ender.getOrCreateUUID(player.getUUID(), backpackStack);
+                  Optional<UUID> uuid = onDeath ? Optional.empty(): Optional.of(ender.getOrCreateUUID(player.getUUID(), backpackStack));
                   backpack = new EntityEnder(player, uuid);
             }
             else if (backpackStack.getItem() instanceof WingedBackpack winged) {
@@ -125,7 +126,7 @@ public abstract class EntityAbstract extends Backpack {
             display.putString("key", key);
             stack.getOrCreateTag().put("display", display);
 
-            if (item instanceof EnderBackpack enderBackpack) {
+            if (item instanceof EnderBackpack enderBackpack && backpack.getPlacedBy() != null) {
                   enderBackpack.getOrCreateUUID(backpack.getPlacedBy(), stack);
             } else {
                   CompoundTag trim = backpack.getTrim();
@@ -476,6 +477,8 @@ public abstract class EntityAbstract extends Backpack {
             else {
                   this.setDeltaMovement(this.getDeltaMovement().add(0.0D, height, 0.0D));
             }
+            if (level().isClientSide())
+                  getViewable().headPitch += 0.1f;
             return true;
       }
 
@@ -485,6 +488,16 @@ public abstract class EntityAbstract extends Backpack {
             InteractionResult interact = interact(player);
             if (interact.consumesAction())
                   return interact;
+
+            if (this instanceof EntityEnder ender)
+            {
+                  UUID placedBy = ender.getPlacedBy();
+                  if (placedBy == null || level().getPlayerByUUID(placedBy) == null) {
+                        PlaySound.HIT.at(this, this.getKind());
+                        this.hop(.1);
+                        return InteractionResult.SUCCESS;
+                  }
+            }
 
             if (viewable.viewers < 1)
                   PlaySound.OPEN.at(this, getKind());
@@ -505,8 +518,8 @@ public abstract class EntityAbstract extends Backpack {
             if (actionKeyPressed) {
                   boolean b = !backData.isEmpty();
                   boolean b1 = backData.backSlotDisabled();
-                  boolean b2 = !this.isRemoved();
-                  if ((b || b1) && b2)
+                  boolean b2 = this.isRemoved();
+                  if (b || b1 || b2)
                   {
                         PlaySound.HIT.at(this, this.getKind());
                         this.hop(.1);
@@ -517,7 +530,11 @@ public abstract class EntityAbstract extends Backpack {
                       - damage source is player.
                       - player is not creative.
                       - backSlot is not occupied */
-                        if (!Kind.ENDER.is(getKind())) {
+                        if (this instanceof EntityEnder ender) {
+                              if (ender.getPlacedBy() == null) {
+                                    ender.setPlacedBy(Optional.of(player.getUUID()));
+                                    ServerSave.getEnderData(player);
+                              }
                               NonNullList<ItemStack> playerInventoryStacks = BackData.get(player).backpackInventory.getItemStacks();
                               NonNullList<ItemStack> backpackEntityStacks = this.getItemStacks();
                               playerInventoryStacks.clear();
