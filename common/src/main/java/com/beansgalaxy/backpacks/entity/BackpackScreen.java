@@ -77,8 +77,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
             RenderSystem.setShaderTexture(0, TEXTURE);
             int j = this.handler.invOffset + topPos;
 
-//minecraft.options.renderDebug &&
-            if (handler.owner instanceof EntityEnder ender) {
+            if (minecraft.options.renderDebug && handler.owner instanceof EntityEnder ender) {
                   UUID placedBy = ender.getPlacedBy();
                   UUID uuid = handler.viewer.getUUID();
                   if (Objects.equals(placedBy.toString(), uuid.toString())) {
