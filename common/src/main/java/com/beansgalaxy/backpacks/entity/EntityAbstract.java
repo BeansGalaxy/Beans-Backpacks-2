@@ -137,7 +137,7 @@ public abstract class EntityAbstract extends Backpack {
             int color = backpack.getColor();
             boolean hasDefaultColor =
                     (Kind.LEATHER.is(kind) && color == DEFAULT_COLOR) ||
-                    (Kind.WINGED.is(kind) && color == WingedBackpack.WINGED_COLOR);
+                    (Kind.WINGED.is(kind) && color == WingedBackpack.WINGED_ENTITY);
 
             if (!hasDefaultColor && stack.getItem() instanceof DyableBackpack)
                   stack.getOrCreateTagElement("display").putInt("color", color);

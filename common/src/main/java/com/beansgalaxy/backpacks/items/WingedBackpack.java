@@ -1,16 +1,16 @@
 package com.beansgalaxy.backpacks.items;
 
-import com.beansgalaxy.backpacks.entity.Backpack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.awt.*;
 
 public class WingedBackpack extends DyableBackpack {
-    public static final int WINGED_COLOR = 8359839;
+    public static final int WINGED_ENTITY = 0x7F8F9F;
+    public static final int WINGED_ITEM_0 = 0x8c8c8c;
+    public static final int WINGED_ITEM_2 = 0x8f8fb3;
 
     public WingedBackpack(Properties properties) {
         super(properties);
@@ -38,28 +38,71 @@ public class WingedBackpack extends DyableBackpack {
         if (nbtCompound != null && nbtCompound.contains(TAG_COLOR, Tag.TAG_ANY_NUMERIC)) {
             return nbtCompound.getInt(TAG_COLOR);
         }
-        return WINGED_COLOR;
+        return WINGED_ENTITY;
     }
 
     public static int shiftColor(int colorInt) {
-        if (colorInt == WINGED_COLOR)
-            return WINGED_COLOR;
+        if (colorInt == WINGED_ENTITY)
+            return WINGED_ENTITY;
 
         Color color = new Color(colorInt);
-        Color winged = new Color(WINGED_COLOR);
+        Color winged = new Color(WINGED_ENTITY);
 
-        Color out = new Color(
-                20 + (3 * color.getRed() + winged.getRed()) / 4,
-                20 + (3 * color.getGreen() + winged.getGreen()) / 4,
-                20 + (2 * color.getBlue() + winged.getBlue()) / 3,
-                255);
+        int r = (3 * color.getRed() + winged.getRed()) / 4;
+        int g = (3 * color.getGreen() + winged.getGreen()) / 4;
+        int b = (2 * color.getBlue() + winged.getBlue()) / 3;
+
+        r += 20;
+        g += 20;
+        b += 20;
+
+        Color out = new Color(Math.min(r, 255), Math.min(g, 255), Math.min(b, 255));
 
         return out.getRGB();
     }
 
+    public static int shiftColorLayer0(int colorInt) {
+        if (colorInt == WINGED_ENTITY)
+            return WINGED_ITEM_0;
+
+        Color color = new Color(colorInt);
+        Color winged = new Color(WINGED_ITEM_0);
+
+        int r = (color.getRed() * 2 + winged.getRed() * 3) / 5;
+        int g = (color.getGreen() * 2 + winged.getGreen() * 3) / 5;
+        int b = (color.getBlue() * 2 + winged.getBlue() * 3) / 5;
+
+        r += 10;
+        g += 10;
+        b += 10;
+
+        int i = (int)(r * 0.7f) + b - 320;
+        int j = Math.min(i, 0) / 10;
+        int k = Math.max(g + j, 0);
+
+        Color out = new Color(Math.min(r, 255), Math.min(k, 255), Math.min(b, 255));
+
+        return out.getRGB();
+    }
+
+    public static int shiftColorLayer2(int colorInt) {
+        Color color = new Color(colorInt);
+        Color winged = new Color(WINGED_ITEM_2);
+
+        int r = (2 * color.getRed() + winged.getRed()) / 3;
+        int g = (2 * color.getGreen() + winged.getGreen()) / 3;
+        int b = (2 * color.getBlue() + winged.getBlue()) / 3;
+
+        r = Math.min(r + 20, 255);
+        g = Math.min(g + 4, 255);
+        b = Math.min(b + 20, 255);
+
+        return new Color(r, g, b).getRGB();
+    }
+
     public static int decodeColor(int colorInt) {
         Color color = new Color(colorInt);
-        Color winged = new Color(WINGED_COLOR);
+        Color winged = new Color(WINGED_ENTITY);
 
         float r = color.getRed();
         float g = color.getGreen();

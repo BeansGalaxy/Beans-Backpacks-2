@@ -21,7 +21,7 @@ public class ItemRendererMixin {
             if (stack.getItem() instanceof BackpackItem && stack.getTag() != null) {
                   ModelManager modelManager = ((ItemRenderer) ((Object) this)).getItemModelShaper().getModelManager();
                   String key = stack.getOrCreateTagElement("display").getString("key");
-                  if(!key.equals("leather"))
+                  if(!key.equals("leather") && !key.equals("winged"))
                         value = modelManager.getModel(beans_Backpacks_2$getBackpack(key));
             }
             return value;

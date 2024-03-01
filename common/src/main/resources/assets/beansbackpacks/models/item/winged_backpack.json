@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "beansbackpacks:item/winged_backpack/0",
+    "layer1": "beansbackpacks:item/winged_backpack/1",
+    "layer2": "beansbackpacks:item/winged_backpack/2"
+  }
+}

@@ -5,7 +5,6 @@ import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.client.renderer.BackpackModel;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
-import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.items.WingedBackpack;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -27,7 +26,6 @@ import net.minecraft.world.item.ItemStack;
 
 import java.awt.*;
 
-import static com.beansgalaxy.backpacks.client.RendererHelper.sneakInter;
 import static com.beansgalaxy.backpacks.client.RendererHelper.weld;
 
 public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
