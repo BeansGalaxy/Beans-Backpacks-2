@@ -75,13 +75,13 @@ public class Constants {
 		return backSlot.is(item) ? backSlot : chestplate;
 	}
 
-	public static NonNullList<Item> readJsonItemList(ResourceManager resourceManager, String disableChestplate1) {
-		Map<ResourceLocation, Resource> disableChestplate = resourceManager.listResources("modify",
-				(in) -> in.getPath().endsWith(disableChestplate1));
+	public static NonNullList<Item> readItemList(ResourceManager resourceManager, String location) {
+		Map<ResourceLocation, Resource> locations = resourceManager.listResources("modify",
+				(in) -> in.getPath().endsWith(location));
 
 		NonNullList<Item> items = NonNullList.create();
 		NonNullList<Item> removedItems = NonNullList.create();
-		disableChestplate.forEach( (resourceLocation, resource) -> {
+		locations.forEach( (resourceLocation, resource) -> {
 			try {
 				InputStream open = resource.open();
 				BufferedReader reader = new BufferedReader(new InputStreamReader(open));
@@ -104,5 +104,37 @@ public class Constants {
 		removedItems.add(Items.AIR.asItem());
 		items.removeAll(removedItems);
 		return items;
+	}
+
+	public static HashSet<String> readStringList(ResourceManager resourceManager, String location) {
+		Map<ResourceLocation, Resource> locations = resourceManager.listResources("modify",
+				(in) -> in.getPath().endsWith(location));
+
+		HashSet<String> strings = new HashSet<>();
+		HashSet<String> removedStrings = new HashSet<>();
+		locations.forEach( (resourceLocation, resource) -> {
+			try {
+				InputStream open = resource.open();
+				BufferedReader reader = new BufferedReader(new InputStreamReader(open));
+
+				String line;
+				while ((line = reader.readLine()) != null) {
+					String[] split = line.replaceAll(" ", "").split(",");
+					for (String id: split) {
+						if (id.startsWith("!"))
+							removedStrings.add(id.replace("!", ""));
+						else
+							strings.add(id);
+					}
+				}
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		});
+
+		strings.removeIf(String::isEmpty);
+		strings.removeAll(removedStrings);
+		return strings;
+
 	}
 }

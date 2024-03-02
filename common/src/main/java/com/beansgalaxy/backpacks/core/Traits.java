@@ -10,6 +10,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public class Traits {
+      public static String last_troubled_key = null;
+
       public static void register(String key, Traits traits) {
             if (key.isEmpty() || key.equals("pot"))
                   return;
@@ -24,7 +26,10 @@ public class Traits {
             Traits traits = Constants.TRAITS_MAP.get(key);
             if (traits == null)
             {
-                  Constants.LOG.info("Requested Traits for key: \"" + key + "\" but Traits returned null");
+                  if (!key.equals(last_troubled_key)) {
+                        Constants.LOG.warn("Requested Traits for key: \"" + key + "\" but Traits returned null");
+                        last_troubled_key = key;
+                  }
                   return new Traits(Kind.UPGRADED, 0);
             }
             return traits;

@@ -2,16 +2,12 @@ package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.Traits;
-import com.beansgalaxy.backpacks.platform.Services;
 import com.mojang.authlib.minecraft.client.ObjectMapper;
 import net.minecraft.commands.Commands;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.flag.FeatureFlagSet;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import org.apache.commons.io.IOUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -38,18 +35,21 @@ public class DataResourcesMixin {
             Constants.BLACKLIST_ITEMS.clear();
 
             Constants.addToList(Constants.BLACKLIST_ITEMS,
-                    readJsonItemList(resourceManager, "blacklist_items"));
+                    readItemList(resourceManager, "blacklist_items"));
 
             Constants.addToList(Constants.ELYTRA_ITEMS,
-                    readJsonItemList(resourceManager, "elytra_items"));
+                    readItemList(resourceManager, "elytra_items"));
 
             Constants.addToList(Constants.CHESTPLATE_DISABLED,
-                        readJsonItemList(resourceManager, "disable_chestplate"));
+                        readItemList(resourceManager, "disable_chestplate"));
 
             Constants.addToList(Constants.DISABLES_BACK_SLOT,
-                        readJsonItemList(resourceManager, "disables_back_slot"));
+                        readItemList(resourceManager, "disables_back_slot"));
 
             Constants.CHESTPLATE_DISABLED.removeAll(Constants.DISABLES_BACK_SLOT);
+
+            HashSet<String> removedKeys =
+                        new HashSet<>(readStringList(resourceManager, "remove_backpack_keys"));
 
             Traits.clear();
             resourceManager.listResources("recipes", (in) ->
@@ -62,12 +62,12 @@ public class DataResourcesMixin {
                         ObjectMapper map = ObjectMapper.create();
                         Traits.Raw raw = map.readValue(json, Traits.Raw.class);
 
-                        Traits.register(raw.key, new Traits(raw));
+                        if (!removedKeys.contains(raw.key))
+                              Traits.register(raw.key, new Traits(raw));
 
                   } catch (IOException e) {
                         throw new RuntimeException(e);
                   }
             }));
       }
-
 }
