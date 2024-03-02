@@ -1,9 +1,9 @@
 package com.beansgalaxy.backpacks.client.network;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
+import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.Minecraft;
@@ -65,7 +65,7 @@ public class CommonAtClient {
             }
       }
 
-      public static void receiveEnderPos(HashSet<ServerSave.EnderLocation> enderLocations) {
+      public static void receiveEnderPos(HashSet<EnderStorage.Location> enderLocations) {
             LocalPlayer player = Minecraft.getInstance().player;
 
             if (player == null)

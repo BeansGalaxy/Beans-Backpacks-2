@@ -1,10 +1,12 @@
-package com.beansgalaxy.backpacks.entity;
+package com.beansgalaxy.backpacks.screen;
 
-import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.Traits;
+import com.beansgalaxy.backpacks.data.EnderStorage;
+import com.beansgalaxy.backpacks.entity.Backpack;
+import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
@@ -52,7 +54,7 @@ public class BackpackMenu extends AbstractContainerMenu {
                   public CompoundTag getTrim() {
                         Traits.LocalData localData = getLocalData();
                         if (Kind.ENDER.is(localData.kind()))
-                              return ServerSave.getTrim(getPlacedBy(), level());
+                              return EnderStorage.getTrim(getPlacedBy(), level());
 
                         return localData.trim;
                   }
@@ -71,7 +73,7 @@ public class BackpackMenu extends AbstractContainerMenu {
             createBackpackSlots(backpackInventory);
 
             if (owner instanceof EntityEnder ender && viewer instanceof ServerPlayer serverPlayer) {
-                  ServerSave.updateLocations(ender.getPlacedBy(), serverPlayer.serverLevel());
+                  EnderStorage.updateLocations(ender.getPlacedBy(), serverPlayer.serverLevel());
             }
       }
 

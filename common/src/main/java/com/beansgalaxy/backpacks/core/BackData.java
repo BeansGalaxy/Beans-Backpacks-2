@@ -1,15 +1,15 @@
 package com.beansgalaxy.backpacks.core;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.access.BackAccessor;
+import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
-import com.beansgalaxy.backpacks.entity.EntityEnder;
-import com.beansgalaxy.backpacks.entity.EntityGeneral;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.platform.Services;
+import com.beansgalaxy.backpacks.screen.BackSlot;
+import com.beansgalaxy.backpacks.screen.InSlot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -19,13 +19,10 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.UUID;
 
 public class BackData {
@@ -54,7 +51,7 @@ public class BackData {
                   ItemStack backStack = BackData.this.getStack();
                   if (backStack.getItem() instanceof EnderBackpack enderBackpack) {
                         UUID uuid = enderBackpack.getOrCreateUUID(owner.getUUID(), backStack);
-                        return ServerSave.getEnderData(uuid, owner.level()).getItemStacks();
+                        return EnderStorage.getEnderData(uuid, owner.level()).getItemStacks();
                   }
                   return this.itemStacks;
             }
@@ -71,22 +68,20 @@ public class BackData {
             }
       };
 
-      protected static final int[] UV = {59, 62};
+      public static final int[] UV = {59, 62};
       public final BackSlot backSlot = new BackSlot(this);
       public final InSlot inSlot = new InSlot(this);
-      private final HashSet<ServerSave.EnderLocation> enderLocations = new HashSet<>();
+      private final HashSet<EnderStorage.Location> enderLocations = new HashSet<>();
       private Traits.LocalData localData = Traits.LocalData.EMPTY;
       private ItemStack backStack = ItemStack.EMPTY;
       public boolean actionKeyPressed = false;
 
-      public void setEnderLocations(HashSet<ServerSave.EnderLocation> newLocations) {
-            ServerSave.EnderData enderData = ServerSave.MAPPED_ENDER_DATA.get(owner.getUUID());
+      public void setEnderLocations(HashSet<EnderStorage.Location> newLocations) {
             this.enderLocations.clear();
             this.enderLocations.addAll(newLocations);
       }
 
-      public HashSet<ServerSave.EnderLocation> getEnderLocations() {
-            ServerSave.EnderData enderData = ServerSave.MAPPED_ENDER_DATA.get(owner.getUUID());
+      public HashSet<EnderStorage.Location> getEnderLocations() {
             return new HashSet<>(enderLocations);
       }
 
@@ -113,7 +108,7 @@ public class BackData {
       public CompoundTag getTrim() {
             if (backStack.getItem() instanceof EnderBackpack enderBackpack) {
                   UUID uuid = enderBackpack.getOrCreateUUID(owner.getUUID(), backStack);
-                  return ServerSave.getTrim(uuid, owner.level());
+                  return EnderStorage.getTrim(uuid, owner.level());
             }
             return localData.trim;
       }

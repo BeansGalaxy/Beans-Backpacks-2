@@ -1,8 +1,6 @@
 package com.beansgalaxy.backpacks.events;
 
-import com.beansgalaxy.backpacks.CommonClass;
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.ServerSave;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

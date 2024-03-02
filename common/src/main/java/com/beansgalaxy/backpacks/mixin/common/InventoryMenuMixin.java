@@ -8,6 +8,8 @@ import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
+import com.beansgalaxy.backpacks.screen.BackSlot;
+import com.beansgalaxy.backpacks.screen.InSlot;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.SlotAccess;
@@ -45,10 +47,8 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                   backData.backSlot.slotIndex = slots.size();
                   this.addSlot(backData.backSlot);
             } else
-            {
-                  backData.inSlot.slotIndex = slots.size();
                   this.addSlot(backData.inSlot);
-            }
+
       }
 
       @Inject(method = "quickMoveStack", cancellable = true, at = @At("HEAD"))

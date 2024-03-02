@@ -1,6 +1,8 @@
 package com.beansgalaxy.backpacks;
 
 import com.beansgalaxy.backpacks.core.BackpackInventory;
+import com.beansgalaxy.backpacks.data.RegisterCommands;
+import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.entity.*;
 import com.beansgalaxy.backpacks.events.*;
 import com.beansgalaxy.backpacks.events.advancements.EquipAnyCriterion;
@@ -8,6 +10,7 @@ import com.beansgalaxy.backpacks.events.advancements.PlaceCriterion;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.items.*;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
+import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents;
@@ -22,8 +25,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.commands.CommandBuildContext;
-import net.minecraft.commands.Commands;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;

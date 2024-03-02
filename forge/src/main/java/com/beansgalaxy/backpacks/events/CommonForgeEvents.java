@@ -1,21 +1,19 @@
 package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.ServerSave;
+import com.beansgalaxy.backpacks.data.RegisterCommands;
+import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.core.BackData;
-import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Traits;
+import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.network.client.ConfigureKeys2C;
 import com.beansgalaxy.backpacks.network.client.SendEnderData2C;
 import com.beansgalaxy.backpacks.network.client.SyncBackSlot2C;
 import com.beansgalaxy.backpacks.platform.Services;
-import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -105,7 +103,7 @@ public class CommonForgeEvents {
                         NetworkPackages.S2C(new SendEnderData2C(uuid, enderData), player);
                   }));
 
-                  ServerSave.updateLocations(player.getUUID(), player.serverLevel());
+                  EnderStorage.updateLocations(player.getUUID(), player.serverLevel());
             }
       }
 
@@ -139,13 +137,13 @@ public class CommonForgeEvents {
       @SubscribeEvent
       public static void serverStartedEvent(ServerStartedEvent event) {
             MinecraftServer server = event.getServer();
-            ServerSave.getServerState(server);
+            ServerSave.updateSave(server);
       }
 
       @SubscribeEvent
       public static void serverStoppingEvent(ServerStoppingEvent event) {
             MinecraftServer server = event.getServer();
-            ServerSave.getServerState(server);
+            ServerSave.updateSave(server);
       }
 
       @SubscribeEvent

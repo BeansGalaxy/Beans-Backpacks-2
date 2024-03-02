@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.network.client;
 
-import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.client.network.CommonAtClient;
+import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkDirection;
@@ -16,21 +16,21 @@ public class ReceiveEnderPos {
                         .encoder(ReceiveEnderPos::encode).decoder(ReceiveEnderPos::new).consumerMainThread(ReceiveEnderPos::handle).add();
       }
 
-      final HashSet<ServerSave.EnderLocation> enderLocations;
+      final HashSet<EnderStorage.Location> enderLocations;
 
-      public ReceiveEnderPos(HashSet<ServerSave.EnderLocation> enderLocations) {
+      public ReceiveEnderPos(HashSet<EnderStorage.Location> enderLocations) {
             this.enderLocations = enderLocations;
       }
 
       public ReceiveEnderPos(FriendlyByteBuf buf) {
             enderLocations = new HashSet<>();
             for (int i = buf.readInt(); i > 0; i--)
-                  enderLocations.add(new ServerSave.EnderLocation(buf));
+                  enderLocations.add(new EnderStorage.Location(buf));
       }
 
       public void encode(FriendlyByteBuf buf) {
             buf.writeInt(enderLocations.size());
-            for (ServerSave.EnderLocation location : enderLocations)
+            for (EnderStorage.Location location : enderLocations)
                   location.writeBuf(buf);
       }
 

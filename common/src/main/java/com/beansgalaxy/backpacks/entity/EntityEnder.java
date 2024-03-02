@@ -1,18 +1,16 @@
 package com.beansgalaxy.backpacks.entity;
 
-import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Traits;
+import com.beansgalaxy.backpacks.data.Config;
+import com.beansgalaxy.backpacks.data.EnderStorage;
+import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.events.PlaySound;
-import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -22,9 +20,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.scores.PlayerTeam;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -83,23 +79,23 @@ public class EntityEnder extends EntityAbstract {
             entityData.set(PLACED_BY, uuid);
 
             if (level() instanceof ServerLevel serverLevel) {
-                  ServerSave.setLocation(getPlacedBy(), this.uuid, blockPosition(), serverLevel);
+                  EnderStorage.setLocation(getPlacedBy(), this.uuid, blockPosition(), serverLevel);
             }
       }
 
       @Override
       public CompoundTag getTrim() {
-            return ServerSave.getTrim(getPlacedBy(), level());
+            return EnderStorage.getTrim(getPlacedBy(), level());
       }
 
       @Override
       protected NonNullList<ItemStack> getItemStacks() {
-            return ServerSave.getEnderData(getPlacedBy(), level()).getItemStacks();
+            return EnderStorage.getEnderData(getPlacedBy(), level()).getItemStacks();
       }
 
       @Override @NotNull
       public Component getDisplayName() {
-            ServerSave.EnderData enderData = ServerSave.getEnderData(getPlacedBy());
+            EnderStorage.Data enderData = EnderStorage.getEnderData(getPlacedBy(), level());
             return enderData.getPlayerName();
       }
 
@@ -111,8 +107,8 @@ public class EntityEnder extends EntityAbstract {
 
       @Override
       public @NotNull InteractionResult interact(Player player, InteractionHand hand) {
-            UUID placedBy = getPlacedBy();
-            if (placedBy != null && level().getPlayerByUUID(placedBy) == null) {
+            UUID placedBy;
+            if ((placedBy = getPlacedBy()) != null && (ServerSave.CONFIG.get(Config.ENDER_LOCK_LOGGED_OFF) && level().getPlayerByUUID(placedBy) == null)) {
                   PlaySound.HIT.at(this, this.getKind());
                   this.hop(.1);
                   return InteractionResult.SUCCESS;
@@ -123,7 +119,7 @@ public class EntityEnder extends EntityAbstract {
 
       @Override
       public void kill() {
-            ServerSave.removeLocation(getPlacedBy(), getUUID());
+            EnderStorage.removeLocation(getPlacedBy(), getUUID());
             super.kill();
       }
 
@@ -134,7 +130,7 @@ public class EntityEnder extends EntityAbstract {
 
       @Override
       public boolean hasCustomName() {
-            return true;
+            return getPlacedBy() != null;
       }
 
       public void setPlacedBy(Optional<UUID> uuid) {

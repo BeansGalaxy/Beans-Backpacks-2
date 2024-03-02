@@ -1,11 +1,13 @@
 package com.beansgalaxy.backpacks.entity;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.Traits;
+import com.beansgalaxy.backpacks.data.Config;
+import com.beansgalaxy.backpacks.data.EnderStorage;
+import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.items.BackpackItem;
@@ -74,10 +76,13 @@ public abstract class EntityAbstract extends Backpack {
 
             EntityAbstract backpack;
             if (backpackStack.getItem() instanceof EnderBackpack ender) {
-                  Optional<UUID> uuid = onDeath ? Optional.empty(): Optional.of(ender.getOrCreateUUID(player.getUUID(), backpackStack));
+                  Optional<UUID> uuid;
+                  if (onDeath && ServerSave.CONFIG.get(Config.UNBIND_ENDER_ON_DEATH)) uuid = Optional.empty();
+                  else uuid = Optional.of(ender.getOrCreateUUID(player.getUUID(), backpackStack));
+
                   backpack = new EntityEnder(player, uuid);
             }
-            else if (backpackStack.getItem() instanceof WingedBackpack winged) {
+            else if (backpackStack.getItem() instanceof WingedBackpack) {
                   int damage = backpackStack.getDamageValue();
                   backpack = new EntityFlight(player, stacks, damage);
             }
@@ -146,7 +151,7 @@ public abstract class EntityAbstract extends Backpack {
             Component customName = backpack.getCustomName();
             if (customName != null)
                   stack.setHoverName(customName);
-            else { // TODO: REMOVE "else" BEFORE RELEASE
+            else { // TODO: REMOVE "else" BEFORE RELEASE (20.1-0.14)
                   if (localData.hoverName.toString().equals("empty"))
                         stack.resetHoverName();
                   else
@@ -492,7 +497,7 @@ public abstract class EntityAbstract extends Backpack {
             if (this instanceof EntityEnder ender)
             {
                   UUID placedBy = ender.getPlacedBy();
-                  if (placedBy == null || level().getPlayerByUUID(placedBy) == null) {
+                  if (placedBy == null) {
                         PlaySound.HIT.at(this, this.getKind());
                         this.hop(.1);
                         return InteractionResult.SUCCESS;
@@ -533,7 +538,7 @@ public abstract class EntityAbstract extends Backpack {
                         if (this instanceof EntityEnder ender) {
                               if (ender.getPlacedBy() == null) {
                                     ender.setPlacedBy(Optional.of(player.getUUID()));
-                                    ServerSave.getEnderData(player);
+                                    EnderStorage.getEnderData(player);
                               }
                               NonNullList<ItemStack> playerInventoryStacks = BackData.get(player).backpackInventory.getItemStacks();
                               NonNullList<ItemStack> backpackEntityStacks = this.getItemStacks();

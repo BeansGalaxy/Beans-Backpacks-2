@@ -50,5 +50,7 @@
 
   "command.beansbackpacks.enderdata.clear.success": "Successfully removed %d.",
   "command.beansbackpacks.enderdata.list.success": "%d entries found",
-  "command.beansbackpacks.enderdata.fail": "No entries found."
+  "command.beansbackpacks.enderdata.fail": "No entries matching that criteria.",
+  "command.beansbackpacks.config.success": "Updated %d to %d",
+  "command.beansbackpacks.config.fail": "%d is already set to %d"
 }

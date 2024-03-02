@@ -1,6 +1,9 @@
-package com.beansgalaxy.backpacks.core;
+package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.core.BackData;
+import com.beansgalaxy.backpacks.core.BackpackInventory;
+import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.client.Minecraft;

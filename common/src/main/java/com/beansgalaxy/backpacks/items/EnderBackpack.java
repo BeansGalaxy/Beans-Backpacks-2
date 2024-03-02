@@ -1,17 +1,16 @@
 package com.beansgalaxy.backpacks.items;
 
-import com.beansgalaxy.backpacks.ServerSave;
+import com.beansgalaxy.backpacks.data.EnderStorage;
+import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ItemCombinerMenu;
-import net.minecraft.world.inventory.SmithingMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public class EnderBackpack extends BackpackItem {
@@ -55,7 +54,7 @@ public class EnderBackpack extends BackpackItem {
             if (player instanceof ServerPlayer serverPlayer) {
                   UUID uuid = player.getUUID();
                   setUUID(uuid, stack);
-                  ServerSave.EnderData enderData = ServerSave.getEnderData(uuid, level);
+                  EnderStorage.Data enderData = EnderStorage.getEnderData(uuid, level);
                   enderData.setPlayerName(player.getName().copy());
                   CompoundTag tag = stack.getTag();
                   if (player.containerMenu instanceof ItemCombinerMenu && tag != null) {

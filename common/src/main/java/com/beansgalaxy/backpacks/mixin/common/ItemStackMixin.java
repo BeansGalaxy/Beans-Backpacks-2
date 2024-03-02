@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.mixin.common;
 
-import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.core.BackData;
+import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.items.Tooltip;
@@ -69,7 +69,7 @@ public abstract class ItemStackMixin {
             if (getItem() instanceof EnderBackpack enderBackpack) {
                   UUID uuid = enderBackpack.getOrCreateUUID(player.getUUID(), instance);
                   Level level = player.level();
-                  ServerSave.EnderData enderData = ServerSave.getEnderData(uuid, level);
+                  EnderStorage.Data enderData = EnderStorage.getEnderData(uuid, level);
                   MutableComponent playerName = enderData.getPlayerNameColored(level.registryAccess());
 
                   if (showHelpTooltip && actionKeyPressed) {

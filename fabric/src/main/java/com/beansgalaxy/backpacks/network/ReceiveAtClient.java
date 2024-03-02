@@ -1,9 +1,9 @@
 package com.beansgalaxy.backpacks.network;
 
-import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.client.network.CommonAtClient;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.Traits;
+import com.beansgalaxy.backpacks.data.EnderStorage;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
@@ -50,9 +50,9 @@ public class ReceiveAtClient {
             if (player == null)
                   return;
 
-            HashSet<ServerSave.EnderLocation> newLocations = new HashSet<>();
+            HashSet<EnderStorage.Location> newLocations = new HashSet<>();
             for (int i = buf.readInt(); i > 0; i--)
-                  newLocations.add(new ServerSave.EnderLocation(buf));
+                  newLocations.add(new EnderStorage.Location(buf));
 
             BackData backData = BackData.get(player);
             backData.setEnderLocations(newLocations);

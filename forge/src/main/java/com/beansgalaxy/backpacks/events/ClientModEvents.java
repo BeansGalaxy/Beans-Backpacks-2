@@ -5,7 +5,7 @@ import com.beansgalaxy.backpacks.ForgeMain;
 import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.client.renderer.*;
 import com.beansgalaxy.backpacks.client.renderer.features.BackFeature;
-import com.beansgalaxy.backpacks.entity.BackpackScreen;
+import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.beansgalaxy.backpacks.items.WingedBackpack;
 import net.minecraft.client.gui.screens.MenuScreens;

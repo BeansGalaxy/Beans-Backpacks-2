@@ -1,11 +1,11 @@
 package com.beansgalaxy.backpacks.platform;
 
 import com.beansgalaxy.backpacks.FabricMain;
-import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
+import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
-import com.beansgalaxy.backpacks.entity.BackpackMenu;
+import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.network.packages.SprintKeyPacket2S;
 import com.beansgalaxy.backpacks.network.packages.SyncBackInventory2C;
@@ -120,7 +120,7 @@ public class FabricNetworkHelper implements NetworkHelper {
 
       @Override
       public void sendEnderData2C(ServerPlayer player, UUID uuid) {
-            ServerSave.EnderData enderData = ServerSave.getEnderData(uuid, player.level());
+            EnderStorage.Data enderData = EnderStorage.getEnderData(uuid, player.level());
             FriendlyByteBuf buf = PacketByteBufs.create();
             buf.writeUUID(uuid);
             buf.writeNbt(enderData.getTrim());
@@ -138,9 +138,9 @@ public class FabricNetworkHelper implements NetworkHelper {
       public void sendEnderLocations2C(ServerPlayer serverPlayer, BackData backData) {
             FriendlyByteBuf buf = PacketByteBufs.create();
 
-            HashSet<ServerSave.EnderLocation> locations = backData.getEnderLocations();
+            HashSet<EnderStorage.Location> locations = backData.getEnderLocations();
             buf.writeInt(locations.size());
-            for (ServerSave.EnderLocation location : locations)
+            for (EnderStorage.Location location : locations)
                   location.writeBuf(buf);
 
             ServerPlayNetworking.send(serverPlayer, NetworkPackages.ENDER_POS_2C, buf);

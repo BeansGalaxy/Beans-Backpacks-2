@@ -6,7 +6,9 @@ import com.beansgalaxy.backpacks.client.renderer.BackpackRenderer;
 import com.beansgalaxy.backpacks.client.renderer.PotModel;
 import com.beansgalaxy.backpacks.compat.TrinketsRegistry;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
-import com.beansgalaxy.backpacks.entity.BackpackScreen;
+import com.beansgalaxy.backpacks.data.EnderStorage;
+import com.beansgalaxy.backpacks.data.ServerSave;
+import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.beansgalaxy.backpacks.events.AppendModelLayers;
 import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.events.LoadEntityEvent;
@@ -72,7 +74,7 @@ public class FabricClient implements ClientModInitializer {
                   String string = buf.readUtf();
                   MutableComponent playerName = Component.Serializer.fromJson(string);
 
-                  ServerSave.EnderData computed = ServerSave.MAPPED_ENDER_DATA.computeIfAbsent(uuid, in -> new ServerSave.EnderData());
+                  EnderStorage.Data computed = ServerSave.MAPPED_ENDER_DATA.computeIfAbsent(uuid, in -> new EnderStorage.Data());
                   computed.setPlayerName(playerName).setTrim(trim).setItemStacks(itemStacks);
 
             });

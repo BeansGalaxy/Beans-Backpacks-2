@@ -4,7 +4,7 @@ import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.renderer.BackpackModel;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.Traits;
-import com.beansgalaxy.backpacks.entity.BackpackScreen;
+import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -34,7 +34,6 @@ import org.joml.Quaternionf;
 
 import java.awt.*;
 import java.util.Map;
-import java.util.Objects;
 
 public interface RendererHelper {
     ModelLayerLocation BACKPACK_MODEL = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "backpack_model"), "main");

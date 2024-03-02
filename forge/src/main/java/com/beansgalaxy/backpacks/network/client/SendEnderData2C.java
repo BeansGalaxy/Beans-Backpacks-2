@@ -1,8 +1,8 @@
 package com.beansgalaxy.backpacks.network.client;
 
-import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
-import com.beansgalaxy.backpacks.core.Traits;
+import com.beansgalaxy.backpacks.data.EnderStorage;
+import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -13,7 +13,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -25,7 +24,7 @@ public class SendEnderData2C {
       }
 
       final UUID uuid;
-      final ServerSave.EnderData enderData;
+      final EnderStorage.Data enderData;
 
       public SendEnderData2C(FriendlyByteBuf buf) {
             this.uuid = buf.readUUID();
@@ -33,10 +32,10 @@ public class SendEnderData2C {
             BackpackInventory.readStackNbt(buf.readNbt(), stacks);
             CompoundTag trim = buf.readNbt();
             MutableComponent playerName = Component.Serializer.fromJson(buf.readUtf());
-            this.enderData = new ServerSave.EnderData(stacks, trim, playerName);
+            this.enderData = new EnderStorage.Data(stacks, trim, playerName);
       }
 
-      public SendEnderData2C(UUID uuid, ServerSave.EnderData enderData) {
+      public SendEnderData2C(UUID uuid, EnderStorage.Data enderData) {
             this.uuid = uuid;
             this.enderData = enderData;
       }
@@ -54,7 +53,7 @@ public class SendEnderData2C {
       }
 
       public void handle(Supplier<NetworkEvent.Context> context) {
-            ServerSave.EnderData computed = ServerSave.MAPPED_ENDER_DATA.computeIfAbsent(uuid, in -> new ServerSave.EnderData());
+            EnderStorage.Data computed = ServerSave.MAPPED_ENDER_DATA.computeIfAbsent(uuid, in -> new EnderStorage.Data());
             computed.setPlayerName(enderData.getPlayerName()).setTrim(enderData.getTrim()).setItemStacks(enderData.getItemStacks());
       }
 }

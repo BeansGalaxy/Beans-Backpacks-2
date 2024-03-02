@@ -1,10 +1,11 @@
-package com.beansgalaxy.backpacks.entity;
+package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.ServerSave;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
-import com.beansgalaxy.backpacks.core.Kind;
+import com.beansgalaxy.backpacks.data.EnderStorage;
+import com.beansgalaxy.backpacks.entity.Backpack;
+import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
@@ -15,7 +16,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -81,9 +81,9 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
                   UUID placedBy = ender.getPlacedBy();
                   UUID uuid = handler.viewer.getUUID();
                   if (Objects.equals(placedBy.toString(), uuid.toString())) {
-                        HashSet<ServerSave.EnderLocation> enderLocations = BackData.get(handler.viewer).getEnderLocations();
+                        HashSet<EnderStorage.Location> enderLocations = BackData.get(handler.viewer).getEnderLocations();
                         int i = 12;
-                        for (ServerSave.EnderLocation location : enderLocations) {
+                        for (EnderStorage.Location location : enderLocations) {
                               MutableComponent component = location.toComponent();
                               context.drawString(this.font, component, 3, height - i, 0xFFFFFF, false);
                               i += 10;

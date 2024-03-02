@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks;
 
 import com.beansgalaxy.backpacks.compat.CurioRegistry;
-import com.beansgalaxy.backpacks.entity.BackpackMenu;
+import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.beansgalaxy.backpacks.entity.EntityGeneral;
 import com.beansgalaxy.backpacks.entity.EntityFlight;
