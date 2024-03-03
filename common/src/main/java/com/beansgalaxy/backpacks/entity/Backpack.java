@@ -4,6 +4,7 @@ import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.Traits;
 import com.beansgalaxy.backpacks.platform.Services;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -34,17 +35,17 @@ public class Backpack extends Entity {
             super(type, level);
       }
 
+      public boolean isMirror() {
+            boolean notMirror = this instanceof EntityAbstract;
+            return !notMirror;
+      }
+
       public Traits.LocalData getLocalData() {
             return new Traits.LocalData(getKey(), getColor(), getTrim(), getCustomName(), getDamage());
       }
 
       public BackpackInventory.Viewable getViewable() {
             return viewable;
-      }
-
-      public boolean isMirror() {
-            boolean notMirror = this instanceof EntityAbstract;
-            return !notMirror;
       }
 
       public int getColor() {
@@ -67,6 +68,11 @@ public class Backpack extends Entity {
       public UUID getPlacedBy() {
             Optional<UUID> uuid = entityData.get(PLACED_BY);
             return uuid.orElseGet(() -> this.uuid);
+      }
+
+      @Override
+      public Direction getDirection() {
+            return Direction.UP;
       }
 
       public int getDamage() {

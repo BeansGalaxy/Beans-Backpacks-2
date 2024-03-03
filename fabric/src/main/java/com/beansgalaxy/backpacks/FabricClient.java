@@ -3,6 +3,7 @@ package com.beansgalaxy.backpacks;
 import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.client.renderer.BackpackModel;
 import com.beansgalaxy.backpacks.client.renderer.BackpackRenderer;
+import com.beansgalaxy.backpacks.client.renderer.BackpackWingsModel;
 import com.beansgalaxy.backpacks.client.renderer.PotModel;
 import com.beansgalaxy.backpacks.compat.TrinketsRegistry;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
@@ -44,6 +45,7 @@ public class FabricClient implements ClientModInitializer {
 
             EntityModelLayerRegistry.registerModelLayer(RendererHelper.POT_MODEL, PotModel::getTexturedModelData);
             EntityModelLayerRegistry.registerModelLayer(RendererHelper.BACKPACK_MODEL, BackpackModel::getTexturedModelData);
+            EntityModelLayerRegistry.registerModelLayer(RendererHelper.PACK_WINGS_MODEL, BackpackWingsModel::createBodyLayer);
             LivingEntityFeatureRendererRegistrationCallback.EVENT.register(new AppendModelLayers());
 
             EntityRendererRegistry.register(FabricMain.BACKPACK_ENTITY, BackpackRenderer::new);

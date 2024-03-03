@@ -53,6 +53,7 @@ public class ClientModEvents {
       @SubscribeEvent
       public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
             event.registerLayerDefinition(RendererHelper.BACKPACK_MODEL, BackpackModel::getTexturedModelData);
+            event.registerLayerDefinition(RendererHelper.PACK_WINGS_MODEL, BackpackWingsModel::createBodyLayer);
             event.registerLayerDefinition(RendererHelper.POT_MODEL, PotModel::getTexturedModelData);
       }
 

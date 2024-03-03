@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -95,5 +96,10 @@ public class EntityFlight extends EntityAbstract {
       @Override
       public boolean isCustomNameVisible() {
             return hasCustomName();
+      }
+
+      @Override
+      public AABB getBoundingBoxForCulling() {
+            return getBoundingBox().inflate(2, 0, 2);
       }
 }

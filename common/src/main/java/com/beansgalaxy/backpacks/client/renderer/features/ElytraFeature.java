@@ -21,6 +21,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
@@ -53,8 +54,10 @@ public class ElytraFeature<T extends LivingEntity, M extends EntityModel<T>> {
     }
 
     private ResourceLocation getElytraResource(ItemStack backStack, BackData backData) {
-        if (backStack.is(Services.REGISTRY.getWinged()))
-            return new ResourceLocation(Constants.MOD_ID, "textures/entity/elytra/" + backData.backpackInventory.getLocalData().key + ".png");
+        if (backStack.is(Services.REGISTRY.getWinged())) {
+            String key = backData.backpackInventory.getLocalData().key;
+            return getWingedBackpackResource(key);
+        }
 
 
         if (backStack.is(Items.ELYTRA)) {
@@ -69,6 +72,11 @@ public class ElytraFeature<T extends LivingEntity, M extends EntityModel<T>> {
         }
 
         return new ResourceLocation(Constants.MOD_ID, "textures/entity/elytra/" + backStack.getItem().toString().replace(":", "$") + ".png");
+    }
+
+    @NotNull
+    public static ResourceLocation getWingedBackpackResource(String key) {
+        return new ResourceLocation(Constants.MOD_ID, "textures/entity/elytra/" + key + ".png");
     }
 
 

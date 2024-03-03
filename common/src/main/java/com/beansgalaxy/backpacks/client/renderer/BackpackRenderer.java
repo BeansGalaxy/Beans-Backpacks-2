@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.client.renderer;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.RendererHelper;
+import com.beansgalaxy.backpacks.client.renderer.features.ElytraFeature;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
 import com.beansgalaxy.backpacks.core.Kind;
 import com.beansgalaxy.backpacks.core.Traits;
@@ -18,6 +19,7 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -38,21 +40,20 @@ import static com.beansgalaxy.backpacks.client.RendererHelper.renderOverlays;
 
 public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
       ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/entity/backpack/null.png");
-      private final BackpackModel model;
+      private final BackpackModel<Backpack> model;
+      private final BackpackWingsModel<Backpack> wings;
       private final TextureAtlas trimAtlas;
 
       public BackpackRenderer(EntityRendererProvider.Context ctx) {
             super(ctx);
-            this.model = new BackpackModel(ctx.bakeLayer(RendererHelper.BACKPACK_MODEL));
+            this.model = new BackpackModel<>(ctx.bakeLayer(RendererHelper.BACKPACK_MODEL));
             this.trimAtlas = ctx.getModelManager().getAtlas(Sheets.ARMOR_TRIMS_SHEET);
+            this.wings = new BackpackWingsModel<>(ctx.bakeLayer(RendererHelper.PACK_WINGS_MODEL));
       }
 
-      private float renderWobble(Entity entity, float yaw) {
-            if (entity instanceof EntityAbstract backpack) {
-                  double breakTime = backpack.wobble;
-                  return (float) (breakTime * Math.sin(breakTime / Math.PI * 4));
-            }
-            return 0;
+      private float renderWobble(EntityAbstract backpack, float yaw) {
+            double breakTime = backpack.wobble;
+            return (float) (breakTime * Math.sin(breakTime / Math.PI * 4));
       }
 
       public void render(T entity, float yaw, float tickDelta, PoseStack pose, MultiBufferSource mbs, int light) {
@@ -68,9 +69,24 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
             if (kind == null)
                   return;
 
-            yaw += renderWobble(entity, yaw);
+            Color tint;
+            String key = traits.key;
+            if (Kind.WINGED.is(kind)) {
+                  tint = new Color(WingedBackpack.shiftColor(traits.color));
+                  if (entity.getDirection().getAxis().isHorizontal()) {
+                        pose.pushPose();
+                        pose.mulPose(Axis.YN.rotationDegrees(yaw));
+                        pose.scale(1.09f, 1.09f, 1.09f);
+                        this.wings.renderToBuffer(pose, mbs.getBuffer(this.model.renderType(ElytraFeature.getWingedBackpackResource(key))), light,
+                                    OverlayTexture.NO_OVERLAY, tint.getRed() / 255f, tint.getGreen() / 255f, tint.getBlue() / 255f, 1f);
+                        pose.popPose();
+                  }
+            } else
+                  tint = new Color(traits.color);
 
-            if (!bEntity.isMirror()) {
+
+            if (entity instanceof EntityAbstract entityAbstract) {
+                  yaw += renderWobble(entityAbstract, yaw);
                   renderHitbox(pose, mbs, entity, yaw, light);
             }
 
@@ -89,9 +105,6 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
             mask.z = 0.2f;
 
             pose.translate(0, -3 / 16f, 0);
-            int colorInt = Kind.WINGED.is(kind) ? WingedBackpack.shiftColor(traits.color) : traits.color;
-            Color tint = new Color(colorInt);
-            String key = traits.key;
             ResourceLocation texture = new ResourceLocation(Constants.MOD_ID, "textures/entity/" + key + ".png");
             VertexConsumer vc = mbs.getBuffer(this.model.renderType(texture));
             this.model.renderToBuffer(pose, vc, light, OverlayTexture.NO_OVERLAY, tint.getRed() / 255F, tint.getGreen() / 255F, tint.getBlue() / 255F, 1F);

@@ -170,9 +170,9 @@ public class BackpackItem extends Item {
 
             int y = blockPos.getY();
             AABB box = EntityAbstract.newBox(blockPos, y, 9 / 16d, direction);
-            double yOffset = (direction.getAxis().isHorizontal() ? 2 : 1) / 16d;
+            double yOffset = (direction.getAxis().isHorizontal() ? 3 : 1) / 16d;
 
-            if (isVertical) {
+            if (isVertical) { // PUSHES ENTITY DOWN TO THE NEAREST COLLISION IF VERTICAL
                   boolean isRelative = !Objects.equals(blockPos, clickedPos);
                   AABB $$4 = new AABB(blockPos);
                   if (isRelative)

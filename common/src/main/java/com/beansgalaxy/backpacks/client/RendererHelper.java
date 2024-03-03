@@ -37,6 +37,7 @@ import java.util.Map;
 
 public interface RendererHelper {
     ModelLayerLocation BACKPACK_MODEL = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "backpack_model"), "main");
+    ModelLayerLocation PACK_WINGS_MODEL = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "backpack_wings_model"), "main");
     ModelLayerLocation POT_MODEL = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "pot_player"), "main");
     Map<String, ResourceLocation> ButtonIdentifiers = ImmutableMap.of(
                 "gold", new ResourceLocation(Constants.MOD_ID, "textures/entity/overlay/gold.png"),
@@ -44,7 +45,7 @@ public interface RendererHelper {
                 "diamond", new ResourceLocation(Constants.MOD_ID, "textures/entity/overlay/diamond.png"),
                 "netherite", new ResourceLocation(Constants.MOD_ID, "textures/entity/overlay/netherite.png"));
 
-    static void renderOverlays(PoseStack pose, int light, MultiBufferSource mbs, Color tint, RegistryAccess registryAccess, Traits.LocalData data, CompoundTag trim, BackpackModel model, TextureAtlas atlas) {
+      static void renderOverlays(PoseStack pose, int light, MultiBufferSource mbs, Color tint, RegistryAccess registryAccess, Traits.LocalData data, CompoundTag trim, BackpackModel model, TextureAtlas atlas) {
         Kind kind = data.kind();
         if (kind.isTrimmable() && trim.get("material") != null && trim.get("pattern") != null)
             TrimHelper.getBackpackTrim(registryAccess, trim).ifPresent((trim1) ->

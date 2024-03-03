@@ -314,7 +314,7 @@ public class EnderStorage {
                   int z = location.getZ();
                   formatCord(z, literal);
 
-                  literal.append(" | " + dimension.toShortLanguageKey());
+                  literal.append(" " + dimension.toShortLanguageKey());
 
                   ChatFormatting color = isAccurate ? ChatFormatting.GREEN : ChatFormatting.YELLOW;
                   return literal.withStyle(color);

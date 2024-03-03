@@ -84,10 +84,10 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
                   UUID uuid = handler.viewer.getUUID();
                   if (Objects.equals(placedBy.toString(), uuid.toString())) {
                         HashSet<EnderStorage.PackagedLocation> enderLocations = BackData.get(handler.viewer).getEnderLocations();
-                        int i = 12;
+                        int i = 4;
                         for (EnderStorage.PackagedLocation location : enderLocations) {
                               MutableComponent component = location.toComponent();
-                              context.drawString(this.font, component, 3, height - i, -1000, false);
+                              context.drawString(this.font, component, 3, i, -1000, false);
                               i += 10;
                         }
                   }
