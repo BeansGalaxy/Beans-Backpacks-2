@@ -590,6 +590,9 @@ public abstract class EntityAbstract extends Backpack {
             int space = getInventory().spaceLeft();
             int max = getLocalData().maxStacks() * 64;
 
+            if (space == max)
+                  return 0;
+
             float i = max - space;
             i /= max;
             i *= 14;
