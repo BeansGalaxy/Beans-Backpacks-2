@@ -10,6 +10,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -51,6 +52,7 @@ public class EntityFlight extends EntityAbstract {
 
             @Override
             public void setChanged() {
+                  EntityFlight.this.level().updateNeighbourForOutputSignal(EntityFlight.this.pos, Blocks.AIR);
                   BackpackInventory.super.setChanged();
             }
       };

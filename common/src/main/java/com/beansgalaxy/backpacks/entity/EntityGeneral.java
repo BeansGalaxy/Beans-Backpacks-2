@@ -10,6 +10,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -51,6 +52,7 @@ public class EntityGeneral extends EntityAbstract {
 
             @Override
             public void setChanged() {
+                  EntityGeneral.this.level().updateNeighbourForOutputSignal(EntityGeneral.this.pos, Blocks.AIR);
                   BackpackInventory.super.setChanged();
             }
       };
@@ -84,5 +86,10 @@ public class EntityGeneral extends EntityAbstract {
       @Override
       public boolean isCustomNameVisible() {
             return hasCustomName();
+      }
+
+      @Override
+      public int getAnalogOutput() {
+            return super.getAnalogOutput();
       }
 }

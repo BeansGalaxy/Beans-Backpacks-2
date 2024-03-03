@@ -132,6 +132,7 @@ public interface BackpackInventory extends Container {
                   if (getContainerSize() > slot)
                         getItemStacks().remove(slot);
             }
+            setChanged();
             return stack;
       }
 
@@ -149,16 +150,18 @@ public interface BackpackInventory extends Container {
       }
 
       default ItemStack removeItemSilent(int slot) {
+            ItemStack returned = ItemStack.EMPTY;
             if (getContainerSize() > slot) {
                   ItemStack stack = getItemStacks().get(slot);
                   int maxCount = stack.getMaxStackSize();
                   if (stack.getCount() > maxCount) {
                         stack.shrink(maxCount);
-                        return stack.copyWithCount(maxCount);
-                  }
-                  return this.getItemStacks().remove(slot);
+                        returned = stack.copyWithCount(maxCount);
+                  } else
+                        returned = this.getItemStacks().remove(slot);
+                  setChanged();
             }
-            return ItemStack.EMPTY;
+            return returned;
       }
 
       @Override
@@ -185,8 +188,8 @@ public interface BackpackInventory extends Container {
       }
 
       default ItemStack insertItem(ItemStack stack, int amount) {
-            ItemStack insertedStack = stack.copy();
-            if (insertItemSilent(stack, amount).getCount() != insertedStack.getCount())
+            int insertedCount = stack.getCount();
+            if (insertItemSilent(stack, amount).getCount() != insertedCount)
                   playSound(stack.isEmpty() ? PlaySound.INSERT : PlaySound.TAKE);
             return stack.isEmpty() ? ItemStack.EMPTY : stack;
       }
@@ -209,6 +212,7 @@ public interface BackpackInventory extends Container {
                         triggerAdvancements(SpecialCriterion.Special.LAYERED);
                   this.getItemStacks().add(0, mergeItem(stack.copyWithCount(count)));
                   stack.setCount(stack.getCount() - count);
+                  setChanged();
             }
             if (isServerSide && Objects.equals(localData.key, "leather") && spaceLeft - weight < 1)
                   triggerAdvancements(SpecialCriterion.Special.FILLED_LEATHER);

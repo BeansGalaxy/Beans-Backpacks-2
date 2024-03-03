@@ -3,17 +3,26 @@ package com.beansgalaxy.backpacks.data;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.core.BackData;
 import com.beansgalaxy.backpacks.core.BackpackInventory;
+import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.DimensionTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -21,6 +30,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
+import net.minecraft.world.level.dimension.DimensionType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -41,9 +53,9 @@ public class EnderStorage {
 
                         CompoundTag locations = new CompoundTag();
                         for (UUID backpack : enderData.locations.keySet()) {
-                              BlockPos blockPos = enderData.locations.get(backpack);
-                              int[] pos = {blockPos.getX(), blockPos.getY(), blockPos.getZ()};
-                              locations.putIntArray(backpack.toString(), pos);
+                              CompoundTag location = new CompoundTag();
+                              enderData.locations.get(backpack).toNBT(location);
+                              locations.put(backpack.toString(), location);
                         }
 
                         data.put("locations", locations);
@@ -61,7 +73,7 @@ public class EnderStorage {
       // TODO: MERGE DEPRECATED AFTER FULL RELEASE (20.1-0.14)
       public static void fromNbtDeprecated(CompoundTag tag) {
             for (String key : tag.getAllKeys()) {
-                  if (key.equals(Constants.MOD_ID)) // TODO: THIS IF IS ONLY HERE FOR COMPATIBILITY FOR PREVIOUS VERSION
+                  if (key.equals(Constants.MOD_ID)) // TODO: THIS IS ONLY HERE FOR COMPATIBILITY FOR PREVIOUS VERSION
                         continue;
                   CompoundTag dataTags = tag.getCompound(key);
                   NonNullList<ItemStack> itemStacks = NonNullList.create();
@@ -71,10 +83,9 @@ public class EnderStorage {
                   EnderStorage.Data enderData = new EnderStorage.Data(itemStacks, trim, playerName);
 
                   CompoundTag locations = dataTags.getCompound("locations");
-                  for (String key1 : locations.getAllKeys()) {
-                        UUID backpack = UUID.fromString(key1);
-                        int[] location = locations.getIntArray(key1);
-                        enderData.locations.put(backpack, new BlockPos(location[0], location[1], location[2]));
+                  for (String backpack : locations.getAllKeys()) {
+                        Location location = new Location(locations.getCompound(backpack));
+                        enderData.locations.put(UUID.fromString(backpack), location);
                   }
 
                   UUID uuid = UUID.fromString(key);
@@ -114,7 +125,7 @@ public class EnderStorage {
                   return;
 
             Data enderData = getEnderData(owner, level);
-            enderData.locations.put(backpack, location);
+            enderData.locations.put(backpack, new Location(location, level.dimension()));
       }
 
       public static void removeLocation(UUID owner, UUID backpack) {
@@ -123,35 +134,64 @@ public class EnderStorage {
                   enderData.locations.remove(backpack);
       }
 
-      public static HashSet<Location> getLocations(ServerPlayer player) {
-            Data enderData = getEnderData(player);
-            HashSet<Location> locations = new HashSet<>();
-            for (UUID backpacks : enderData.locations.keySet()) {
-                  ServerLevel serverLevel = player.serverLevel();
-                  Entity entity = serverLevel.getEntity(backpacks);
+      public static void flagForUpdate(EntityEnder ender, MinecraftServer server) {
+            UUID placedBy = ender.getPlacedBy();
+            if (placedBy == null) return;
+
+            Data data = ServerSave.MAPPED_ENDER_DATA.get(placedBy);
+            if (data == null) return;
+
+            int limit = 64;
+            for (Location location : data.locations.values()) {
+                  if (limit == 0) return;
+
+                  ServerLevel level = server.getLevel(location.dimension);
+                  if (level == null) continue;
+
+                  level.updateNeighbourForOutputSignal(location.location, Blocks.AIR);
+
+                  limit--;
+            }
+      }
+
+      public static HashSet<PackagedLocation> getLocations(UUID owner, MinecraftServer minecraftServer) {
+            Data enderData = getEnderData(owner, minecraftServer.getLevel(Level.OVERWORLD));
+            HashSet<PackagedLocation> locations = new HashSet<>();
+            for (UUID backpack : enderData.locations.keySet()) {
+
+                  Location location = enderData.locations.get(backpack);
+                  ResourceKey<Level> dimension = location.dimension;
+                  BlockPos blockPos = location.location;
+
+                  ServerLevel level = minecraftServer.getLevel(dimension);
+                  if (level == null) {
+                        locations.add(new PackagedLocation(false, blockPos, dimension));
+                        continue;
+                  }
+
+                  Entity entity = level.getEntity(backpack);
                   if (entity == null) {
-                        BlockPos blockPos = enderData.locations.get(backpacks);
-                        locations.add(new Location(false, blockPos));
+                        locations.add(new PackagedLocation(false, blockPos, dimension));
                         continue;
                   }
 
                   if (entity.isRemoved()) {
-                        enderData.locations.remove(backpacks);
+                        enderData.locations.remove(backpack);
                         continue;
                   }
 
-                  BlockPos blockPos = entity.blockPosition();
-                  enderData.locations.put(backpacks, blockPos);
-                  locations.add(new Location(true, blockPos));
+                  BlockPos newBlockPos = entity.blockPosition();
+                  enderData.locations.put(backpack, new Location(newBlockPos, dimension));
+                  locations.add(new PackagedLocation(true, newBlockPos, dimension));
             }
             return locations;
       }
 
       public static void updateLocations(UUID uuid, Level serverLevel) {
             Player owner = serverLevel.getPlayerByUUID(uuid);
-            if (owner instanceof ServerPlayer serverPlayer) {
+            if (owner instanceof ServerPlayer serverPlayer && serverPlayer.getServer() != null) {
                   BackData backData = BackData.get(owner);
-                  backData.setEnderLocations(getLocations(serverPlayer));
+                  backData.setEnderLocations(getLocations(serverPlayer.getUUID(), serverPlayer.getServer()));
                   Services.NETWORK.sendEnderLocations2C(serverPlayer, backData);
             }
       }
@@ -160,7 +200,7 @@ public class EnderStorage {
             private NonNullList<ItemStack> itemStacks = NonNullList.create();
             private CompoundTag trim = new CompoundTag();
             private MutableComponent playerName = Component.empty();
-            private final HashMap<UUID, BlockPos> locations = new HashMap<>();
+            private final HashMap<UUID, Location> locations = new HashMap<>();
 
             public Data(NonNullList<ItemStack> itemStacks, CompoundTag trim, MutableComponent playerName) {
                   this.itemStacks = itemStacks == null ? NonNullList.create() : itemStacks;
@@ -226,30 +266,80 @@ public class EnderStorage {
       }
 
       public static class Location {
+            private final BlockPos location;
+            private final ResourceKey<Level> dimension;
+
+            public Location(BlockPos location, ResourceKey<Level> dimension) {
+                  this.location = location;
+                  this.dimension = dimension;
+            }
+
+            public void toNBT(CompoundTag tag) {
+                  int[] pos = {location.getX(), location.getY(), location.getZ()};
+                  tag.putIntArray("BlockPos", pos);
+                  ResourceLocation dimension = this.dimension.location();
+                  tag.putString("namespace", dimension.getNamespace());
+                  tag.putString("path", dimension.getPath());
+
+            }
+
+            public Location(CompoundTag tag) {
+                  int[] pos = tag.getIntArray("BlockPos");
+                  this.location = new BlockPos(pos[0], pos[1], pos[2]);
+                  ResourceLocation r = new ResourceLocation(tag.getString("namespace"), tag.getString("path"));
+                  this.dimension = ResourceKey.create(Registries.DIMENSION, r);
+            }
+      }
+
+      public static class PackagedLocation {
             private final boolean isAccurate;
             private final BlockPos location;
+            private final ResourceLocation dimension;
 
-            public Location(boolean accurate, BlockPos location) {
+            public PackagedLocation(boolean accurate, BlockPos location, ResourceKey<Level> dimension) {
                   this.isAccurate = accurate;
                   this.location = location;
+                  this.dimension = dimension.location();
             }
 
             public MutableComponent toComponent() {
+                  MutableComponent literal = Component.literal("");
+
                   int x = location.getX();
+                  formatCord(x, literal);
+                  literal.append(", ");
                   int y = location.getY();
+                  formatCord(y, literal);
+                  literal.append(", ");
                   int z = location.getZ();
+                  formatCord(z, literal);
+
+                  literal.append(" | " + dimension.toShortLanguageKey());
+
                   ChatFormatting color = isAccurate ? ChatFormatting.GREEN : ChatFormatting.YELLOW;
-                  return Component.literal(x + ", " + y + ", " + z).withStyle(color);
+                  return literal.withStyle(color);
+            }
+
+            private static void formatCord(int cord, MutableComponent literal) {
+                  String number = String.valueOf(cord);
+                  int length = number.length();
+                  while (length < 3) {
+                        literal.append(" ");
+                        length++;
+                  }
+                  literal.append(number);
             }
 
             public void writeBuf(FriendlyByteBuf buf) {
                   buf.writeBoolean(isAccurate);
                   buf.writeBlockPos(location);
+                  buf.writeResourceLocation(dimension);
             }
 
-            public Location(FriendlyByteBuf buf) {
+            public PackagedLocation(FriendlyByteBuf buf) {
                   this.isAccurate = buf.readBoolean();
                   this.location = buf.readBlockPos();
+                  this.dimension = buf.readResourceLocation();
             }
       }
 }

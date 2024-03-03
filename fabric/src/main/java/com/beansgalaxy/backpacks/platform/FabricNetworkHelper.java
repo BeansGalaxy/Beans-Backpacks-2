@@ -138,9 +138,9 @@ public class FabricNetworkHelper implements NetworkHelper {
       public void sendEnderLocations2C(ServerPlayer serverPlayer, BackData backData) {
             FriendlyByteBuf buf = PacketByteBufs.create();
 
-            HashSet<EnderStorage.Location> locations = backData.getEnderLocations();
+            HashSet<EnderStorage.PackagedLocation> locations = backData.getEnderLocations();
             buf.writeInt(locations.size());
-            for (EnderStorage.Location location : locations)
+            for (EnderStorage.PackagedLocation location : locations)
                   location.writeBuf(buf);
 
             ServerPlayNetworking.send(serverPlayer, NetworkPackages.ENDER_POS_2C, buf);

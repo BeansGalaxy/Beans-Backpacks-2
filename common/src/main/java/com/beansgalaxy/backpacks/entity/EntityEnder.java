@@ -20,6 +20,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -61,6 +62,9 @@ public class EntityEnder extends EntityAbstract {
 
             @Override
             public void setChanged() {
+                  if (EntityEnder.this.level() instanceof ServerLevel serverLevel)
+                        EnderStorage.flagForUpdate(EntityEnder.this, serverLevel.getServer());
+
                   BackpackInventory.super.setChanged();
             }
       };
@@ -69,18 +73,17 @@ public class EntityEnder extends EntityAbstract {
             super(type, level);
       }
 
-      @Override
-      public BackpackInventory getInventory() {
-            return inventory;
-      }
-
       public EntityEnder(Player player, Optional<UUID> uuid) {
             super(Services.REGISTRY.getEnderEntity(), player.level());
             entityData.set(PLACED_BY, uuid);
 
-            if (level() instanceof ServerLevel serverLevel) {
+            if (level() instanceof ServerLevel serverLevel)
                   EnderStorage.setLocation(getPlacedBy(), this.uuid, blockPosition(), serverLevel);
-            }
+      }
+
+      @Override
+      public BackpackInventory getInventory() {
+            return inventory;
       }
 
       @Override
@@ -121,6 +124,7 @@ public class EntityEnder extends EntityAbstract {
       public void kill() {
             EnderStorage.removeLocation(getPlacedBy(), getUUID());
             super.kill();
+            level().updateNeighbourForOutputSignal(pos, Blocks.AIR);
       }
 
       @Override
@@ -138,6 +142,12 @@ public class EntityEnder extends EntityAbstract {
       }
 
       @Override
+      protected void reapplyPosition() {
+            super.reapplyPosition();
+            level().updateNeighbourForOutputSignal(pos, Blocks.AIR);
+      }
+
+      @Override
       protected void readAdditionalSaveData(CompoundTag tag) {
             this.setDirection(Direction.from3DDataValue(tag.getByte("facing")));
             this.setDisplay(tag.getCompound("display"));
@@ -147,5 +157,13 @@ public class EntityEnder extends EntityAbstract {
       protected void addAdditionalSaveData(CompoundTag tag) {
             tag.putByte("facing", (byte)this.direction.get3DDataValue());
             tag.put("display", getDisplay());
+      }
+
+      @Override
+      public int getAnalogOutput() {
+            if (isRemoved() || getPlacedBy() == null)
+                  return 0;
+
+            return super.getAnalogOutput();
       }
 }

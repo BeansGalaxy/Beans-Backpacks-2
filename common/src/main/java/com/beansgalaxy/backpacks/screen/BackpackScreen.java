@@ -76,23 +76,22 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
             RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
             RenderSystem.setShaderTexture(0, TEXTURE);
             int j = this.handler.invOffset + topPos;
+            context.blit(TEXTURE, leftPos, j - 123, 0, 0, 0, imageWidth, imageHeight, 256, 256);
+            drawBackpack(context, width / 2, j, 202, this.handler.mirror, mouseX, mouseY);
 
             if (minecraft.options.renderDebug && handler.owner instanceof EntityEnder ender) {
                   UUID placedBy = ender.getPlacedBy();
                   UUID uuid = handler.viewer.getUUID();
                   if (Objects.equals(placedBy.toString(), uuid.toString())) {
-                        HashSet<EnderStorage.Location> enderLocations = BackData.get(handler.viewer).getEnderLocations();
+                        HashSet<EnderStorage.PackagedLocation> enderLocations = BackData.get(handler.viewer).getEnderLocations();
                         int i = 12;
-                        for (EnderStorage.Location location : enderLocations) {
+                        for (EnderStorage.PackagedLocation location : enderLocations) {
                               MutableComponent component = location.toComponent();
-                              context.drawString(this.font, component, 3, height - i, 0xFFFFFF, false);
+                              context.drawString(this.font, component, 3, height - i, -1000, false);
                               i += 10;
                         }
                   }
             }
-
-            context.blit(TEXTURE, leftPos, j - 123, 0, 0, 0, imageWidth, imageHeight, 256, 256);
-            drawBackpack(context, width / 2, j, 202, this.handler.mirror, mouseX, mouseY);
       }
 
       private void drawBackpack(GuiGraphics context, int x, int y, int scale, Backpack entity, int mouseX, int mouseY) {

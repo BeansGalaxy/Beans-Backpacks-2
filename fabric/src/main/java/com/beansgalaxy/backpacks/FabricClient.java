@@ -59,7 +59,7 @@ public class FabricClient implements ClientModInitializer {
                   case 0 -> WingedBackpack.shiftColorLayer0(((WingedBackpack) stack.getItem()).getColor(stack));
                   case 2 -> WingedBackpack.shiftColorLayer2(((WingedBackpack) stack.getItem()).getColor(stack));
                   default -> 0xFFFFFF;
-            });
+            }, FabricMain.WINGED_BACKPACK);
 
             ModelLoadingPlugin.register(new LoadItemModels());
 

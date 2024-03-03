@@ -16,21 +16,21 @@ public class ReceiveEnderPos {
                         .encoder(ReceiveEnderPos::encode).decoder(ReceiveEnderPos::new).consumerMainThread(ReceiveEnderPos::handle).add();
       }
 
-      final HashSet<EnderStorage.Location> enderLocations;
+      final HashSet<EnderStorage.PackagedLocation> enderLocations;
 
-      public ReceiveEnderPos(HashSet<EnderStorage.Location> enderLocations) {
+      public ReceiveEnderPos(HashSet<EnderStorage.PackagedLocation> enderLocations) {
             this.enderLocations = enderLocations;
       }
 
       public ReceiveEnderPos(FriendlyByteBuf buf) {
             enderLocations = new HashSet<>();
             for (int i = buf.readInt(); i > 0; i--)
-                  enderLocations.add(new EnderStorage.Location(buf));
+                  enderLocations.add(new EnderStorage.PackagedLocation(buf));
       }
 
       public void encode(FriendlyByteBuf buf) {
             buf.writeInt(enderLocations.size());
-            for (EnderStorage.Location location : enderLocations)
+            for (EnderStorage.PackagedLocation location : enderLocations)
                   location.writeBuf(buf);
       }
 

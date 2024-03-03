@@ -65,7 +65,7 @@ public class CommonAtClient {
             }
       }
 
-      public static void receiveEnderPos(HashSet<EnderStorage.Location> enderLocations) {
+      public static void receiveEnderPos(HashSet<EnderStorage.PackagedLocation> enderLocations) {
             LocalPlayer player = Minecraft.getInstance().player;
 
             if (player == null)

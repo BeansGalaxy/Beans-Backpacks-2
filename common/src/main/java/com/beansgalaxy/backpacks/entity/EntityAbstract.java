@@ -37,6 +37,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -49,7 +50,7 @@ import java.util.UUID;
 
 public abstract class EntityAbstract extends Backpack {
       public Direction direction;
-      private BlockPos pos;
+      protected BlockPos pos;
       private double actualY;
       private static final int BREAK_TIMER = 25;
       public int wobble = 9;
@@ -99,17 +100,18 @@ public abstract class EntityAbstract extends Backpack {
             Component hoverName = backpackStack.hasCustomHoverName() ? backpackStack.getHoverName(): null;
             backpack.setCustomName(hoverName);
 
-            if (!direction.getAxis().isHorizontal())
-                  backpack.setYRot(yaw);
+            boolean isHorizontal = direction.getAxis().isHorizontal();
+            if (!isHorizontal) backpack.setYRot(yaw);
 
+            Level level = player.level();
             PlaySound.PLACE.at(backpack, traits.kind());
             if (player instanceof ServerPlayer serverPlayer) {
                   Services.REGISTRY.triggerPlace(serverPlayer, traits.key);
-
-                  Level level = serverPlayer.level();
                   level.gameEvent(player, GameEvent.ENTITY_PLACE, backpack.position());
                   level.addFreshEntity(backpack);
             }
+
+            if (isHorizontal) level.updateNeighbourForOutputSignal(backpack.pos, Blocks.AIR);
 
             backpackStack.shrink(1);
             return backpack;
@@ -581,4 +583,18 @@ public abstract class EntityAbstract extends Backpack {
             return new Vec3(this.pos.getX(), this.actualY, this.pos.getZ());
       }
 
+      public int getAnalogOutput() {
+            if (getItemStacks().isEmpty())
+                  return 0;
+
+            int space = getInventory().spaceLeft();
+            int max = getLocalData().maxStacks() * 64;
+
+            float i = max - space;
+            i /= max;
+            i *= 14;
+            i += 1;
+
+            return (int) i;
+      }
 }

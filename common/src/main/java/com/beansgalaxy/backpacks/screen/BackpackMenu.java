@@ -183,7 +183,7 @@ public class BackpackMenu extends AbstractContainerMenu {
                   clickedStack = backpackInventory.getItemStacks().get(slotId - FIRST_SLOT_INDEX);
                   this.moveItemStackTo(clickedStack, 0, FIRST_SLOT_INDEX, true);
                   if (clickedStack.isEmpty()) {
-                        backpackInventory.getItemStacks().remove(slotId - FIRST_SLOT_INDEX);
+                        backpackInventory.removeItemNoUpdate(slotId - FIRST_SLOT_INDEX);
                         backpackInventory.playSound(PlaySound.TAKE);
                   }
             }

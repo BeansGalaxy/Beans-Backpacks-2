@@ -71,17 +71,17 @@ public class BackData {
       public static final int[] UV = {59, 62};
       public final BackSlot backSlot = new BackSlot(this);
       public final InSlot inSlot = new InSlot(this);
-      private final HashSet<EnderStorage.Location> enderLocations = new HashSet<>();
+      private final HashSet<EnderStorage.PackagedLocation> enderLocations = new HashSet<>();
       private Traits.LocalData localData = Traits.LocalData.EMPTY;
       private ItemStack backStack = ItemStack.EMPTY;
       public boolean actionKeyPressed = false;
 
-      public void setEnderLocations(HashSet<EnderStorage.Location> newLocations) {
+      public void setEnderLocations(HashSet<EnderStorage.PackagedLocation> newLocations) {
             this.enderLocations.clear();
             this.enderLocations.addAll(newLocations);
       }
 
-      public HashSet<EnderStorage.Location> getEnderLocations() {
+      public HashSet<EnderStorage.PackagedLocation> getEnderLocations() {
             return new HashSet<>(enderLocations);
       }
 

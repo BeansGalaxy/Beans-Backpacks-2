@@ -50,9 +50,9 @@ public class ReceiveAtClient {
             if (player == null)
                   return;
 
-            HashSet<EnderStorage.Location> newLocations = new HashSet<>();
+            HashSet<EnderStorage.PackagedLocation> newLocations = new HashSet<>();
             for (int i = buf.readInt(); i > 0; i--)
-                  newLocations.add(new EnderStorage.Location(buf));
+                  newLocations.add(new EnderStorage.PackagedLocation(buf));
 
             BackData backData = BackData.get(player);
             backData.setEnderLocations(newLocations);
