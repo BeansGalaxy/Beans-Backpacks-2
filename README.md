@@ -18,14 +18,31 @@ the issues tab. </p>
 
 <h1 align="center"> Changelog </h1>
 
-### 20.1-0.14-v2 & 20.2-0.16-v2
+### 20.1-0.15-v2 & 20.2-0.17-v2
+- Backpacks now work with comparators. *(including Ender Backpacks)*
+- Added final Ender & Winged Backpack texture
+- Named Backpacks now display their name & Ender Backpacks display their owner.
+- With F3, you can see all placed Ender Backpacks' coordinates.
+- Added `/beansmod` command. *([more info](https://github.com/BeansGalaxy/Beans-Backpacks-2/wiki/Commands))*
+- Added `config` subcommand.
+  - Added an option to unbind worn Ender Backpacks on death.
+  - Added an option to lock a player's Ender Backpack while they're offline.
+- Added Various `enderdata` commands to help with managing Ender Backpacks entries. 
+- Elytra Wings are now visible when Winged Backpacks are hung.
+- Added `remove_backpack_keys` to Data-Pack's `modify` *([more info](https://github.com/BeansGalaxy/Beans-Backpacks-2/wiki/Configurations#additional-lists))*
+- Added Backpack Items to the Recipe Book.
+- Fixed multiple workarounds to `disables_back_slot` & `disable_chestplate`
+- Restructured Backpack Entities classes so they are more modular.
+- Restructured Ender Data saving and loading.
+
+### 20.1-0.14-v2 & 20.2-0.17-v2
 - Added Winged Backpacks
 - Added Ender Backpacks *([more info](https://github.com/BeansGalaxy/Beans-Backpacks-2/wiki/Functionality#ender-backpacks))*
 - Added `elytra_items` in Data-Pack's `modify` folder *([more info](https://github.com/BeansGalaxy/Beans-Backpacks-2/wiki/Configurations))*
 - Renamed *New Duds* Advancement description to *Equip a Dyed Backpack*
 - Many changes to Backpack Entities and Inventories
 
-<h3> 20.1-0.13-v2 & 20.2-0.15-v2 <img align="right" src="assets/images/new_backpacks.png" alt="Back Slot" style="width:400px"> </h3>
+<h3> 20.1-0.13-v2 & 20.2-0.16-v2 <img align="right" src="assets/images/new_backpacks.png" alt="Back Slot" style="width:400px"> </h3>
 
 - Fixed Backpacks disappearing on Death
 

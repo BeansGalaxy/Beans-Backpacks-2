@@ -71,9 +71,10 @@ public class EnderStorage {
       }
 
       // TODO: MERGE DEPRECATED AFTER FULL RELEASE (20.1-0.14)
-      public static void fromNbtDeprecated(CompoundTag tag) {
+      public static boolean fromNbtDeprecated(CompoundTag tag) {
+            boolean isOldLoad = false; // TODO: FOR COMPATIBILITY FOR PREVIOUS VERSION
             for (String key : tag.getAllKeys()) {
-                  if (key.equals(Constants.MOD_ID)) // TODO: THIS IS ONLY HERE FOR COMPATIBILITY FOR PREVIOUS VERSION
+                  if (key.equals("EnderData") || key.equals("Config")) // TODO: FOR COMPATIBILITY FOR PREVIOUS VERSION
                         continue;
                   CompoundTag dataTags = tag.getCompound(key);
                   NonNullList<ItemStack> itemStacks = NonNullList.create();
@@ -90,8 +91,10 @@ public class EnderStorage {
 
                   UUID uuid = UUID.fromString(key);
                   ServerSave.MAPPED_ENDER_DATA.put(uuid, enderData);
+                  isOldLoad = true;
             }
             ServerSave.MAPPED_ENDER_DATA.remove(null);
+            return isOldLoad;
       }
 
       public static Data getEnderData(Player player) {

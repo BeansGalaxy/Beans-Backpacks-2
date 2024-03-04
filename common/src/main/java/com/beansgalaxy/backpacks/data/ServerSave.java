@@ -18,21 +18,17 @@ public class ServerSave extends SavedData {
 
       @Override @NotNull
       public CompoundTag save(@NotNull CompoundTag tag) {
-            CompoundTag backpacksSave = new CompoundTag();
-            EnderStorage.toNBT(backpacksSave);
-            Config.toNBT(backpacksSave);
-            tag.put(Constants.MOD_ID, backpacksSave);
+            EnderStorage.toNBT(tag);
+            Config.toNBT(tag);
             return tag;
       }
 
       public static ServerSave createFromNbt(CompoundTag tag) {
             ServerSave save = new ServerSave();
-            EnderStorage.fromNbtDeprecated(tag);
-            CompoundTag backpacksSave;
-            if (tag.contains(Constants.MOD_ID)) {
-                  backpacksSave = tag.getCompound(Constants.MOD_ID);
-                  EnderStorage.fromNbt(backpacksSave);
-                  Config.fromNBT(backpacksSave);
+            boolean isOldSave = EnderStorage.fromNbtDeprecated(tag);
+            if (!isOldSave) {
+                  EnderStorage.fromNbt(tag);
+                  Config.fromNBT(tag);
             }
             return save;
       }
