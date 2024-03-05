@@ -1,7 +1,7 @@
 {
   "key.beansbackpacks.category" : "Beans' Backpacks",
   "key.beansbackpacks.action": "Действие рюкзака",
-  "key.beansbackpacks.description": "Leave unbound to pair this action with the key bound to sprint.",
+  "key.beansbackpacks.description": "Оставьте «Не назначена», чтобы назначить это действие на клавишу бега.",
   "itemGroup.beansbackpacks": "Рюкзаки",
 
   "tooltip.beansbackpacks.name.leather": "Рюкзак",
@@ -11,7 +11,7 @@
   "tooltip.beansbackpacks.name.winged": "Крылатый рюкзак",
   "tooltip.beansbackpacks.name.ender": "Эндер-рюкзак",
 
-  "tooltip.beansbackpacks.empty_title_1": "%d §7, чтобы узнать подробности.",
+  "tooltip.beansbackpacks.empty_title_1": "%d§7, чтобы узнать подробности.",
   "tooltip.beansbackpacks.empty_title_2": "",
 
   "tooltip.beansbackpacks.help.backpack0": "§7Нажмите на этот рюкзак,",
@@ -30,23 +30,23 @@
   "tooltip.beansbackpacks.help.pot6": "§7Вы не можете снять",
   "tooltip.beansbackpacks.help.pot7": "§7вазу с предметами.",
 
-  "tooltip.beansbackpacks.help.ender0": "§7Эти предметы присутствуют",
+  "tooltip.beansbackpacks.help.ender0": "§7Предметы внутри присутствуют",
   "tooltip.beansbackpacks.help.ender1": "§7во всех связанных рюкзаках.",
   "tooltip.beansbackpacks.help.ender2": "§7Перепривяжите рюкзак,",
   "tooltip.beansbackpacks.help.ender3": "§7отделав или разрушив его.",
   "tooltip.beansbackpacks.help.ender4": "§7Этот рюкзак привязан",
-  "tooltip.beansbackpacks.help.ender5": "§7к %d§7.",
+  "tooltip.beansbackpacks.help.ender5": "§7к игроку %d§7.",
 
   "tooltip.beansbackpacks.ender.binding": "§7Привязан к: %d",
 
   "sounds.beansbackpacks.place": "Рюкзак размещён",
   "sounds.beansbackpacks.equip": "Рюкзак экипирован",
-  "sounds.beansbackpacks.hit": "Hit Backpack",
-  "sounds.beansbackpacks.break": "Broke Backpack",
-  "sounds.beansbackpacks.insert": "Inserted into Backpack",
-  "sounds.beansbackpacks.take": "Took from Backpack",
-  "sounds.beansbackpacks.open": "Рюкзак открыт",
-  "sounds.beansbackpacks.close": "Рюкзак закрыт",
+  "sounds.beansbackpacks.hit": "Рюкзак ударен",
+  "sounds.beansbackpacks.break": "Сломан рюкзак",
+  "sounds.beansbackpacks.insert": "Предмет положен в рюкзак",
+  "sounds.beansbackpacks.take": "Предмет взят из рюкзака",
+  "sounds.beansbackpacks.open": "Открылся рюкзак",
+  "sounds.beansbackpacks.close": "Закрылся рюкзак",
 
   "command.beansbackpacks.enderdata.clear.success": "Successfully removed %d.",
   "command.beansbackpacks.enderdata.list.success": "%d entries found",
