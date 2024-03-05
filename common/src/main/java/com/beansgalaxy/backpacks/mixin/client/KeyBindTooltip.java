@@ -9,19 +9,20 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(KeyBindsList.KeyEntry.class)
+@Mixin(value = KeyBindsList.KeyEntry.class)
 public abstract class KeyBindTooltip {
       @Shadow @Final private Button changeButton;
       @Shadow @Final private Component name;
 
-      @Redirect(method = "refreshEntry", at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/client/gui/components/Button;setTooltip(Lnet/minecraft/client/gui/components/Tooltip;)V"))
-      private void redirect(Button instance, Tooltip tooltip) {
+      @Inject(method = "refreshEntry", at = @At(value = "INVOKE", ordinal = 1, shift = At.Shift.AFTER,
+                  target = "Lnet/minecraft/client/gui/components/Button;setTooltip(Lnet/minecraft/client/gui/components/Tooltip;)V"))
+      private void changeBackpackKeyHover(CallbackInfo ci) {
             if (name.equals(Component.translatable(KeyPress.KEY_BACKPACK_MODIFIER))) {
-                  tooltip = Tooltip.create(Component.translatable(KeyPress.KEY_DESCRIPTION));
+                  this.changeButton.setTooltip(Tooltip.create(Component.translatable(KeyPress.KEY_DESCRIPTION)));
             }
-            this.changeButton.setTooltip(tooltip);
       }
-
 }

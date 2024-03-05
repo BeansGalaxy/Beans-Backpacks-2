@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.platform.services;
 
 import com.beansgalaxy.backpacks.core.BackData;
+import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -18,6 +19,10 @@ public interface CompatHelper {
                   if (isModLoaded(namespace))
                         return true;
             return false;
+      }
+
+      default boolean graveModLoaded() {
+            return anyModsLoaded(new String[]{"universal-graves", "yigd", "gravestones"});
       }
 
       void setBackSlotItem(BackData data, ItemStack stack);

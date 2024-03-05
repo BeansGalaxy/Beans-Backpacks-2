@@ -8,6 +8,7 @@ import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.platform.Services;
+import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import com.beansgalaxy.backpacks.screen.InSlot;
 import net.minecraft.core.BlockPos;
@@ -21,6 +22,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashSet;
 import java.util.UUID;
@@ -155,15 +160,11 @@ public class BackData {
       }
 
       public void drop() {
-            if (localData.key.isEmpty())
-                  return;
-
             NonNullList<ItemStack> itemStacks = backpackInventory.getItemStacks();
-
             ItemStack backStack = getStack();
             if (!Kind.isBackpack(backStack)) {
                   owner.spawnAtLocation(backStack.copy(), 0.5f);
-                  if (localData.isPot()) {
+                  if (Kind.POT.is(backStack)) {
                         int iteration = 0;
                         int maxIterations = 108;
                         while (!itemStacks.isEmpty() && iteration < maxIterations) {
@@ -190,9 +191,29 @@ public class BackData {
             double y = blockPos.getY() + 1.5;
             int z = blockPos.getZ();
 
-            EntityAbstract.create(backStack, x, y, z, yaw, true, Direction.UP, owner, itemStacks);
+            Direction direction = Direction.UP;
+            if (Services.COMPAT.graveModLoaded()) {
+                  Direction step = Direction.fromYRot(yaw);
+                  BlockPos relative = blockPos.relative(step);
+                  y = owner.getY();
+                  if (canPlayerStandOn(owner, relative)) {
+                        x = relative.getX();
+                        z = relative.getZ();
+                        direction = step;
+                  } else
+                        direction = Direction.fromYRot(yaw);
+            }
+
+            EntityAbstract.create(backStack, x, y, z, yaw, true, direction, owner, itemStacks);
 
             set(ItemStack.EMPTY);
+      }
+
+      private boolean canPlayerStandOn(Player player, BlockPos blockPos) {
+            Level level = player.level();
+            BlockState blockState = level.getBlockState(blockPos);
+            BlockGetter chunkForCollisions = level.getChunk(blockPos);
+            return blockState.entityCanStandOn(chunkForCollisions, blockPos, player);
       }
 
       public void copyTo(BackData newBackData) {

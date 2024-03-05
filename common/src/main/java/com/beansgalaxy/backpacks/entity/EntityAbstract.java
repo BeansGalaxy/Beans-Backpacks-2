@@ -542,6 +542,7 @@ public abstract class EntityAbstract extends Backpack {
                                     ender.setPlacedBy(Optional.of(player.getUUID()));
                                     EnderStorage.getEnderData(player);
                               }
+                        } else {
                               NonNullList<ItemStack> playerInventoryStacks = BackData.get(player).backpackInventory.getItemStacks();
                               NonNullList<ItemStack> backpackEntityStacks = this.getItemStacks();
                               playerInventoryStacks.clear();

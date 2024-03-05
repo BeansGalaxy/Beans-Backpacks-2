@@ -18,6 +18,13 @@ the issues tab. </p>
 
 <h1 align="center"> Changelog </h1>
 
+### 20.1-0.16-v3 & 20.2-0.17-v2
+
+- With various grave mods installed the backpack will try not to place in the grave on death.
+- Fixed elytra item not dropping on death
+- Fixed items being deleted while equipping a non-ender backpack
+- Fixed crash with some mods in the Key-Bind Menu *(all my homies hate \@Redirect)*
+
 ### 20.1-0.15-v2 & 20.2-0.17-v2
 - Backpacks now work with comparators. *(including Ender Backpacks)*
 - Added final Ender & Winged Backpack texture
