@@ -1,6 +1,6 @@
 package com.beansgalaxy.backpacks.network.client;
 
-import com.beansgalaxy.backpacks.core.Traits;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;

@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.core.Traits;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.mojang.authlib.minecraft.client.ObjectMapper;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.RegistryAccess;

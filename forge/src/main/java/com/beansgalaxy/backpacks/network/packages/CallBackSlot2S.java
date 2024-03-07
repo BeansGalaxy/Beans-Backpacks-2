@@ -1,6 +1,6 @@
 package com.beansgalaxy.backpacks.network.packages;
 
-import com.beansgalaxy.backpacks.core.BackData;
+import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.network.client.SyncBackSlot2C;
 import net.minecraft.network.FriendlyByteBuf;

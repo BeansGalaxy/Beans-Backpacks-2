@@ -1,10 +1,9 @@
 package com.beansgalaxy.backpacks.compat;
 
-import com.beansgalaxy.backpacks.core.BackData;
+import com.beansgalaxy.backpacks.data.BackData;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurio;

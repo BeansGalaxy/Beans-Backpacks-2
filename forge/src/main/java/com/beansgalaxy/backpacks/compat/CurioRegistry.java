@@ -1,14 +1,11 @@
 package com.beansgalaxy.backpacks.compat;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.core.BackData;
-import com.beansgalaxy.backpacks.core.Kind;
-import net.minecraft.core.NonNullList;
-import net.minecraft.world.entity.LivingEntity;
+import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.entity.Kind;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotResult;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;

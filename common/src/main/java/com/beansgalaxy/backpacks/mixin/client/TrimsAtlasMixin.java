@@ -30,15 +30,14 @@ public abstract class TrimsAtlasMixin {
     public List<ResourceLocation> injectBackpackTrims(PalettedPermutations instance, ResourceManager resourceManager) {
         if(textures.size() == 1 && textures.get(0).equals(new ResourceLocation(backpackTrimsLocation))) {
             Set<ResourceLocation> resourceLocations =
-                    resourceManager.listResources("textures/trims", in ->
-                    in.getPath().endsWith(".png") && in.getNamespace().equals(Constants.MOD_ID))
+                    resourceManager.listResources("textures/trims/backpacks", in ->
+                            in.getPath().endsWith(".png"))
                     .keySet();
 
             NonNullList<ResourceLocation> newLocations = NonNullList.create();
-            resourceLocations.forEach(in -> {
-                String path = in.getPath().replace("textures/", "").replace(".png", "");
-                newLocations.add(new ResourceLocation(Constants.MOD_ID, path));
-            });
+            resourceLocations.forEach(in ->
+                        newLocations.add(in.withPath(path ->
+                                    path.replace("textures/", "").replace(".png", ""))));
 
             return newLocations.stream().toList();
         }

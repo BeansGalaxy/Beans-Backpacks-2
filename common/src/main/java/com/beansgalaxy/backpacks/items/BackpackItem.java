@@ -1,9 +1,9 @@
 package com.beansgalaxy.backpacks.items;
 
-import com.beansgalaxy.backpacks.core.BackData;
-import com.beansgalaxy.backpacks.core.BackpackInventory;
-import com.beansgalaxy.backpacks.core.Kind;
-import com.beansgalaxy.backpacks.core.Traits;
+import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.screen.BackpackInventory;
+import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import com.beansgalaxy.backpacks.events.PlaySound;

@@ -35,16 +35,16 @@ public class TrimHelper extends ArmorTrim {
         super(material, pattern);
         this.material = material;
         this.backpackTexture = Util.memoize(armorMaterial -> {
-            String patternString = pattern.value().assetId().getPath();
+            ResourceLocation location = pattern.value().assetId();
             String materialString = this.getMaterialAssetNameFor(armorMaterial);
-            ResourceLocation resourceLocation = new ResourceLocation(Constants.MOD_ID, "trims/" + patternString + "_" + materialString);
+            ResourceLocation resourceLocation = location.withPath(in -> "trims/backpacks/" + in + "_" + materialString);
             return resourceLocation;
         });
     }
 
-    private String getMaterialAssetNameFor(ArmorMaterial armorMaterial) {
+    private String getMaterialAssetNameFor(ArmorMaterial $$0) {
         Map<ArmorMaterials, String> map = this.material.value().overrideArmorMaterials();
-        return armorMaterial instanceof ArmorMaterials && map.containsKey(armorMaterial) ? map.get(armorMaterial) : this.material.value().assetName();
+        return $$0 instanceof ArmorMaterials && map.containsKey($$0) ? map.get($$0) : this.material.value().assetName();
     }
 
     public static Optional<TrimHelper> getBackpackTrim(RegistryAccess registryManager, CompoundTag tag) {

@@ -1,15 +1,15 @@
-package com.beansgalaxy.backpacks.core;
+package com.beansgalaxy.backpacks.data;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.access.BackAccessor;
-import com.beansgalaxy.backpacks.data.EnderStorage;
+import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.platform.Services;
-import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.beansgalaxy.backpacks.screen.BackSlot;
+import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.screen.InSlot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,7 +22,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -160,30 +159,6 @@ public class BackData {
       }
 
       public void drop() {
-            NonNullList<ItemStack> itemStacks = backpackInventory.getItemStacks();
-            ItemStack backStack = getStack();
-            if (!Kind.isBackpack(backStack)) {
-                  owner.spawnAtLocation(backStack.copy(), 0.5f);
-                  if (Kind.POT.is(backStack)) {
-                        int iteration = 0;
-                        int maxIterations = 108;
-                        while (!itemStacks.isEmpty() && iteration < maxIterations) {
-                              ItemStack stack = itemStacks.remove(iteration);
-                              if (stack.getMaxStackSize() == 64) {
-                                    owner.spawnAtLocation(stack, 0.5f);
-                              } else while (stack.getCount() > 0) {
-                                    int removedCount = Math.min(stack.getCount(), stack.getMaxStackSize());
-                                    owner.spawnAtLocation(stack.copyWithCount(removedCount));
-                                    stack.shrink(removedCount);
-                              }
-                              iteration++;
-                        }
-                        SoundEvent soundEvent = iteration >= maxIterations ? SoundEvents.DECORATED_POT_BREAK : SoundEvents.DECORATED_POT_SHATTER;
-                        owner.playSound(soundEvent, 0.4f, 0.8f);
-                  }
-                  return;
-            }
-
             BlockPos blockPos = owner.getOnPos();
             float yaw = owner.yBodyRot + 180;
 
@@ -196,7 +171,7 @@ public class BackData {
                   Direction step = Direction.fromYRot(yaw);
                   BlockPos relative = blockPos.relative(step);
                   y = owner.getY();
-                  if (canPlayerStandOn(owner, relative)) {
+                  if (canPlaceBackpackSafely(owner, relative) ) {
                         x = relative.getX();
                         z = relative.getZ();
                         direction = step;
@@ -204,16 +179,50 @@ public class BackData {
                         direction = Direction.fromYRot(yaw);
             }
 
+            NonNullList<ItemStack> droppedItems = drop(x, y, z, direction, yaw);
+            while (!droppedItems.isEmpty()) {
+                  owner.spawnAtLocation(droppedItems.get(0));
+            }
+      }
+
+      /* ======================= COMPAT METHOD FOR GRAVE MODS TO GRAB ======================== */
+      public NonNullList<ItemStack> drop(int x, double y, int z, Direction direction, float yaw) {
+            NonNullList<ItemStack> droppedItems = NonNullList.create();
+            NonNullList<ItemStack> itemStacks = backpackInventory.getItemStacks();
+            ItemStack backStack = getStack();
+            if (!Kind.isBackpack(backStack)) {
+                  droppedItems.add(backStack.copy());
+                  if (Kind.POT.is(backStack)) {
+                        int iteration = 0;
+                        int maxIterations = 108;
+                        while (!itemStacks.isEmpty() && iteration < maxIterations) {
+                              ItemStack stack = itemStacks.remove(iteration);
+                              if (stack.getMaxStackSize() == 64) {
+                                    droppedItems.add(stack);
+                              } else while (stack.getCount() > 0) {
+                                    int removedCount = Math.min(stack.getCount(), stack.getMaxStackSize());
+                                    droppedItems.add(stack.copyWithCount(removedCount));
+                                    stack.shrink(removedCount);
+                              }
+                              iteration++;
+                        }
+                        SoundEvent soundEvent = iteration >= maxIterations ? SoundEvents.DECORATED_POT_BREAK : SoundEvents.DECORATED_POT_SHATTER;
+                        owner.playSound(soundEvent, 0.4f, 0.8f);
+                  }
+                  return droppedItems;
+            }
+
             EntityAbstract.create(backStack, x, y, z, yaw, true, direction, owner, itemStacks);
 
             set(ItemStack.EMPTY);
+            return droppedItems;
       }
 
-      private boolean canPlayerStandOn(Player player, BlockPos blockPos) {
+      private boolean canPlaceBackpackSafely(Player player, BlockPos blockPos) {
             Level level = player.level();
             BlockState blockState = level.getBlockState(blockPos);
             BlockGetter chunkForCollisions = level.getChunk(blockPos);
-            return blockState.entityCanStandOn(chunkForCollisions, blockPos, player);
+            return blockState.entityCanStandOn(chunkForCollisions, blockPos, player) && blockState.canOcclude();
       }
 
       public void copyTo(BackData newBackData) {

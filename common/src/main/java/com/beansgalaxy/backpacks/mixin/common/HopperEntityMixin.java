@@ -1,6 +1,6 @@
 package com.beansgalaxy.backpacks.mixin.common;
 
-import com.beansgalaxy.backpacks.core.BackpackInventory;
+import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Container;

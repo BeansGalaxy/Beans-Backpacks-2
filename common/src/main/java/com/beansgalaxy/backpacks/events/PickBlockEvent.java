@@ -1,8 +1,8 @@
 package com.beansgalaxy.backpacks.events;
 
-import com.beansgalaxy.backpacks.core.BackData;
-import com.beansgalaxy.backpacks.core.BackpackInventory;
-import com.beansgalaxy.backpacks.core.Kind;
+import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.screen.BackpackInventory;
+import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;

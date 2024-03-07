@@ -1,6 +1,6 @@
 package com.beansgalaxy.backpacks.events;
 
-import com.beansgalaxy.backpacks.core.BackData;
+import com.beansgalaxy.backpacks.data.BackData;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;

@@ -2,7 +2,7 @@ package com.beansgalaxy.backpacks.platform;
 
 import com.beansgalaxy.backpacks.ForgeMain;
 import com.beansgalaxy.backpacks.Sounds;
-import com.beansgalaxy.backpacks.core.Kind;
+import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.entity.EntityGeneral;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;

@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.core.BackData;
+import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.network.packages.ConfigureKeys2C;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;

@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.events.advancements;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.core.BackData;
+import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.google.gson.JsonObject;

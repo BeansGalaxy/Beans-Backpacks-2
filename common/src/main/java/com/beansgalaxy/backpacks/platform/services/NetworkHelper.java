@@ -1,6 +1,6 @@
 package com.beansgalaxy.backpacks.platform.services;
 
-import com.beansgalaxy.backpacks.core.BackData;
+import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;

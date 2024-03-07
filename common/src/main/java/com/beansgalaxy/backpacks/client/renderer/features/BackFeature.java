@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.client.renderer.features;
 
-import com.beansgalaxy.backpacks.core.BackData;
-import com.beansgalaxy.backpacks.core.Kind;
+import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.entity.Kind;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.PlayerModel;

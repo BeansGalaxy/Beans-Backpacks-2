@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.events;
 
-import com.beansgalaxy.backpacks.core.BackData;
-import com.beansgalaxy.backpacks.core.Kind;
+import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

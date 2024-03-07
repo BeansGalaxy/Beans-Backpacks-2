@@ -1,6 +1,7 @@
-package com.beansgalaxy.backpacks.core;
+package com.beansgalaxy.backpacks.entity;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.nbt.CompoundTag;

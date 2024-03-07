@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.items;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.core.Traits;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.google.gson.JsonObject;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;

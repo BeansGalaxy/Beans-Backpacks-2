@@ -1,8 +1,8 @@
 package com.beansgalaxy.backpacks.client.renderer.features;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.core.BackData;
-import com.beansgalaxy.backpacks.core.Traits;
+import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.items.WingedBackpack;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.mojang.blaze3d.vertex.PoseStack;

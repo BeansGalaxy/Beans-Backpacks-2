@@ -1,8 +1,7 @@
 package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.core.BackData;
-import com.beansgalaxy.backpacks.core.BackpackInventory;
+import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.entity.EntityEnder;

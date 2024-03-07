@@ -1,6 +1,6 @@
 package com.beansgalaxy.backpacks;
 
-import com.beansgalaxy.backpacks.core.BackpackInventory;
+import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.data.RegisterCommands;
 import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.entity.*;

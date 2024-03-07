@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.events;
 
-import com.beansgalaxy.backpacks.core.BackData;
-import com.beansgalaxy.backpacks.core.Kind;
+import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.entity.Kind;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;

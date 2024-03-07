@@ -1,6 +1,6 @@
 package com.beansgalaxy.backpacks.platform.services;
 
-import com.beansgalaxy.backpacks.core.Kind;
+import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import net.minecraft.server.level.ServerPlayer;

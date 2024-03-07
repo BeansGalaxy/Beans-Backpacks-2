@@ -1,10 +1,6 @@
 package com.beansgalaxy.backpacks.platform.services;
 
-import com.beansgalaxy.backpacks.core.BackData;
-import com.beansgalaxy.backpacks.platform.Services;
-import net.minecraft.core.NonNullList;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
+import com.beansgalaxy.backpacks.data.BackData;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 

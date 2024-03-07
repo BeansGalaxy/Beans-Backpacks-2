@@ -1,6 +1,6 @@
 package com.beansgalaxy.backpacks.events;
 
-import com.beansgalaxy.backpacks.core.Kind;
+import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;

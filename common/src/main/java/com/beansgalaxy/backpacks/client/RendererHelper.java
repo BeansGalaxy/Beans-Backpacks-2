@@ -2,8 +2,8 @@ package com.beansgalaxy.backpacks.client;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.renderer.BackpackModel;
-import com.beansgalaxy.backpacks.core.Kind;
-import com.beansgalaxy.backpacks.core.Traits;
+import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.platform.Lighting;

@@ -1,6 +1,7 @@
-package com.beansgalaxy.backpacks.core;
+package com.beansgalaxy.backpacks.data;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.entity.Kind;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;

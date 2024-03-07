@@ -1,16 +1,11 @@
 package com.beansgalaxy.backpacks.platform;
 
-import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.compat.CurioRegistry;
-import com.beansgalaxy.backpacks.core.BackData;
+import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
-import net.minecraft.core.NonNullList;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModList;
-
-import java.util.Arrays;
 
 public class ForgeCompatHelper implements CompatHelper {
 

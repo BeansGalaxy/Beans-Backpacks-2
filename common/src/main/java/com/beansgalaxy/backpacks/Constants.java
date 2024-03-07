@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks;
 
-import com.beansgalaxy.backpacks.core.BackData;
-import com.beansgalaxy.backpacks.core.Traits;
+import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import net.minecraft.core.NonNullList;
