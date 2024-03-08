@@ -171,18 +171,29 @@ public class BackData {
                   Direction step = Direction.fromYRot(yaw);
                   BlockPos relative = blockPos.relative(step);
                   y = owner.getY();
-                  if (canPlaceBackpackSafely(owner, relative) ) {
+                  if (canPlaceBackpackSafely(owner, relative)) {
                         x = relative.getX();
                         z = relative.getZ();
                         direction = step;
                   } else
-                        direction = Direction.fromYRot(yaw);
+                        direction = Direction.fromYRot(yaw + 90);
             }
 
             NonNullList<ItemStack> droppedItems = drop(x, y, z, direction, yaw);
             while (!droppedItems.isEmpty()) {
-                  owner.spawnAtLocation(droppedItems.get(0));
+                  owner.spawnAtLocation(droppedItems.remove(0));
             }
+      }
+
+      private boolean canPlaceBackpackSafely(Player player, BlockPos blockPos) {
+            Level level = player.level();
+            BlockState blockState = level.getBlockState(blockPos.above());
+            BlockGetter chunkForCollisions = level.getChunk(blockPos);
+            if (blockState.isCollisionShapeFullBlock(chunkForCollisions, blockPos.above()))
+                  return false;
+
+            BlockState blockStateBelow = level.getBlockState(blockPos);
+            return blockStateBelow.entityCanStandOn(chunkForCollisions, blockPos, player);
       }
 
       /* ======================= COMPAT METHOD FOR GRAVE MODS TO GRAB ======================== */
@@ -216,13 +227,6 @@ public class BackData {
 
             set(ItemStack.EMPTY);
             return droppedItems;
-      }
-
-      private boolean canPlaceBackpackSafely(Player player, BlockPos blockPos) {
-            Level level = player.level();
-            BlockState blockState = level.getBlockState(blockPos);
-            BlockGetter chunkForCollisions = level.getChunk(blockPos);
-            return blockState.entityCanStandOn(chunkForCollisions, blockPos, player) && blockState.canOcclude();
       }
 
       public void copyTo(BackData newBackData) {
