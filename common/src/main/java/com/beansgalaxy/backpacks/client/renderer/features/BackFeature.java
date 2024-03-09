@@ -23,12 +23,14 @@ public class BackFeature<T extends LivingEntity, M extends EntityModel<T>>
     private final BackpackFeature<T, M> backpackFeature;
     private final PotFeature<T, M> potFeature;
     private final ElytraFeature<T, M> elytraFeature;
+    private final CauldronFeature<T, M> cauldronFeature;
     protected float sneakInter = 0;
 
     public BackFeature(RenderLayerParent<T, M> context, EntityModelSet loader, ModelManager modelManager) {
         super(context);
         backpackFeature = new BackpackFeature<>(loader, modelManager, this);
         potFeature = new PotFeature<>(loader, this);
+        cauldronFeature = new CauldronFeature<>(loader, modelManager, this);
         elytraFeature = new ElytraFeature<>(loader, this);
     }
 
@@ -46,6 +48,8 @@ public class BackFeature<T extends LivingEntity, M extends EntityModel<T>>
                 backpackFeature.render(pose, mbs, light, player, torso, backData);
             else if (Kind.POT.is(kind))
                 potFeature.render(pose, mbs, light, player, torso, backStack);
+            else if (Kind.CAULDRON.is(kind))
+                cauldronFeature.render(pose, mbs, light, player, torso, backStack);
 
             if (Kind.isWings(backStack))
                 elytraFeature.render(pose, mbs, light, entity, limbAngle, limbDistance, animationProgress, yHeadRot, headPitch, this.getParentModel(), backData);

@@ -38,7 +38,8 @@ import java.util.Map;
 public interface RendererHelper {
     ModelLayerLocation BACKPACK_MODEL = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "backpack_model"), "main");
     ModelLayerLocation PACK_WINGS_MODEL = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "backpack_wings_model"), "main");
-    ModelLayerLocation POT_MODEL = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "pot_player"), "main");
+      ModelLayerLocation POT_MODEL = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "pot_player"), "main");
+      ModelLayerLocation CAULDRON_MODEL = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "cauldron_player"), "main");
     Map<String, ResourceLocation> ButtonIdentifiers = ImmutableMap.of(
                 "gold", new ResourceLocation(Constants.MOD_ID, "textures/entity/overlay/gold.png"),
                 "amethyst", new ResourceLocation(Constants.MOD_ID, "textures/entity/overlay/amethyst.png"),

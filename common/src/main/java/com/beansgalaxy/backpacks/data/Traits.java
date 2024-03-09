@@ -14,7 +14,7 @@ public class Traits {
       public static String last_troubled_key = null;
 
       public static void register(String key, Traits traits) {
-            if (key.isEmpty() || key.equals("pot"))
+            if (key.isEmpty() || key.equals("pot") || key.equals("cauldron"))
                   return;
 
             Constants.TRAITS_MAP.put(key, traits);
@@ -23,6 +23,9 @@ public class Traits {
       public static Traits get(String key) {
             if (key.equals("pot"))
                   return new Traits(Kind.POT, 999);
+
+            if (key.equals("cauldron"))
+                  return new Traits(Kind.CAULDRON, 999);
 
             Traits traits = Constants.TRAITS_MAP.get(key);
             if (traits == null)
@@ -109,6 +112,7 @@ public class Traits {
 
       public static class LocalData {
             public static final LocalData POT = new LocalData("pot");
+            public static final LocalData CAULDRON = new LocalData("cauldron");
             public static final LocalData EMPTY = new LocalData("");
             public static final LocalData ENDER = new LocalData("ender");
 
@@ -132,6 +136,10 @@ public class Traits {
             }
 
             public boolean isPot() {
+                  return key.equals("pot");
+            }
+
+            public boolean isCauldron() {
                   return key.equals("pot");
             }
 

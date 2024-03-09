@@ -1,10 +1,7 @@
 package com.beansgalaxy.backpacks;
 
 import com.beansgalaxy.backpacks.client.RendererHelper;
-import com.beansgalaxy.backpacks.client.renderer.BackpackModel;
-import com.beansgalaxy.backpacks.client.renderer.BackpackRenderer;
-import com.beansgalaxy.backpacks.client.renderer.BackpackWingsModel;
-import com.beansgalaxy.backpacks.client.renderer.PotModel;
+import com.beansgalaxy.backpacks.client.renderer.*;
 import com.beansgalaxy.backpacks.compat.TrinketsRegistry;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.data.EnderStorage;
@@ -44,6 +41,7 @@ public class FabricClient implements ClientModInitializer {
             NetworkPackages.registerS2CPackets();
 
             EntityModelLayerRegistry.registerModelLayer(RendererHelper.POT_MODEL, PotModel::getTexturedModelData);
+            EntityModelLayerRegistry.registerModelLayer(RendererHelper.CAULDRON_MODEL, CauldronModel::createBodyLayer);
             EntityModelLayerRegistry.registerModelLayer(RendererHelper.BACKPACK_MODEL, BackpackModel::getTexturedModelData);
             EntityModelLayerRegistry.registerModelLayer(RendererHelper.PACK_WINGS_MODEL, BackpackWingsModel::createBodyLayer);
             LivingEntityFeatureRendererRegistrationCallback.EVENT.register(new AppendModelLayers());

@@ -16,6 +16,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -181,6 +183,10 @@ public class Tooltip {
       public static void playSound(Kind kind, PlaySound playSound, float volume) {
             Random rnd = new Random();
             float pitch = playSound.isRandom() ? (rnd.nextFloat() / 4f) + 0.8f : 1f;
-            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(Services.REGISTRY.getSound(kind, playSound), pitch, volume));
+            playSound(Services.REGISTRY.getSound(kind, playSound), pitch, volume);
+      }
+
+      public static void playSound(SoundEvent soundEvent, float pitch, float volume) {
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(soundEvent, pitch, volume));
       }
 }

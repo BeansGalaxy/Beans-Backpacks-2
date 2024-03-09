@@ -71,14 +71,16 @@ public abstract class EntityAbstract extends Backpack {
                                           Direction direction, Player player, NonNullList<ItemStack> stacks)
       {
             Traits.LocalData traits = Traits.LocalData.fromstack(backpackStack);
-            if (traits == null || traits.key.isEmpty() || traits.isPot())
+            if (traits == null || traits.key.isEmpty() || traits.isPot() || traits.isCauldron())
                   return null;
 
             EntityAbstract backpack;
             if (backpackStack.getItem() instanceof EnderBackpack ender) {
                   Optional<UUID> uuid;
-                  if (onDeath && ServerSave.CONFIG.get(Config.UNBIND_ENDER_ON_DEATH)) uuid = Optional.empty();
-                  else uuid = Optional.of(ender.getOrCreateUUID(player.getUUID(), backpackStack));
+                  if (onDeath && ServerSave.CONFIG.get(Config.UNBIND_ENDER_ON_DEATH))
+                        uuid = Optional.empty();
+                  else
+                        uuid = Optional.of(ender.getOrCreateUUID(player.getUUID(), backpackStack));
 
                   backpack = new EntityEnder(player, uuid);
             }

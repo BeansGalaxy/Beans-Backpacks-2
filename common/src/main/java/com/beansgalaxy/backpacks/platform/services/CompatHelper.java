@@ -1,10 +1,15 @@
 package com.beansgalaxy.backpacks.platform.services;
 
+import com.beansgalaxy.backpacks.client.renderer.features.CauldronFeature;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.screen.CauldronInventory;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.material.Fluid;
 
 public interface CompatHelper {
       String CURIOS = "curios";
@@ -32,4 +37,6 @@ public interface CompatHelper {
       ItemStack getBackSlotItem(BackData backData, ItemStack defaultItem);
 
       boolean backSlotDisabled(Player owner);
+
+      CauldronInventory.FluidAttributes getFluidTexture(Fluid fluid, TextureAtlas blocksAtlas);
 }

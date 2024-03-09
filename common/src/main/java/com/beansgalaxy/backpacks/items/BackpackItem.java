@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.items;
 
+import com.beansgalaxy.backpacks.access.BucketAccess;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
@@ -7,11 +8,14 @@ import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import com.beansgalaxy.backpacks.events.PlaySound;
+import com.beansgalaxy.backpacks.screen.CauldronInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.SlotAccess;
@@ -20,8 +24,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -56,18 +63,22 @@ public class BackpackItem extends Item {
 
             BackData backData = BackData.get(player);
             BackpackInventory backpackInventory = backData.backpackInventory;
-
             if (backStack != backData.getStack())
                   return false;
+
+            Level level = player.level();
+            boolean quickMove = backData.actionKeyPressed || shiftIsDown;
+            if (kind == Kind.CAULDRON) {
+                  return handleCauldronClick(backStack, player, access, cursorStack, level);
+            }
 
             if (backpackInventory.isEmpty())
                   if (cursorStack.isEmpty() || Kind.isWearable(cursorStack))
                         return false;
 
-            if (Kind.ENDER.is(kind) && player.level().isClientSide())
+            if (Kind.ENDER.is(kind) && level.isClientSide())
                   return true;
 
-            boolean quickMove = backData.actionKeyPressed || shiftIsDown;
             if (quickMove && clickAction != ClickAction.SECONDARY) {
                   handleQuickMove(player.getInventory(), backpackInventory);
                   return true;
@@ -77,9 +88,39 @@ public class BackpackItem extends Item {
                         cursorStack, 0, backpackInventory));
       }
 
+      private static boolean handleCauldronClick(ItemStack backStack, Player player, SlotAccess access, ItemStack cursorStack, Level level) {
+            if (cursorStack.getItem() instanceof BucketAccess bucketAccess) {
+                  Fluid insertedFluid = bucketAccess.beans_Backpacks_2$getFluid();
+                  Fluid fluid = CauldronInventory.interact(backStack, insertedFluid);
+                  if (fluid == null)
+                        return backStack.hasTag() && backStack.getTagElement("fluid") != null;
+
+                  if (fluid.isSame(Fluids.EMPTY)) {
+                        if (level.isClientSide())
+                              Tooltip.playSound(insertedFluid.is(FluidTags.LAVA) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY, 1, 0.4f);
+                        access.set(Items.BUCKET.getDefaultInstance());
+                        return true;
+                  } else {
+                        ItemStack bucket = fluid.getBucket().getDefaultInstance();
+                        if (level.isClientSide())
+                              fluid.getPickupSound().ifPresent(soundEvent -> Tooltip.playSound(soundEvent, 1, 0.4f));
+
+                        if (cursorStack.getCount() == 1)
+                              access.set(bucket);
+                        else {
+                              cursorStack.shrink(1);
+                              player.getInventory().placeItemBackInInventory(bucket);
+                        }
+
+                        return true;
+                  }
+            } else
+                  return backStack.hasTag() && backStack.getTagElement("fluid") != null;
+      }
+
       public static void handleQuickMove(Inventory playerInventory, BackpackInventory backpackInventory) {
             ItemStack stack = backpackInventory.getItem(0);
-            if (stack.isEmpty())
+            if (stack.isEmpty() || Kind.CAULDRON.is(backpackInventory.getLocalData().kind()))
                   return;
 
             ItemStack backpackStack = backpackInventory.removeItemSilent(0);

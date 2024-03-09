@@ -55,6 +55,7 @@ public class ClientModEvents {
             event.registerLayerDefinition(RendererHelper.BACKPACK_MODEL, BackpackModel::getTexturedModelData);
             event.registerLayerDefinition(RendererHelper.PACK_WINGS_MODEL, BackpackWingsModel::createBodyLayer);
             event.registerLayerDefinition(RendererHelper.POT_MODEL, PotModel::getTexturedModelData);
+            event.registerLayerDefinition(RendererHelper.CAULDRON_MODEL, CauldronModel::createBodyLayer);
       }
 
       @SubscribeEvent
