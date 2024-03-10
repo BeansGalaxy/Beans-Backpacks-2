@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.platform;
 
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.network.packages.UseCauldron2S;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
@@ -11,6 +12,7 @@ import com.beansgalaxy.backpacks.network.packages.InstantPlace2S;
 import com.beansgalaxy.backpacks.network.packages.PickBackpack2S;
 import com.beansgalaxy.backpacks.network.packages.SprintKeyPacket2S;
 import com.beansgalaxy.backpacks.platform.services.NetworkHelper;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -106,5 +108,10 @@ public class ForgeNetworkHelper implements NetworkHelper {
       @Override
       public void sendEnderLocations2C(ServerPlayer serverPlayer, BackData backData) {
             NetworkPackages.S2C(new ReceiveEnderPos(backData.getEnderLocations()), serverPlayer);
+      }
+
+      @Override
+      public void useCauldron2S(BlockPos pos, boolean isPlace) {
+            NetworkPackages.C2S(new UseCauldron2S(pos, isPlace));
       }
 }

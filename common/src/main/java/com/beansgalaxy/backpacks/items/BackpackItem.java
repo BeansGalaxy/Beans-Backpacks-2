@@ -189,9 +189,9 @@ public class BackpackItem extends Item {
 
       public static InteractionResult hotkeyOnBlock(Player player, Direction direction, BlockPos clickedPos) {
             BackData backData = BackData.get(player);
-            ItemStack backpackStack = backData.getStack();
+            ItemStack backStack = backData.getStack();
 
-            if (useOnBlock(player, direction, clickedPos, backpackStack, true)) {
+            if (useOnBlock(player, direction, clickedPos, backStack, true)) {
                   backData.setChanged();
                   return InteractionResult.SUCCESS;
             }

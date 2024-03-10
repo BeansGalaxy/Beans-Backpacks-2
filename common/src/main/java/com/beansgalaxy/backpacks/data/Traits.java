@@ -140,7 +140,7 @@ public class Traits {
             }
 
             public boolean isCauldron() {
-                  return key.equals("pot");
+                  return key.equals("cauldron");
             }
 
             public static LocalData fromstack(ItemStack stack) {

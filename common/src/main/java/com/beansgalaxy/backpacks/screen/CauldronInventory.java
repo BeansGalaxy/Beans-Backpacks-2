@@ -1,13 +1,35 @@
 package com.beansgalaxy.backpacks.screen;
 
+import com.beansgalaxy.backpacks.data.BackData;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LiquidBlockContainer;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.BlockHitResult;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 
 public class CauldronInventory {
@@ -76,6 +98,20 @@ public class CauldronInventory {
             return Fluids.EMPTY;
       }
 
+      public static Fluid get(ItemStack cauldron) {
+            if (!cauldron.hasTag()) return Fluids.EMPTY;
+
+            CompoundTag fluidTag = cauldron.getTagElement("fluid");
+            if (fluidTag == null) return Fluids.EMPTY;
+
+            if (fluidTag.contains("id")) {
+                  String string = fluidTag.getString("id");
+                  return BuiltInRegistries.FLUID.get(new ResourceLocation(string));
+            }
+            return Fluids.EMPTY;
+      }
+
       public record FluidAttributes(TextureAtlasSprite sprite, Color tint) {
+
       }
 }
