@@ -107,6 +107,7 @@ public class FabricMain implements ModInitializer {
                     Constants.TRAITS_MAP.keySet().forEach(key ->
                                 output.accept(BackpackItem.stackFromKey(key)));
                     output.accept(Items.DECORATED_POT);
+                    output.accept(Items.CAULDRON);
                 }).build();
 
     public static final CreativeModeTab CREATIVE_TAB =

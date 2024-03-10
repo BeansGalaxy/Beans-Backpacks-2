@@ -15,6 +15,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -144,5 +145,14 @@ public class FabricNetworkHelper implements NetworkHelper {
                   location.writeBuf(buf);
 
             ServerPlayNetworking.send(serverPlayer, NetworkPackages.ENDER_POS_2C, buf);
+      }
+
+      @Override
+      public void useCauldron2S(BlockPos pos, boolean isPlace) {
+            FriendlyByteBuf buf = PacketByteBufs.create();
+            buf.writeBlockPos(pos);
+            buf.writeBoolean(isPlace);
+
+            ClientPlayNetworking.send(NetworkPackages.USE_CAULDRON_2S, buf);
       }
 }

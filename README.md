@@ -4,7 +4,10 @@
 
 1.20.2 updates will come slower than 1.20.1 until a full release. If there are any critical bugs then 
 they will be patched but 1.20.1 will be the most up to date version. Ports to 1.20.4 will come after 
-we're out of beta. Ports to 1.19 and earlier is TBD
+we're out of beta. Ports to 1.19 and earlier is TBD.
+
+### Grave Mod Developers
+I have added many methods in [CompatHelper](https://github.com/BeansGalaxy/Beans-Backpacks-2/tree/20.1/common/src/main/java/com/beansgalaxy/backpacks/platform/services) to hopefully help you out. Inventory expansion mods and grave mods should get along! End the suffering!
 
 ### Mod Packs
 <p>
@@ -17,6 +20,11 @@ the issues tab. </p>
 <br>
 
 <h1 align="center"> Changelog </h1>
+
+### 20.1-0.16-v3 & 20.2-0.17-v2
+
+- Added many methods for compatibility with other developers. *([You're In Grave Danger](https://modrinth.com/mod/yigd))*
+- That's it for now.
 
 ### 20.1-0.16-v3 & 20.2-0.17-v2
 
