@@ -196,7 +196,6 @@ public class BackData {
             return blockStateBelow.entityCanStandOn(chunkForCollisions, blockPos, player);
       }
 
-      /* ======================= COMPAT METHOD FOR GRAVE MODS TO GRAB ======================== */
       public NonNullList<ItemStack> drop(int x, double y, int z, Direction direction, float yaw) {
             NonNullList<ItemStack> droppedItems = NonNullList.create();
             NonNullList<ItemStack> itemStacks = backpackInventory.getItemStacks();

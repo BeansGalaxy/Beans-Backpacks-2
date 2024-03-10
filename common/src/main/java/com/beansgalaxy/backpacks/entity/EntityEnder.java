@@ -73,8 +73,8 @@ public class EntityEnder extends EntityAbstract {
             super(type, level);
       }
 
-      public EntityEnder(Player player, Optional<UUID> uuid) {
-            super(Services.REGISTRY.getEnderEntity(), player.level());
+      public EntityEnder(Level level, Optional<UUID> uuid) {
+            super(Services.REGISTRY.getEnderEntity(), level);
             entityData.set(PLACED_BY, uuid);
 
             if (level() instanceof ServerLevel serverLevel)
