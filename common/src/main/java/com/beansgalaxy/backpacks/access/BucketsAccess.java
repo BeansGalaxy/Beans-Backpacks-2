@@ -1,8 +1,9 @@
 package com.beansgalaxy.backpacks.access;
 
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluid;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -11,5 +12,15 @@ public interface BucketsAccess {
 
       Optional<SoundEvent> getPickupSound();
 
-      SoundEvent getPlaceSound();
+      default SoundEvent getPlaceSound() {
+            return defaultPlaceSound();
+      }
+
+      SoundEvent defaultPlaceSound();
+
+      int scale();
+
+      @NotNull
+      Item getEmptyInstance();
+
 }

@@ -1,6 +1,5 @@
 package com.beansgalaxy.backpacks.platform;
 
-import com.beansgalaxy.backpacks.client.renderer.features.CauldronFeature;
 import com.beansgalaxy.backpacks.compat.TrinketsRegistry;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;

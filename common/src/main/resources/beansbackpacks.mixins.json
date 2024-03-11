@@ -11,6 +11,8 @@
     "common.ComparatorMixin",
     "common.DataResourcesMixin",
     "common.ElytraItemMixin",
+    "common.HoneyBlockMixin",
+    "common.HoneyBottleMixin",
     "common.HopperEntityMixin",
     "common.InteractWithPlayer",
     "common.InventoryContainerMixin",

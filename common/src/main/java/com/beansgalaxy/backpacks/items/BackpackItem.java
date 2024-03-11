@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.items;
 
+import com.beansgalaxy.backpacks.access.BucketLikeAccess;
 import com.beansgalaxy.backpacks.access.BucketsAccess;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
@@ -14,6 +15,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.SlotAccess;
@@ -29,9 +31,10 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class BackpackItem extends Item {
-      public BackpackItem(Item.Properties properties) {
+      public BackpackItem(Properties properties) {
             super(properties);
       }
 
@@ -83,28 +86,52 @@ public class BackpackItem extends Item {
       }
 
       private static boolean handleCauldronClick(ItemStack backStack, Player player, SlotAccess access, ItemStack cursorStack, Level level) {
-            Item item = cursorStack.getItem();
-            Item bucket = CauldronInventory.interact(backStack, item);
-            if (bucket == null)
-                  return backStack.hasTag() && backStack.getTagElement("bucket") != null;
+            Item bucket = cursorStack.getItem();
 
-            if (bucket.equals(Items.AIR)) {
-                  if (level.isClientSide() && item instanceof BucketsAccess bucketAccess)
-                        Tooltip.playSound(bucketAccess.getPlaceSound(), 1, 0.4f);
-                  access.set(Items.BUCKET.getDefaultInstance());
-            } else {
-                  ItemStack bucketStack = bucket.getDefaultInstance();
-                  if (level.isClientSide() && bucket instanceof BucketsAccess bucketAccess)
-                        bucketAccess.getPickupSound().ifPresent(soundEvent -> Tooltip.playSound(soundEvent, 1, 0.4f));
-
-                  if (cursorStack.getCount() == 1)
-                        access.set(bucketStack);
-                  else {
-                        cursorStack.shrink(1);
-                        player.getInventory().placeItemBackInInventory(bucketStack);
-                  }
-
+            Item returned;
+            if (CauldronInventory.getBucket(backStack) instanceof BucketsAccess bucketsAccess && bucketsAccess.getEmptyInstance().equals(bucket))
+            {
+                  Item remove = CauldronInventory.remove(backStack);
+                  if (!remove.equals(Items.AIR)) {
+                        returned = remove;
+                  } else
+                        return backStack.hasTag() && backStack.getTagElement("bucket") != null;
             }
+            else returned = CauldronInventory.add(backStack, bucket);
+
+            if (returned == null) return backStack.hasTag() && backStack.getTagElement("bucket") != null;
+
+            ItemStack newStack = ItemStack.EMPTY;
+            Optional<SoundEvent> soundEvent = Optional.empty();
+            if (bucket instanceof BlockItem blockItem && blockItem.getBlock() instanceof BucketLikeAccess bucketLikeAccess)
+            {
+                  if (returned.equals(bucketLikeAccess.getEmptyInstance())) {
+                        newStack = bucketLikeAccess.getEmptyInstance().getDefaultInstance();
+                        soundEvent = Optional.of(bucketLikeAccess.defaultPlaceSound());
+                  } else {
+                        newStack = bucketLikeAccess.getFilledInstance().getDefaultInstance();
+                        soundEvent = bucketLikeAccess.getPickupSound();
+                  }
+            }
+            else if (bucket instanceof BucketsAccess bucketsAccess && returned.equals(bucketsAccess.getEmptyInstance())) {
+                  newStack = bucketsAccess.getEmptyInstance().getDefaultInstance();
+                  soundEvent = Optional.of(bucketsAccess.defaultPlaceSound());
+            }
+            else if (returned instanceof BucketsAccess bucketsAccess) {
+                  newStack = returned.getDefaultInstance();
+                  soundEvent = bucketsAccess.getPickupSound();
+            }
+
+            if (level.isClientSide() && soundEvent.isPresent())
+                  Tooltip.playSound(soundEvent.get(), 1, 0.4f);
+
+            if (cursorStack.getCount() == 1)
+                  access.set(newStack);
+            else {
+                  cursorStack.shrink(1);
+                  player.getInventory().placeItemBackInInventory(newStack);
+            }
+
             return true;
       }
 

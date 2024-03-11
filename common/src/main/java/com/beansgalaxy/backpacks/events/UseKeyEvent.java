@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.access.BucketItemAccess;
+import com.beansgalaxy.backpacks.access.BucketLikeAccess;
 import com.beansgalaxy.backpacks.access.BucketsAccess;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.entity.Kind;
@@ -71,7 +72,7 @@ public class UseKeyEvent {
                   FluidState fluidState = liquidBlock.getFluidState(blockState);
                   if (fluidState.isSource()) {
                         Fluid type = fluidState.getType();
-                        if (CauldronInventory.add(cauldron, type.getBucket())) {
+                        if (CauldronInventory.add(cauldron, type.getBucket()) != null) {
                               type.getPickupSound().ifPresent(soundEvent -> player.playSound(soundEvent, 1, 1));
                               level.gameEvent(player, GameEvent.FLUID_PICKUP, blockPos);
                               level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 11);
@@ -79,7 +80,7 @@ public class UseKeyEvent {
                         }
                   }
             }
-            if (block instanceof SimpleWaterloggedBlock && blockState.getValue(BlockStateProperties.WATERLOGGED) && CauldronInventory.add(cauldron, Items.WATER_BUCKET)) {
+            else if (block instanceof SimpleWaterloggedBlock && blockState.getValue(BlockStateProperties.WATERLOGGED) && CauldronInventory.add(cauldron, Items.WATER_BUCKET) != null) {
                   Fluids.WATER.getPickupSound().ifPresent(soundEvent -> player.playSound(soundEvent, 1, 1));
                   level.gameEvent(player, GameEvent.FLUID_PICKUP, blockPos);
                   level.setBlock(blockPos, blockState.setValue(BlockStateProperties.WATERLOGGED, false), 3);
@@ -87,12 +88,12 @@ public class UseKeyEvent {
                         level.destroyBlock(blockPos, true);
                   return true;
             }
-            if (block instanceof BucketPickup pickup) {
+            else if (block instanceof BucketPickup pickup) {
                   Item bucket = CauldronInventory.getBucket(cauldron);
                   boolean shouldPickup = false;
                   if (bucket instanceof BucketsAccess access) {
                         Optional<BlockState> optional = access.getBlockState();
-                        if (optional.isPresent() && optional.get().getBlock().equals(blockState.getBlock()))
+                        if (optional.isPresent() && optional.get().is(blockState.getBlock()))
                               shouldPickup = true;
                   }
                   else if (bucket.equals(Items.AIR))
@@ -106,6 +107,24 @@ public class UseKeyEvent {
                               CauldronInventory.add(cauldron, item);
                               return true;
                         }
+                  }
+            }
+            else if (block instanceof BucketLikeAccess blockAccess) {
+                  Item bucket = CauldronInventory.getBucket(cauldron);
+                  boolean shouldPickup = false;
+                  if (bucket instanceof BucketsAccess access && access.getBlockState().isPresent() && access.getBlockState().get().is(block))
+                        shouldPickup = true;
+                  else if (bucket.equals(Items.AIR))
+                        shouldPickup = true;
+
+                  if (shouldPickup) {
+                        level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 11);
+                        if (!level.isClientSide())
+                              level.levelEvent(2001, blockPos, Block.getId(blockState));
+
+                        blockAccess.getPickupSound().ifPresent(soundEvent -> player.playSound(soundEvent, 1, 1));
+                        CauldronInventory.add(cauldron, blockAccess);
+                        return true;
                   }
             }
             return false;
@@ -158,8 +177,9 @@ public class UseKeyEvent {
             Item bucket = CauldronInventory.getBucket(cauldron);
             if (bucket instanceof BucketsAccess bucketAccess) {
                   Player player = backData.owner;
+                  Block block = blockState.getBlock();
                   if (bucket instanceof BucketItemAccess access &&
-                              blockState.getBlock() instanceof LiquidBlockContainer liquidContainer &&
+                              block instanceof LiquidBlockContainer liquidContainer &&
                               liquidContainer.canPlaceLiquid(level, blockPos, blockState, access.beans_Backpacks_2$getFluid()) &&
                               liquidContainer.placeLiquid(level, blockPos, blockState, access.beans_Backpacks_2$getFluid().defaultFluidState())) {
                         playEmptySound(player, level, blockPos, CauldronInventory.remove(cauldron));
@@ -183,13 +203,18 @@ public class UseKeyEvent {
                   if (blockState.canBeReplaced() && bucketAccess.getBlockState().isPresent()) {
                         if (!level.isClientSide() && !blockState.liquid())
                               level.destroyBlock(blockPos, true);
-                        if (!blockFluidState.isSource() && level.setBlock(blockPos, bucketAccess.getBlockState().get(), 11))
-                              playEmptySound(player, level, blockPos, CauldronInventory.remove(cauldron));
+                        if (level.setBlock(blockPos, bucketAccess.getBlockState().get(), 11)
+                        || blockFluidState.getType().getBucket().equals(bucket) && blockFluidState.isSource()) {
+                              if (bucketAccess instanceof BucketLikeAccess access)
+                                    playEmptySound(player, level, blockPos, CauldronInventory.remove(cauldron, access));
+                              else
+                                    playEmptySound(player, level, blockPos, CauldronInventory.remove(cauldron));
+                        }
                         return true;
+
                   }
 
-                  if ((blockFluidState.getType().getBucket().equals(bucket) && blockFluidState.isSource())
-                              || (Items.WATER_BUCKET.equals(bucket) && blockState.getBlock() instanceof SimpleWaterloggedBlock)) {
+                  if (Items.WATER_BUCKET.equals(bucket) && block instanceof SimpleWaterloggedBlock) {
                         playEmptySound(player, level, blockPos, CauldronInventory.remove(cauldron));
                         return true;
                   }

@@ -15,6 +15,7 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
@@ -37,11 +38,13 @@ import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.DecoratedPotBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.awt.*;
+import java.util.Optional;
 
 public class CauldronFeature<T extends LivingEntity, M extends EntityModel<T>> {
 
@@ -71,14 +74,23 @@ public class CauldronFeature<T extends LivingEntity, M extends EntityModel<T>> {
                 int amount = fluidTag.getInt("amount");
                 if (amount > 0) {
                     Item bucket = BuiltInRegistries.ITEM.get(new ResourceLocation(fluidTag.getString("id")));
+                    pose.scale(0.5f, 0.5f, 0.5f);
+                    int cappedAmount = (int) Math.min(amount/4f - 1, 6);
+                    pose.translate(0, -(cappedAmount / 8f) + 12 / 8f + (cappedAmount == 0 ? -0.01 : 0), 0);
                     if (bucket instanceof BucketItemAccess access) {
-                        pose.scale(0.5f, 0.5f, 0.5f);
-                        int cappedAmount = Math.min(amount - 1, 6);
-                        pose.translate(0, -(cappedAmount / 8f) + 12 / 8f + (cappedAmount == 0 ? -0.01 : 0), 0);
                         Fluid fluid = access.beans_Backpacks_2$getFluid();
                         CauldronInventory.FluidAttributes attributes = Services.COMPAT.getFluidTexture(fluid, blocksAtlas);
                         VertexConsumer fluidVC = attributes.sprite().wrap(mbs.getBuffer(RenderType.translucent()));
                         cauldronModel.fluid.render(pose, fluidVC, light, OverlayTexture.NO_OVERLAY, attributes.tint().getRed() / 255f, attributes.tint().getGreen() / 255f, attributes.tint().getBlue() / 255f, 1);
+                    } else if (bucket instanceof BucketsAccess access) {
+                        Optional<BlockState> optional = access.getBlockState();
+                        optional.ifPresent(blockState -> {
+                            VertexConsumer blockVC = mbs.getBuffer(ItemBlockRenderTypes.getRenderType(blockState, false));
+                            Minecraft instance = Minecraft.getInstance();
+                            TextureAtlasSprite particleIcon = instance.getBlockRenderer().getBlockModel(blockState).getParticleIcon();
+                            Color color = new Color(instance.getBlockColors().getColor(blockState, null, null, 0));
+                            cauldronModel.fluid.render(pose, particleIcon.wrap(blockVC), light, OverlayTexture.NO_OVERLAY, color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, 1);
+                        });
                     }
                 }
             }
