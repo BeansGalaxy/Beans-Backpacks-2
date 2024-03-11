@@ -1,6 +1,5 @@
 package com.beansgalaxy.backpacks.screen;
 
-import com.beansgalaxy.backpacks.access.BucketItemAccess;
 import com.beansgalaxy.backpacks.access.BucketLikeAccess;
 import com.beansgalaxy.backpacks.access.BucketsAccess;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -8,15 +7,23 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluids;
 
 import java.awt.*;
 
 public class CauldronInventory {
+      public static final int MAX_SIZE = 24 * 4;
+
+      public static int sizeLeft(ItemStack cauldron) {
+            if (!cauldron.hasTag()) return MAX_SIZE;
+
+            CompoundTag fluidTag = cauldron.getTagElement("bucket");
+            if (fluidTag == null) return MAX_SIZE;
+
+            if (fluidTag.contains("amount")) {
+                  return MAX_SIZE - fluidTag.getInt("amount");
+            }
+            return MAX_SIZE;
+      }
 
       public static Item add(ItemStack cauldron, Item bucket) {
             int amount = 0;
@@ -136,33 +143,6 @@ public class CauldronInventory {
                   return BuiltInRegistries.ITEM.get(new ResourceLocation(string));
             }
             return Items.AIR;
-      }
-
-      public static boolean addSolid(ItemStack cauldron, BlockState blockState) {
-            Block block = blockState.getBlock();
-            if (block.equals(Blocks.AIR))
-                  return false;
-
-            CompoundTag fluidTag = cauldron.getTagElement("fluid");
-            if (fluidTag != null)
-                  return false;
-
-            int amount = 1;
-            CompoundTag blockTag = cauldron.getOrCreateTagElement("block");
-            if (blockTag.contains("id")) {
-                  String string = blockTag.getString("id");
-                  Block stored = BuiltInRegistries.BLOCK.get(new ResourceLocation(string));
-                  if (!block.equals(stored)) return false;
-                  if (blockTag.contains("amount"))
-                        amount += blockTag.getInt("amount");
-            }
-            else {
-                  ResourceLocation key = BuiltInRegistries.BLOCK.getKey(block);
-                  blockTag.putString("id", key.toString());
-            }
-
-            blockTag.putInt("amount", amount);
-            return true;
       }
 
       public record FluidAttributes(TextureAtlasSprite sprite, Color tint) {

@@ -75,7 +75,7 @@ public class CauldronFeature<T extends LivingEntity, M extends EntityModel<T>> {
                 if (amount > 0) {
                     Item bucket = BuiltInRegistries.ITEM.get(new ResourceLocation(fluidTag.getString("id")));
                     pose.scale(0.5f, 0.5f, 0.5f);
-                    int cappedAmount = (int) Math.min(amount/4f - 1, 6);
+                    int cappedAmount = (int) (amount / (CauldronInventory.MAX_SIZE / 6f));
                     pose.translate(0, -(cappedAmount / 8f) + 12 / 8f + (cappedAmount == 0 ? -0.01 : 0), 0);
                     if (bucket instanceof BucketItemAccess access) {
                         Fluid fluid = access.beans_Backpacks_2$getFluid();

@@ -67,6 +67,8 @@ public class UseKeyEvent {
       public static boolean cauldronPickup(Player player, BlockPos blockPos, Level level, BackData backData) {
             BlockState blockState = level.getBlockState(blockPos);
             ItemStack cauldron = backData.getStack();
+            if (CauldronInventory.sizeLeft(cauldron) <= 0) return false;
+
             Block block = blockState.getBlock();
             if (block instanceof LiquidBlock liquidBlock) {
                   FluidState fluidState = liquidBlock.getFluidState(blockState);

@@ -88,7 +88,7 @@ public class BackpackItem extends Item {
       private static boolean handleCauldronClick(ItemStack backStack, Player player, SlotAccess access, ItemStack cursorStack, Level level) {
             Item bucket = cursorStack.getItem();
 
-            Item returned;
+            Item returned = null;
             if (CauldronInventory.getBucket(backStack) instanceof BucketsAccess bucketsAccess && bucketsAccess.getEmptyInstance().equals(bucket))
             {
                   Item remove = CauldronInventory.remove(backStack);
@@ -97,7 +97,8 @@ public class BackpackItem extends Item {
                   } else
                         return backStack.hasTag() && backStack.getTagElement("bucket") != null;
             }
-            else returned = CauldronInventory.add(backStack, bucket);
+            else if (CauldronInventory.sizeLeft(backStack) > 0)
+                  returned = CauldronInventory.add(backStack, bucket);
 
             if (returned == null) return backStack.hasTag() && backStack.getTagElement("bucket") != null;
 
