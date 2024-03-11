@@ -1,6 +1,6 @@
 package com.beansgalaxy.backpacks.items;
 
-import com.beansgalaxy.backpacks.access.BucketAccess;
+import com.beansgalaxy.backpacks.access.BucketsAccess;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
@@ -14,21 +14,15 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -89,33 +83,29 @@ public class BackpackItem extends Item {
       }
 
       private static boolean handleCauldronClick(ItemStack backStack, Player player, SlotAccess access, ItemStack cursorStack, Level level) {
-            if (cursorStack.getItem() instanceof BucketAccess bucketAccess) {
-                  Fluid insertedFluid = bucketAccess.beans_Backpacks_2$getFluid();
-                  Fluid fluid = CauldronInventory.interact(backStack, insertedFluid);
-                  if (fluid == null)
-                        return backStack.hasTag() && backStack.getTagElement("fluid") != null;
+            Item item = cursorStack.getItem();
+            Item bucket = CauldronInventory.interact(backStack, item);
+            if (bucket == null)
+                  return backStack.hasTag() && backStack.getTagElement("bucket") != null;
 
-                  if (fluid.isSame(Fluids.EMPTY)) {
-                        if (level.isClientSide())
-                              Tooltip.playSound(insertedFluid.is(FluidTags.LAVA) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY, 1, 0.4f);
-                        access.set(Items.BUCKET.getDefaultInstance());
-                        return true;
-                  } else {
-                        ItemStack bucket = fluid.getBucket().getDefaultInstance();
-                        if (level.isClientSide())
-                              fluid.getPickupSound().ifPresent(soundEvent -> Tooltip.playSound(soundEvent, 1, 0.4f));
+            if (bucket.equals(Items.AIR)) {
+                  if (level.isClientSide() && item instanceof BucketsAccess bucketAccess)
+                        Tooltip.playSound(bucketAccess.getPlaceSound(), 1, 0.4f);
+                  access.set(Items.BUCKET.getDefaultInstance());
+            } else {
+                  ItemStack bucketStack = bucket.getDefaultInstance();
+                  if (level.isClientSide() && bucket instanceof BucketsAccess bucketAccess)
+                        bucketAccess.getPickupSound().ifPresent(soundEvent -> Tooltip.playSound(soundEvent, 1, 0.4f));
 
-                        if (cursorStack.getCount() == 1)
-                              access.set(bucket);
-                        else {
-                              cursorStack.shrink(1);
-                              player.getInventory().placeItemBackInInventory(bucket);
-                        }
-
-                        return true;
+                  if (cursorStack.getCount() == 1)
+                        access.set(bucketStack);
+                  else {
+                        cursorStack.shrink(1);
+                        player.getInventory().placeItemBackInInventory(bucketStack);
                   }
-            } else
-                  return backStack.hasTag() && backStack.getTagElement("fluid") != null;
+
+            }
+            return true;
       }
 
       public static void handleQuickMove(Inventory playerInventory, BackpackInventory backpackInventory) {

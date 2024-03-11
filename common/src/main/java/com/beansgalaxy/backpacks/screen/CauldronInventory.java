@@ -1,114 +1,122 @@
 package com.beansgalaxy.backpacks.screen;
 
-import com.beansgalaxy.backpacks.data.BackData;
-import net.minecraft.advancements.CriteriaTriggers;
+import com.beansgalaxy.backpacks.access.BucketItemAccess;
+import com.beansgalaxy.backpacks.access.BucketsAccess;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BucketItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.LiquidBlockContainer;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.material.FlowingFluid;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.phys.BlockHitResult;
 
-import javax.annotation.Nullable;
 import java.awt.*;
 
 public class CauldronInventory {
 
-      public static Fluid interact(ItemStack bucketStack, Fluid fluid) {
-            if (fluid.isSame(Fluids.EMPTY))
+      public static Item interact(ItemStack bucketStack, Item bucket) {
+            if (bucket instanceof BucketItemAccess access && access.beans_Backpacks_2$getFluid().isSame(Fluids.EMPTY))
             {
-                  Fluid remove = remove(bucketStack);
-                  if (!remove.isSame(Fluids.EMPTY)) {
+                  Item remove = remove(bucketStack);
+                  if (!remove.equals(Items.AIR)) {
                         return remove;
                   } else
                         return null;
 
             }
-            else if (add(bucketStack, fluid))
+            else if (add(bucketStack, bucket))
             {
-                  return Fluids.EMPTY;
+                  return Items.AIR;
             }
             return null;
       }
 
-      public static boolean add(ItemStack cauldron, Fluid fluid) {
-            if (fluid.isSame(Fluids.EMPTY))
-                  return false;
+      public static boolean add(ItemStack cauldron, Item bucket) {
+            if (bucket instanceof BucketItem || bucket instanceof SolidBucketItem) {
+                  int amount = 1;
+                  CompoundTag fluidTag = cauldron.getOrCreateTagElement("bucket");
+                  if (fluidTag.contains("id")) {
+                        String string = fluidTag.getString("id");
+                        Item stored = BuiltInRegistries.ITEM.get(new ResourceLocation(string));
+                        if (!bucket.equals(stored))
+                              return false;
+                        if (fluidTag.contains("amount"))
+                              amount += fluidTag.getInt("amount");
+                  } else {
+                        ResourceLocation key = BuiltInRegistries.ITEM.getKey(bucket);
+                        fluidTag.putString("id", key.toString());
+                  }
 
-            int amount = 1;
-            CompoundTag fluidTag = cauldron.getOrCreateTagElement("fluid");
-            if (fluidTag.contains("id")) {
-                  String string = fluidTag.getString("id");
-                  Fluid stored = BuiltInRegistries.FLUID.get(new ResourceLocation(string));
-                  if (!fluid.isSame(stored))
-                        return false;
-                  if (fluidTag.contains("amount"))
-                        amount += fluidTag.getInt("amount");
+                  fluidTag.putInt("amount", amount);
+                  return true;
             }
-            else {
-                  ResourceLocation key = BuiltInRegistries.FLUID.getKey(fluid);
-                  fluidTag.putString("id", key.toString());
-            }
-
-            fluidTag.putInt("amount", amount);
-            return true;
+            return false;
       }
 
-      public static Fluid remove(ItemStack cauldron) {
-            if (!cauldron.hasTag()) return Fluids.EMPTY;
+      public static Item remove(ItemStack cauldron) {
+            if (!cauldron.hasTag()) return Items.AIR;
 
-            CompoundTag fluidTag = cauldron.getTagElement("fluid");
-            if (fluidTag == null) return Fluids.EMPTY;
+            CompoundTag fluidTag = cauldron.getTagElement("bucket");
+            if (fluidTag == null) return Items.AIR;
 
             if (fluidTag.contains("id")) {
                   String string = fluidTag.getString("id");
-                  Fluid fluid = BuiltInRegistries.FLUID.get(new ResourceLocation(string));
+                  Item fluid = BuiltInRegistries.ITEM.get(new ResourceLocation(string));
                   int amount = -1;
                   if (fluidTag.contains("amount"))
                         amount += fluidTag.getInt("amount");
 
                   if (amount < 1)
-                        cauldron.getTag().remove("fluid");
+                        cauldron.getTag().remove("bucket");
                   else
                         fluidTag.putInt("amount", amount);
 
                   return fluid;
             }
 
-            return Fluids.EMPTY;
+            return Items.AIR;
       }
 
-      public static Fluid get(ItemStack cauldron) {
-            if (!cauldron.hasTag()) return Fluids.EMPTY;
+      public static Item getBucket(ItemStack cauldron) {
+            if (!cauldron.hasTag()) return Items.AIR;
 
-            CompoundTag fluidTag = cauldron.getTagElement("fluid");
-            if (fluidTag == null) return Fluids.EMPTY;
+            CompoundTag fluidTag = cauldron.getTagElement("bucket");
+            if (fluidTag == null) return Items.AIR;
 
             if (fluidTag.contains("id")) {
                   String string = fluidTag.getString("id");
-                  return BuiltInRegistries.FLUID.get(new ResourceLocation(string));
+                  return BuiltInRegistries.ITEM.get(new ResourceLocation(string));
             }
-            return Fluids.EMPTY;
+            return Items.AIR;
+      }
+
+      public static boolean addSolid(ItemStack cauldron, BlockState blockState) {
+            Block block = blockState.getBlock();
+            if (block.equals(Blocks.AIR))
+                  return false;
+
+            CompoundTag fluidTag = cauldron.getTagElement("fluid");
+            if (fluidTag != null)
+                  return false;
+
+            int amount = 1;
+            CompoundTag blockTag = cauldron.getOrCreateTagElement("block");
+            if (blockTag.contains("id")) {
+                  String string = blockTag.getString("id");
+                  Block stored = BuiltInRegistries.BLOCK.get(new ResourceLocation(string));
+                  if (!block.equals(stored)) return false;
+                  if (blockTag.contains("amount"))
+                        amount += blockTag.getInt("amount");
+            }
+            else {
+                  ResourceLocation key = BuiltInRegistries.BLOCK.getKey(block);
+                  blockTag.putString("id", key.toString());
+            }
+
+            blockTag.putInt("amount", amount);
+            return true;
       }
 
       public record FluidAttributes(TextureAtlasSprite sprite, Color tint) {

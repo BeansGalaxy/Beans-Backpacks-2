@@ -36,15 +36,18 @@ public abstract class PickBlockMixin {
             if (interactionHand.equals(InteractionHand.MAIN_HAND)) {
                   Minecraft minecraft = Minecraft.getInstance();
                   LocalPlayer player = minecraft.player;
-                  if (!player.isShiftKeyDown() && UseKeyEvent.cauldronPickup(player)) {
+                  HitResult hitResult = minecraft.hitResult;
+                  if (!player.isShiftKeyDown() && (UseKeyEvent.cauldronPickup(player)
+                  || (hitResult instanceof BlockHitResult blockHitResult && UseKeyEvent.cauldronPickup(blockHitResult, player)))) {
                         this.player.swing(InteractionHand.MAIN_HAND);
                         ci.cancel();
                   }
-                  else if (minecraft.hitResult instanceof BlockHitResult blockHitResult && UseKeyEvent.cauldronPlace(player, blockHitResult)) {
+                  else if (hitResult instanceof BlockHitResult blockHitResult && UseKeyEvent.cauldronPlace(player, blockHitResult)) {
                         this.player.swing(InteractionHand.MAIN_HAND);
                         ci.cancel();
                   }
-                  else if (player.isShiftKeyDown() && UseKeyEvent.cauldronPickup(player)) {
+                  else if (player.isShiftKeyDown() && UseKeyEvent.cauldronPickup(player)
+                  || (hitResult instanceof BlockHitResult blockHitResult && UseKeyEvent.cauldronPickup(blockHitResult, player))) {
                         this.player.swing(InteractionHand.MAIN_HAND);
                         ci.cancel();
                   }

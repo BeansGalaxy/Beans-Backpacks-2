@@ -1,6 +1,8 @@
 package com.beansgalaxy.backpacks.client.renderer.features;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.access.BucketItemAccess;
+import com.beansgalaxy.backpacks.access.BucketsAccess;
 import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.client.renderer.CauldronModel;
 import com.beansgalaxy.backpacks.client.renderer.PotModel;
@@ -31,6 +33,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.DecoratedPotBlockEntity;
 import net.minecraft.world.level.material.Fluid;
@@ -61,18 +65,21 @@ public class CauldronFeature<T extends LivingEntity, M extends EntityModel<T>> {
         VertexConsumer cauldVC = mbs.getBuffer(cauldronModel.renderType(TEXTURE));
         cauldronModel.renderToBuffer(pose, cauldVC, light, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
 
-        if (backStack.hasTag() && backStack.getTag().contains("fluid")) {
-            CompoundTag fluidTag = backStack.getTagElement("fluid");
+        if (backStack.hasTag() && backStack.getTag().contains("bucket")) {
+            CompoundTag fluidTag = backStack.getTagElement("bucket");
             if (fluidTag.contains("id") && fluidTag.contains("amount")) {
                 int amount = fluidTag.getInt("amount");
                 if (amount > 0) {
-                    pose.scale(0.5f, 0.5f, 0.5f);
-                    int cappedAmount = Math.min(amount - 1, 6);
-                    pose.translate(0, -(cappedAmount / 8f) + 12/8f + (cappedAmount == 0 ? -0.01 : 0), 0);
-                    Fluid fluid = BuiltInRegistries.FLUID.get(new ResourceLocation(fluidTag.getString("id")));
-                    CauldronInventory.FluidAttributes attributes = Services.COMPAT.getFluidTexture(fluid, blocksAtlas);
-                    VertexConsumer fluidVC = attributes.sprite().wrap(mbs.getBuffer(RenderType.translucent()));
-                    cauldronModel.fluid.render(pose, fluidVC, light, OverlayTexture.NO_OVERLAY, attributes.tint().getRed() / 255f, attributes.tint().getGreen() / 255f, attributes.tint().getBlue() / 255f, 1);
+                    Item bucket = BuiltInRegistries.ITEM.get(new ResourceLocation(fluidTag.getString("id")));
+                    if (bucket instanceof BucketItemAccess access) {
+                        pose.scale(0.5f, 0.5f, 0.5f);
+                        int cappedAmount = Math.min(amount - 1, 6);
+                        pose.translate(0, -(cappedAmount / 8f) + 12 / 8f + (cappedAmount == 0 ? -0.01 : 0), 0);
+                        Fluid fluid = access.beans_Backpacks_2$getFluid();
+                        CauldronInventory.FluidAttributes attributes = Services.COMPAT.getFluidTexture(fluid, blocksAtlas);
+                        VertexConsumer fluidVC = attributes.sprite().wrap(mbs.getBuffer(RenderType.translucent()));
+                        cauldronModel.fluid.render(pose, fluidVC, light, OverlayTexture.NO_OVERLAY, attributes.tint().getRed() / 255f, attributes.tint().getGreen() / 255f, attributes.tint().getBlue() / 255f, 1);
+                    }
                 }
             }
         }

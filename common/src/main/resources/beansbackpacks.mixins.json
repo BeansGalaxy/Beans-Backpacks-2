@@ -7,6 +7,7 @@
   "mixins": [
     "common.ArmorItemMixin",
     "common.BucketItemMixin",
+    "common.BucketSolidsMixin",
     "common.ComparatorMixin",
     "common.DataResourcesMixin",
     "common.ElytraItemMixin",
