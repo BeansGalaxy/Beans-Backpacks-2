@@ -1,20 +1,19 @@
 {
   "display": {
     "icon": {
-      "item": "beansbackpacks:ender_backpack"
+      "item": "minecraft:bee_nest"
     },
-    "title": "VWOOMP",
-    "description": "Use a Hopper on your Ender Backpack",
-    "frame": "challenge",
+    "title": "Chris Robbin",
+    "description": "Use a cauldron on a hive",
     "show_toast": true,
     "announce_to_chat": true
   },
-  "parent": "beansbackpacks:this_sucks",
+  "parent": "beansbackpacks:equipment/cauldron",
   "criteria": {
     "requirement": {
       "trigger": "minecraft:beansbackpacks/special",
       "conditions": {
-        "special": "ENDER_HOPPER"
+        "special": "CAULDRON_BEE_HIVE"
       }
     }
   }

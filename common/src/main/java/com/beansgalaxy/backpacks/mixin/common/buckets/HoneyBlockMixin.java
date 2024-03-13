@@ -2,10 +2,15 @@ package com.beansgalaxy.backpacks.mixin.common.buckets;
 
 import com.beansgalaxy.backpacks.access.BucketLikeAccess;
 import com.beansgalaxy.backpacks.access.BucketsAccess;
+import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.HalfTransparentBlock;
 import net.minecraft.world.level.block.HoneyBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,6 +33,14 @@ public abstract class HoneyBlockMixin extends HalfTransparentBlock implements Bu
       @Override
       public Optional<SoundEvent> getPickupSound() {
             return Optional.of(SoundEvents.HONEY_BLOCK_BREAK);
+      }
+
+      @Override
+      public boolean onPickup(Level level, BlockPos blockPos, BlockState blockState, Player player) {
+            level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 11);
+            if (!level.isClientSide())
+                  level.levelEvent(2001, blockPos, Block.getId(blockState));
+            return true;
       }
 
       @Override

@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.items.Tooltip;
@@ -45,6 +46,7 @@ public class PickBlockEvent {
             player.connection.send(new ClientboundSetCarriedItemPacket(inventory.selected));
 
             Services.NETWORK.backpackInventory2C(player);
+            Services.REGISTRY.triggerSpecial(player, SpecialCriterion.Special.PICK_BACKPACK);
 
             if (overflowSlot > -1)
                   player.connection.send(new ClientboundContainerSetSlotPacket(-2, 0, overflowSlot, inventory.getItem(overflowSlot)));

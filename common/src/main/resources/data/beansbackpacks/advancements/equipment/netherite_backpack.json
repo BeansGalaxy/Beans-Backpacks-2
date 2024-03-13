@@ -10,7 +10,7 @@
     "show_toast": true,
     "announce_to_chat": true
   },
-  "parent": "beansbackpacks:filled_leather",
+  "parent": "beansbackpacks:equipment/leather_filled",
   "criteria": {
     "requirement": {
       "conditions": {

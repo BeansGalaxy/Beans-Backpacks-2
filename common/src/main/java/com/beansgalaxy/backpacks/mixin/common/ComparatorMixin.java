@@ -2,9 +2,14 @@ package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
+import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
+import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ComparatorBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -27,8 +32,13 @@ public class ComparatorMixin {
             int signal = Integer.MIN_VALUE;
             if (backpack != null)
                   signal = backpack.getAnalogOutput();
-            if (signal > j) 
+            if (signal > j) {
+                  if (level instanceof ServerLevel serverLevel) {
+                        Player serverPlayer = serverLevel.getPlayerByUUID(backpack.getPlacedBy());
+                        Services.REGISTRY.triggerSpecial((ServerPlayer) serverPlayer, SpecialCriterion.Special.COMPARATOR);
+                  }
                   cir.setReturnValue(signal);
+            }
       }
 
       @Unique

@@ -104,7 +104,7 @@ public class BackpackItem extends Item {
             if (clickAction.equals(ClickAction.SECONDARY) && !cursorStack.isEmpty())
             {
                   ItemStack insertedStack = cursorStack.copyWithCount(1);
-                  ItemStack add = PotInventory.add(pot, insertedStack, level);
+                  ItemStack add = PotInventory.add(pot, insertedStack, player);
                   if (add != null && add.isEmpty()) {
                         cursorStack.shrink(1);
                         return true;
@@ -113,7 +113,7 @@ public class BackpackItem extends Item {
             else if (cursorStack.isEmpty())
                   tookStack = PotInventory.take(pot, ClickAction.SECONDARY.equals(clickAction), level);
             else
-                  tookStack = PotInventory.add(pot, cursorStack, level);
+                  tookStack = PotInventory.add(pot, cursorStack, player);
 
 
             if (tookStack != null) {

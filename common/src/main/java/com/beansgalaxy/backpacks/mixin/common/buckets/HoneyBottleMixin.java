@@ -3,11 +3,14 @@ package com.beansgalaxy.backpacks.mixin.common.buckets;
 import com.beansgalaxy.backpacks.access.BucketItemAccess;
 import com.beansgalaxy.backpacks.access.BucketLikeAccess;
 import com.beansgalaxy.backpacks.access.BucketsAccess;
+import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.HoneyBottleItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +34,11 @@ public class HoneyBottleMixin implements BucketLikeAccess {
       @Override
       public SoundEvent defaultPlaceSound() {
             return SoundEvents.BOTTLE_EMPTY;
+      }
+
+      @Override
+      public boolean onPickup(Level level, BlockPos blockPos, BlockState blockState, Player player) {
+            return true;
       }
 
       @Override

@@ -6,20 +6,21 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "common.ArmorItemMixin",
-    "common.buckets.BucketItemMixin",
-    "common.buckets.BucketSolidsMixin",
     "common.ComparatorMixin",
     "common.DataResourcesMixin",
     "common.ElytraItemMixin",
-    "common.buckets.HoneyBlockMixin",
-    "common.buckets.HoneyBottleMixin",
     "common.HopperEntityMixin",
     "common.InteractWithPlayer",
     "common.InventoryContainerMixin",
     "common.InventoryMenuMixin",
     "common.ItemCombinerMixin",
     "common.ItemStackMixin",
-    "common.ServerPlayMixin"
+    "common.ServerPlayMixin",
+    "common.buckets.BeehiveBlockMixin",
+    "common.buckets.BucketItemMixin",
+    "common.buckets.BucketSolidsMixin",
+    "common.buckets.HoneyBlockMixin",
+    "common.buckets.HoneyBottleMixin"
   ],
   "client": [
     "client.ArmorTrimMixin",

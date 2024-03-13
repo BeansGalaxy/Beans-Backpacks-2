@@ -5,12 +5,16 @@ import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.platform.Services;
+import com.beansgalaxy.backpacks.screen.PotInventory;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.spongepowered.asm.mixin.Final;
@@ -114,8 +118,11 @@ public abstract class InventoryContainerMixin implements BackAccessor {
                   BackpackInventory backpackInventory = backData.backpackInventory;
                   ItemStack backStack = backData.getStack();
 
-                  if (Kind.isStorage(backStack) && backpackInventory.canPlaceItem(stack))
+                  if (Kind.POT.is(backStack))
                   {
+                        CompoundTag backTag = backStack.getTagElement("back_slot");
+                        if (backTag == null || !backTag.contains("id") || !backTag.contains("amount"))
+                              return;
 
                         instance.items.forEach(stacks -> {
                               if (ItemStack.isSameItemSameTags(stacks, stack)) {
@@ -129,16 +136,39 @@ public abstract class InventoryContainerMixin implements BackAccessor {
                                     stack.setCount(remainder);
                               }
                         });
-                        AtomicBoolean tookStack = new AtomicBoolean(false);
+
+                        if (stack.isEmpty()) {
+                              cir.setReturnValue(true);
+                              return;
+                        }
+
+                        ItemStack add = PotInventory.add(backStack, stack, player);
+                        if (add != null) cir.setReturnValue(true);
+                  }
+                  else if (Kind.isStorage(backStack) && backpackInventory.canPlaceItem(stack))
+                  {
+                        instance.items.forEach(stacks -> {
+                              if (ItemStack.isSameItemSameTags(stacks, stack)) {
+                                    int present = stacks.getCount();
+                                    int inserted = stack.getCount();
+                                    int count = present + inserted;
+                                    int remainder = Math.max(0, count - stack.getMaxStackSize());
+                                    count -= remainder;
+
+                                    stacks.setCount(count);
+                                    stack.setCount(remainder);
+                              }
+                        });
+                        AtomicBoolean didTake = new AtomicBoolean(false);
                         backpackInventory.getItemStacks().forEach(stacks -> {
                               if (ItemStack.isSameItemSameTags(stacks, stack)) {
                                     backpackInventory.insertItemSilent(stack, stack.getCount());
                                     backpackInventory.setChanged();
-                                    tookStack.set(true);
+                                    didTake.set(true);
                               }
                         });
 
-                        if (tookStack.get()) {
+                        if (didTake.get()) {
                               cir.setReturnValue(true);
                               if (player instanceof ServerPlayer serverPlayer) {
                                     Services.NETWORK.backpackInventory2C(serverPlayer);

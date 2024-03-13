@@ -218,7 +218,7 @@ public interface BackpackInventory extends Container {
                   stack.setCount(stack.getCount() - count);
                   setChanged();
             }
-            if (isServerSide && Objects.equals(localData.key, "leather") && spaceLeft - weight < 1)
+            if (isServerSide && Objects.equals(localData.key, "leather") && spaceLeft - (weight * amount) < 1)
                   triggerAdvancements(SpecialCriterion.Special.FILLED_LEATHER);
 
             return stack;

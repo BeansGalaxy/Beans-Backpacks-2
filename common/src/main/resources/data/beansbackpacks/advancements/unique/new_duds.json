@@ -9,7 +9,7 @@
     "show_toast": true,
     "announce_to_chat": true
   },
-  "parent": "beansbackpacks:backpack_place",
+  "parent": "beansbackpacks:interactions/place",
   "criteria": {
     "requirement": {
       "trigger": "minecraft:beansbackpacks/equip_any",

@@ -169,7 +169,7 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                         return;
                   }
                   else if (Kind.POT.is(kind)) {
-                        PotInventory.add(backStack, stack, level);
+                        PotInventory.add(backStack, stack, player);
                         return;
                   }
                   else if (Kind.CAULDRON.is(kind)) {

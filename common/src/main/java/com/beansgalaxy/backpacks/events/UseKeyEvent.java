@@ -114,16 +114,12 @@ public class UseKeyEvent {
             else if (block instanceof BucketLikeAccess blockAccess) {
                   Item bucket = CauldronInventory.getBucket(cauldron);
                   boolean shouldPickup = false;
-                  if (bucket instanceof BucketsAccess access && access.getBlockState().isPresent() && access.getBlockState().get().is(block))
+                  if (blockAccess.getFilledInstance().equals(bucket))
                         shouldPickup = true;
                   else if (bucket.equals(Items.AIR))
                         shouldPickup = true;
 
-                  if (shouldPickup) {
-                        level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 11);
-                        if (!level.isClientSide())
-                              level.levelEvent(2001, blockPos, Block.getId(blockState));
-
+                  if (shouldPickup && blockAccess.onPickup(level, blockPos, blockState, player)) {
                         blockAccess.getPickupSound().ifPresent(soundEvent -> player.playSound(soundEvent, 1, 1));
                         CauldronInventory.add(cauldron, blockAccess);
                         return true;

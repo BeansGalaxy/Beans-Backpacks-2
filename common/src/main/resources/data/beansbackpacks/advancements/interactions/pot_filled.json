@@ -1,0 +1,21 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:gold_block"
+    },
+    "title": "Scrooge",
+    "description": "Completely fill a Pot",
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "beansbackpacks:equipment/pot",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:beansbackpacks/special",
+      "conditions": {
+        "special": "FILLED_POT"
+      }
+    }
+  }
+}

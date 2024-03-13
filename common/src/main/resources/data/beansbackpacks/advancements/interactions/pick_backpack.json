@@ -1,0 +1,20 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:spyglass"
+    },
+    "title": "Gotcha!",
+    "description": "Retrieve an item using pick-block",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "beansbackpacks:beansbackpacks",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:beansbackpacks/special",
+      "conditions": {
+        "special": "PICK_BACKPACK"
+      }
+    }
+  }
+}

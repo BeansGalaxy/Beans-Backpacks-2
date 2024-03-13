@@ -1,11 +1,16 @@
 package com.beansgalaxy.backpacks.screen;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
+import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.items.Tooltip;
+import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -13,8 +18,12 @@ import net.minecraft.world.level.Level;
 public class PotInventory {
       public static final int MAX_SIZE = 128;
 
-      public static ItemStack add(ItemStack pot, ItemStack inserted, Level level) {
+      public static ItemStack add(ItemStack pot, ItemStack inserted, Player player) {
+            Level level = player.level();
             if (inserted.isEmpty() || inserted.hasTag() || !inserted.isStackable())
+                  return null;
+
+            if (Constants.BLACKLIST_ITEMS.contains(inserted.getItem()))
                   return null;
 
             int amount = inserted.getCount();
@@ -26,6 +35,7 @@ public class PotInventory {
                   if (!inserted.is(stored)) return null;
                   int storedAmount = itemTag.getInt("amount");
                   if (storedAmount >= max_amount) return null;
+
                   amount += storedAmount;
             } else {
                   ResourceLocation key = BuiltInRegistries.ITEM.getKey(inserted.getItem());
@@ -38,6 +48,8 @@ public class PotInventory {
             } else {
                   itemTag.putInt("amount", max_amount);
                   inserted.setCount(amount - max_amount);
+                  if (player instanceof ServerPlayer serverPlayer)
+                        Services.REGISTRY.triggerSpecial(serverPlayer, SpecialCriterion.Special.FILLED_POT);
             }
 
             if (level.isClientSide())
