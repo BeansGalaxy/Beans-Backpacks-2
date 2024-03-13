@@ -2,11 +2,18 @@ package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.EnderStorage;
+import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.items.Tooltip;
+import com.beansgalaxy.backpacks.screen.CauldronInventory;
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
@@ -40,8 +47,7 @@ public abstract class ItemStackMixin {
 
       @Shadow public abstract ItemStack copy();
 
-      @Unique
-      private final ItemStack instance = ((ItemStack) (Object) this);
+      @Unique private final ItemStack instance = ((ItemStack) (Object) this);
 
       @Inject(method = "overrideOtherStackedOnMe", at = @At("HEAD"), cancellable = true)
       private void stackedOnMe(ItemStack stack, Slot slot, ClickAction clickAction, Player player, SlotAccess access, CallbackInfoReturnable<Boolean> cir) {
@@ -63,10 +69,45 @@ public abstract class ItemStackMixin {
                   return;
 
             BackData backData = BackData.get(player);
-            boolean showHelpTooltip = instance == backData.getStack() && backData.backpackInventory.isEmpty();
+            ItemStack backStack = backData.getStack();
             boolean actionKeyPressed = backData.actionKeyPressed;
+            boolean hasItems = !backData.backpackInventory.isEmpty();
+            boolean showHelpTooltip = instance == backStack && (!hasItems);
+            Kind kind = Kind.fromStack(backStack);
 
-            if (getItem() instanceof EnderBackpack enderBackpack) {
+
+            if (instance == backStack && Kind.POT.is(kind)) {
+                  CompoundTag potTag = backStack.getTagElement("back_slot");
+                  if (potTag != null && potTag.contains("id") && potTag.contains("amount")) {
+                        String string = potTag.getString("id");
+                        Item item1 = BuiltInRegistries.ITEM.get(new ResourceLocation(string));
+                        Component name1 = item1.getName(item1.getDefaultInstance());
+                        int amount = potTag.getInt("amount");
+                        MutableComponent literal = Component.literal(amount + " ");
+                        MutableComponent append = literal.append(name1);
+                        components.add(append.withStyle(ChatFormatting.GRAY));
+                  }
+                  else if (actionKeyPressed)
+                        cir.setReturnValue(Tooltip.addLore(components, "pot", 7));
+                  else
+                        Tooltip.loreTitle(components);
+
+            }
+            else if (instance == backStack && Kind.CAULDRON.is(kind)) {
+                  CauldronInventory.Attributes attributes = CauldronInventory.Attributes.create(backStack);
+                  if (attributes != null) {
+                        int scale = attributes.access().scale();
+                        MutableComponent literal = Component.literal((attributes.amount() / scale) + " ");
+                        MutableComponent append = literal.append(Component.translatable(attributes.bucket().getDescriptionId()));
+                        components.add(append.withStyle(ChatFormatting.GRAY));
+                  }
+                  else if (actionKeyPressed)
+                        cir.setReturnValue(Tooltip.addLore(components, "cauldron", 7));
+                  else
+                        Tooltip.loreTitle(components);
+
+            }
+            else if (getItem() instanceof EnderBackpack enderBackpack) {
                   UUID uuid = enderBackpack.getOrCreateUUID(player.getUUID(), instance);
                   Level level = player.level();
                   EnderStorage.Data enderData = EnderStorage.getEnderData(uuid, level);
@@ -79,20 +120,12 @@ public abstract class ItemStackMixin {
                               Tooltip.loreTitle(components);
                         components.add(Component.translatableWithFallback("tooltip.beansbackpacks.ender.binding", "§7Bound to: ", playerName));
                   }
-            } else
-                  if (showHelpTooltip)
-            {
+            }
+            else if (showHelpTooltip) {
                   boolean isBackpack = getItem() instanceof BackpackItem;
-                  boolean isPot = instance.is(Items.DECORATED_POT);
-
-                  if (actionKeyPressed)
-                  {
-                        if (isBackpack)
+                  if (actionKeyPressed && isBackpack)
                               cir.setReturnValue(Tooltip.addLore(components, "backpack", 5));
-                        else if (isPot)
-                              cir.setReturnValue(Tooltip.addLore(components, "pot", 7));
-                  }
-                  else if (isBackpack || isPot)
+                  else if (isBackpack)
                         Tooltip.loreTitle(components);
             }
       }

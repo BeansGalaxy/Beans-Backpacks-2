@@ -9,9 +9,7 @@ import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
-import com.beansgalaxy.backpacks.screen.BackSlot;
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
-import com.beansgalaxy.backpacks.screen.InSlot;
+import com.beansgalaxy.backpacks.screen.*;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.SlotAccess;
@@ -19,6 +17,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -105,16 +104,17 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                   return;
             }
 
+            Level level = player.level();
             if (!backData.isEmpty() && Constants.elytraOrDisables(cursorStack.getItem()))
             {
                   if (selectedEquipment && !slot.hasItem() && !cursorStack.isEmpty())
                   {
-                        if (player.level().isClientSide)
+                        if (level.isClientSide)
                               Tooltip.playSound(kind, PlaySound.HIT);
                         return;
                   }
                   if (actionType == ClickType.QUICK_MOVE && !selectedBackpackInventory) {
-                        if (player.level().isClientSide())
+                        if (level.isClientSide())
                               Tooltip.playSound(kind, PlaySound.HIT);
                         return;
                   }
@@ -163,13 +163,27 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                   }
             }
 
-            if (backData.actionKeyPressed && selectedPlayerInventory) {
+            if (backData.actionKeyPressed && selectedPlayerInventory ) {
                   if (backStack.isEmpty() && backData.backSlot.isActive() && !stack.isEmpty() && Kind.isWearable(stack)) {
                         slot.set(backData.backSlot.safeInsert(stack));
                         return;
                   }
+                  else if (Kind.POT.is(kind)) {
+                        PotInventory.add(backStack, stack, level);
+                        return;
+                  }
+                  else if (Kind.CAULDRON.is(kind)) {
+                        ItemStack returned = CauldronInventory.quickInsert(backStack, stack, level);
+                        if (!returned.isEmpty()) {
+                              if (stack.isEmpty())
+                                    slot.set(returned);
+                              else
+                                    player.getInventory().placeItemBackInInventory(returned);
+                        }
+                        return;
+                  }
                   else if (Kind.isStorage(backStack)) {
-                        if (!player.level().isClientSide() || !Kind.ENDER.is(kind))
+                        if (!level.isClientSide() || !Kind.ENDER.is(kind))
                               slot.set(backpackInventory.insertItem(stack, stack.getCount()));
                         if (player instanceof ServerPlayer serverPlayer && Kind.ENDER.is(kind))
                               Services.NETWORK.sendEnderData2C(serverPlayer, serverPlayer.getUUID());

@@ -68,8 +68,8 @@ public class CauldronFeature<T extends LivingEntity, M extends EntityModel<T>> {
         VertexConsumer cauldVC = mbs.getBuffer(cauldronModel.renderType(TEXTURE));
         cauldronModel.renderToBuffer(pose, cauldVC, light, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
 
-        if (backStack.hasTag() && backStack.getTag().contains("bucket")) {
-            CompoundTag fluidTag = backStack.getTagElement("bucket");
+        if (backStack.hasTag() && backStack.getTag().contains("back_slot")) {
+            CompoundTag fluidTag = backStack.getTagElement("back_slot");
             if (fluidTag.contains("id") && fluidTag.contains("amount")) {
                 int amount = fluidTag.getInt("amount");
                 if (amount > 0) {

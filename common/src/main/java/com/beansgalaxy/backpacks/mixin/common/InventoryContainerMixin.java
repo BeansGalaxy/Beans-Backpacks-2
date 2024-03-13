@@ -74,7 +74,7 @@ public abstract class InventoryContainerMixin implements BackAccessor {
       }
 
       @Unique
-      private void depricatedLoad(ListTag tag) {
+      private void depricatedLoad(ListTag tag) { // TODO: REMOVE THIS LOAD BEFORE RELEASE
             backData.set(ItemStack.EMPTY);
             for (int i = 0; i < tag.size(); ++i) {
                   CompoundTag compoundTag = tag.getCompound(i);
@@ -86,6 +86,22 @@ public abstract class InventoryContainerMixin implements BackAccessor {
                               if (Kind.isStorage(itemStack))
                                     backData.backpackInventory.readStackNbt(compoundTag.getCompound("Contents"));
                         }
+                  }
+            }
+      }
+
+      @Inject(method = "add(Lnet/minecraft/world/item/ItemStack;)Z", at = @At("HEAD"), cancellable = true)
+      public void checkCauldronPotItem(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+            Kind kind = Kind.fromStack(stack);
+            if (Kind.POT.is(kind) || Kind.CAULDRON.is(kind)) {
+                  CompoundTag backTag = stack.getTagElement("back_slot");
+                  if (backTag != null) {
+                        BackData backData = getBackData();
+                        if (backData.getStack().isEmpty()) {
+                              backData.set(stack.copyAndClear());
+                              cir.setReturnValue(true);
+                        }
+                        else cir.setReturnValue(false);
                   }
             }
       }

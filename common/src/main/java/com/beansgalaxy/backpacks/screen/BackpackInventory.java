@@ -5,6 +5,7 @@ import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.entity.EntityEnder;
+import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.items.BackpackItem;
@@ -21,6 +22,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -250,6 +252,12 @@ public interface BackpackInventory extends Container {
       }
 
       default int weightByItem(ItemStack stack) {
+            if (stack.is(Items.ENCHANTED_BOOK))
+                  return 16;
+
+            if (Kind.isBackpack(stack))
+                  return 16;
+
             return 64 / stack.getMaxStackSize();
       };
 

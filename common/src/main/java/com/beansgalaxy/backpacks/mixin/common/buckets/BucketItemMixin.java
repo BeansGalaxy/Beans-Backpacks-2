@@ -1,4 +1,4 @@
-package com.beansgalaxy.backpacks.mixin.common;
+package com.beansgalaxy.backpacks.mixin.common.buckets;
 
 import com.beansgalaxy.backpacks.access.BucketItemAccess;
 import com.beansgalaxy.backpacks.access.BucketsAccess;

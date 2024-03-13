@@ -45,47 +45,4 @@ public class ServerPlayMixin {
             PlaceBackpackEvent.cancelCoyoteClick(player, actionResult, false);
             return actionResult;
       }
-
-
-      public void pickFromBackpack(ServerboundPickItemPacket packet, CallbackInfo ci) {
-
-            int slot = packet.getSlot();
-            if (slot < 0) {
-                  int backpackSlot = (slot + 100) * -1;
-                  if (backpackSlot < 0) {
-                        ci.cancel();
-                        return;
-                  }
-
-                  PacketUtils.ensureRunningOnSameThread(packet,(ServerGamePacketListener) this, this.player.serverLevel());
-                  BackData backData = BackData.get(player);
-                  Inventory inventory = player.getInventory();
-
-                  Kind kind = Kind.fromStack(backData.getStack());
-                  if (inventory.getFreeSlot() == -1)
-                  {
-                        PlaySound.HIT.at(player, kind, 0.1f);
-                        ci.cancel();
-                        return;
-                  }
-
-                  int overflowSlot = -1;
-                  ItemStack selectedStack = inventory.getItem(inventory.selected);
-                  inventory.setItem(inventory.selected, backData.backpackInventory.removeItemSilent(backpackSlot));
-                  PlaySound.TAKE.at(player, kind);
-
-                  if (!selectedStack.isEmpty())
-                  {
-                        overflowSlot = inventory.getFreeSlot();
-                        inventory.setItem(overflowSlot, selectedStack);
-                  }
-
-                  this.player.connection.send(new ClientboundContainerSetSlotPacket(-2, 0, inventory.selected, selectedStack));
-                  this.player.connection.send(new ClientboundSetCarriedItemPacket(inventory.selected));
-                  Services.NETWORK.backpackInventory2C(player);
-                  if (overflowSlot > -1)
-                        this.player.connection.send(new ClientboundContainerSetSlotPacket(-2, 0, overflowSlot, inventory.getItem(overflowSlot)));
-                  ci.cancel();
-            }
-      }
 }

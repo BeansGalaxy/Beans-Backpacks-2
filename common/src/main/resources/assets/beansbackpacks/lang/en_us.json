@@ -25,8 +25,8 @@
   "tooltip.beansbackpacks.help.pot1": "§7to insert/take items.",
   "tooltip.beansbackpacks.help.pot2": "§7Hold %d §7to move items",
   "tooltip.beansbackpacks.help.pot3": "§7quickly to/from this pot.",
-  "tooltip.beansbackpacks.help.pot4": "§7Pots store an unlimited",
-  "tooltip.beansbackpacks.help.pot5": "§7amount of one item.",
+  "tooltip.beansbackpacks.help.pot4": "§7Pots store 128 stacks",
+  "tooltip.beansbackpacks.help.pot5": "§7of a single item.",
   "tooltip.beansbackpacks.help.pot6": "§7You cannot un-equip a",
   "tooltip.beansbackpacks.help.pot7": "§7pot while storing items.",
 
@@ -38,6 +38,15 @@
   "tooltip.beansbackpacks.help.ender5": "§7to %d§7.",
 
   "tooltip.beansbackpacks.ender.binding": "§7Bound to: %d",
+
+  "tooltip.beansbackpacks.help.cauldron0": "§7Click onto this cauldron",
+  "tooltip.beansbackpacks.help.cauldron1": "§7to leave/take fluid.",
+  "tooltip.beansbackpacks.help.cauldron2": "§7Click + %d §7a fluid to",
+  "tooltip.beansbackpacks.help.cauldron3": "§7quickly fill this cauldron.",
+  "tooltip.beansbackpacks.help.cauldron4": "%d §7+ %d §7fluids or",
+  "tooltip.beansbackpacks.help.cauldron5": "§7blocks to collect/place.",
+  "tooltip.beansbackpacks.help.cauldron6": "§7Cauldrons holding fluids",
+  "tooltip.beansbackpacks.help.cauldron7": "§7cannot be un-equipped.",
 
   "sounds.beansbackpacks.place": "Backpack Placed",
   "sounds.beansbackpacks.equip": "Backpack Equipped",

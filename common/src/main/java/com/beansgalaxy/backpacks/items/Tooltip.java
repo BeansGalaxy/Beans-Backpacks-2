@@ -7,6 +7,7 @@ import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
+import com.beansgalaxy.backpacks.screen.CauldronInventory;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -26,6 +27,7 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -49,9 +51,21 @@ public class Tooltip {
             // IS BACKPACK EQUIPPED
             BackData backData = BackData.get(player);
             ItemStack equippedOnBack = backData.getStack();
-            if (!stack.equals(equippedOnBack) || backData.backpackInventory.isEmpty())
-                  return Optional.empty();
+            if (stack.equals(equippedOnBack)) {
+                  if (!backData.backpackInventory.isEmpty())
+                        return backpackTooltip(player, backData);
+                  if (equippedOnBack.getTagElement("back_slot") != null)
+                        return specialTooltip(equippedOnBack, backData);
+            }
+            return Optional.empty();
+      }
 
+      private static Optional<TooltipComponent> specialTooltip(ItemStack equippedOnBack, BackData backData) {
+            return Optional.empty();
+      }
+
+      @NotNull
+      private static Optional<TooltipComponent> backpackTooltip(Player player, BackData backData) {
             NonNullList<ItemStack> defaultedList = NonNullList.create();
             NonNullList<ItemStack> backpackList = BackData.get(player).backpackInventory.getItemStacks();
             backpackList.forEach(itemstack -> defaultedList.add(itemstack.copy()));

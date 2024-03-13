@@ -10,6 +10,7 @@ import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.screen.CauldronInventory;
+import com.beansgalaxy.backpacks.screen.PotInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -65,9 +66,10 @@ public class BackpackItem extends Item {
 
             Level level = player.level();
             boolean quickMove = backData.actionKeyPressed || shiftIsDown;
-            if (kind == Kind.CAULDRON) {
+            if (Kind.CAULDRON.is(kind))
                   return handleCauldronClick(backStack, player, access, cursorStack, level);
-            }
+            if (Kind.POT.is(kind))
+                  return handlePotClick(backStack, player, access, cursorStack, quickMove, clickAction);
 
             if (backpackInventory.isEmpty())
                   if (cursorStack.isEmpty() || Kind.isWearable(cursorStack))
@@ -85,6 +87,43 @@ public class BackpackItem extends Item {
                         cursorStack, 0, backpackInventory));
       }
 
+      private static boolean handlePotClick(ItemStack pot, Player player, SlotAccess access, ItemStack cursorStack, boolean quickMove, ClickAction clickAction) {
+            Level level = player.level();
+            if (quickMove && clickAction != ClickAction.SECONDARY) {
+                  Inventory inventory = player.getInventory();
+                  if (inventory.getFreeSlot() != -1) {
+                        ItemStack take = PotInventory.take(pot, false, level);
+                        if (take != null) {
+                              inventory.placeItemBackInInventory(take);
+                              return true;
+                        }
+                  }
+                  return pot.getTagElement("back_slot") != null;
+            }
+            ItemStack tookStack = null;
+            if (clickAction.equals(ClickAction.SECONDARY) && !cursorStack.isEmpty())
+            {
+                  ItemStack insertedStack = cursorStack.copyWithCount(1);
+                  ItemStack add = PotInventory.add(pot, insertedStack, level);
+                  if (add != null && add.isEmpty()) {
+                        cursorStack.shrink(1);
+                        return true;
+                  }
+            }
+            else if (cursorStack.isEmpty())
+                  tookStack = PotInventory.take(pot, ClickAction.SECONDARY.equals(clickAction), level);
+            else
+                  tookStack = PotInventory.add(pot, cursorStack, level);
+
+
+            if (tookStack != null) {
+                  access.set(tookStack);
+                  return true;
+            }
+
+            return pot.getTagElement("back_slot") != null;
+      }
+
       private static boolean handleCauldronClick(ItemStack backStack, Player player, SlotAccess access, ItemStack cursorStack, Level level) {
             Item bucket = cursorStack.getItem();
 
@@ -95,12 +134,12 @@ public class BackpackItem extends Item {
                   if (!remove.equals(Items.AIR)) {
                         returned = remove;
                   } else
-                        return backStack.hasTag() && backStack.getTagElement("bucket") != null;
+                        return backStack.hasTag() && backStack.getTagElement("back_slot") != null;
             }
             else if (CauldronInventory.sizeLeft(backStack) > 0)
                   returned = CauldronInventory.add(backStack, bucket);
 
-            if (returned == null) return backStack.hasTag() && backStack.getTagElement("bucket") != null;
+            if (returned == null) return backStack.hasTag() && backStack.getTagElement("back_slot") != null;
 
             ItemStack newStack = ItemStack.EMPTY;
             Optional<SoundEvent> soundEvent = Optional.empty();

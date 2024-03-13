@@ -176,8 +176,10 @@ public class UseKeyEvent {
 
       public static boolean cauldronPlace(Level level, BlockPos blockPos, BlockState blockState, BackData backData) {
             ItemStack cauldron = backData.getStack();
-            Item bucket = CauldronInventory.getBucket(cauldron);
-            if (bucket instanceof BucketsAccess bucketAccess) {
+            CauldronInventory.Attributes attributes = CauldronInventory.Attributes.create(cauldron);
+            if (attributes != null && attributes.amount() >= attributes.amountToPlace()) {
+                  BucketsAccess bucketAccess = attributes.access();
+                  Item bucket = attributes.bucket();
                   Player player = backData.owner;
                   Block block = blockState.getBlock();
                   if (bucket instanceof BucketItemAccess access &&

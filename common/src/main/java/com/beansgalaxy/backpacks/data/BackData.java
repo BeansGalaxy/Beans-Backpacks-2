@@ -19,6 +19,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
@@ -181,7 +182,9 @@ public class BackData {
 
             NonNullList<ItemStack> droppedItems = drop(x, y, z, direction, yaw);
             while (!droppedItems.isEmpty()) {
-                  owner.spawnAtLocation(droppedItems.remove(0));
+                  ItemEntity itemEntity = owner.spawnAtLocation(droppedItems.remove(0));
+                  if (itemEntity != null)
+                        itemEntity.setExtendedLifetime();
             }
       }
 
