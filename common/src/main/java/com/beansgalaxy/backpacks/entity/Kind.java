@@ -45,7 +45,7 @@ public enum Kind {
             if (stack.isEmpty())
                   return false;
 
-            if (stack.is(Items.DECORATED_POT) || stack.is(Services.REGISTRY.getEnder()))
+            if (stack.is(Services.REGISTRY.getEnder()))
                   return true;
 
             CompoundTag tag = stack.getTag();

@@ -5,6 +5,7 @@ import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.entity.Kind;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotResult;
@@ -18,16 +19,13 @@ public class CurioRegistry {
       public static void register(final FMLCommonSetupEvent event) {
             for (Kind kind: Kind.values())
                   CuriosApi.registerCurio(kind.getItem(), new CurioItem());
-            //CuriosApi.registerCurio(Items.ELYTRA, new CurioItem());
+            CuriosApi.registerCurio(Items.ELYTRA, new CurioItem());
       }
 
       public static void setBackStack(ItemStack stack, Player owner) {
             Optional<ICuriosItemHandler> resolve = CuriosApi.getCuriosInventory(owner).resolve();
             if (resolve.isEmpty())
                   return;
-
-
-            //resolve.get().setEquippedCurio(); TODO: USE THIS METHOD INSTEAD TO SET BACK SLOT
 
             IDynamicStackHandler stacks = resolve.get().getCurios().get("back").getStacks();
             if (stacks.getSlots() > 0)

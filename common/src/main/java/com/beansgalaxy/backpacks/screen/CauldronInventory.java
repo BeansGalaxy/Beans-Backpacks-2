@@ -98,8 +98,9 @@ public class CauldronInventory {
 
                         if (amount < 0)
                               return Items.AIR;
-                        else if (amount == 0)
-                              cauldron.getTag().remove("back_slot");
+                        else if (amount == 0) {
+                              cauldron.removeTagKey("back_slot");
+                        }
                         else
                               fluidTag.putInt("amount", amount);
 
@@ -126,7 +127,7 @@ public class CauldronInventory {
                         if (amount < 0)
                               return Items.AIR;
                         else if (amount == 0)
-                              cauldron.getTag().remove("back_slot");
+                              cauldron.removeTagKey("back_slot");
                         else
                               fluidTag.putInt("amount", amount);
 

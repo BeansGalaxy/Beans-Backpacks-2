@@ -120,16 +120,6 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                   }
             }
 
-            if (selectedBackpackInventory && actionType == ClickType.THROW && cursorStack.isEmpty() && Kind.POT.is(kind))
-            {
-                  ItemStack backpackStack = backpackInventory.getItem(0);
-                  int maxStack = backpackStack.getMaxStackSize();
-                  int count = button == 0 ? 1 : Math.min(stack.getCount(), maxStack);
-                  ItemStack itemStack = backpackInventory.removeItem(0, count);
-                  owner.drop(itemStack, true);
-                  return;
-            }
-
             if (slotIndex < InventoryMenu.INV_SLOT_START || actionType == ClickType.THROW) {
                   super.clicked(slotIndex, button, actionType, player);
                   return;

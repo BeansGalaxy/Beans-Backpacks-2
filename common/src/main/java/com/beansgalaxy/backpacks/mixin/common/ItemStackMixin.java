@@ -70,63 +70,72 @@ public abstract class ItemStackMixin {
 
             BackData backData = BackData.get(player);
             ItemStack backStack = backData.getStack();
-            boolean actionKeyPressed = backData.actionKeyPressed;
-            boolean hasItems = !backData.backpackInventory.isEmpty();
-            boolean showHelpTooltip = instance == backStack && (!hasItems);
             Kind kind = Kind.fromStack(backStack);
 
+            if (instance == backStack && kind != null) {
+                  boolean actionKeyPressed = backData.actionKeyPressed;
+                  boolean hasItems = !backData.backpackInventory.isEmpty();
+                  switch (kind) {
+                        case POT -> {
+                              CompoundTag potTag = backStack.getTagElement("back_slot");
+                              if (potTag != null && potTag.contains("id") && potTag.contains("amount")) {
+                                    String string = potTag.getString("id");
+                                    Item item1 = BuiltInRegistries.ITEM.get(new ResourceLocation(string));
+                                    Component name1 = item1.getName(item1.getDefaultInstance());
+                                    int amount = potTag.getInt("amount");
+                                    MutableComponent literal = Component.literal(amount + " ");
+                                    MutableComponent append = literal.append(name1);
+                                    components.add(append.withStyle(ChatFormatting.GRAY));
+                              } else if (actionKeyPressed)
+                                    cir.setReturnValue(Tooltip.addLore(components, "pot", 7));
+                              else
+                                    Tooltip.loreTitle(components);
+                        }
+                        case CAULDRON -> {
+                              CauldronInventory.Attributes attributes = CauldronInventory.Attributes.create(backStack);
+                              if (attributes != null) {
+                                    int scale = attributes.access().scale();
+                                    MutableComponent literal = Component.literal((attributes.amount() / scale) + " ");
+                                    MutableComponent append = literal.append(Component.translatable(attributes.bucket().getDescriptionId()));
+                                    components.add(append.withStyle(ChatFormatting.GRAY));
+                              } else if (actionKeyPressed)
+                                    cir.setReturnValue(Tooltip.addLore(components, "cauldron", 7));
+                              else
+                                    Tooltip.loreTitle(components);
+                        }
+                        case ENDER -> {
+                              if (hasItems) return;
 
-            if (instance == backStack && Kind.POT.is(kind)) {
-                  CompoundTag potTag = backStack.getTagElement("back_slot");
-                  if (potTag != null && potTag.contains("id") && potTag.contains("amount")) {
-                        String string = potTag.getString("id");
-                        Item item1 = BuiltInRegistries.ITEM.get(new ResourceLocation(string));
-                        Component name1 = item1.getName(item1.getDefaultInstance());
-                        int amount = potTag.getInt("amount");
-                        MutableComponent literal = Component.literal(amount + " ");
-                        MutableComponent append = literal.append(name1);
-                        components.add(append.withStyle(ChatFormatting.GRAY));
+                              EnderBackpack enderBackpack = (EnderBackpack) getItem();
+                              UUID uuid = enderBackpack.getOrCreateUUID(player.getUUID(), instance);
+                              Level level = player.level();
+                              EnderStorage.Data enderData = EnderStorage.getEnderData(uuid, level);
+                              MutableComponent playerName = enderData.getPlayerNameColored(level.registryAccess());
+
+                              if (actionKeyPressed)
+                                    cir.setReturnValue(Tooltip.addLoreEnder(components, playerName));
+                              else {
+                                    Tooltip.loreTitle(components);
+                                    components.add(Component.translatableWithFallback("tooltip.beansbackpacks.ender.binding", "§7Bound to: ", playerName));
+                              }
+                        }
+                        default -> {
+                              if (hasItems) return;
+
+                              if (actionKeyPressed)
+                                    cir.setReturnValue(Tooltip.addLore(components, "backpack", 5));
+                              else
+                                    Tooltip.loreTitle(components);
+                        }
                   }
-                  else if (actionKeyPressed)
-                        cir.setReturnValue(Tooltip.addLore(components, "pot", 7));
-                  else
-                        Tooltip.loreTitle(components);
-
-            }
-            else if (instance == backStack && Kind.CAULDRON.is(kind)) {
-                  CauldronInventory.Attributes attributes = CauldronInventory.Attributes.create(backStack);
-                  if (attributes != null) {
-                        int scale = attributes.access().scale();
-                        MutableComponent literal = Component.literal((attributes.amount() / scale) + " ");
-                        MutableComponent append = literal.append(Component.translatable(attributes.bucket().getDescriptionId()));
-                        components.add(append.withStyle(ChatFormatting.GRAY));
-                  }
-                  else if (actionKeyPressed)
-                        cir.setReturnValue(Tooltip.addLore(components, "cauldron", 7));
-                  else
-                        Tooltip.loreTitle(components);
-
-            }
-            else if (getItem() instanceof EnderBackpack enderBackpack) {
+            } else if (Kind.ENDER.is(kind))
+            {
+                  EnderBackpack enderBackpack = (EnderBackpack) getItem();
                   UUID uuid = enderBackpack.getOrCreateUUID(player.getUUID(), instance);
                   Level level = player.level();
                   EnderStorage.Data enderData = EnderStorage.getEnderData(uuid, level);
                   MutableComponent playerName = enderData.getPlayerNameColored(level.registryAccess());
-
-                  if (showHelpTooltip && actionKeyPressed) {
-                        cir.setReturnValue(Tooltip.addLoreEnder(components, playerName));
-                  } else {
-                        if (showHelpTooltip)
-                              Tooltip.loreTitle(components);
-                        components.add(Component.translatableWithFallback("tooltip.beansbackpacks.ender.binding", "§7Bound to: ", playerName));
-                  }
-            }
-            else if (showHelpTooltip) {
-                  boolean isBackpack = getItem() instanceof BackpackItem;
-                  if (actionKeyPressed && isBackpack)
-                              cir.setReturnValue(Tooltip.addLore(components, "backpack", 5));
-                  else if (isBackpack)
-                        Tooltip.loreTitle(components);
+                  components.add(Component.translatableWithFallback("tooltip.beansbackpacks.ender.binding", "§7Bound to: ", playerName));
             }
       }
 

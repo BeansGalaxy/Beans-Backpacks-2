@@ -199,30 +199,13 @@ public class BackData {
             return blockStateBelow.entityCanStandOn(chunkForCollisions, blockPos, player);
       }
 
-      /* ======================= COMPAT METHOD FOR GRAVE MODS TO GRAB ======================== */
       public NonNullList<ItemStack> drop(int x, double y, int z, Direction direction, float yaw) {
             NonNullList<ItemStack> droppedItems = NonNullList.create();
             NonNullList<ItemStack> itemStacks = backpackInventory.getItemStacks();
             ItemStack backStack = getStack();
             if (!Kind.isBackpack(backStack)) {
                   droppedItems.add(backStack.copy());
-                  if (Kind.POT.is(backStack)) {
-                        int iteration = 0;
-                        int maxIterations = 108;
-                        while (!itemStacks.isEmpty() && iteration < maxIterations) {
-                              ItemStack stack = itemStacks.remove(iteration);
-                              if (stack.getMaxStackSize() == 64) {
-                                    droppedItems.add(stack);
-                              } else while (stack.getCount() > 0) {
-                                    int removedCount = Math.min(stack.getCount(), stack.getMaxStackSize());
-                                    droppedItems.add(stack.copyWithCount(removedCount));
-                                    stack.shrink(removedCount);
-                              }
-                              iteration++;
-                        }
-                        SoundEvent soundEvent = iteration >= maxIterations ? SoundEvents.DECORATED_POT_BREAK : SoundEvents.DECORATED_POT_SHATTER;
-                        owner.playSound(soundEvent, 0.4f, 0.8f);
-                  }
+                  set(ItemStack.EMPTY);
                   return droppedItems;
             }
 

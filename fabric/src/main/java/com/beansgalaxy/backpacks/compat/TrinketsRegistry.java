@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import java.util.Map;
 import java.util.Optional;
@@ -25,7 +26,8 @@ public class TrinketsRegistry {
                   public boolean canEquip(ItemStack stack, SlotReference slot, LivingEntity entity) {
                         boolean b = Trinket.super.canEquip(stack, slot, entity) && slot.index() == 0;
                         boolean b1 = entity instanceof Player player && BackData.get(player).backSlotDisabled();
-                        return b && !b1;
+                        boolean b2 = stack.getCount() == 1;
+                        return b && !b1 && b2;
 
                   }
 
@@ -40,18 +42,7 @@ public class TrinketsRegistry {
             for (Kind kind: Kind.values())
                   TrinketsApi.registerTrinket(kind.getItem(), trinket);
 
-            TrinketsApi.registerTrinketPredicate(
-                        new ResourceLocation("trinkets", "all"), (stack, ref, entity) -> {
-                              if (entity instanceof Player player && !Kind.isBackpack(stack)) {
-                                    if (Kind.isWearable(BackData.get(player).getStack())
-                                                && Constants.DISABLES_BACK_SLOT.contains(stack.getItem())) {
-                                          return TriState.FALSE;
-                                    }
-                              }
-                              return TriState.TRUE;
-                        });
-
-            //TrinketsApi.registerTrinket(Items.ELYTRA.asItem(), trinket);
+            TrinketsApi.registerTrinket(Items.ELYTRA.asItem(), trinket);
       }
 
       public static void setBackStack(ItemStack stack, BackData backData) {

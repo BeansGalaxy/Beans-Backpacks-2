@@ -52,10 +52,10 @@ public class Tooltip {
             BackData backData = BackData.get(player);
             ItemStack equippedOnBack = backData.getStack();
             if (stack.equals(equippedOnBack)) {
-                  if (!backData.backpackInventory.isEmpty())
-                        return backpackTooltip(player, backData);
                   if (equippedOnBack.getTagElement("back_slot") != null)
                         return specialTooltip(equippedOnBack, backData);
+                  if (!backData.backpackInventory.isEmpty())
+                        return backpackTooltip(player, backData);
             }
             return Optional.empty();
       }

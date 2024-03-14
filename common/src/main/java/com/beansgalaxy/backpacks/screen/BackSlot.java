@@ -43,6 +43,11 @@ public class BackSlot extends Slot {
       }
 
       @Override
+      public int getMaxStackSize() {
+            return 1;
+      }
+
+      @Override
       public boolean mayPlace(ItemStack stack) {
             return Kind.isWearable(stack) && !backData.backSlotDisabled();
       }
