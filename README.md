@@ -21,13 +21,29 @@ the issues tab. </p>
 
 <h1 align="center"> Changelog </h1>
 
-### 20.1-0.16-v3 & 20.2-0.17-v2
+<h3> 20.1-0.18-v2 & 20.2-0.17-v2 <img align="right" src="assets/images/updates/wet_update.png" alt="Back Slot" style="width:400px"> </h3>
 
+- Added wearable cauldrons
+  - Holds 24 buckets
+  - Fluids can be placed/picked-up with hotkey
+  - Hotkey + clicking on containers in inventory quickly empties
+  - You can carry water, lava, powdered snow, honey, and modded fluids
+- Changes to Decorated Pot
+  - Limited to 128 stacks
+  - Never deletes items if over 108 stacks on death
+  - Drops as item on death. Can only be picked up if back slot is empty
+  - Only hold items w/o nbt or damage
+- Enchanted Books act like they stack to 16 in backpacks 
+- Backpacks act like they stack to 16 in backpacks *(you can carry 16 in leather backpacks)*
+- Added many new Advancements for new features
+  - Re-organized Advancements so many will be lost
+- Fixed "Time for an Upgrade" Advancement again
+
+### 20.1-0.17-v3 & 20.2-0.17-v2
 - Added many methods for compatibility with other developers. *([You're In Grave Danger](https://modrinth.com/mod/yigd))*
 - That's it for now.
 
 ### 20.1-0.16-v3 & 20.2-0.17-v2
-
 - With various grave mods installed the backpack will try not to place in the grave on death.
 - Fixed elytra item not dropping on death
 - Fixed items being deleted while equipping a non-ender backpack
