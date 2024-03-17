@@ -1,11 +1,7 @@
 package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.data.RegisterCommands;
-import com.beansgalaxy.backpacks.data.ServerSave;
-import com.beansgalaxy.backpacks.data.BackData;
-import com.beansgalaxy.backpacks.data.Traits;
-import com.beansgalaxy.backpacks.data.EnderStorage;
+import com.beansgalaxy.backpacks.data.*;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.network.client.ConfigureKeys2C;
 import com.beansgalaxy.backpacks.network.client.SendEnderData2C;

@@ -27,7 +27,8 @@ import java.awt.*;
 
 public class ElytraFeature<T extends LivingEntity, M extends EntityModel<T>> {
 
-    private static final ResourceLocation WINGS_LOCATION = new ResourceLocation("textures/entity/elytra.png");
+    private static final ResourceLocation ELYTRA_LOCATION = new ResourceLocation("textures/entity/elytra.png");
+    public static final ResourceLocation WINGED_LOCATION = new ResourceLocation(Constants.MOD_ID, "textures/entity/elytra/winged.png");
     private final ElytraModel<T> elytraModel;
     private final BackFeature<T, M> backFeature;
 
@@ -40,7 +41,7 @@ public class ElytraFeature<T extends LivingEntity, M extends EntityModel<T>> {
         ItemStack backStack = backData.getStack();
         ResourceLocation texture = getElytraResource(backStack, backData);
 
-        Traits.LocalData traits = backData.getLocalData();
+        Traits.LocalData traits = backData.getTraits();
         int colorInt = backStack.getItem() instanceof WingedBackpack ? WingedBackpack.shiftColor(traits.color) : 0xFFFFFF;
         Color tint = new Color(colorInt);
 
@@ -55,13 +56,11 @@ public class ElytraFeature<T extends LivingEntity, M extends EntityModel<T>> {
 
     private ResourceLocation getElytraResource(ItemStack backStack, BackData backData) {
         if (backStack.is(Services.REGISTRY.getWinged())) {
-            String key = backData.backpackInventory.getLocalData().key;
-            return getWingedBackpackResource(key);
+            return WINGED_LOCATION;
         }
 
-
         if (backStack.is(Items.ELYTRA)) {
-            ResourceLocation texture = WINGS_LOCATION;
+            ResourceLocation texture = ELYTRA_LOCATION;
             AbstractClientPlayer player = (AbstractClientPlayer) backData.owner;
             if (player.isElytraLoaded() && player.getElytraTextureLocation() != null) {
                 texture = player.getElytraTextureLocation();
@@ -76,7 +75,7 @@ public class ElytraFeature<T extends LivingEntity, M extends EntityModel<T>> {
 
     @NotNull
     public static ResourceLocation getWingedBackpackResource(String key) {
-        return new ResourceLocation(Constants.MOD_ID, "textures/entity/elytra/" + key + ".png");
+        return new ResourceLocation(Constants.MOD_ID, "textures/entity/elytra/winged.png");
     }
 
 

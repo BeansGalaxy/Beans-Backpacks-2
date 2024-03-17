@@ -1,9 +1,0 @@
-{
-  "type": "beansbackpacks:backpack_crafting",
-  "material":  "minecraft:gold_ingot",
-  "binder": "minecraft:phantom_membrane",
-  "name": "Gold Backpack",
-  "key": "gold",
-  "kind": "METAL",
-  "max_stacks": 7
-}

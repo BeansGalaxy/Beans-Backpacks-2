@@ -3,6 +3,7 @@ package com.beansgalaxy.backpacks.mixin.common;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.access.BackAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.items.BackpackItem;
@@ -30,9 +31,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = InventoryMenu.class, priority = 899)
 public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftingContainer>{
-
-      @Shadow @Final private Player owner;
-      @Shadow @Final private static EquipmentSlot[] SLOT_IDS;
 
       @Shadow public abstract ItemStack quickMoveStack(Player player, int i);
 
@@ -82,7 +80,8 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
 
             BackData backData = BackData.get(player);
             ItemStack backStack = backData.getStack();
-            Kind kind = Kind.fromStack(backStack);
+            Traits.LocalData traits = backData.getTraits();
+            Kind kind = traits.kind;
             BackpackInventory backpackInventory = backData.backpackInventory;
             Slot slot = slots.get(slotIndex);
             ItemStack stack = slot.getItem();
@@ -172,7 +171,7 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                         }
                         return;
                   }
-                  else if (Kind.isStorage(backStack)) {
+                  else if (traits.isStorage()) {
                         if (!level.isClientSide() || !Kind.ENDER.is(kind))
                               slot.set(backpackInventory.insertItem(stack, stack.getCount()));
                         if (player instanceof ServerPlayer serverPlayer && Kind.ENDER.is(kind))

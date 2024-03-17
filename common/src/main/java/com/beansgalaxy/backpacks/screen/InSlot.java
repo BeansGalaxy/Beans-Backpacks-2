@@ -33,7 +33,7 @@ public class InSlot extends Slot {
       public boolean isActive() {
             ItemStack backStack = backData.getStack();
             boolean creative = backData.owner.isCreative();
-            boolean storage = Kind.isStorage(backStack);
+            boolean storage = backData.getTraits().isStorage();
             boolean empty = backData.backpackInventory.isEmpty();
             return !creative && storage || !empty || (Kind.POT.is(backStack) || Kind.CAULDRON.is(backStack));
       }

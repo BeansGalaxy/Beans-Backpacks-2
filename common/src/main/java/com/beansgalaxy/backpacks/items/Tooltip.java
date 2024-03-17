@@ -3,11 +3,9 @@ package com.beansgalaxy.backpacks.items;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
-import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
-import com.beansgalaxy.backpacks.screen.CauldronInventory;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -18,7 +16,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -81,7 +78,7 @@ public class Tooltip {
                         defaultedList.removeIf(ItemStack::isEmpty);
                   }
             }
-            int totalWeight = getBundleOccupancy(defaultedList) / backData.backpackInventory.getLocalData().maxStacks();
+            int totalWeight = getBundleOccupancy(defaultedList) / backData.backpackInventory.getTraits().maxStacks();
             return Optional.of(new BundleTooltip(defaultedList, totalWeight));
       }
 
@@ -101,8 +98,7 @@ public class Tooltip {
 
       /** LORE AND NAME **/
       public static Component name(ItemStack stack) {
-            String key = stack.getOrCreateTagElement("display").getString("key");
-            return Component.literal(Traits.get(key).name);
+            return Component.literal(Kind.getTraits(stack).name);
       }
 
       private static final MutableComponent empty = Component.literal("");
@@ -173,7 +169,7 @@ public class Tooltip {
 
             BackpackInventory backpackInventory = backData.backpackInventory;
             int spaceLeft = backpackInventory.spaceLeft();
-            int maxStacks = backpackInventory.getLocalData().maxStacks();
+            int maxStacks = backpackInventory.getTraits().maxStacks();
 
             if (spaceLeft < 1) {
                   barColor = FULL_COLOR;

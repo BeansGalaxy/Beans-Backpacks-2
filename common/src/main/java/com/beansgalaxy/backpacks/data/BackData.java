@@ -16,8 +16,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -61,8 +59,9 @@ public class BackData {
                   return this.itemStacks;
             }
 
-            @Override public Traits.LocalData getLocalData() {
-                  return localData;
+            @Override
+            public Traits.LocalData getTraits() {
+                  return traits;
             }
 
             @Override
@@ -77,7 +76,7 @@ public class BackData {
       public final BackSlot backSlot = new BackSlot(this);
       public final InSlot inSlot = new InSlot(this);
       private final HashSet<EnderStorage.PackagedLocation> enderLocations = new HashSet<>();
-      private Traits.LocalData localData = Traits.LocalData.EMPTY;
+      private Traits.LocalData traits = Traits.LocalData.EMPTY;
       private ItemStack backStack = ItemStack.EMPTY;
       public boolean actionKeyPressed = false;
 
@@ -102,8 +101,8 @@ public class BackData {
             return Services.COMPAT.getBackSlotItem(this, backStack);
       }
 
-      public Traits.LocalData getLocalData() {
-            return localData;
+      public Traits.LocalData getTraits() {
+            return traits;
       }
 
       public boolean isEmpty() {
@@ -115,7 +114,7 @@ public class BackData {
                   UUID uuid = enderBackpack.getOrCreateUUID(owner.getUUID(), backStack);
                   return EnderStorage.getTrim(uuid, owner.level());
             }
-            return localData.trim;
+            return traits.getTrim();
       }
 
       public void set(ItemStack stack) {
@@ -128,7 +127,7 @@ public class BackData {
                   enderBackpack.getOrCreateUUID(owner.getUUID(), stack);
 
             this.backStack = stack;
-            this.localData = Traits.LocalData.fromstack(stack);
+            this.traits = Traits.LocalData.fromStack(stack);
             this.setChanged();
       }
 

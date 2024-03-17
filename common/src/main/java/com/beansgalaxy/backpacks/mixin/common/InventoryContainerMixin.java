@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.access.BackAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -47,15 +48,17 @@ public abstract class InventoryContainerMixin implements BackAccessor {
 
       @Inject(method = "save", at = @At("TAIL"))
       public void writeBackSlot(ListTag tag, CallbackInfoReturnable<ListTag> cir) {
+            BackData backData = getBackData();
             ItemStack backStack = backData.getStack();
             if (!backStack.isEmpty()) {
                   CompoundTag compoundTag = new CompoundTag();
                   CompoundTag backItem = new CompoundTag();
                   backStack.save(backItem);
                   compoundTag.put("BackSlot", backItem);
-                  if (Kind.isStorage(backStack) && !Kind.ENDER.is(backStack)) {
+                  Traits.LocalData traits = backData.getTraits();
+                  BackpackInventory backpackInventory = backData.backpackInventory;
+                  if (!backpackInventory.isEmpty() && !Kind.ENDER.is(traits.kind)) {
                         CompoundTag backTag1 = new CompoundTag();
-                        BackpackInventory backpackInventory = backData.backpackInventory;
                         backpackInventory.writeNbt(backTag1);
                         compoundTag.put("Contents", backTag1);
                   }
@@ -70,8 +73,10 @@ public abstract class InventoryContainerMixin implements BackAccessor {
                   CompoundTag compoundTag = tag.getCompound(i);
                   ItemStack itemStack = ItemStack.of(compoundTag.getCompound("BackSlot"));
                   if (!itemStack.isEmpty()) {
+                        BackData backData = getBackData();
                         backData.set(itemStack);
-                        if (Kind.isStorage(itemStack) && !Kind.ENDER.is(backData.getStack()))
+                        Traits.LocalData traits = backData.getTraits();
+                        if (traits.isStorage() && !Kind.ENDER.is(traits.kind))
                               backData.backpackInventory.readStackNbt(compoundTag.getCompound("Contents"));
                   }
             }
@@ -79,6 +84,7 @@ public abstract class InventoryContainerMixin implements BackAccessor {
 
       @Unique
       private void depricatedLoad(ListTag tag) { // TODO: REMOVE THIS LOAD BEFORE RELEASE
+            BackData backData = getBackData();
             backData.set(ItemStack.EMPTY);
             for (int i = 0; i < tag.size(); ++i) {
                   CompoundTag compoundTag = tag.getCompound(i);
@@ -87,7 +93,7 @@ public abstract class InventoryContainerMixin implements BackAccessor {
                   if (!itemStack.isEmpty()) {
                         if (slot == 110) {
                               backData.set(itemStack);
-                              if (Kind.isStorage(itemStack))
+                              if (backData.getTraits().isStorage())
                                     backData.backpackInventory.readStackNbt(compoundTag.getCompound("Contents"));
                         }
                   }
@@ -115,10 +121,12 @@ public abstract class InventoryContainerMixin implements BackAccessor {
             Inventory instance = (Inventory) (Object) this;
             if (slot == -1 && !stack.isEmpty())
             {
+                  BackData backData = getBackData();
                   BackpackInventory backpackInventory = backData.backpackInventory;
                   ItemStack backStack = backData.getStack();
+                  Traits.LocalData traits = backData.getTraits();
 
-                  if (Kind.POT.is(backStack))
+                  if (Kind.POT.is(traits.kind))
                   {
                         CompoundTag backTag = backStack.getTagElement("back_slot");
                         if (backTag == null || !backTag.contains("id") || !backTag.contains("amount"))
@@ -145,7 +153,7 @@ public abstract class InventoryContainerMixin implements BackAccessor {
                         ItemStack add = PotInventory.add(backStack, stack, player);
                         if (add != null) cir.setReturnValue(true);
                   }
-                  else if (Kind.isStorage(backStack) && backpackInventory.canPlaceItem(stack))
+                  else if (traits.isStorage() && backpackInventory.canPlaceItem(stack))
                   {
                         instance.items.forEach(stacks -> {
                               if (ItemStack.isSameItemSameTags(stacks, stack)) {
@@ -189,12 +197,13 @@ public abstract class InventoryContainerMixin implements BackAccessor {
       @Inject(method = "add(ILnet/minecraft/world/item/ItemStack;)Z", at = @At("RETURN"), cancellable = true)
       public void insertBackpack(int $$0, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
             if (!cir.getReturnValue()) {
+                  BackData backData = getBackData();
                   BackpackInventory backpackInventory = backData.backpackInventory;
-                  ItemStack backStack = backData.getStack();
-                  if (backStack.is(Items.DECORATED_POT) && backpackInventory.isEmpty())
+                  Traits.LocalData traits = backData.getTraits();
+                  if (traits.isSpecial() && backpackInventory.isEmpty())
                         return;
 
-                  if (!Kind.isStorage(backStack))
+                  if (!traits.isStorage())
                         return;
 
                   cir.setReturnValue(backpackInventory.insertItemSilent(stack, stack.getCount()).isEmpty());

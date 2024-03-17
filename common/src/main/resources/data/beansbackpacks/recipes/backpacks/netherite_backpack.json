@@ -1,0 +1,19 @@
+{
+  "type": "beansbackpacks:smithing",
+  "backpack_id": "netherite",
+  "template": {
+    "item": "minecraft:netherite_upgrade_smithing_template"
+  },
+  "base": {
+    "item": "beansbackpacks:metal_backpack"
+  },
+  "addition": {
+    "item": "minecraft:netherite_ingot"
+  },
+  "settings": {
+    "max_stacks": 11,
+    "fire_resistant": true,
+    "fallback_name": "Netherite Backpack",
+    "button_material": "netherite"
+  }
+}

@@ -3,9 +3,9 @@ package com.beansgalaxy.backpacks.client.renderer;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.client.renderer.features.ElytraFeature;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
-import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.items.WingedBackpack;
@@ -57,26 +57,21 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
 
       public void render(T entity, float yaw, float tickDelta, PoseStack pose, MultiBufferSource mbs, int light) {
             Backpack bEntity = ((Backpack) entity);
-            Traits.LocalData traits = bEntity.getLocalData();
-
-            if (traits.key.isEmpty())
-                  return;
+            Traits.LocalData traits = bEntity.getTraits();
+            if (traits.isEmpty()) return;
 
             BackpackInventory.Viewable viewable = bEntity.getViewable();
-            Kind kind = traits.kind();
-
-            if (kind == null)
-                  return;
+            Kind kind = traits.kind;
+            if (kind == null) return;
 
             Color tint;
-            String key = traits.key;
             if (Kind.WINGED.is(kind)) {
                   tint = new Color(WingedBackpack.shiftColor(traits.color));
                   if (entity.getDirection().getAxis().isHorizontal()) {
                         pose.pushPose();
                         pose.mulPose(Axis.YN.rotationDegrees(yaw));
                         pose.scale(1.09f, 1.09f, 1.09f);
-                        this.wings.renderToBuffer(pose, mbs.getBuffer(this.model.renderType(ElytraFeature.getWingedBackpackResource(key))), light,
+                        this.wings.renderToBuffer(pose, mbs.getBuffer(this.model.renderType(ElytraFeature.WINGED_LOCATION)), light,
                                     OverlayTexture.NO_OVERLAY, tint.getRed() / 255f, tint.getGreen() / 255f, tint.getBlue() / 255f, 1f);
                         pose.popPose();
                   }
@@ -104,12 +99,12 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
             mask.z = 0.2f;
 
             pose.translate(0, -3 / 16f, 0);
-            ResourceLocation texture = new ResourceLocation(Constants.MOD_ID, "textures/entity/" + key + ".png");
+            ResourceLocation texture = kind.getAppendedResource(traits.key, "");
             VertexConsumer vc = mbs.getBuffer(this.model.renderType(texture));
             this.model.renderToBuffer(pose, vc, light, OverlayTexture.NO_OVERLAY, tint.getRed() / 255F, tint.getGreen() / 255F, tint.getBlue() / 255F, 1F);
             RegistryAccess registryAccess = bEntity.getCommandSenderWorld().registryAccess();
 
-            CompoundTag trim = bEntity.getTrim();
+            CompoundTag trim = bEntity.getTraits().getTrim();
 
             renderOverlays(pose, light, mbs, tint, registryAccess, traits, trim, this.model, this.trimAtlas);
             pose.popPose();

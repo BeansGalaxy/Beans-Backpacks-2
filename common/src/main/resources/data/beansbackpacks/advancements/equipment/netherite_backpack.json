@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "beansbackpacks:upgraded_backpack",
+      "item": "beansbackpacks:metal_backpack",
       "nbt": "{display:{key:netherite}}"
     },
     "title": "Deep Pockets in Every Sense",
@@ -17,7 +17,7 @@
         "items": [
           {
             "items": [
-              "beansbackpacks:upgraded_backpack"
+              "beansbackpacks:metal_backpack"
             ],
             "nbt": "{display:{key:netherite}}"
           }

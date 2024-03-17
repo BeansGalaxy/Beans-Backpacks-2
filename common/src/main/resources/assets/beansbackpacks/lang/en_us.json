@@ -4,12 +4,12 @@
   "key.beansbackpacks.description": "Leave unbound to pair this action with the key bound to sprint.",
   "itemGroup.beansbackpacks": "Backpacks",
 
-  "tooltip.beansbackpacks.name.leather": "Backpack",
-  "tooltip.beansbackpacks.name.iron": "Iron Backpack",
+  "item.beansbackpacks.backpack": "Backpack",
+  "item.beansbackpacks.metal_backpack": "Iron Backpack",
+  "item.beansbackpacks.winged_backpack": "Winged Backpack",
+  "item.beansbackpacks.ender_backpack": "Ender Backpack",
   "tooltip.beansbackpacks.name.gold": "Gold Backpack",
   "tooltip.beansbackpacks.name.netherite": "Netherite Backpack",
-  "tooltip.beansbackpacks.name.winged": "Winged Backpack",
-  "tooltip.beansbackpacks.name.ender": "Ender Backpack",
 
   "tooltip.beansbackpacks.empty_title_1": "%d §7for backpack info.",
   "tooltip.beansbackpacks.empty_title_2": "",

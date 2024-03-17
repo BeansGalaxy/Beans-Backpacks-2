@@ -24,7 +24,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-import java.util.Objects;
 import java.util.UUID;
 
 public interface BackpackInventory extends Container {
@@ -33,7 +32,7 @@ public interface BackpackInventory extends Container {
 
       Entity getOwner();
 
-      Traits.LocalData getLocalData();
+      Traits.LocalData getTraits();
 
       UUID getPlacedBy();
 
@@ -99,7 +98,7 @@ public interface BackpackInventory extends Container {
       NonNullList<ItemStack> getItemStacks();
 
       default void playSound(PlaySound sound) {
-            sound.at(getOwner(), getLocalData().kind());
+            sound.at(getOwner(), getTraits().kind);
       }
 
       @Override
@@ -203,8 +202,8 @@ public interface BackpackInventory extends Container {
                   return stack;
 
             int weight = weightByItem(stack);
-            Traits.LocalData localData = getLocalData();
-            if (weight == 0 || localData == null || localData.key.isEmpty())
+            Traits.LocalData traits = this.getTraits();
+            if (weight == 0 || traits == null || traits.isSpecial())
                   return stack;
 
             boolean isServerSide = !getOwner().level().isClientSide();
@@ -218,7 +217,7 @@ public interface BackpackInventory extends Container {
                   stack.setCount(stack.getCount() - count);
                   setChanged();
             }
-            if (isServerSide && Objects.equals(localData.key, "leather") && spaceLeft - (weight * amount) < 1)
+            if (isServerSide && Kind.LEATHER.is(traits.kind) && spaceLeft - (weight * amount) < 1)
                   triggerAdvancements(SpecialCriterion.Special.FILLED_LEATHER);
 
             return stack;
@@ -242,13 +241,13 @@ public interface BackpackInventory extends Container {
       }
 
       default int spaceLeft() {
-            if (getLocalData().kind() == null)
+            if (getTraits().kind == null)
                   return 0;
 
             int totalWeight = this.getItemStacks().stream().mapToInt(
                         itemStacks -> weightByItem(itemStacks) * itemStacks.getCount()).sum();
 
-            return getLocalData().maxStacks() * 64 - totalWeight;
+            return this.getTraits().maxStacks() * 64 - totalWeight;
       }
 
       default int weightByItem(ItemStack stack) {
@@ -267,7 +266,7 @@ public interface BackpackInventory extends Container {
                   ItemStack lookSlot = getItem(i);
                   if (!stack.isEmpty() && ItemStack.isSameItemSameTags(stack, lookSlot)) {
                         int count = stack.getCount() + lookSlot.getCount();
-                        int maxCount = getLocalData().isPot() ? Integer.MAX_VALUE : stack.getMaxStackSize();
+                        int maxCount = stack.getMaxStackSize();
                         if (count > maxCount) {
                               lookSlot.setCount(maxCount);
                               count -= maxCount;
@@ -337,8 +336,8 @@ public interface BackpackInventory extends Container {
 
             boolean isEmpty = getItemStacks().isEmpty();
             ItemStack topStack = isEmpty ? ItemStack.EMPTY : getItemStacks().get(0);
-            if (getLocalData().isPot())
-                  return isEmpty || inserted.is(topStack.getItem());
+//            if (this.getData().isPot()) TODO: TEST IF PLACE ITEM IN INSLOT IS BROKEN
+//                  return isEmpty || inserted.is(topStack.getItem());
 
             boolean isFull = spaceLeft() < 1;
             return isEmpty || !isFull;

@@ -35,7 +35,7 @@ public class PlaceCriterion extends SimpleCriterionTrigger<PlaceCriterion.Condit
             }
 
             boolean requirementsMet(String key) {
-                  if (this.key == null || this.key.isEmpty())
+                  if (Constants.isEmpty(key))
                         return true;
 
                   return Objects.equals(this.key, key);

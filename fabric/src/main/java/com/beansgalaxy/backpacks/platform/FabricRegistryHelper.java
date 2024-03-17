@@ -112,35 +112,35 @@ public class FabricRegistryHelper implements RegistryHelper {
                               }
                         }
                   }
+//                  case METAL -> {
+//                        switch (type) {
+//                              case PLACE -> {
+//                                    return Sounds.PLACE_METAL;
+//                              }
+//                              case EQUIP -> {
+//                                    return Sounds.EQUIP_METAL;
+//                              }
+//                              case HIT -> {
+//                                    return Sounds.HIT_METAL;
+//                              }
+//                              case BREAK -> {
+//                                    return Sounds.BREAK_METAL;
+//                              }
+//                              case INSERT -> {
+//                                    return Sounds.INSERT_METAL;
+//                              }
+//                              case TAKE -> {
+//                                    return Sounds.TAKE_METAL;
+//                              }
+//                              case OPEN -> {
+//                                    return Sounds.OPEN_METAL;
+//                              }
+//                              case CLOSE -> {
+//                                    return Sounds.CLOSE_METAL;
+//                              }
+//                        }
+//                  }
                   case METAL -> {
-                        switch (type) {
-                              case PLACE -> {
-                                    return Sounds.PLACE_METAL;
-                              }
-                              case EQUIP -> {
-                                    return Sounds.EQUIP_METAL;
-                              }
-                              case HIT -> {
-                                    return Sounds.HIT_METAL;
-                              }
-                              case BREAK -> {
-                                    return Sounds.BREAK_METAL;
-                              }
-                              case INSERT -> {
-                                    return Sounds.INSERT_METAL;
-                              }
-                              case TAKE -> {
-                                    return Sounds.TAKE_METAL;
-                              }
-                              case OPEN -> {
-                                    return Sounds.OPEN_METAL;
-                              }
-                              case CLOSE -> {
-                                    return Sounds.CLOSE_METAL;
-                              }
-                        }
-                  }
-                  case UPGRADED -> {
                         switch (type) {
                               case PLACE -> {
                                     return Sounds.PLACE_UPGRADED;

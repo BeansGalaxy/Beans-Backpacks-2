@@ -3,9 +3,9 @@ package com.beansgalaxy.backpacks.items;
 import com.beansgalaxy.backpacks.access.BucketLikeAccess;
 import com.beansgalaxy.backpacks.access.BucketsAccess;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
-import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import com.beansgalaxy.backpacks.events.PlaySound;
@@ -35,6 +35,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class BackpackItem extends Item {
+
       public BackpackItem(Properties properties) {
             super(properties);
       }
@@ -177,7 +178,7 @@ public class BackpackItem extends Item {
 
       public static void handleQuickMove(Inventory playerInventory, BackpackInventory backpackInventory) {
             ItemStack stack = backpackInventory.getItem(0);
-            if (stack.isEmpty() || Kind.CAULDRON.is(backpackInventory.getLocalData().kind()))
+            if (stack.isEmpty() || Kind.CAULDRON.is(backpackInventory.getTraits().kind))
                   return;
 
             ItemStack backpackStack = backpackInventory.removeItemSilent(0);
@@ -307,10 +308,6 @@ public class BackpackItem extends Item {
       }
 
       public static boolean doesPlace(Player player, int x, double y, int z, Direction direction, ItemStack backpackStack, boolean fromBackSlot) {
-            Traits.LocalData traits = Traits.LocalData.fromstack(backpackStack);
-            if (traits == null || traits.key.isEmpty())
-                  return false;
-
             NonNullList<ItemStack> stacks = fromBackSlot ?
                         BackData.get(player).backpackInventory.getItemStacks() : NonNullList.create();
 
@@ -334,8 +331,31 @@ public class BackpackItem extends Item {
 
       @Override
       public Component getName(ItemStack stack) {
-            String key = stack.getOrCreateTagElement("display").getString("key");
-            return Component.translatableWithFallback("tooltip.beansbackpacks.name." + key , Traits.get(key).name);
+            CompoundTag display = stack.getTagElement("display");
+            Traits traits = Kind.getTraits(stack);
+            if (display != null && display.contains("key")) {
+                  String key = display.getString("key");
+                  return Component.translatableWithFallback("tooltip.beansbackpacks.name." + key, traits.name);
+            }
+            return super.getName(stack);
+      }
+
+      @Override
+      public void verifyTagAfterLoad(CompoundTag tag) {
+            if (tag.contains("display")) {
+                  CompoundTag display = tag.getCompound("display");
+                  if (display.contains("key")) {
+                        String key = display.getString("key");
+                        switch (key) {
+                              case "leather", "iron", "ender", "winged" -> {
+                                    display.remove("key");
+                                    if (display.isEmpty())
+                                          tag.remove("display");
+                              }
+                        }
+                  }
+            }
+            super.verifyTagAfterLoad(tag);
       }
 
       @Override
@@ -351,16 +371,5 @@ public class BackpackItem extends Item {
       @Override
       public int getBarColor(ItemStack $$0) {
             return Tooltip.barColor;
-      }
-
-      public static ItemStack stackFromKey(String key) {
-            Traits traits = Traits.get(key);
-            CompoundTag display = new CompoundTag();
-            display.putString("key", key);
-
-            ItemStack stack = traits.kind.getItem().getDefaultInstance();
-            stack.getOrCreateTag().put("display", display);
-
-            return stack;
       }
 }

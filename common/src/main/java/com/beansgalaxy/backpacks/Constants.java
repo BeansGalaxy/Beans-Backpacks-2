@@ -39,6 +39,10 @@ public class Constants {
 	public static final HashSet<Item> BLACKLIST_ITEMS = new HashSet<>();
 	public static final HashSet<Item> ELYTRA_ITEMS = new HashSet<>();
 
+	public static boolean isEmpty(String string) {
+		return string == null || string.isEmpty() || string.isBlank();
+	}
+
 	public static boolean elytraOrDisables(Item item) {
 		return DISABLES_BACK_SLOT.contains(item) || ELYTRA_ITEMS.contains(item);
 	}

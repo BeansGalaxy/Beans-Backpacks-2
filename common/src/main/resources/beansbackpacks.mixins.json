@@ -14,6 +14,7 @@
     "common.InventoryContainerMixin",
     "common.InventoryMenuMixin",
     "common.ItemCombinerMixin",
+    "common.ItemEntityMixin",
     "common.ItemStackMixin",
     "common.ServerPlayMixin",
     "common.buckets.BeehiveBlockMixin",

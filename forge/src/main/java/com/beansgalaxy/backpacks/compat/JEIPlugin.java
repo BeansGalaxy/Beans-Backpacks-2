@@ -26,7 +26,7 @@ public class JEIPlugin implements IModPlugin {
                         return IIngredientSubtypeInterpreter.NONE;
 
                   String key = display.getString("key");
-                  if (key.isEmpty())
+                  if (Constants.isEmpty(key))
                         return IIngredientSubtypeInterpreter.NONE;
 
                   return display.getAsString();

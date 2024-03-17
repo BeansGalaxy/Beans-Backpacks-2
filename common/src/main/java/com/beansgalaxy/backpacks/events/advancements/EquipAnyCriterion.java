@@ -57,7 +57,7 @@ public class EquipAnyCriterion extends SimpleCriterionTrigger<EquipAnyCriterion.
                   }
 
                   CompoundTag display = backStack.getTagElement("display");
-                  if (!key.isEmpty() && display != null) {
+                  if (!Constants.isEmpty(key) && display != null) {
                         String key = display.getString("key");
                         return Objects.equals(this.key, key);
                   }

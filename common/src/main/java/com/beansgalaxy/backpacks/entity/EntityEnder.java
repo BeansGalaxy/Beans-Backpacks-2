@@ -1,10 +1,7 @@
 package com.beansgalaxy.backpacks.entity;
 
+import com.beansgalaxy.backpacks.data.*;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
-import com.beansgalaxy.backpacks.data.Traits;
-import com.beansgalaxy.backpacks.data.Config;
-import com.beansgalaxy.backpacks.data.EnderStorage;
-import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.Direction;
@@ -51,8 +48,8 @@ public class EntityEnder extends EntityAbstract {
             }
 
             @Override
-            public Traits.LocalData getLocalData() {
-                  return EntityEnder.this.getLocalData();
+            public Traits.LocalData getTraits() {
+                  return EntityEnder.this.getTraits();
             }
 
             @Override
@@ -87,8 +84,17 @@ public class EntityEnder extends EntityAbstract {
       }
 
       @Override
-      public CompoundTag getTrim() {
-            return EnderStorage.getTrim(getPlacedBy(), level());
+      public Traits.LocalData getTraits() {
+            if (traits.isEmpty())
+                  traits = new Traits.LocalData(this.entityData.get(LOCAL_DATA)) {
+
+                        @Override
+                        public CompoundTag getTrim() {
+                              return EnderStorage.getTrim(getPlacedBy(), level());
+                        }
+
+                  };
+            return traits;
       }
 
       @Override
@@ -112,7 +118,7 @@ public class EntityEnder extends EntityAbstract {
       public @NotNull InteractionResult interact(Player player, InteractionHand hand) {
             UUID placedBy;
             if ((placedBy = getPlacedBy()) != null && (ServerSave.CONFIG.get(Config.ENDER_LOCK_LOGGED_OFF) && level().getPlayerByUUID(placedBy) == null)) {
-                  PlaySound.HIT.at(this, this.getKind());
+                  PlaySound.HIT.at(this, getTraits().kind);
                   this.hop(.1);
                   return InteractionResult.SUCCESS;
             }
@@ -149,14 +155,12 @@ public class EntityEnder extends EntityAbstract {
 
       @Override
       protected void readAdditionalSaveData(CompoundTag tag) {
-            this.setDirection(Direction.from3DDataValue(tag.getByte("facing")));
-            this.setDisplay(tag.getCompound("display"));
+            fromNBT(tag);
       }
 
       @Override
       protected void addAdditionalSaveData(CompoundTag tag) {
-            tag.putByte("facing", (byte)this.direction.get3DDataValue());
-            tag.put("display", getDisplay());
+            toNBT(tag);
       }
 
       @Override

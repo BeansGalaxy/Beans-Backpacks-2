@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.entity;
 
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.data.Traits;
+import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
@@ -42,8 +42,8 @@ public class EntityFlight extends EntityAbstract {
             }
 
             @Override
-            public Traits.LocalData getLocalData() {
-                  return EntityFlight.this.getLocalData();
+            public Traits.LocalData getTraits() {
+                  return EntityFlight.this.getTraits();
             }
 
             @Override
@@ -86,11 +86,6 @@ public class EntityFlight extends EntityAbstract {
       @Override
       NonNullList<ItemStack> getItemStacks() {
             return itemStacks;
-      }
-
-      @Override
-      public int getDamage() {
-            return damage;
       }
 
       @Override

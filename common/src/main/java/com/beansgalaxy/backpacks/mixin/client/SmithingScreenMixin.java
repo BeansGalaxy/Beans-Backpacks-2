@@ -1,14 +1,13 @@
 package com.beansgalaxy.backpacks.mixin.client;
 
 import com.beansgalaxy.backpacks.client.RendererHelper;
-import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.data.Traits;
+import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.ItemCombinerScreen;
 import net.minecraft.client.gui.screens.inventory.SmithingScreen;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -45,19 +44,9 @@ public abstract class SmithingScreenMixin extends ItemCombinerScreen<SmithingMen
                   }
 
                   @Override
-                  public CompoundTag getTrim() {
+                  public Traits.LocalData getTraits() {
                         ItemStack stack = smithingMenu.getSlot(3).getItem();
-                        CompoundTag tag = stack.getTag();
-                        if (tag == null || !tag.contains("Trim"))
-                              return new CompoundTag();
-
-                        return tag.getCompound("Trim");
-                  }
-
-                  @Override
-                  public Traits.LocalData getLocalData() {
-                        ItemStack stack = smithingMenu.getSlot(3).getItem();
-                        return Traits.LocalData.fromstack(stack);
+                        return Traits.LocalData.fromStack(stack);
                   }
             };
       }
@@ -80,7 +69,7 @@ public abstract class SmithingScreenMixin extends ItemCombinerScreen<SmithingMen
       private boolean beans_Backpacks_2$doesRenderBackpack(GuiGraphics graphics, int x, int y) {
             if (smithingMenu != null
                         && Kind.isBackpack(smithingMenu.getSlot(3).getItem())
-                        && backpackPreview.getLocalData().maxStacks() != 0)
+                        && backpackPreview.getTraits().maxStacks() != 0)
             {
                   RendererHelper.renderBackpackForSmithing(graphics, (float) x, (float) y, backpackPreview);
                   return true;

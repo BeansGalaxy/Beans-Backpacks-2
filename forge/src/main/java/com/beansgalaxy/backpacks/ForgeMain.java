@@ -1,6 +1,8 @@
 package com.beansgalaxy.backpacks;
 
 import com.beansgalaxy.backpacks.compat.CurioRegistry;
+import com.beansgalaxy.backpacks.data.Traits;
+import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.beansgalaxy.backpacks.entity.EntityGeneral;
@@ -75,11 +77,11 @@ public class ForgeMain {
     public static final DeferredRegister<RecipeSerializer<?>> RECIPES =
                 DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Constants.MOD_ID);
 
-    public static final RegistryObject<RecipeSerializer<RecipeCrafting>> BACKPACK_RECIPE =
-                RECIPES.register(RecipeCrafting.ID, () -> RecipeCrafting.INSTANCE);
+    public static final RegistryObject<RecipeSerializer<Crafting>> BACKPACK_CRAFTING =
+                RECIPES.register(Crafting.ID, () -> Crafting.INSTANCE);
 
-    public static final RegistryObject<RecipeSerializer<RecipeSmithing>> BACKPACK_SMITHING_RECIPE =
-                RECIPES.register(RecipeSmithing.ID, () -> RecipeSmithing.INSTANCE);
+    public static final RegistryObject<RecipeSerializer<Smithing>> BACKPACK_SMITHING =
+                RECIPES.register(Smithing.ID, () -> Smithing.INSTANCE);
 
     // REGISTER ITEMS
     public static final DeferredRegister<Item> ITEMS =
@@ -105,10 +107,10 @@ public class ForgeMain {
                             .title(Component.translatable("itemGroup." + Constants.MOD_ID))
                             .icon(() -> new ItemStack(LEATHER_BACKPACK.get()))
                             .displayItems((params, output) -> {
+                                for (Kind value : Kind.values())
+                                    output.accept(value.getItem());
                                 Constants.TRAITS_MAP.keySet().forEach(key ->
-                                            output.accept(BackpackItem.stackFromKey(key)));
-                                output.accept(Items.DECORATED_POT);
-                                output.accept(Items.CAULDRON);
+                                            output.accept(Traits.toStack(key)));
                             })
                             .build());
 

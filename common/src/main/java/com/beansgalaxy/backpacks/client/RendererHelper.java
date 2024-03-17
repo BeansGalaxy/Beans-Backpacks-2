@@ -2,8 +2,8 @@ package com.beansgalaxy.backpacks.client;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.renderer.BackpackModel;
-import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.data.Traits;
+import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.platform.Lighting;
@@ -40,18 +40,13 @@ public interface RendererHelper {
     ModelLayerLocation PACK_WINGS_MODEL = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "backpack_wings_model"), "main");
       ModelLayerLocation POT_MODEL = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "pot_player"), "main");
       ModelLayerLocation CAULDRON_MODEL = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "cauldron_player"), "main");
-    Map<String, ResourceLocation> ButtonIdentifiers = ImmutableMap.of(
-                "gold", new ResourceLocation(Constants.MOD_ID, "textures/entity/overlay/gold.png"),
-                "amethyst", new ResourceLocation(Constants.MOD_ID, "textures/entity/overlay/amethyst.png"),
-                "diamond", new ResourceLocation(Constants.MOD_ID, "textures/entity/overlay/diamond.png"),
-                "netherite", new ResourceLocation(Constants.MOD_ID, "textures/entity/overlay/netherite.png"));
 
       static void renderOverlays(PoseStack pose, int light, MultiBufferSource mbs, Color tint, RegistryAccess registryAccess, Traits.LocalData data, CompoundTag trim, BackpackModel model, TextureAtlas atlas) {
-        Kind kind = data.kind();
+        Kind kind = data.kind;
         if (kind.isTrimmable() && trim.get("material") != null && trim.get("pattern") != null)
             TrimHelper.getBackpackTrim(registryAccess, trim).ifPresent((trim1) ->
                         renderTrim(model, pose, light, mbs, atlas.getSprite(trim1.backpackTexture(getMaterial(data.key)))));
-        else renderButton(kind, tint, model, pose, light, mbs, data.key);
+        else renderButton(data, tint, model, pose, light, mbs, data.key);
     }
 
     static void weld(ModelPart welded, ModelPart weldTo) {
@@ -84,20 +79,23 @@ public interface RendererHelper {
         } else model.renderToBuffer(pose, vc, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
     }
 
-    static void renderButton(Kind b$kind, Color tint, EntityModel<Entity> model, PoseStack pose, int light, MultiBufferSource mbs, String key) {
+    static void renderButton(Traits.LocalData traits, Color tint, EntityModel<Entity> model, PoseStack pose, int light, MultiBufferSource mbs, String key) {
           ResourceLocation identifier = null;
-          switch (b$kind) {
-                case METAL -> identifier = ButtonIdentifiers.get("diamond");
-                case UPGRADED -> identifier = ButtonIdentifiers.get("netherite");
+          Kind kind = traits.kind;
+          switch (kind) {
+                case METAL, UPGRADED -> {
+                        identifier = traits.button().getResource();
+                }
                 case LEATHER, WINGED ->
                 {
-                      VertexConsumer interior = mbs.getBuffer(RenderType.entityTranslucent(new ResourceLocation(Constants.MOD_ID, "textures/entity/" + key +"_interior.png")));
+                      ResourceLocation interiorResource = kind.getAppendedResource("", "_interior");
+                      VertexConsumer interior = mbs.getBuffer(RenderType.entityTranslucent(interiorResource));
                       model.renderToBuffer(pose, interior, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
 
                       if (isYellow(tint))
-                            identifier = ButtonIdentifiers.get("amethyst");
+                            identifier = Traits.Button.AMETHYST.getResource();
                       else
-                            identifier = ButtonIdentifiers.get("gold");
+                            identifier = Traits.Button.GOLD.getResource();
                 }
           }
 
@@ -106,9 +104,9 @@ public interface RendererHelper {
                 model.renderToBuffer(pose, buttonVc, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
           }
 
-          if (b$kind == Kind.LEATHER) {
-                ResourceLocation overlayIdentifier = new ResourceLocation(Constants.MOD_ID, "textures/entity/" + key + "_overlay.png");
-                VertexConsumer overlayTexture = mbs.getBuffer(RenderType.entityTranslucent(overlayIdentifier));
+          if (kind == Kind.LEATHER) {
+                ResourceLocation overlay = kind.getAppendedResource("", "_overlay");
+                VertexConsumer overlayTexture = mbs.getBuffer(RenderType.entityTranslucent(overlay));
                 model.renderToBuffer(pose, overlayTexture, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 0.5f);
           }
     }

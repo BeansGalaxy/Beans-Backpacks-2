@@ -73,7 +73,8 @@ public class ForgeRegistryHelper implements RegistryHelper {
 
       @Override
       public void triggerSpecial(ServerPlayer player, SpecialCriterion.Special special) {
-            ForgeMain.SPECIAL.trigger(player, special);
+            if (player != null)
+                  ForgeMain.SPECIAL.trigger(player, special);
       }
 
       @Override
@@ -108,35 +109,35 @@ public class ForgeRegistryHelper implements RegistryHelper {
                               }
                         }
                   }
-                  case METAL -> {
-                        switch (type) {
-                              case PLACE -> {
-                                    return Sounds.PLACE_METAL.get();
-                              }
-                              case EQUIP -> {
-                                    return Sounds.EQUIP_METAL.get();
-                              }
-                              case HIT -> {
-                                    return Sounds.HIT_METAL.get();
-                              }
-                              case BREAK -> {
-                                    return Sounds.BREAK_METAL.get();
-                              }
-                              case INSERT -> {
-                                    return Sounds.INSERT_METAL.get();
-                              }
-                              case TAKE -> {
-                                    return Sounds.TAKE_METAL.get();
-                              }
-                              case OPEN -> {
-                                    return Sounds.OPEN_METAL.get();
-                              }
-                              case CLOSE -> {
-                                    return Sounds.CLOSE_METAL.get();
-                              }
-                        }
-                  }
-                  case UPGRADED -> {
+//                  case METAL -> {
+//                        switch (type) {
+//                              case PLACE -> {
+//                                    return Sounds.PLACE_METAL.get();
+//                              }
+//                              case EQUIP -> {
+//                                    return Sounds.EQUIP_METAL.get();
+//                              }
+//                              case HIT -> {
+//                                    return Sounds.HIT_METAL.get();
+//                              }
+//                              case BREAK -> {
+//                                    return Sounds.BREAK_METAL.get();
+//                              }
+//                              case INSERT -> {
+//                                    return Sounds.INSERT_METAL.get();
+//                              }
+//                              case TAKE -> {
+//                                    return Sounds.TAKE_METAL.get();
+//                              }
+//                              case OPEN -> {
+//                                    return Sounds.OPEN_METAL.get();
+//                              }
+//                              case CLOSE -> {
+//                                    return Sounds.CLOSE_METAL.get();
+//                              }
+//                        }
+//                  }
+                  case METAL, UPGRADED -> {
                         switch (type) {
                               case PLACE -> {
                                     return Sounds.PLACE_UPGRADED.get();

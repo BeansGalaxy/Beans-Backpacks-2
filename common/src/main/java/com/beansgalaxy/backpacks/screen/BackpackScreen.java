@@ -59,7 +59,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
 
       @Override
       public void render(GuiGraphics ctx, int mouseX, int mouseY, float delta) {
-            int maxStacks = handler.backpackInventory.getLocalData().maxStacks();
+            int maxStacks = handler.backpackInventory.getTraits().maxStacks();
             if (maxStacks == 0 || handler.owner.isRemoved()) {
                   onClose();
                   return;

@@ -1,12 +1,8 @@
 package com.beansgalaxy.backpacks.entity;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.data.*;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
-import com.beansgalaxy.backpacks.data.Traits;
-import com.beansgalaxy.backpacks.data.Config;
-import com.beansgalaxy.backpacks.data.EnderStorage;
-import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.items.BackpackItem;
@@ -42,6 +38,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.PlayerTeam;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
@@ -67,11 +64,16 @@ public abstract class EntityAbstract extends Backpack {
             this.pos = BlockPos.containing(x, y, z);
       }
 
+      @Nullable
       public static EntityAbstract create(ItemStack backpackStack, int x, double y, int z, float yaw, boolean onDeath,
                                           Direction direction, Player player, NonNullList<ItemStack> stacks)
       {
-            Traits.LocalData traits = Traits.LocalData.fromstack(backpackStack);
-            if (traits == null || traits.key.isEmpty() || traits.isPot() || traits.isCauldron())
+            Traits.LocalData traits = Traits.LocalData.fromStack(backpackStack);
+            if (traits == null)
+                  return null;
+
+            boolean empty = traits.isEmpty();
+            if (empty)
                   return null;
 
             EntityAbstract backpack;
@@ -94,9 +96,7 @@ public abstract class EntityAbstract extends Backpack {
             backpack.pos = BlockPos.containing(x, y, z);
 
             backpack.setDirection(direction);
-            backpack.entityData.set(KEY, traits.key);
-            backpack.entityData.set(COLOR, traits.color);
-            backpack.entityData.set(TRIM, traits.trim);
+            backpack.entityData.set(LOCAL_DATA, traits.toNBT());
 
             Component hoverName = backpackStack.hasCustomHoverName() ? backpackStack.getHoverName(): null;
             backpack.setCustomName(hoverName);
@@ -105,7 +105,7 @@ public abstract class EntityAbstract extends Backpack {
             if (!isHorizontal) backpack.setYRot(yaw);
 
             Level level = player.level();
-            PlaySound.PLACE.at(backpack, traits.kind());
+            PlaySound.PLACE.at(backpack, Kind.fromStack(backpackStack));
             if (player instanceof ServerPlayer serverPlayer) {
                   Services.REGISTRY.triggerPlace(serverPlayer, traits.key);
                   level.gameEvent(player, GameEvent.ENTITY_PLACE, backpack.position());
@@ -124,28 +124,33 @@ public abstract class EntityAbstract extends Backpack {
       }
 
       public static ItemStack toStack(EntityAbstract backpack) {
-            Traits.LocalData localData = backpack.getLocalData();
-            Kind kind = localData.kind();
+            Traits.LocalData traits = backpack.getTraits();
+            Kind kind = traits.kind;
+            if (Kind.UPGRADED.is(kind))
+                  kind = Kind.METAL;
             Item item = kind.getItem();
             ItemStack stack = item.getDefaultInstance();
-            String key = backpack.getKey();
-
-            CompoundTag display = new CompoundTag();
-            display.putString("key", key);
-            stack.getOrCreateTag().put("display", display);
 
             if (item instanceof EnderBackpack enderBackpack && backpack.getPlacedBy() != null) {
                   enderBackpack.getOrCreateUUID(backpack.getPlacedBy(), stack);
             } else {
-                  CompoundTag trim = backpack.getTrim();
+                  CompoundTag trim = traits.getTrim();
                   if (!trim.isEmpty())
                         stack.addTagElement("Trim", trim);
             }
 
-            int color = backpack.getColor();
-            boolean hasDefaultColor =
-                    (Kind.LEATHER.is(kind) && color == DEFAULT_COLOR) ||
-                    (Kind.WINGED.is(kind) && color == WingedBackpack.WINGED_ENTITY);
+            int color = traits.color;
+            boolean hasDefaultColor = false;
+
+            switch (kind) {
+                  case METAL, UPGRADED -> {
+                        String key = traits.key;
+                        if (!Constants.isEmpty(key) && !key.equals("iron")) // TODO: 20.1-0.18-v2 REMOVE KEY EQUALS IRON CHECK
+                              stack.getOrCreateTagElement("display").putString("key", key);
+                  }
+                  case LEATHER -> hasDefaultColor = color == DEFAULT_COLOR;
+                  case WINGED -> hasDefaultColor = color == WingedBackpack.WINGED_ENTITY;
+            }
 
             if (!hasDefaultColor && stack.getItem() instanceof DyableBackpack)
                   stack.getOrCreateTagElement("display").putInt("color", color);
@@ -154,15 +159,12 @@ public abstract class EntityAbstract extends Backpack {
             Component customName = backpack.getCustomName();
             if (customName != null)
                   stack.setHoverName(customName);
-            else { // TODO: REMOVE "else" BEFORE RELEASE (20.1-0.14)
-                  if (localData.hoverName.toString().equals("empty"))
-                        stack.resetHoverName();
-                  else
-                        stack.setHoverName(localData.hoverName);
+            else {
+                  stack.resetHoverName();
             }
 
             if (item instanceof WingedBackpack)
-                  stack.setDamageValue(localData.damage);
+                  stack.setDamageValue(traits.damage);
 
             return stack;
       }
@@ -173,7 +175,8 @@ public abstract class EntityAbstract extends Backpack {
 
       @Override
       public Component getName() {
-            return Component.translatableWithFallback("tooltip.beansbackpacks.name." + getKey(), getLocalData().name());
+            Traits.LocalData traits = getTraits();
+            return traits.kind.getName(traits);
       }
 
       @Override
@@ -261,10 +264,10 @@ public abstract class EntityAbstract extends Backpack {
       }
 
       private void wobble() {
-            Kind kind = getLocalData().kind();
             boolean inLava = isInLava();
             boolean isOnFire = isOnFire();
-            if (!Kind.UPGRADED.is(kind) && inLava || isOnFire)
+            boolean fireResistant = getTraits().fireResistant();
+            if (!fireResistant && inLava || isOnFire)
             {
                   if (wobble % 12 == 0)
                         playSound(SoundEvents.GENERIC_BURN);
@@ -283,12 +286,11 @@ public abstract class EntityAbstract extends Backpack {
       private void updateGravity() {
             this.setNoGravity(this.isNoGravity() && !this.level().noCollision(this, this.getBoundingBox().inflate(0.1, -0.1, 0.1)));
             boolean inLava = this.isInLava();
-            Kind b$kind = getLocalData().kind();
             if (!this.isNoGravity()) {
                   if (this.isInWater()) {
                         inWaterGravity();
                   } else if (inLava) {
-                        if (b$kind == Kind.UPGRADED && this.isEyeInFluid(FluidTags.LAVA) && getDeltaMovement().y < 0.1) {
+                        if (getTraits().fireResistant() && this.isEyeInFluid(FluidTags.LAVA) && getDeltaMovement().y < 0.1) {
                               this.setDeltaMovement(this.getDeltaMovement().add(0D, 0.02D, 0D));
                         }
                         this.setDeltaMovement(this.getDeltaMovement().scale(0.6D));
@@ -334,7 +336,7 @@ public abstract class EntityAbstract extends Backpack {
 
       @Override
       public boolean fireImmune() {
-            return getLocalData().kind() == Kind.UPGRADED || this.getType().fireImmune();
+            return getTraits().fireResistant();
       }
 
       /** DATA MANAGEMENT **/
@@ -354,39 +356,62 @@ public abstract class EntityAbstract extends Backpack {
       @Override
       protected void readAdditionalSaveData(CompoundTag tag) {
             getInventory().readStackNbt(tag);
+            fromNBT(tag);
+      }
+
+      protected void fromNBT(CompoundTag tag) {
             this.setDirection(Direction.from3DDataValue(tag.getByte("facing")));
-            this.setDisplay(tag.getCompound("display"));
+            if (tag.contains("display")) // TODO: FOR REMOVAL 20.1-0.18-v2 : DISPLAY TAG IS THE OLD METHOD FOR SAVING
+                  this.setDisplay(tag.getCompound("display"));
+            else {
+                  CompoundTag localData = tag.getCompound("local_data");
+                  this.entityData.set(PLACED_BY, Optional.of(localData.getUUID("placed_by")));
+                  entityData.set(LOCAL_DATA, localData);
+            }
       }
 
       @Override
       protected void addAdditionalSaveData(CompoundTag tag) {
             getInventory().writeNbt(tag);
+            toNBT(tag);
+      }
+
+      protected void toNBT(CompoundTag tag) {
             tag.putByte("facing", (byte)this.direction.get3DDataValue());
-            tag.put("display", getDisplay());
+            CompoundTag traits = getTraits().toNBT();
+            UUID placedBy = getPlacedBy();
+            if (placedBy != this.uuid && placedBy != null)
+                  traits.putUUID("placed_by", placedBy);
+            tag.put("local_data", traits);
       }
 
       // LOCAL
-      public CompoundTag getDisplay() {
-            CompoundTag tag = new CompoundTag();
-            tag.putString("key", getKey());
-            tag.putInt("color", getColor());
-            tag.put("Trim", getTrim());
-            Component component = this.entityData.get(HOVER_NAME);
-            String json = Component.Serializer.toJson(component);
-            tag.putString("hover_name", json);
-            UUID placedBy = getPlacedBy();
-            if (placedBy != this.uuid && placedBy != null)
-                  tag.putUUID("placed_by", placedBy);
-            return tag;
-      }
-
+      @Deprecated // 20.1-0.18-v2
       public void setDisplay(CompoundTag display) {
-            this.entityData.set(KEY, display.getString("key"));
-            this.entityData.set(COLOR, display.getInt("color"));
-            this.entityData.set(TRIM, display.getCompound("Trim"));
+            String key = display.getString("key");
+            int color = display.getInt("color");
+            CompoundTag trim = display.getCompound("Trim");
             MutableComponent hoverName = Component.Serializer.fromJson(display.getString("hover_name"));
-            if (hoverName != null && !hoverName.toString().equals("empty"))
-                  this.entityData.set(HOVER_NAME, hoverName);
+
+            Kind kind = Kind.METAL;
+            switch (key) {
+                  case "iron" -> key = "";
+                  case "leather" -> {
+                        key = "";
+                        kind = Kind.LEATHER;
+                  }
+                  case "ender" -> {
+                        key = "";
+                        kind = Kind.ENDER;
+                  }
+                  case "winged" -> {
+                        key = "";
+                         kind = Kind.WINGED;
+                  }
+            }
+            Traits.LocalData traits = new Traits.LocalData(key, kind, color, trim, hoverName, 0);
+            this.traits = traits;
+            this.entityData.set(LOCAL_DATA, traits.toNBT());
 
             if (!display.contains("placed_by"))
                   Constants.LOG.warn("No \"Placed By\" UUID provided from -> " + this);
@@ -456,16 +481,17 @@ public abstract class EntityAbstract extends Backpack {
                   breakAndDropContents();
             else if (!silent)
             {
-                  PlaySound.HIT.at(this, getKind());
+                  PlaySound.HIT.at(this, getTraits().kind);
                   return hop(0.1);
             }
             return true;
       }
 
       private void breakAndDropContents() {
-            PlaySound.BREAK.at(this, getKind());
+            Kind kind = getTraits().kind;
+            PlaySound.BREAK.at(this, kind);
             boolean dropItems = level().getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS);
-            if (dropItems && !Kind.ENDER.is(getKind())) {
+            if (dropItems && !Kind.ENDER.is(kind)) {
                   while (!this.getItemStacks().isEmpty()) {
                         ItemStack stack = this.getItemStacks().remove(0);
                         this.spawnAtLocation(stack);
@@ -497,18 +523,19 @@ public abstract class EntityAbstract extends Backpack {
             if (interact.consumesAction())
                   return interact;
 
+            Kind kind = getTraits().kind;
             if (this instanceof EntityEnder ender)
             {
                   UUID placedBy = ender.getPlacedBy();
                   if (placedBy == null) {
-                        PlaySound.HIT.at(this, this.getKind());
+                        PlaySound.HIT.at(this, kind);
                         this.hop(.1);
                         return InteractionResult.SUCCESS;
                   }
             }
 
             if (viewable.viewers < 1)
-                  PlaySound.OPEN.at(this, getKind());
+                  PlaySound.OPEN.at(this, kind);
             Services.NETWORK.openBackpackMenu(player, this);
             return InteractionResult.SUCCESS;
       }
@@ -527,9 +554,10 @@ public abstract class EntityAbstract extends Backpack {
                   boolean b = !backData.isEmpty();
                   boolean b1 = backData.backSlotDisabled();
                   boolean b2 = this.isRemoved();
+                  Kind kind = getTraits().kind;
                   if (b || b1 || b2)
                   {
-                        PlaySound.HIT.at(this, this.getKind());
+                        PlaySound.HIT.at(this, kind);
                         this.hop(.1);
                   }
                   else
@@ -550,7 +578,7 @@ public abstract class EntityAbstract extends Backpack {
                               playerInventoryStacks.addAll(backpackEntityStacks);
                         }
                         backData.set(toStack(this));
-                        PlaySound.EQUIP.at(player, this.getKind());
+                        PlaySound.EQUIP.at(player, kind);
                         if (player instanceof ServerPlayer serverPlayer)
                               Services.NETWORK.backpackInventory2C(serverPlayer);
 
@@ -590,7 +618,7 @@ public abstract class EntityAbstract extends Backpack {
                   return 0;
 
             int space = getInventory().spaceLeft();
-            int max = getLocalData().maxStacks() * 64;
+            int max = getTraits().maxStacks() * 64;
 
             if (space == max)
                   return 0;

@@ -41,11 +41,7 @@ import java.util.UUID;
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
 
-      @Shadow @Final @Deprecated @Nullable private Item item;
-
       @Shadow public abstract Item getItem();
-
-      @Shadow public abstract ItemStack copy();
 
       @Unique private final ItemStack instance = ((ItemStack) (Object) this);
 
@@ -70,12 +66,12 @@ public abstract class ItemStackMixin {
 
             BackData backData = BackData.get(player);
             ItemStack backStack = backData.getStack();
-            Kind kind = Kind.fromStack(backStack);
+            Kind instanceKind = Kind.fromStack(instance);
 
-            if (instance == backStack && kind != null) {
+            if (instance == backStack && instanceKind != null) {
                   boolean actionKeyPressed = backData.actionKeyPressed;
                   boolean hasItems = !backData.backpackInventory.isEmpty();
-                  switch (kind) {
+                  switch (instanceKind) {
                         case POT -> {
                               CompoundTag potTag = backStack.getTagElement("back_slot");
                               if (potTag != null && potTag.contains("id") && potTag.contains("amount")) {
@@ -128,7 +124,7 @@ public abstract class ItemStackMixin {
                                     Tooltip.loreTitle(components);
                         }
                   }
-            } else if (Kind.ENDER.is(kind))
+            } else if (Kind.ENDER.is(instanceKind))
             {
                   EnderBackpack enderBackpack = (EnderBackpack) getItem();
                   UUID uuid = enderBackpack.getOrCreateUUID(player.getUUID(), instance);

@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks;
 
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.data.RegisterCommands;
 import com.beansgalaxy.backpacks.data.ServerSave;
@@ -93,21 +94,21 @@ public class FabricMain implements ModInitializer {
         return Registry.register(BuiltInRegistries.ITEM, resourceLocation, item);
     }
 
-    public static final RecipeSerializer<RecipeCrafting> RECIPE_CRAFTING = Registry.register(
-                            BuiltInRegistries.RECIPE_SERIALIZER, RecipeCrafting.LOCATION, RecipeCrafting.INSTANCE);
+    public static final RecipeSerializer<Crafting> RECIPE_CRAFTING = Registry.register(
+                            BuiltInRegistries.RECIPE_SERIALIZER, Crafting.LOCATION, Crafting.INSTANCE);
 
-    public static final RecipeSerializer<RecipeSmithing> RECIPE_SMITHING = Registry.register(
-                            BuiltInRegistries.RECIPE_SERIALIZER, RecipeSmithing.LOCATION, RecipeSmithing.INSTANCE);
+    public static final RecipeSerializer<Smithing> RECIPE_SMITHING = Registry.register(
+                BuiltInRegistries.RECIPE_SERIALIZER, Smithing.LOCATION, Smithing.INSTANCE);
 
     // REGISTER CREATIVE TAB
     public static final CreativeModeTab BACKPACK_TAB = FabricItemGroup.builder()
                 .title(Component.translatable("itemGroup." + Constants.MOD_ID))
                 .icon(() -> new ItemStack(LEATHER_BACKPACK))
                 .displayItems((params, output) -> {
+                    for (Kind value : Kind.values())
+                        output.accept(value.getItem());
                     Constants.TRAITS_MAP.keySet().forEach(key ->
-                                output.accept(BackpackItem.stackFromKey(key)));
-                    output.accept(Items.DECORATED_POT);
-                    output.accept(Items.CAULDRON);
+                                output.accept(Traits.toStack(key)));
                 }).build();
 
     public static final CreativeModeTab CREATIVE_TAB =

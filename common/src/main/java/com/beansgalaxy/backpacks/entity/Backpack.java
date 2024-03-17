@@ -1,11 +1,10 @@
 package com.beansgalaxy.backpacks.entity;
 
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.data.Traits;
+import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -17,14 +16,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class Backpack extends Entity {
-      public static final EntityDataAccessor<String> KEY = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.STRING);
-      public static final EntityDataAccessor<Integer> COLOR = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.INT);
-      public static final EntityDataAccessor<CompoundTag> TRIM = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.COMPOUND_TAG);
-      public static final EntityDataAccessor<Component> HOVER_NAME = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.COMPONENT);
       public static final EntityDataAccessor<Optional<UUID>> PLACED_BY = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.OPTIONAL_UUID);
+      public static final EntityDataAccessor<CompoundTag> LOCAL_DATA = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.COMPOUND_TAG);
       public static final int DEFAULT_COLOR = 9062433;
 
       public final BackpackInventory.Viewable viewable = new BackpackInventory.Viewable();
+      protected Traits.LocalData traits = Traits.LocalData.EMPTY;
 
       public Backpack(Level $$1) {
             super(Services.REGISTRY.getGeneralEntity(), $$1);
@@ -34,34 +31,14 @@ public class Backpack extends Entity {
             super(type, level);
       }
 
-      public boolean isMirror() {
-            boolean notMirror = this instanceof EntityAbstract;
-            return !notMirror;
-      }
-
-      public Traits.LocalData getLocalData() {
-            return new Traits.LocalData(getKey(), getColor(), getTrim(), getCustomName(), getDamage());
+      public Traits.LocalData getTraits() {
+            if (traits.isEmpty())
+                  traits = new Traits.LocalData(this.entityData.get(LOCAL_DATA));
+            return traits;
       }
 
       public BackpackInventory.Viewable getViewable() {
             return viewable;
-      }
-
-      public int getColor() {
-            return this.entityData.get(COLOR);
-      }
-
-      public Kind getKind() {
-            String key = getKey();
-            return Traits.get(key).kind;
-      }
-
-      public String getKey() {
-            return this.entityData.get(KEY);
-      }
-
-      public CompoundTag getTrim() {
-            return this.entityData.get(TRIM);
       }
 
       public UUID getPlacedBy() {
@@ -74,16 +51,9 @@ public class Backpack extends Entity {
             return Direction.UP;
       }
 
-      public int getDamage() {
-            return 0;
-      }
-
       @Override
       protected void defineSynchedData() {
-            this.entityData.define(KEY, "");
-            this.entityData.define(COLOR, DEFAULT_COLOR);
-            this.entityData.define(TRIM, new CompoundTag());
-            this.entityData.define(HOVER_NAME, Component.empty());
+            this.entityData.define(LOCAL_DATA, Traits.LocalData.EMPTY.toNBT());
             this.entityData.define(PLACED_BY, Optional.empty());
       }
 
