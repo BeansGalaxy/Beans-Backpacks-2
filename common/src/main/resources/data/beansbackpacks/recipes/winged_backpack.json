@@ -5,10 +5,10 @@
     "item": "minecraft:netherite_upgrade_smithing_template"
   },
   "base": {
-    "item": "beansbackpacks:backpack"
+    "item": "minecraft:elytra"
   },
   "addition": {
-    "item": "minecraft:elytra"
+    "item": "beansbackpacks:backpack"
   },
   "result": {
     "item": "beansbackpacks:winged_backpack"

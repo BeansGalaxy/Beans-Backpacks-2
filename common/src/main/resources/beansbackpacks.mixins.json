@@ -9,6 +9,7 @@
     "common.ComparatorMixin",
     "common.DataResourcesMixin",
     "common.ElytraItemMixin",
+    "common.ExperienceOrbMixin",
     "common.HopperEntityMixin",
     "common.InteractWithPlayer",
     "common.InventoryContainerMixin",
