@@ -19,29 +19,31 @@ public class UseCauldron2S {
       }
 
       final BlockPos blockPos;
-      final boolean isPlace;
+      final UseKeyEvent.Type type;
 
-      public UseCauldron2S(BlockPos pos, boolean isPlace) {
+      public UseCauldron2S(BlockPos pos, UseKeyEvent.Type type) {
             blockPos = pos;
-            this.isPlace = isPlace;
+            this.type = type;
       }
 
       public UseCauldron2S(FriendlyByteBuf byteBuf) {
-            this(byteBuf.readBlockPos(), byteBuf.readBoolean());
+            this(byteBuf.readBlockPos(), UseKeyEvent.Type.byID(byteBuf.readByte()));
       }
 
       public void encode(FriendlyByteBuf buf) {
             buf.writeBlockPos(blockPos);
-            buf.writeBoolean(isPlace);
+            buf.writeByte(type.id);
       }
 
       public void handle(Supplier<NetworkEvent.Context> context) {
             ServerPlayer sender = context.get().getSender();
             Level level = sender.level();
             BackData backData = BackData.get(sender);
-            if (isPlace)
-                  UseKeyEvent.cauldronPlace(level, blockPos, level.getBlockState(blockPos), backData);
-            else
-                  UseKeyEvent.cauldronPickup(sender, blockPos, level, backData);
+
+            switch (type) {
+                  case PICKUP -> UseKeyEvent.cauldronPickup(sender, blockPos, level, backData);
+                  case PLACE -> UseKeyEvent.cauldronPlace(level, blockPos, level.getBlockState(blockPos), backData);
+                  case EQUIP -> UseKeyEvent.potCauldronEquip(blockPos, level, backData);
+            }
       }
 }

@@ -9,11 +9,15 @@ import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.screen.CauldronInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -21,6 +25,8 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.DecoratedPotBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -35,6 +41,27 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 
 public class UseKeyEvent {
+      public enum Type {
+            PICKUP((byte) 0),
+            PLACE((byte) 1),
+            EQUIP((byte) 2);
+
+            public final byte id;
+            Type(byte id) {
+                  this.id = id;
+            }
+
+            public static Type byID(byte id) {
+                  for (Type value : Type.values()) {
+                        if (value.id == id) {
+                              return value;
+                        }
+                  }
+                  return PICKUP;
+            }
+      }
+
+
       public static boolean cauldronPickup(Player player) {
             BackData backData = BackData.get(player);
             if (backData.actionKeyPressed && Kind.CAULDRON.is(backData.getStack())) {
@@ -43,7 +70,7 @@ public class UseKeyEvent {
                   BlockHitResult blockHitResult = getPlayerPOVHitResult(level, owner, ClipContext.Fluid.SOURCE_ONLY);
                   BlockPos blockPos = blockHitResult.getBlockPos();
                   if (blockHitResult.getType() == HitResult.Type.BLOCK && cauldronPickup(player, blockPos, level, backData)) {
-                        if (level.isClientSide()) Services.NETWORK.useCauldron2S(blockPos, false);
+                        if (level.isClientSide()) Services.NETWORK.useCauldron2S(blockPos, Type.PICKUP);
                         return true;
                   }
             }
@@ -52,15 +79,70 @@ public class UseKeyEvent {
 
       public static boolean cauldronPickup(BlockHitResult blockHitResult, Player player) {
             BackData backData = BackData.get(player);
-            if (backData.actionKeyPressed && Kind.CAULDRON.is(backData.getStack())) {
+            if (backData.actionKeyPressed && blockHitResult.getType() == HitResult.Type.BLOCK) {
                   Player owner = backData.owner;
                   Level level = owner.level();
                   BlockPos blockPos = blockHitResult.getBlockPos();
-                  if (blockHitResult.getType() == HitResult.Type.BLOCK && cauldronPickup(player, blockPos, level, backData)) {
-                        if (level.isClientSide()) Services.NETWORK.useCauldron2S(blockPos, false);
+                  if (potCauldronEquip(blockPos, level, backData)) {
+                        if (level.isClientSide()) Services.NETWORK.useCauldron2S(blockPos, Type.EQUIP);
+                        return true;
+                  }
+                  else if (Kind.CAULDRON.is(backData.getTraits().kind) && cauldronPickup(player, blockPos, level, backData))
+                  {
+                        if (level.isClientSide()) Services.NETWORK.useCauldron2S(blockPos, Type.PICKUP);
                         return true;
                   }
             }
+            return false;
+      }
+
+      public static boolean potCauldronEquip(BlockPos blockPos, Level level, BackData backData) {
+            ItemStack backStack = backData.getStack();
+            if (!backStack.isEmpty())
+                  return false;
+
+            BlockState blockState = level.getBlockState(blockPos);
+            Block block = blockState.getBlock();
+            Player player = backData.owner;
+            if (level.getBlockEntity(blockPos) instanceof DecoratedPotBlockEntity potBlock) {
+                  DecoratedPotBlockEntity.Decorations decorations = potBlock.getDecorations();
+                  ItemStack itemstack = Items.DECORATED_POT.getDefaultInstance();
+                  CompoundTag compoundtag = decorations.save(new CompoundTag());
+                  BlockItem.setBlockEntityData(itemstack, BlockEntityType.DECORATED_POT, compoundtag);
+                  backData.set(itemstack);
+                  if (!level.isClientSide()) {
+                        level.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
+                        level.gameEvent(null, GameEvent.BLOCK_DESTROY, blockPos);
+                  }
+                  level.playSound(player, blockPos, SoundEvents.DECORATED_POT_BREAK, SoundSource.BLOCKS, 1f, 1f);
+                  player.playSound(SoundEvents.ARMOR_EQUIP_GENERIC);
+                  return true;
+            }
+            if (block instanceof AbstractCauldronBlock cauldronBlock)
+            {
+                  ItemStack cauldron = Items.CAULDRON.getDefaultInstance();
+                  backData.set(cauldron);
+                  int analogOutputSignal = cauldronBlock.getAnalogOutputSignal(blockState, level, blockPos);
+                  if (analogOutputSignal == 3) {
+                        if (block.equals(Blocks.WATER_CAULDRON)) {
+                              CauldronInventory.add(cauldron, Items.WATER_BUCKET);
+                        }
+                        else if (block.equals(Blocks.LAVA_CAULDRON)) {
+                              CauldronInventory.add(cauldron, Items.LAVA_BUCKET);
+                        }
+                        else if (block.equals(Blocks.POWDER_SNOW_CAULDRON)) {
+                              CauldronInventory.add(cauldron, Items.POWDER_SNOW_BUCKET);
+                        }
+                  }
+                  if (!level.isClientSide()) {
+                        level.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
+                        level.gameEvent(null, GameEvent.BLOCK_DESTROY, blockPos);
+                  }
+                  level.playSound(player, blockPos, SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 1f, 1f);
+                  player.playSound(SoundEvents.ARMOR_EQUIP_GENERIC);
+                  return true;
+            }
+
             return false;
       }
 
@@ -107,6 +189,29 @@ public class UseKeyEvent {
                               Item item = stack.getItem();
                               if (item instanceof BucketsAccess access) access.getPickupSound().ifPresent(soundEvent -> player.playSound(soundEvent, 1, 1));
                               CauldronInventory.add(cauldron, item);
+                              return true;
+                        }
+                  }
+            }
+            else if (block instanceof AbstractCauldronBlock cauldronBlock) {
+                  int analogOutputSignal = cauldronBlock.getAnalogOutputSignal(blockState, level, blockPos);
+                  if (analogOutputSignal == 3) {
+                        BucketsAccess bucket = null;
+                        if (block.equals(Blocks.WATER_CAULDRON) && CauldronInventory.add(cauldron, Items.WATER_BUCKET) != null)
+                              bucket = (BucketsAccess) Items.WATER_BUCKET;
+                        if (block.equals(Blocks.LAVA_CAULDRON) && CauldronInventory.add(cauldron, Items.LAVA_BUCKET) != null)
+                              bucket = (BucketsAccess) Items.LAVA_BUCKET;
+                        if (block.equals(Blocks.POWDER_SNOW_CAULDRON) && CauldronInventory.add(cauldron, Items.POWDER_SNOW_BUCKET) != null)
+                              bucket = (BucketsAccess) Items.POWDER_SNOW_BUCKET;
+                        if (bucket != null) {
+                              level.setBlock(blockPos, Blocks.CAULDRON.defaultBlockState(), 11);
+                              if (!level.isClientSide()) {
+                                    player.awardStat(Stats.USE_CAULDRON);
+                                    level.setBlockAndUpdate(blockPos, Blocks.CAULDRON.defaultBlockState());
+                                    bucket.getPickupSound().ifPresent(soundEvent ->
+                                                level.playSound(null, blockPos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F));
+                                    level.gameEvent(null, GameEvent.FLUID_PICKUP, blockPos);
+                              }
                               return true;
                         }
                   }
@@ -163,7 +268,7 @@ public class UseKeyEvent {
                   }
 
                   if (cauldronPlace(level, blockPos, blockState, backData)) {
-                        if (level.isClientSide()) Services.NETWORK.useCauldron2S(blockPos, true);
+                        if (level.isClientSide()) Services.NETWORK.useCauldron2S(blockPos, Type.PLACE);
                         return true;
                   }
             }

@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.platform;
 
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.events.UseKeyEvent;
 import com.beansgalaxy.backpacks.network.packages.UseCauldron2S;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.data.EnderStorage;
@@ -111,7 +112,7 @@ public class ForgeNetworkHelper implements NetworkHelper {
       }
 
       @Override
-      public void useCauldron2S(BlockPos pos, boolean isPlace) {
-            NetworkPackages.C2S(new UseCauldron2S(pos, isPlace));
+      public void useCauldron2S(BlockPos pos, UseKeyEvent.Type type) {
+            NetworkPackages.C2S(new UseCauldron2S(pos, type));
       }
 }

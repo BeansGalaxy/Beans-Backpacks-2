@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.platform;
 
 import com.beansgalaxy.backpacks.FabricMain;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.events.UseKeyEvent;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
@@ -148,10 +149,10 @@ public class FabricNetworkHelper implements NetworkHelper {
       }
 
       @Override
-      public void useCauldron2S(BlockPos pos, boolean isPlace) {
+      public void useCauldron2S(BlockPos pos, UseKeyEvent.Type type) {
             FriendlyByteBuf buf = PacketByteBufs.create();
             buf.writeBlockPos(pos);
-            buf.writeBoolean(isPlace);
+            buf.writeByte(type.id);
 
             ClientPlayNetworking.send(NetworkPackages.USE_CAULDRON_2S, buf);
       }

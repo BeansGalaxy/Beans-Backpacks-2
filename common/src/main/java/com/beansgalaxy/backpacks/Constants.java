@@ -68,17 +68,6 @@ public class Constants {
 		list.removeIf(item -> item.equals(Items.AIR));
 	}
 
-	public static void addToList(HashSet<Item> list, Item item) {
-		if (!item.equals(Items.AIR))
-			list.add(item);
-	}
-
-	public static ItemStack getTorsoWearables(Player player, Item item) {
-		ItemStack backSlot = BackData.get(player).getStack();
-		ItemStack chestplate = player.getItemBySlot(EquipmentSlot.CHEST);
-		return backSlot.is(item) ? backSlot : chestplate;
-	}
-
 	public static NonNullList<Item> readItemList(ResourceManager resourceManager, String location) {
 		Map<ResourceLocation, Resource> locations = resourceManager.listResources("modify",
 				(in) -> in.getPath().endsWith(location));
