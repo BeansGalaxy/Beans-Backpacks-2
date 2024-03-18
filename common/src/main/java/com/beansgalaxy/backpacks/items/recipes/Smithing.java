@@ -1,4 +1,4 @@
-package com.beansgalaxy.backpacks.items;
+package com.beansgalaxy.backpacks.items.recipes;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.Traits;

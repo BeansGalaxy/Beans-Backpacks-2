@@ -1,4 +1,4 @@
-package com.beansgalaxy.backpacks.items;
+package com.beansgalaxy.backpacks.items.recipes;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.Traits;
@@ -20,7 +20,6 @@ import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -214,19 +213,17 @@ public class Crafting extends CustomRecipe {
 
             static Map<String, Ingredient> keyFromJson(JsonObject $$0) {
                   Map<String, Ingredient> $$1 = Maps.newHashMap();
-                  Iterator var2 = $$0.entrySet().iterator();
 
-                  while(var2.hasNext()) {
-                        Map.Entry<String, JsonElement> $$2 = (Map.Entry)var2.next();
-                        if (((String)$$2.getKey()).length() != 1) {
-                              throw new JsonSyntaxException("Invalid key entry: '" + (String)$$2.getKey() + "' is an invalid symbol (must be 1 character only).");
+                  for (Map.Entry<String, JsonElement> stringJsonElementEntry : $$0.entrySet()) {
+                        if ((stringJsonElementEntry).getKey().length() != 1) {
+                              throw new JsonSyntaxException("Invalid key entry: '" + (stringJsonElementEntry).getKey() + "' is an invalid symbol (must be 1 character only).");
                         }
 
-                        if (" ".equals($$2.getKey())) {
+                        if (" ".equals((stringJsonElementEntry).getKey())) {
                               throw new JsonSyntaxException("Invalid key entry: ' ' is a reserved symbol.");
                         }
 
-                        $$1.put((String)$$2.getKey(), Ingredient.fromJson((JsonElement)$$2.getValue(), false));
+                        $$1.put((stringJsonElementEntry).getKey(), Ingredient.fromJson((stringJsonElementEntry).getValue(), false));
                   }
 
                   $$1.put(" ", Ingredient.EMPTY);

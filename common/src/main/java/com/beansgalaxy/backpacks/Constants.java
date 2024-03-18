@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks;
 
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
+import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import net.minecraft.core.NonNullList;
@@ -11,6 +12,7 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -38,6 +40,18 @@ public class Constants {
 	public static final HashSet<Item> DISABLES_BACK_SLOT = new HashSet<>();
 	public static final HashSet<Item> BLACKLIST_ITEMS = new HashSet<>();
 	public static final HashSet<Item> ELYTRA_ITEMS = new HashSet<>();
+
+	public static final CreativeModeTab.DisplayItemsGenerator CREATIVE_TAB_GENERATOR = (params, output) -> {
+		for (Kind value : Kind.values()) {
+			if (!Kind.UPGRADED.is(value))
+				output.accept(value.getItem());
+			if (Kind.METAL.is(value))
+				Constants.TRAITS_MAP.keySet().forEach(key -> {
+					if (!key.equals("null"))
+						output.accept(Traits.toStack(key));
+				});
+		}
+	};
 
 	public static boolean isEmpty(String string) {
 		return string == null || string.isEmpty() || string.isBlank();

@@ -121,6 +121,9 @@ public abstract class EntityAbstract extends Backpack {
       }
 
       private void saveToItemTag(CompoundTag tag) {
+            if (tag == null)
+                  return;
+
             tag.remove("backpack_id");
             tag.remove("Trim");
             if (tag.contains("display")) {
@@ -379,7 +382,7 @@ public abstract class EntityAbstract extends Backpack {
                   this.setDisplay(tag.getCompound("display"));
             else {
                   CompoundTag localData = tag.getCompound("local_data");
-                  this.entityData.set(PLACED_BY, Optional.of(localData.getUUID("owner")));
+                  this.entityData.set(OWNER, Optional.of(localData.getUUID("owner")));
                   entityData.set(LOCAL_DATA, localData);
                   itemTags = tag.getCompound("item_tags");
             }
@@ -414,6 +417,7 @@ public abstract class EntityAbstract extends Backpack {
             Kind kind = Kind.METAL;
             switch (key) {
                   case "iron" -> key = "";
+                  case "netherite" -> key = "null";
                   case "leather" -> {
                         key = "";
                         kind = Kind.LEATHER;
@@ -427,14 +431,14 @@ public abstract class EntityAbstract extends Backpack {
                          kind = Kind.WINGED;
                   }
             }
-            Traits.LocalData traits = new Traits.LocalData(key, kind, color, trim, hoverName, 0);
+            Traits.LocalData traits = new Traits.LocalData(key, kind, color, trim, hoverName);
             this.traits = traits;
             this.entityData.set(LOCAL_DATA, traits.toNBT());
 
             if (!display.contains("placed_by"))
                   Constants.LOG.warn("No \"Placed By\" UUID provided from -> " + this);
             else
-                  this.entityData.set(PLACED_BY, Optional.of(display.getUUID("placed_by")));
+                  this.entityData.set(OWNER, Optional.of(display.getUUID("placed_by")));
       }
 
       /** COLLISIONS AND INTERACTIONS **/

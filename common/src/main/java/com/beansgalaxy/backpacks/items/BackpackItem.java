@@ -314,6 +314,9 @@ public class BackpackItem extends Item {
             BlockPos blockPos = BlockPos.containing(x, y, z);
             float yaw = rotFromBlock(blockPos, player) + 90;
 
+            if (player.level().isClientSide())
+                  return true;
+
             EntityAbstract entityAbstract =
                         EntityAbstract.create(backpackStack, x, y, z, yaw, false, direction, player, stacks);
 
@@ -351,6 +354,7 @@ public class BackpackItem extends Item {
                               tag.remove("display");
                         switch (key) {
                               case "leather", "iron", "ender", "winged" -> {}
+                              case "netherite" -> tag.putString("backpack_id", "null");
                               default -> tag.putString("backpack_id", key);
                         }
                   }

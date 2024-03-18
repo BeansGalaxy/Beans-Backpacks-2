@@ -2,10 +2,12 @@ package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.EnderStorage;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.items.Tooltip;
+import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.screen.CauldronInventory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
@@ -66,10 +68,32 @@ public abstract class ItemStackMixin {
 
             BackData backData = BackData.get(player);
             ItemStack backStack = backData.getStack();
-            Kind instanceKind = Kind.fromStack(instance);
+            Traits.LocalData traits = Traits.LocalData.fromStack(instance);
+            Kind instanceKind = traits.kind;
+            boolean actionKeyPressed = backData.actionKeyPressed;
+
+            if (traits.isEmpty())
+                  return;
+
+            if (instance.is(Services.REGISTRY.getUpgraded()))
+            {
+                  if (actionKeyPressed) {
+                        components.add(Component.translatable("tooltip.beansbackpacks.help.null9"));
+                        components.add(Component.translatable("tooltip.beansbackpacks.help.null10"));
+                        components.add(Component.empty());
+                        components.add(Component.translatable("tooltip.beansbackpacks.help.null0"));
+                        components.add(Component.translatable("tooltip.beansbackpacks.help.null1"));
+                        components.add(Component.empty());
+                        components.add(Component.translatable("tooltip.beansbackpacks.help.null2"));
+                        components.add(Component.translatable("tooltip.beansbackpacks.help.null3"));
+                        components.add(Component.translatable("tooltip.beansbackpacks.help.null4"));
+                        cir.setReturnValue(components);
+                  }
+                  else Tooltip.nullTitle(components);;
+                  return;
+            }
 
             if (instance == backStack && instanceKind != null) {
-                  boolean actionKeyPressed = backData.actionKeyPressed;
                   boolean hasItems = !backData.backpackInventory.isEmpty();
                   switch (instanceKind) {
                         case POT -> {
@@ -118,10 +142,18 @@ public abstract class ItemStackMixin {
                         default -> {
                               if (hasItems) return;
 
-                              if (actionKeyPressed)
-                                    cir.setReturnValue(Tooltip.addLore(components, "backpack", 5));
-                              else
-                                    Tooltip.loreTitle(components);
+                              if (traits.key.equals("null")) {
+                                    if (actionKeyPressed)
+                                          cir.setReturnValue(Tooltip.addNullLore(components, player));
+                                    else
+                                          Tooltip.nullTitle(components);
+                              }
+                              else {
+                                    if (actionKeyPressed)
+                                          cir.setReturnValue(Tooltip.addLore(components, "backpack", 5));
+                                    else
+                                          Tooltip.loreTitle(components);
+                              }
                         }
                   }
             } else if (Kind.ENDER.is(instanceKind))

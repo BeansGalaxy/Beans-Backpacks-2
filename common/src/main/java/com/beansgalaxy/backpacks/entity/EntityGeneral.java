@@ -63,7 +63,7 @@ public class EntityGeneral extends EntityAbstract {
 
       public EntityGeneral(Player player, NonNullList<ItemStack> stacks) {
             super(Services.REGISTRY.getGeneralEntity(), player.level());
-            this.entityData.set(PLACED_BY, Optional.of(player.getUUID()));
+            this.entityData.set(OWNER, Optional.of(player.getUUID()));
 
             if (stacks != null && !stacks.isEmpty()) {
                   getItemStacks().addAll(stacks);

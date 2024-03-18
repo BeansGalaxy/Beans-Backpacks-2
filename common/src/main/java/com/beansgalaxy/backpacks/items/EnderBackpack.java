@@ -26,6 +26,9 @@ public class EnderBackpack extends BackpackItem {
                   if (display.contains("placed_by")) {
                         UUID uuid = display.getUUID("placed_by");
                         tag.putUUID("owner", uuid);
+                        display.remove("placed_by");
+                        if (display.isEmpty())
+                              tag.remove("display");
                   }
             }
             super.verifyTagAfterLoad(tag);

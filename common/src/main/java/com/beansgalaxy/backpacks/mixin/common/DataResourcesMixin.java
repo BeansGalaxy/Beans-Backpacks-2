@@ -77,6 +77,7 @@ public class DataResourcesMixin {
 
                               Traits.register(key, new Traits(fallbackName, maxStacks, fireResistant, button));
                         }
+                        Traits.register("null", new Traits("Null Backpack", 11, true, Traits.Button.NONE));
 
                   } catch (IOException e) {
                         throw new RuntimeException(e);

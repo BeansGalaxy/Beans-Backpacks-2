@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class Backpack extends Entity {
-      public static final EntityDataAccessor<Optional<UUID>> PLACED_BY = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.OPTIONAL_UUID);
+      public static final EntityDataAccessor<Optional<UUID>> OWNER = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.OPTIONAL_UUID);
       public static final EntityDataAccessor<CompoundTag> LOCAL_DATA = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.COMPOUND_TAG);
       public static final int DEFAULT_COLOR = 9062433;
 
@@ -42,7 +42,7 @@ public class Backpack extends Entity {
       }
 
       public UUID getPlacedBy() {
-            Optional<UUID> uuid = entityData.get(PLACED_BY);
+            Optional<UUID> uuid = entityData.get(OWNER);
             return uuid.orElseGet(() -> this.uuid);
       }
 
@@ -54,7 +54,7 @@ public class Backpack extends Entity {
       @Override
       protected void defineSynchedData() {
             this.entityData.define(LOCAL_DATA, Traits.LocalData.EMPTY.toNBT());
-            this.entityData.define(PLACED_BY, Optional.empty());
+            this.entityData.define(OWNER, Optional.empty());
       }
 
       @Override

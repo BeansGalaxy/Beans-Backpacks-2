@@ -108,7 +108,7 @@ public class Traits {
             private CompoundTag trim = new CompoundTag();
             public Component hoverName = Component.empty();
 
-            public LocalData(String key, Kind kind, int color, CompoundTag trim, Component hoverName, int damage) {
+            public LocalData(String key, Kind kind, int color, CompoundTag trim, Component hoverName) {
                   this.key = key == null ? "": key;
                   this.kind = kind;
                   this.color = color;
@@ -166,35 +166,29 @@ public class Traits {
                   Component hoverName = stack.hasCustomHoverName() ? stack.getHoverName(): Component.empty();
                   switch (kind) {
                         case UPGRADED -> {
-                              CompoundTag tag = stack.getTag();
                               CompoundTag trim = stack.getTagElement("Trim");
-                              if (tag == null || !tag.contains("backpack_id"))
-                                    return new LocalData("netherite", Kind.METAL, 0xFFFFFF, trim, hoverName, 0);
-
-                              String key = tag.getString("backpack_id");
-                              return new LocalData(key, Kind.METAL, 0xFFFFFF, trim, hoverName, 0);
+                              return new LocalData("null", Kind.METAL, 0xFFFFFF, trim, hoverName);
                         }
                         case METAL -> {
                               CompoundTag tag = stack.getTag();
                               CompoundTag trim = stack.getTagElement("Trim");
                               if (tag == null || !tag.contains("backpack_id"))
-                                    return new LocalData("", Kind.METAL, 0xFFFFFF, trim, hoverName, 0);
+                                    return new LocalData("", Kind.METAL, 0xFFFFFF, trim, hoverName);
 
                               String key = tag.getString("backpack_id");
-                              return new LocalData(key, Kind.METAL, 0xFFFFFF, trim, hoverName, 0);
+                              return new LocalData(key, Kind.METAL, 0xFFFFFF, trim, hoverName);
                         }
                         case LEATHER -> {
                               int itemColor = stack.getItem() instanceof DyeableLeatherItem dyable ? dyable.getColor(stack) : 0xFFFFFF;
-                              return new LocalData("", Kind.LEATHER, itemColor, null, hoverName, 0);
+                              return new LocalData("", Kind.LEATHER, itemColor, null, hoverName);
                         }
                         case WINGED -> {
-                              int damage = stack.getDamageValue();
                               int itemColor = stack.getItem() instanceof DyeableLeatherItem dyable ? dyable.getColor(stack) : 0xFFFFFF;
-                              return new LocalData("", Kind.WINGED, itemColor, null, hoverName, damage);
+                              return new LocalData("", Kind.WINGED, itemColor, null, hoverName);
                         }
                         case ENDER -> {
                               CompoundTag trim = stack.getTagElement("Trim");
-                              return new LocalData("", Kind.ENDER, 0xFFFFFF, trim, hoverName, 0);
+                              return new LocalData("", Kind.ENDER, 0xFFFFFF, trim, hoverName);
                         }
                         case CAULDRON -> {
                               return CAULDRON;

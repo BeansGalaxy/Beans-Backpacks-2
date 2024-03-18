@@ -1,6 +1,8 @@
 package com.beansgalaxy.backpacks;
 
-import com.beansgalaxy.backpacks.data.Traits;
+import com.beansgalaxy.backpacks.items.recipes.Conversion;
+import com.beansgalaxy.backpacks.items.recipes.Crafting;
+import com.beansgalaxy.backpacks.items.recipes.Smithing;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.data.RegisterCommands;
 import com.beansgalaxy.backpacks.data.ServerSave;
@@ -100,16 +102,14 @@ public class FabricMain implements ModInitializer {
     public static final RecipeSerializer<Smithing> RECIPE_SMITHING = Registry.register(
                 BuiltInRegistries.RECIPE_SERIALIZER, Smithing.LOCATION, Smithing.INSTANCE);
 
+    public static final RecipeSerializer<Conversion> RECIPE_CONVERSION = Registry.register(
+                BuiltInRegistries.RECIPE_SERIALIZER, Conversion.LOCATION, Conversion.INSTANCE);
+
     // REGISTER CREATIVE TAB
     public static final CreativeModeTab BACKPACK_TAB = FabricItemGroup.builder()
                 .title(Component.translatable("itemGroup." + Constants.MOD_ID))
                 .icon(() -> new ItemStack(LEATHER_BACKPACK))
-                .displayItems((params, output) -> {
-                    for (Kind value : Kind.values())
-                        output.accept(value.getItem());
-                    Constants.TRAITS_MAP.keySet().forEach(key ->
-                                output.accept(Traits.toStack(key)));
-                }).build();
+                .displayItems(Constants.CREATIVE_TAB_GENERATOR).build();
 
     public static final CreativeModeTab CREATIVE_TAB =
                 Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,

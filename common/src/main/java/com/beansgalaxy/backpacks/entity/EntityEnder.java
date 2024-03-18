@@ -4,7 +4,6 @@ import com.beansgalaxy.backpacks.data.*;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
-import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -72,7 +71,7 @@ public class EntityEnder extends EntityAbstract {
 
       public EntityEnder(Player player, Optional<UUID> uuid) {
             super(Services.REGISTRY.getEnderEntity(), player.level());
-            entityData.set(PLACED_BY, uuid);
+            entityData.set(OWNER, uuid);
 
             if (level() instanceof ServerLevel serverLevel)
                   EnderStorage.setLocation(getPlacedBy(), this.uuid, blockPosition(), serverLevel);
@@ -110,7 +109,7 @@ public class EntityEnder extends EntityAbstract {
 
       @Override
       public UUID getPlacedBy() {
-            Optional<UUID> uuid = entityData.get(PLACED_BY);
+            Optional<UUID> uuid = entityData.get(OWNER);
             return uuid.orElse(null);
       }
 
@@ -144,7 +143,7 @@ public class EntityEnder extends EntityAbstract {
       }
 
       public void setPlacedBy(Optional<UUID> uuid) {
-            entityData.set(PLACED_BY, uuid);
+            entityData.set(OWNER, uuid);
       }
 
       @Override

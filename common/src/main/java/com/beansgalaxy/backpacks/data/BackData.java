@@ -207,8 +207,8 @@ public class BackData {
                   set(ItemStack.EMPTY);
                   return droppedItems;
             }
-
-            EntityAbstract.create(backStack, x, y, z, yaw, true, direction, owner, itemStacks);
+            if (!owner.level().isClientSide())
+                  EntityAbstract.create(backStack, x, y, z, yaw, true, direction, owner, itemStacks);
 
             set(ItemStack.EMPTY);
             return droppedItems;

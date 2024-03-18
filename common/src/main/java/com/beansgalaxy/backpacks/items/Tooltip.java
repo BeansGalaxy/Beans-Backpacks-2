@@ -6,6 +6,7 @@ import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -113,6 +114,10 @@ public class Tooltip {
             if (!t2.getString().isEmpty()) components.add(t2);
       }
 
+      public static void nullTitle(List<Component> components) {
+            components.add(Component.translatable("tooltip.beansbackpacks.null_title", Component.literal(keyBind.toLowerCase()).withStyle(ChatFormatting.GRAY)));
+      }
+
       public static List<Component> addLore(List<Component> components, String kind, int lines) {
             Minecraft instance = Minecraft.getInstance();
             String useKey = "§6" + instance.options.keyUse.getTranslatedKeyMessage().getString()
@@ -139,6 +144,23 @@ public class Tooltip {
                   if (i != lines && (i + 1) % 2 == 0)
                         components.add(empty);
             }
+
+            return components;
+      }
+
+      public static List<Component> addNullLore(List<Component> components, Player player) {
+            components.add(Component.translatable("tooltip.beansbackpacks.help.null0"));
+            components.add(Component.translatable("tooltip.beansbackpacks.help.null1"));
+            components.add(empty);
+            components.add(Component.translatable("tooltip.beansbackpacks.help.null2"));
+            components.add(Component.translatable("tooltip.beansbackpacks.help.null3"));
+            components.add(Component.translatable("tooltip.beansbackpacks.help.null4"));
+            components.add(empty);
+            components.add(Component.translatable("tooltip.beansbackpacks.help.null5"));
+            components.add(Component.translatable("tooltip.beansbackpacks.help.null6"));
+            components.add(empty);
+            components.add(Component.translatable("tooltip.beansbackpacks.help.null7"));
+            components.add(Component.translatable("tooltip.beansbackpacks.help.null8", player.getName().plainCopy().withStyle(ChatFormatting.GOLD)));
 
             return components;
       }

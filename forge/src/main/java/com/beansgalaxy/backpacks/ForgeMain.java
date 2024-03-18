@@ -1,8 +1,9 @@
 package com.beansgalaxy.backpacks;
 
 import com.beansgalaxy.backpacks.compat.CurioRegistry;
-import com.beansgalaxy.backpacks.data.Traits;
-import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.items.recipes.Conversion;
+import com.beansgalaxy.backpacks.items.recipes.Crafting;
+import com.beansgalaxy.backpacks.items.recipes.Smithing;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.beansgalaxy.backpacks.entity.EntityGeneral;
@@ -83,6 +84,9 @@ public class ForgeMain {
     public static final RegistryObject<RecipeSerializer<Smithing>> BACKPACK_SMITHING =
                 RECIPES.register(Smithing.ID, () -> Smithing.INSTANCE);
 
+    public static final RegistryObject<RecipeSerializer<Conversion>> BACKPACK_CONVERSION =
+                RECIPES.register(Conversion.ID, () -> Conversion.INSTANCE);
+
     // REGISTER ITEMS
     public static final DeferredRegister<Item> ITEMS =
                 DeferredRegister.create(ForgeRegistries.ITEMS, Constants.MOD_ID);
@@ -106,12 +110,6 @@ public class ForgeMain {
                 CreativeModeTab.builder()
                             .title(Component.translatable("itemGroup." + Constants.MOD_ID))
                             .icon(() -> new ItemStack(LEATHER_BACKPACK.get()))
-                            .displayItems((params, output) -> {
-                                for (Kind value : Kind.values())
-                                    output.accept(value.getItem());
-                                Constants.TRAITS_MAP.keySet().forEach(key ->
-                                            output.accept(Traits.toStack(key)));
-                            })
-                            .build());
+                            .displayItems(Constants.CREATIVE_TAB_GENERATOR).build());
 
 }
