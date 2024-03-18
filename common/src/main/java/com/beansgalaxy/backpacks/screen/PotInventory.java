@@ -27,17 +27,15 @@ public class PotInventory {
                   return null;
 
             int amount = inserted.getCount();
-            int storedAmount = 0;
             int max_amount = inserted.getMaxStackSize() * MAX_SIZE;
             CompoundTag itemTag = pot.getOrCreateTagElement("back_slot");
             if (itemTag.contains("id") && itemTag.contains("amount")) {
+                  int storedAmount = itemTag.getInt("amount");
+                  if (storedAmount >= max_amount) return null;
+                  amount += storedAmount;
                   String string = itemTag.getString("id");
                   Item stored = BuiltInRegistries.ITEM.get(new ResourceLocation(string));
                   if (!inserted.is(stored)) return null;
-                  storedAmount = itemTag.getInt("amount");
-                  if (storedAmount >= max_amount) return null;
-
-                  amount += storedAmount;
             } else {
                   ResourceLocation key = BuiltInRegistries.ITEM.getKey(inserted.getItem());
                   itemTag.putString("id", key.toString());
@@ -45,7 +43,7 @@ public class PotInventory {
 
             if (inserted.hasTag() && !inserted.isStackable()) {
                   CompoundTag tag = inserted.getTag();
-                  itemTag.put(String.valueOf(storedAmount), tag);
+                  itemTag.put(String.valueOf(amount), tag);
             }
 
             if (amount < max_amount) {
@@ -77,14 +75,14 @@ public class PotInventory {
                   Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(id));
                   ItemStack stack = item.getDefaultInstance();
                   int maxStackSize = stack.getMaxStackSize();
-                  int amount = itemTag.getByte("amount");
+                  int amount = itemTag.getInt("amount");
                   int count = Math.min(amount, maxStackSize);
                   if (doSplit) count = Math.max(1, count / 2);
-                  amount -= count;
                   if (itemTag.contains(String.valueOf(amount))) {
                         CompoundTag tag = itemTag.getCompound(String.valueOf(amount));
                         stack.setTag(tag);
                   }
+                  amount -= count;
                   if (amount > 0) {
                         itemTag.putInt("amount", amount);
                         stack.setCount(count);

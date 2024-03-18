@@ -25,10 +25,12 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.DecoratedPotBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
@@ -60,7 +62,6 @@ public class UseKeyEvent {
                   return PICKUP;
             }
       }
-
 
       public static boolean cauldronPickup(Player player) {
             BackData backData = BackData.get(player);
@@ -104,7 +105,8 @@ public class UseKeyEvent {
             BlockState blockState = level.getBlockState(blockPos);
             Block block = blockState.getBlock();
             Player player = backData.owner;
-            if (level.getBlockEntity(blockPos) instanceof DecoratedPotBlockEntity potBlock) {
+            BlockEntity blockEntity = level.getChunkAt(blockPos).getBlockEntity(blockPos, LevelChunk.EntityCreationType.IMMEDIATE);
+            if (blockEntity instanceof DecoratedPotBlockEntity potBlock) {
                   DecoratedPotBlockEntity.Decorations decorations = potBlock.getDecorations();
                   ItemStack itemstack = Items.DECORATED_POT.getDefaultInstance();
                   CompoundTag compoundtag = decorations.save(new CompoundTag());
@@ -118,7 +120,7 @@ public class UseKeyEvent {
                   player.playSound(SoundEvents.ARMOR_EQUIP_GENERIC);
                   return true;
             }
-            if (block instanceof AbstractCauldronBlock cauldronBlock)
+            else if (block instanceof AbstractCauldronBlock cauldronBlock)
             {
                   ItemStack cauldron = Items.CAULDRON.getDefaultInstance();
                   backData.set(cauldron);
