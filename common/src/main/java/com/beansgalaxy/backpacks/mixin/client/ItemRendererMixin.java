@@ -3,6 +3,7 @@ package com.beansgalaxy.backpacks.mixin.client;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
+import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelManager;
@@ -22,19 +23,14 @@ public class ItemRendererMixin {
                   target = "Lcom/mojang/blaze3d/vertex/PoseStack;pushPose()V"), argsOnly = true)
       private BakedModel injected(BakedModel value, ItemStack stack) {
             Item item = stack.getItem();
-            if (item instanceof BackpackItem && !(item instanceof DyableBackpack) && stack.getTag() != null) {
+            if (item.equals(Services.REGISTRY.getMetal()) && stack.getTag() != null) {
                   ModelManager modelManager = ((ItemRenderer) ((Object) this)).getItemModelShaper().getModelManager();
-                  CompoundTag display = stack.getTagElement("display");
-                  if (display != null && display.contains("key")) {
-                        String key = display.getString("key");
-                        value = modelManager.getModel(beans_Backpacks_2$getBackpack(key));
+                  CompoundTag tag = stack.getTag();
+                  if (tag != null && tag.contains("backpack_id")) {
+                        String backpack_id = tag.getString("backpack_id");
+                        value = modelManager.getModel(new ModelResourceLocation(Constants.MOD_ID, "backpack/" + backpack_id, "inventory"));
                   }
             }
             return value;
-      }
-
-      @Unique
-      private static ModelResourceLocation beans_Backpacks_2$getBackpack(String key) {
-            return new ModelResourceLocation(Constants.MOD_ID, "backpack/" + key, "inventory");
       }
 }

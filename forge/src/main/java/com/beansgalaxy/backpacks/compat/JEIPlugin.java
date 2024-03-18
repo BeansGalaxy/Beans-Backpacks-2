@@ -21,15 +21,15 @@ public class JEIPlugin implements IModPlugin {
       @Override
       public void registerItemSubtypes(ISubtypeRegistration registration) {
             IIngredientSubtypeInterpreter<ItemStack> interpreter = (stack, context) -> {
-                  CompoundTag display = stack.getTagElement("display");
-                  if (display == null)
+                  CompoundTag tag = stack.getTag();
+                  if (tag == null)
                         return IIngredientSubtypeInterpreter.NONE;
 
-                  String key = display.getString("key");
+                  String key = tag.getString("backpack_id");
                   if (Constants.isEmpty(key))
                         return IIngredientSubtypeInterpreter.NONE;
 
-                  return display.getAsString();
+                  return tag.getAsString();
             };
 
             registration.registerSubtypeInterpreter(Services.REGISTRY.getLeather(), interpreter);

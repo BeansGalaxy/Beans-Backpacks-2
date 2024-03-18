@@ -20,26 +20,32 @@ public class PotInventory {
 
       public static ItemStack add(ItemStack pot, ItemStack inserted, Player player) {
             Level level = player.level();
-            if (inserted.isEmpty() || inserted.hasTag() || !inserted.isStackable())
+            if (inserted.isEmpty() || (inserted.isStackable() && inserted.hasTag()))
                   return null;
 
             if (Constants.BLACKLIST_ITEMS.contains(inserted.getItem()))
                   return null;
 
             int amount = inserted.getCount();
+            int storedAmount = 0;
             int max_amount = inserted.getMaxStackSize() * MAX_SIZE;
             CompoundTag itemTag = pot.getOrCreateTagElement("back_slot");
             if (itemTag.contains("id") && itemTag.contains("amount")) {
                   String string = itemTag.getString("id");
                   Item stored = BuiltInRegistries.ITEM.get(new ResourceLocation(string));
                   if (!inserted.is(stored)) return null;
-                  int storedAmount = itemTag.getInt("amount");
+                  storedAmount = itemTag.getInt("amount");
                   if (storedAmount >= max_amount) return null;
 
                   amount += storedAmount;
             } else {
                   ResourceLocation key = BuiltInRegistries.ITEM.getKey(inserted.getItem());
                   itemTag.putString("id", key.toString());
+            }
+
+            if (inserted.hasTag() && !inserted.isStackable()) {
+                  CompoundTag tag = inserted.getTag();
+                  itemTag.put(String.valueOf(storedAmount), tag);
             }
 
             if (amount < max_amount) {
@@ -71,10 +77,14 @@ public class PotInventory {
                   Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(id));
                   ItemStack stack = item.getDefaultInstance();
                   int maxStackSize = stack.getMaxStackSize();
-                  int amount = itemTag.getInt("amount");
+                  int amount = itemTag.getByte("amount");
                   int count = Math.min(amount, maxStackSize);
                   if (doSplit) count = Math.max(1, count / 2);
                   amount -= count;
+                  if (itemTag.contains(String.valueOf(amount))) {
+                        CompoundTag tag = itemTag.getCompound(String.valueOf(amount));
+                        stack.setTag(tag);
+                  }
                   if (amount > 0) {
                         itemTag.putInt("amount", amount);
                         stack.setCount(count);

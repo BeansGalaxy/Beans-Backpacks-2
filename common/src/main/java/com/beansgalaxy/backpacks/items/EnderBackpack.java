@@ -19,34 +19,33 @@ public class EnderBackpack extends BackpackItem {
             super(properties);
       }
 
-      @Override
+      @Override @Deprecated // Since 20.1-0.18-v2
       public void verifyTagAfterLoad(CompoundTag tag) {
+            if (tag.contains("display")) {
+                  CompoundTag display = tag.getCompound("display");
+                  if (display.contains("placed_by")) {
+                        UUID uuid = display.getUUID("placed_by");
+                        tag.putUUID("owner", uuid);
+                  }
+            }
             super.verifyTagAfterLoad(tag);
       }
 
-      @Nullable
-      private static UUID getUuid(CompoundTag tag) {
-            if (tag.contains("placed_by")) {
-                  UUID uuid = tag.getUUID("placed_by");
-                  if (ServerSave.MAPPED_ENDER_DATA.containsKey(uuid))
-                        return uuid;
-            }
-            return null;
-      }
-
-      public UUID getOrCreateUUID(UUID fallback, ItemStack stack) {
-            CompoundTag tag = stack.getOrCreateTagElement("display");
-            UUID uuid = getUuid(tag);
-            if (uuid != null)
+      public UUID getOrCreateUUID(UUID uuid, ItemStack stack) {
+            CompoundTag tag = stack.getTag();
+            if (tag == null || !tag.contains("owner"))
                   return uuid;
 
-            tag.putUUID("placed_by", fallback);
-            return fallback;
+            if (ServerSave.MAPPED_ENDER_DATA.containsKey(uuid))
+                  uuid = tag.getUUID("owner");
+
+            tag.putUUID("owner", uuid);
+            return uuid;
       }
 
       public void setUUID(UUID uuid, ItemStack stack) {
-            CompoundTag tag = stack.getOrCreateTagElement("display");
-            tag.putUUID("placed_by", uuid);
+            CompoundTag tag = stack.getOrCreateTag();
+            tag.putUUID("owner", uuid);
       }
 
       @Override

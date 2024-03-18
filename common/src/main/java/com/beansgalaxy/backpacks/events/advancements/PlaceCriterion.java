@@ -17,7 +17,7 @@ public class PlaceCriterion extends SimpleCriterionTrigger<PlaceCriterion.Condit
 
       @Override
       protected Conditions createInstance(JsonObject jsonObject, ContextAwarePredicate contextAwarePredicate, DeserializationContext var3) {
-            String key = GsonHelper.getAsString(jsonObject, "key", "");
+            String key = GsonHelper.getAsString(jsonObject, "backpack_id", "");
             return new Conditions(key, contextAwarePredicate);
       }
 

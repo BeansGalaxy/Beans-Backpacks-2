@@ -92,7 +92,7 @@ public class Traits {
 
       public static ItemStack toStack(String backpackID) {
             ItemStack stack = Kind.METAL.getItem().getDefaultInstance();
-            stack.getOrCreateTagElement("display").putString("key", backpackID);
+            stack.getOrCreateTag().putString("backpack_id", backpackID);
             return stack;
       }
 
@@ -107,7 +107,6 @@ public class Traits {
             public int color = 0xFFFFFF;
             private CompoundTag trim = new CompoundTag();
             public Component hoverName = Component.empty();
-            public int damage = 0;
 
             public LocalData(String key, Kind kind, int color, CompoundTag trim, Component hoverName, int damage) {
                   this.key = key == null ? "": key;
@@ -115,7 +114,6 @@ public class Traits {
                   this.color = color;
                   this.trim = trim == null ? new CompoundTag(): trim;
                   this.hoverName = hoverName == null ? Component.empty(): hoverName;
-                  this.damage = damage;
             }
 
             private LocalData(Kind kind) {
@@ -126,14 +124,13 @@ public class Traits {
             public LocalData(CompoundTag tag) {
                   String kindString = tag.getString("kind");
                   this.kind = Kind.fromName(kindString);
-                  this.key = tag.getString("key");
+                  this.key = tag.getString("backpack_id");
                   if (tag.contains("empty") && tag.getBoolean("empty"))
                         this.isEmpty = true;
                   else {
                         this.color = tag.getInt("color");
                         this.trim = tag.getCompound("Trim");
                         this.hoverName = Component.Serializer.fromJson(tag.getString("name"));
-                        this.damage = tag.getInt("damage");
                   }
             }
 
@@ -146,14 +143,13 @@ public class Traits {
             public CompoundTag toNBT() {
                   CompoundTag data = new CompoundTag();
                   data.putString("kind", kind.name());
-                  data.putString("key", key);
+                  data.putString("backpack_id", key);
                   if (isEmpty())
                         data.putBoolean("empty", true);
                   else {
                         data.putInt("color", color);
                         data.put("Trim", trim);
                         data.putString("name", Component.Serializer.toJson(hoverName));
-                        data.putInt("damage", damage);
                   }
                   return data;
             }
@@ -170,21 +166,21 @@ public class Traits {
                   Component hoverName = stack.hasCustomHoverName() ? stack.getHoverName(): Component.empty();
                   switch (kind) {
                         case UPGRADED -> {
-                              CompoundTag display = stack.getTagElement("display");
+                              CompoundTag tag = stack.getTag();
                               CompoundTag trim = stack.getTagElement("Trim");
-                              if (display == null)
+                              if (tag == null || !tag.contains("backpack_id"))
                                     return new LocalData("netherite", Kind.METAL, 0xFFFFFF, trim, hoverName, 0);
 
-                              String key = display.getString("key");
+                              String key = tag.getString("backpack_id");
                               return new LocalData(key, Kind.METAL, 0xFFFFFF, trim, hoverName, 0);
                         }
                         case METAL -> {
-                              CompoundTag display = stack.getTagElement("display");
+                              CompoundTag tag = stack.getTag();
                               CompoundTag trim = stack.getTagElement("Trim");
-                              if (display == null)
+                              if (tag == null || !tag.contains("backpack_id"))
                                     return new LocalData("", Kind.METAL, 0xFFFFFF, trim, hoverName, 0);
 
-                              String key = display.getString("key");
+                              String key = tag.getString("backpack_id");
                               return new LocalData(key, Kind.METAL, 0xFFFFFF, trim, hoverName, 0);
                         }
                         case LEATHER -> {

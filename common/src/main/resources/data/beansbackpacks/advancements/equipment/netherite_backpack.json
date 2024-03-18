@@ -2,7 +2,7 @@
   "display": {
     "icon": {
       "item": "beansbackpacks:metal_backpack",
-      "nbt": "{display:{key:netherite}}"
+      "nbt": "{backpack_id:netherite}"
     },
     "title": "Deep Pockets in Every Sense",
     "description": "Find a Place to Store Your Diamonds",
@@ -19,7 +19,7 @@
             "items": [
               "beansbackpacks:metal_backpack"
             ],
-            "nbt": "{display:{key:netherite}}"
+            "nbt": "{backpack_id:netherite}"
           }
         ]
       },

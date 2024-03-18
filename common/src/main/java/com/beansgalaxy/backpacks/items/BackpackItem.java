@@ -331,27 +331,27 @@ public class BackpackItem extends Item {
 
       @Override
       public Component getName(ItemStack stack) {
-            CompoundTag display = stack.getTagElement("display");
+            CompoundTag display = stack.getTag();
             Traits traits = Kind.getTraits(stack);
-            if (display != null && display.contains("key")) {
-                  String key = display.getString("key");
+            if (display != null && display.contains("backpack_id")) {
+                  String key = display.getString("backpack_id");
                   return Component.translatableWithFallback("tooltip.beansbackpacks.name." + key, traits.name);
             }
             return super.getName(stack);
       }
 
-      @Override
+      @Override @Deprecated // Since 20.1-0.18-v2
       public void verifyTagAfterLoad(CompoundTag tag) {
             if (tag.contains("display")) {
                   CompoundTag display = tag.getCompound("display");
                   if (display.contains("key")) {
                         String key = display.getString("key");
+                        display.remove("key");
+                        if (display.isEmpty())
+                              tag.remove("display");
                         switch (key) {
-                              case "leather", "iron", "ender", "winged" -> {
-                                    display.remove("key");
-                                    if (display.isEmpty())
-                                          tag.remove("display");
-                              }
+                              case "leather", "iron", "ender", "winged" -> {}
+                              default -> tag.putString("backpack_id", key);
                         }
                   }
             }

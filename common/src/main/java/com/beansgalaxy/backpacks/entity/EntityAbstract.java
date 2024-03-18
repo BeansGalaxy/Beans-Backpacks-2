@@ -50,6 +50,7 @@ public abstract class EntityAbstract extends Backpack {
       private double actualY;
       private static final int BREAK_TIMER = 25;
       public int wobble = 9;
+      private CompoundTag itemTags;
 
       // REGISTER BACKPACK CONSTRUCTOR
       public EntityAbstract(EntityType<? extends Entity> type, Level level) {
@@ -97,6 +98,7 @@ public abstract class EntityAbstract extends Backpack {
 
             backpack.setDirection(direction);
             backpack.entityData.set(LOCAL_DATA, traits.toNBT());
+            backpack.saveToItemTag(backpackStack.getTag());
 
             Component hoverName = backpackStack.hasCustomHoverName() ? backpackStack.getHoverName(): null;
             backpack.setCustomName(hoverName);
@@ -118,6 +120,18 @@ public abstract class EntityAbstract extends Backpack {
             return backpack;
       }
 
+      private void saveToItemTag(CompoundTag tag) {
+            tag.remove("backpack_id");
+            tag.remove("Trim");
+            if (tag.contains("display")) {
+                  CompoundTag display = tag.getCompound("display");
+                  display.remove("color");
+                  if (display.isEmpty())
+                        tag.remove("display");
+            }
+            this.itemTags = tag;
+      }
+
       @Override
       protected void defineSynchedData() {
             super.defineSynchedData();
@@ -130,6 +144,9 @@ public abstract class EntityAbstract extends Backpack {
                   kind = Kind.METAL;
             Item item = kind.getItem();
             ItemStack stack = item.getDefaultInstance();
+            CompoundTag itemTags = backpack.itemTags;
+            if (itemTags != null)
+                  stack.setTag(itemTags);
 
             if (item instanceof EnderBackpack enderBackpack && backpack.getPlacedBy() != null) {
                   enderBackpack.getOrCreateUUID(backpack.getPlacedBy(), stack);
@@ -146,7 +163,7 @@ public abstract class EntityAbstract extends Backpack {
                   case METAL, UPGRADED -> {
                         String key = traits.key;
                         if (!Constants.isEmpty(key) && !key.equals("iron")) // TODO: 20.1-0.18-v2 REMOVE KEY EQUALS IRON CHECK
-                              stack.getOrCreateTagElement("display").putString("key", key);
+                              stack.getOrCreateTag().putString("backpack_id", key);
                   }
                   case LEATHER -> hasDefaultColor = color == DEFAULT_COLOR;
                   case WINGED -> hasDefaultColor = color == WingedBackpack.WINGED_ENTITY;
@@ -162,9 +179,6 @@ public abstract class EntityAbstract extends Backpack {
             else {
                   stack.resetHoverName();
             }
-
-            if (item instanceof WingedBackpack)
-                  stack.setDamageValue(traits.damage);
 
             return stack;
       }
@@ -365,9 +379,11 @@ public abstract class EntityAbstract extends Backpack {
                   this.setDisplay(tag.getCompound("display"));
             else {
                   CompoundTag localData = tag.getCompound("local_data");
-                  this.entityData.set(PLACED_BY, Optional.of(localData.getUUID("placed_by")));
+                  this.entityData.set(PLACED_BY, Optional.of(localData.getUUID("owner")));
                   entityData.set(LOCAL_DATA, localData);
+                  itemTags = tag.getCompound("item_tags");
             }
+
       }
 
       @Override
@@ -381,8 +397,10 @@ public abstract class EntityAbstract extends Backpack {
             CompoundTag traits = getTraits().toNBT();
             UUID placedBy = getPlacedBy();
             if (placedBy != this.uuid && placedBy != null)
-                  traits.putUUID("placed_by", placedBy);
+                  traits.putUUID("owner", placedBy);
             tag.put("local_data", traits);
+            if (itemTags != null)
+                  tag.put("item_tags", itemTags);
       }
 
       // LOCAL

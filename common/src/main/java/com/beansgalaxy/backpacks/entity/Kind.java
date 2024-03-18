@@ -38,9 +38,9 @@ public enum Kind {
             if (kind == null)
                   return Traits.EMPTY;
 
-            CompoundTag display = stack.getTagElement("display");
-            if (display != null && display.contains("key")) {
-                  String id = display.getString("key");
+            CompoundTag tag = stack.getTag();
+            if (tag != null && tag.contains("backpack_id")) {
+                  String id = tag.getString("backpack_id");
                   return kind.traits(id);
             }
 
