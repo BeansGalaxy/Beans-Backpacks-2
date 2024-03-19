@@ -1,9 +1,0 @@
-{
-  "type": "beansbackpacks:crafting",
-  "material":  "minecraft:copper_ingot",
-  "binder": "minecraft:phantom_membrane",
-  "name": "Copper Backpack",
-  "key": "copper",
-  "kind": "METAL",
-  "max_stacks": 9
-}
