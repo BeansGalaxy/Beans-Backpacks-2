@@ -12,18 +12,20 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SmithingRecipe;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Smithing implements SmithingRecipe {
       public static final String ID = "smithing";
       public static final ResourceLocation LOCATION = new ResourceLocation(Constants.MOD_ID, ID);
       public static final RecipeSerializer<Smithing> INSTANCE = new Smithing.Serializer();
       private final String backpack_id;
-      private final Ingredient template;
-      private final Ingredient base;
-      private final Ingredient addition;
+      public final Ingredient template;
+      public final Ingredient base;
+      public final Ingredient addition;
 
       public Smithing(String backpack_id, Ingredient template, Ingredient base, Ingredient addition) {
             this.backpack_id = backpack_id;
@@ -68,7 +70,7 @@ public class Smithing implements SmithingRecipe {
       }
 
       @Override @NotNull
-      public ItemStack getResultItem(RegistryAccess registryAccess) {
+      public ItemStack getResultItem(@Nullable RegistryAccess registryAccess) {
             return Traits.toStack(backpack_id);
       }
 

@@ -20,6 +20,12 @@
         ],
         "client": [
             "com.beansgalaxy.backpacks.FabricClient"
+        ],
+        "rei_client": [
+            "com.beansgalaxy.backpacks.compat.REI"
+        ],
+        "emi": [
+            "com.beansgalaxy.backpacks.client.emi.EMI"
         ]
     },
     "mixins": [
