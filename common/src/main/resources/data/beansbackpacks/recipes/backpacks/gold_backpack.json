@@ -14,7 +14,7 @@
       "item": "minecraft:phantom_membrane"
     }
   },
-  "settings": {
+  "traits": {
     "fallback_name": "Gold Backpack"
   }
 }

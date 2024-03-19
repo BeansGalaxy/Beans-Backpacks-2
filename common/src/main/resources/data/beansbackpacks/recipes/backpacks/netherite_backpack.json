@@ -10,7 +10,7 @@
   "addition": {
     "item": "minecraft:netherite_ingot"
   },
-  "settings": {
+  "traits": {
     "max_stacks": 11,
     "fire_resistant": true,
     "fallback_name": "Netherite Backpack",

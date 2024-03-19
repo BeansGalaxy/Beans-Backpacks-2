@@ -68,7 +68,7 @@ public class DataResourcesMixin {
 
                         String key = GsonHelper.getAsString(jsonObject, "backpack_id");
                         if (!removedKeys.contains(key)) {
-                              JsonObject settings = GsonHelper.getAsJsonObject(jsonObject, "settings");
+                              JsonObject settings = GsonHelper.getAsJsonObject(jsonObject, "traits");
                               String fallbackName = GsonHelper.getAsString(settings, "fallback_name", "Iron Backpack");
                               int maxStacks = GsonHelper.getAsInt(settings, "max_stacks", 7);
                               boolean fireResistant = GsonHelper.getAsBoolean(settings, "fire_resistant", false);

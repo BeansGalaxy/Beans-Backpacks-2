@@ -120,19 +120,20 @@ public abstract class EntityAbstract extends Backpack {
             return backpack;
       }
 
-      private void saveToItemTag(CompoundTag tag) {
+      private void saveToItemTag(@Nullable CompoundTag tag) {
             if (tag == null)
                   return;
 
-            tag.remove("backpack_id");
-            tag.remove("Trim");
-            if (tag.contains("display")) {
-                  CompoundTag display = tag.getCompound("display");
+            CompoundTag copy = tag.copy();
+            copy.remove("backpack_id");
+            copy.remove("Trim");
+            if (copy.contains("display")) {
+                  CompoundTag display = copy.getCompound("display");
                   display.remove("color");
                   if (display.isEmpty())
-                        tag.remove("display");
+                        copy.remove("display");
             }
-            this.itemTags = tag;
+            this.itemTags = copy;
       }
 
       @Override
