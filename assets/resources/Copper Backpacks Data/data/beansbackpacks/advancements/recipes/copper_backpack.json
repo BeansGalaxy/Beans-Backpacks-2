@@ -1,0 +1,61 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_backpack": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "beansbackpacks:metal_backpack"
+            ]
+          }
+        ]
+      }
+    },
+    "has_copper": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:copper_ingot"
+            ]
+          }
+        ]
+      }
+    },
+    "has_membrane": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:phantom_membrane"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "beansbackpacks:copper_backpack"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_backpack",
+      "has_the_recipe",
+      "has_copper",
+      "has_membrane"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "beansbackpacks:backpacks/copper_backpack"
+    ]
+  },
+  "sends_telemetry_event": false
+}

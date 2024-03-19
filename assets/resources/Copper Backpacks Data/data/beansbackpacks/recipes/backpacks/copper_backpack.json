@@ -1,0 +1,20 @@
+{
+  "type": "beansbackpacks:crafting",
+  "backpack_id": "copper",
+  "pattern": [
+    "iBi",
+    "i i",
+    "iBi"
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:copper_ingot"
+    },
+    "B": {
+      "item": "minecraft:phantom_membrane"
+    }
+  },
+  "traits": {
+    "fallback_name": "Copper Backpack"
+  }
+}
