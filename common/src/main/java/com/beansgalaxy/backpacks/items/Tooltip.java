@@ -221,4 +221,8 @@ public class Tooltip {
       public static void playSound(SoundEvent soundEvent, float pitch, float volume) {
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(soundEvent, pitch, volume));
       }
+
+      public static void registerItemPredicates() {
+
+      }
 }

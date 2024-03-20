@@ -26,12 +26,16 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
+import java.awt.*;
 import java.util.UUID;
 
 public class FabricClient implements ClientModInitializer {
@@ -60,6 +64,11 @@ public class FabricClient implements ClientModInitializer {
                   case 2 -> WingedBackpack.shiftColorLayer2(((WingedBackpack) stack.getItem()).getColor(stack));
                   default -> 0xFFFFFF;
             }, FabricMain.WINGED_BACKPACK);
+
+            ItemProperties.register(Services.REGISTRY.getLeather(),
+                        new ResourceLocation("is_yellow"), RendererHelper.IS_YELLOW_ITEM_PREDICATE);
+            ItemProperties.register(Services.REGISTRY.getWinged(),
+                        new ResourceLocation("is_yellow"), RendererHelper.IS_YELLOW_ITEM_PREDICATE);
 
             ModelLoadingPlugin.register(new LoadItemModels());
 

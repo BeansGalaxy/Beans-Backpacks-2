@@ -5,6 +5,7 @@ import com.beansgalaxy.backpacks.ForgeMain;
 import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.client.renderer.*;
 import com.beansgalaxy.backpacks.client.renderer.features.BackFeature;
+import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.beansgalaxy.backpacks.items.WingedBackpack;
@@ -12,7 +13,9 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -66,6 +69,10 @@ public class ClientModEvents {
                   case 0 -> WingedBackpack.shiftColorLayer0(((WingedBackpack) stack.getItem()).getColor(stack));
                   case 2 -> WingedBackpack.shiftColorLayer2(((WingedBackpack) stack.getItem()).getColor(stack));
                   default -> 0xFFFFFF; }, ForgeMain.WINGED_BACKPACK.get());
+            ItemProperties.register(Services.REGISTRY.getLeather(),
+                        new ResourceLocation(Constants.MOD_ID, "is_yellow"), RendererHelper.IS_YELLOW_ITEM_PREDICATE);
+            ItemProperties.register(Services.REGISTRY.getWinged(),
+                        new ResourceLocation(Constants.MOD_ID, "is_yellow"), RendererHelper.IS_YELLOW_ITEM_PREDICATE);
       }
 
       @SubscribeEvent
