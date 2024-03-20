@@ -7,6 +7,7 @@ import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -55,6 +56,10 @@ public class Constants {
 
 	public static boolean isEmpty(String string) {
 		return string == null || string.isEmpty() || string.isBlank();
+	}
+
+	public static boolean isEmpty(Component component) {
+		return component == null || component.getContents().toString().equals("empty");
 	}
 
 	public static boolean elytraOrDisables(Item item) {

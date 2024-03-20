@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.data;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.Config;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.data.ServerSave;
@@ -76,7 +77,7 @@ public class RegisterCommands {
                                                 addBreak = true;
 
                                                 EnderStorage.Data enderData = ServerSave.MAPPED_ENDER_DATA.get(uuid);
-                                                if (enderData.getPlayerName().getContents().toString().equals("empty"))
+                                                if (Constants.isEmpty(enderData.getPlayerName()))
                                                       literal.append(Component.literal("(" + uuid + ")").withStyle(ChatFormatting.GRAY).withStyle(ChatFormatting.ITALIC));
                                                 else
                                                       literal.append(enderData.getPlayerNameColored(ctx.getSource().registryAccess()));
@@ -145,7 +146,7 @@ public class RegisterCommands {
                                                       List<UUID> forRemoval = new ArrayList<>();
                                                       for (UUID uuid : ServerSave.MAPPED_ENDER_DATA.keySet()) {
                                                             EnderStorage.Data enderData = ServerSave.MAPPED_ENDER_DATA.get(uuid);
-                                                            if (enderData.getPlayerName().getContents().toString().equals("empty"))
+                                                            if (Constants.isEmpty(enderData.getPlayerName()))
                                                                   forRemoval.add(uuid);
                                                       }
                                                       int total = forRemoval.size();

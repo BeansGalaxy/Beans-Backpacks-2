@@ -1,20 +1,23 @@
 package com.beansgalaxy.backpacks.client.renderer;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.client.renderer.features.ElytraFeature;
+import com.beansgalaxy.backpacks.client.renderer.models.BackpackModel;
+import com.beansgalaxy.backpacks.client.renderer.models.BackpackWingsModel;
 import com.beansgalaxy.backpacks.data.Traits;
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
-import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
+import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.items.WingedBackpack;
+import com.beansgalaxy.backpacks.screen.BackpackInventory;
+import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.SmithingScreen;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -31,93 +34,133 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
 import java.awt.*;
 
-import static com.beansgalaxy.backpacks.client.RendererHelper.renderOverlays;
-
 public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
       ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/entity/backpack/null.png");
-      private final BackpackModel<Backpack> model;
-      private final BackpackWingsModel<Backpack> wings;
+      private final BackpackModel<T> model;
+      private final BackpackWingsModel<T> wings;
       private final TextureAtlas trimAtlas;
 
       public BackpackRenderer(EntityRendererProvider.Context ctx) {
             super(ctx);
-            this.model = new BackpackModel<>(ctx.bakeLayer(RendererHelper.BACKPACK_MODEL));
+            this.model = new BackpackModel<>(ctx.bakeLayer(RenderHelper.BACKPACK_MODEL));
             this.trimAtlas = ctx.getModelManager().getAtlas(Sheets.ARMOR_TRIMS_SHEET);
-            this.wings = new BackpackWingsModel<>(ctx.bakeLayer(RendererHelper.PACK_WINGS_MODEL));
+            this.wings = new BackpackWingsModel<>(ctx.bakeLayer(RenderHelper.PACK_WINGS_MODEL));
       }
 
-      private float renderWobble(EntityAbstract backpack, float yaw) {
-            double breakTime = backpack.wobble;
-            return (float) (breakTime * Math.sin(breakTime / Math.PI * 4));
-      }
+      @Override
+      public void render(@NotNull T entity, float yaw, float tick, @NotNull PoseStack pose, @NotNull MultiBufferSource source, int light) {
+            Backpack backpack = (Backpack) entity;
 
-      public void render(T entity, float yaw, float tickDelta, PoseStack pose, MultiBufferSource mbs, int light) {
-            Backpack bEntity = ((Backpack) entity);
-            Traits.LocalData traits = bEntity.getTraits();
-            if (traits.isEmpty()) return;
+            Traits.LocalData traits = backpack.getTraits();
+            if (traits.isEmpty() || traits.kind == null)
+                  return;
 
-            BackpackInventory.Viewable viewable = bEntity.getViewable();
             Kind kind = traits.kind;
-            if (kind == null) return;
-
             Color tint;
             if (Kind.WINGED.is(kind)) {
                   tint = new Color(WingedBackpack.shiftColor(traits.color));
-                  if (entity.getDirection().getAxis().isHorizontal()) {
+                  if (backpack.getDirection().getAxis().isHorizontal()) {
                         pose.pushPose();
                         pose.mulPose(Axis.YN.rotationDegrees(yaw));
                         pose.scale(1.09f, 1.09f, 1.09f);
-                        this.wings.renderToBuffer(pose, mbs.getBuffer(this.model.renderType(ElytraFeature.WINGED_LOCATION)), light,
+                        this.wings.renderToBuffer(pose, source.getBuffer(this.model.renderType(ElytraFeature.WINGED_LOCATION)), light,
                                     OverlayTexture.NO_OVERLAY, tint.getRed() / 255f, tint.getGreen() / 255f, tint.getBlue() / 255f, 1f);
                         pose.popPose();
                   }
-            } else
-                  tint = new Color(traits.color);
+            }
+            else tint = new Color(traits.color);
 
-
-            if (entity instanceof EntityAbstract entityAbstract) {
-                  yaw += renderWobble(entityAbstract, yaw);
-                  renderHitbox(pose, mbs, entity, yaw, light);
+            if (backpack instanceof EntityAbstract entityAbstract) {
+                  double breakTime = entityAbstract.wobble;
+                  yaw += (float) (breakTime * Math.sin(breakTime / Math.PI * 4));
+                  renderNameAndHitbox(pose, source, entity, yaw, light);
             }
 
+            BackpackInventory.Viewable viewable = backpack.getViewable();
             pose.pushPose();
             pose.mulPose(Axis.YN.rotationDegrees(yaw));
             viewable.updateOpen();
-            model.head.xRot = viewable.headPitch;
-            model.body.z = -4;
-            model.body.yRot = (float) (180 * (Math.PI / 180));
-            model.body.xRot = (float) (180 * (Math.PI / 180));
+            this.model.setupPlaced(viewable.headPitch);
 
-            ModelPart mask = this.model.mask;
-            mask.xScale = 0.99f;
-            mask.yScale = 1f;
-            mask.zScale = 0.96f;
-            mask.z = 0.2f;
-
-            pose.translate(0, -3 / 16f, 0);
             ResourceLocation texture = kind.getAppendedResource(traits.key, "");
-            VertexConsumer vc = mbs.getBuffer(this.model.renderType(texture));
+            VertexConsumer vc = source.getBuffer(this.model.renderType(texture));
             this.model.renderToBuffer(pose, vc, light, OverlayTexture.NO_OVERLAY, tint.getRed() / 255F, tint.getGreen() / 255F, tint.getBlue() / 255F, 1F);
-            RegistryAccess registryAccess = bEntity.getCommandSenderWorld().registryAccess();
+            RegistryAccess registryAccess = backpack.getCommandSenderWorld().registryAccess();
+            renderOverlays(pose, light, source, tint, registryAccess, traits, this.model, this.trimAtlas);
 
-            CompoundTag trim = bEntity.getTraits().getTrim();
+            ResourceLocation interiorResource = kind.getAppendedResource(traits.key, Kind.is(kind, Kind.LEATHER, Kind.WINGED) ? "_interior" : "");
+            VertexConsumer interior = source.getBuffer(RenderType.entityTranslucent(interiorResource));
+            model.renderMask(pose, interior, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
 
-            renderOverlays(pose, light, mbs, tint, registryAccess, traits, trim, this.model, this.trimAtlas);
             pose.popPose();
       }
 
-      private void renderHitbox(PoseStack pose, MultiBufferSource mbs, T entity, float yaw, int light) {
+      public static void renderOverlays(PoseStack pose, int light, MultiBufferSource mbs, Color tint, RegistryAccess registryAccess, Traits.LocalData traits, BackpackModel model, TextureAtlas atlas) {
+            CompoundTag trim = traits.getTrim();
+            String button = traits.button();
+            if (!button.equals("none") || !trim.contains("material") || !trim.contains("pattern")) {
+                  if (RenderHelper.isYellow(new Color(traits.color))) {
+                        button = "amethyst";
+                  }
+                  if (!Constants.isEmpty(button)) {
+                        CompoundTag tag = new CompoundTag();
+                        tag.putString("pattern", Constants.MOD_ID + ":trim_button_default");
+                        tag.putString("material", button);
+                        trim = tag;
+                  }
+            }
+
+            TrimHelper.getBackpackTrim(registryAccess, trim).ifPresent((trim1) -> {
+                  VertexConsumer vc = atlas.getSprite(trim1.backpackTexture(traits.material())).wrap(mbs.getBuffer(Sheets.armorTrimsSheet()));
+                  Screen currentScreen = Minecraft.getInstance().screen;
+                  if (currentScreen instanceof BackpackScreen || currentScreen instanceof SmithingScreen) {
+                        pose.scale(1.001f, 0.995f, 1);
+                        for (int i = 0; i < 8; i++) {
+                              pose.scale(1.001f, 1.001f, 1.001f);
+                              model.renderToBuffer(pose, vc, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+                        }
+                  } else
+                        model.renderToBuffer(pose, vc, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+
+            });
+
+            Kind kind = traits.kind;
+            if (Kind.LEATHER.is(kind)) {
+                  ResourceLocation overlay = kind.getAppendedResource("", "_overlay");
+                  VertexConsumer overlayTexture = mbs.getBuffer(RenderType.entityTranslucent(overlay));
+                  model.renderToBuffer(pose, overlayTexture, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 0.5f);
+            }
+      }
+
+      private void renderNameAndHitbox(PoseStack pose, MultiBufferSource mbs, T entity, float yaw, int light) {
             Minecraft minecraft = Minecraft.getInstance();
             if (minecraft.hitResult instanceof EntityHitResult hitResult && hitResult.getEntity() == entity && !minecraft.options.hideGui) {
                   if (this.shouldShowName(entity)) {
                         Component displayName = entity.getDisplayName();
-                        if (!displayName.getContents().toString().equals("empty")) {
+                        if (!Constants.isEmpty(displayName)) {
                               pose.pushPose();
-                              renderNameTag(entity, displayName, pose, mbs, light);
+                              double $$5 = this.entityRenderDispatcher.distanceToSqr(entity);
+                              if (!($$5 > 4096.0)) {
+                                    Direction direction = entity.getDirection();
+                                    float y = entity.getNameTagOffsetY();
+                                    double yOff = entity.getEyeY() - entityRenderDispatcher.camera.getPosition().y;
+                                    y -= (float) (yOff / 16);
+                                    pose.translate(direction.getStepX() * 5/16f, y, direction.getStepZ() * 5/16f);
+                                    pose.mulPose(this.entityRenderDispatcher.cameraOrientation());
+                                    pose.scale(-0.02F, -0.02F, 1F);
+                                    Matrix4f $$9 = pose.last().pose();
+                                    float $$10 = Minecraft.getInstance().options.getBackgroundOpacity(0.25F);
+                                    int $$11 = (int)($$10 * 255.0F) << 24;
+                                    net.minecraft.client.gui.Font $$12 = this.getFont();
+                                    float $$13 = (float)(-$$12.width(displayName) / 2);
+                                    $$12.drawInBatch(displayName, $$13, 0, 553648127, false, $$9, mbs, Font.DisplayMode.SEE_THROUGH, $$11, light);
+                                    $$12.drawInBatch(displayName, $$13, 0, -1, false, $$9, mbs, Font.DisplayMode.NORMAL, 0, light);
+                              }
                               pose.popPose();
                         }
                   }
@@ -141,31 +184,6 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
                         pose.mulPose(Axis.YN.rotationDegrees(yaw));
                   }
                   pose.popPose();
-            }
-      }
-
-      @Override
-      protected void renderNameTag(T entity, Component $$1, PoseStack pose, MultiBufferSource mbs, int light) {
-            double $$5 = this.entityRenderDispatcher.distanceToSqr(entity);
-            if (!($$5 > 4096.0)) {
-                  boolean $$6 = !entity.isDiscrete();
-                  Direction direction = entity.getDirection();
-                  float y = entity.getNameTagOffsetY();
-                  double yOff = entity.getEyeY() - entityRenderDispatcher.camera.getPosition().y;
-                  y -= yOff / 16;
-                  int $$8 = "deadmau5".equals($$1.getString()) ? -10 : 0;
-                  pose.translate(direction.getStepX() * 5/16f, y, direction.getStepZ() * 5/16f);
-                  pose.mulPose(this.entityRenderDispatcher.cameraOrientation());
-                  pose.scale(-0.02F, -0.02F, 1F);
-                  Matrix4f $$9 = pose.last().pose();
-                  float $$10 = Minecraft.getInstance().options.getBackgroundOpacity(0.25F);
-                  int $$11 = (int)($$10 * 255.0F) << 24;
-                  Font $$12 = this.getFont();
-                  float $$13 = (float)(-$$12.width($$1) / 2);
-                  $$12.drawInBatch($$1, $$13, (float)$$8, 553648127, false, $$9, mbs, $$6 ? Font.DisplayMode.SEE_THROUGH : Font.DisplayMode.NORMAL, $$11, light);
-                  if ($$6) {
-                        $$12.drawInBatch($$1, $$13, (float)$$8, -1, false, $$9, mbs, Font.DisplayMode.NORMAL, 0, light);
-                  }
             }
       }
 

@@ -1,18 +1,24 @@
 package com.beansgalaxy.backpacks.mixin.client;
 
-import com.beansgalaxy.backpacks.client.RendererHelper;
+import com.beansgalaxy.backpacks.client.renderer.RenderHelper;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.platform.Services;
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.ItemCombinerScreen;
 import net.minecraft.client.gui.screens.inventory.SmithingScreen;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.SmithingMenu;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -71,7 +77,23 @@ public abstract class SmithingScreenMixin extends ItemCombinerScreen<SmithingMen
                         && Kind.isBackpack(smithingMenu.getSlot(3).getItem())
                         && backpackPreview.getTraits().maxStacks() != 0)
             {
-                  RendererHelper.renderBackpackForSmithing(graphics, (float) x, (float) y, backpackPreview);
+                  graphics.pose().pushPose();
+
+                  int scale = 50;
+                  graphics.pose().translate(x, y - 8, 50.0);
+                  Quaternionf rotation = new Quaternionf().rotationXYZ(0.43633232F, 3.5f, (float) Math.PI);
+
+                  graphics.pose().mulPoseMatrix(new Matrix4f().scaling((float) scale, (float) scale, (float) (-scale)));
+                  Lighting.setupForEntityInInventory();
+                  graphics.pose().mulPose(rotation);
+                  EntityRenderDispatcher $$8 = Minecraft.getInstance().getEntityRenderDispatcher();
+
+                  $$8.setRenderShadow(false);
+                  RenderSystem.runAsFancy(() -> $$8.render(backpackPreview, 0.0, 0.0, 0.0, 0.0F, 1.0F, graphics.pose(), graphics.bufferSource(), 15728880));
+                  graphics.flush();
+                  $$8.setRenderShadow(true);
+                  graphics.pose().popPose();
+                  Lighting.setupFor3DItems();
                   return true;
             }
             return false;

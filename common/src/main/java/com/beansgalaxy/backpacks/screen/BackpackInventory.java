@@ -203,7 +203,7 @@ public interface BackpackInventory extends Container {
 
             int weight = weightByItem(stack);
             Traits.LocalData traits = this.getTraits();
-            if (weight == 0 || traits == null || traits.isSpecial())
+            if (weight == 0 || traits == null || Kind.is(traits.kind, Kind.POT, Kind.CAULDRON))
                   return stack;
 
             boolean isServerSide = !getOwner().level().isClientSide();

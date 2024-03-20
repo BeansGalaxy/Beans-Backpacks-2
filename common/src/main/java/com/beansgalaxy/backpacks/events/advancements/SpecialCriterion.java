@@ -38,7 +38,8 @@ public class SpecialCriterion extends SimpleCriterionTrigger<SpecialCriterion.Co
       }
 
       public void trigger(ServerPlayer player, Special special) {
-            trigger(player, conditions -> conditions.requirementsMet(special));
+            if (player != null)
+                  trigger(player, conditions -> conditions.requirementsMet(special));
       }
 
       public enum Special {

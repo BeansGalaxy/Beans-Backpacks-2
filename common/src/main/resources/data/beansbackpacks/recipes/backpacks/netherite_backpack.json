@@ -14,6 +14,7 @@
     "max_stacks": 11,
     "fire_resistant": true,
     "fallback_name": "Netherite Backpack",
-    "button_material": "netherite"
+    "button": "minecraft:netherite",
+    "material": "netherite"
   }
 }

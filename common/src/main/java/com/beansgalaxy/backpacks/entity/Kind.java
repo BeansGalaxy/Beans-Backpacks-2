@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 
+import java.util.Arrays;
 import java.util.function.Function;
 
 public enum Kind {
@@ -68,33 +69,12 @@ public enum Kind {
 
       }
 
-      public static boolean isStorage(ItemStack stack) {
-            if (stack.isEmpty())
-                  return false;
-
-            if (stack.is(Services.REGISTRY.getEnder()))
-                  return true;
-
-            int maxStacks = Traits.LocalData.fromStack(stack).maxStacks();
-            return maxStacks > 0;
-      }
-
       public static boolean isWings(ItemStack backStack) {
             if (backStack.is(Services.REGISTRY.getWinged()))
                   return true;
 
             return Constants.ELYTRA_ITEMS.contains(backStack.getItem());
       }
-
-      public boolean isTrimmable() {
-            return isMetal() || this == Kind.ENDER;
-      }
-
-      @Deprecated // 20.1-0.18-v2
-      public boolean isMetal() {
-            return this == Kind.METAL || this == Kind.UPGRADED;
-      }
-
 
       public static Kind fromStack(ItemStack stack) {
             for(Kind kind: Kind.values())
@@ -130,10 +110,14 @@ public enum Kind {
             return this == kind;
       }
 
+      public static boolean is(Kind kind, Kind... kinds) {
+            return kind != null && Arrays.stream(kinds).anyMatch(in -> in == kind);
+      }
+
       public ResourceLocation getAppendedResource(String key, String append) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("textures/entity/");
-            if (!Constants.isEmpty(key) && this.isMetal())
+            if (!Constants.isEmpty(key) && Kind.is(this, Kind.METAL, Kind.UPGRADED))
                   stringBuilder.append("backpack/").append(key);
             else
                   stringBuilder.append(this.name().toLowerCase());

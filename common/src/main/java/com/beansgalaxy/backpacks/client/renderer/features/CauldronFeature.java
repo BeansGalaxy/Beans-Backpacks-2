@@ -3,9 +3,8 @@ package com.beansgalaxy.backpacks.client.renderer.features;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.access.BucketItemAccess;
 import com.beansgalaxy.backpacks.access.BucketsAccess;
-import com.beansgalaxy.backpacks.client.RendererHelper;
-import com.beansgalaxy.backpacks.client.renderer.CauldronModel;
-import com.beansgalaxy.backpacks.client.renderer.PotModel;
+import com.beansgalaxy.backpacks.client.renderer.RenderHelper;
+import com.beansgalaxy.backpacks.client.renderer.models.CauldronModel;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.screen.CauldronInventory;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -18,30 +17,21 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelManager;
-import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.DecoratedPotBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 import java.awt.*;
 import java.util.Optional;
@@ -54,7 +44,7 @@ public class CauldronFeature<T extends LivingEntity, M extends EntityModel<T>> {
     private final TextureAtlas blocksAtlas;
 
     public CauldronFeature(EntityModelSet loader, ModelManager modelManager, BackFeature<T, M> backFeature) {
-        this.cauldronModel = new CauldronModel<>(loader.bakeLayer(RendererHelper.CAULDRON_MODEL));
+        this.cauldronModel = new CauldronModel<>(loader.bakeLayer(RenderHelper.CAULDRON_MODEL));
         this.blocksAtlas = modelManager.getAtlas(InventoryMenu.BLOCK_ATLAS);
         this.backFeature = backFeature;
     }

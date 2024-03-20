@@ -1,4 +1,4 @@
-package com.beansgalaxy.backpacks.client.renderer;
+package com.beansgalaxy.backpacks.client.renderer.models;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.mojang.blaze3d.vertex.PoseStack;

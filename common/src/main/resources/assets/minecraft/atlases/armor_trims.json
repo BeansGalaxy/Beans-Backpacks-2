@@ -3,6 +3,7 @@
     {
       "type": "paletted_permutations",
       "textures": [
+        "beansbackpacks:trims/trim_button_default",
         "beansbackpacks/trims"
       ],
       "palette_key": "trims/color_palettes/trim_palette",

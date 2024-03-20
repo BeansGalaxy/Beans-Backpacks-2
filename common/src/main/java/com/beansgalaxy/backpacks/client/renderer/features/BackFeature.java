@@ -12,10 +12,9 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-
-import static com.beansgalaxy.backpacks.client.RendererHelper.sneakInter;
 
 public class BackFeature<T extends LivingEntity, M extends EntityModel<T>>
         extends RenderLayer<T, M> {
@@ -32,6 +31,15 @@ public class BackFeature<T extends LivingEntity, M extends EntityModel<T>>
         potFeature = new PotFeature<>(loader, this);
         cauldronFeature = new CauldronFeature<>(loader, modelManager, this);
         elytraFeature = new ElytraFeature<>(loader, this);
+    }
+
+    public static void weld(ModelPart welded, ModelPart weldTo) {
+          welded.xRot = weldTo.xRot;
+          welded.yRot = weldTo.yRot;
+          welded.zRot = weldTo.zRot;
+          welded.x = weldTo.x;
+          welded.y = weldTo.y;
+          welded.z = weldTo.z;
     }
 
     @Override
@@ -54,5 +62,15 @@ public class BackFeature<T extends LivingEntity, M extends EntityModel<T>>
             if (Kind.isWings(backStack))
                 elytraFeature.render(pose, mbs, light, entity, limbAngle, limbDistance, animationProgress, yHeadRot, headPitch, this.getParentModel(), backData);
         }
+    }
+
+    static float sneakInter(Entity entity, float sneakInter) {
+        if (entity.isCrouching())
+            sneakInter += sneakInter < 3 ? 1 : 0;
+        else {
+            sneakInter -= sneakInter > 1 ? 1 : 0;
+            sneakInter -= sneakInter > 0 ? 1 : 0;
+        }
+        return sneakInter;
     }
 }

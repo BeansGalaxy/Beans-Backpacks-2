@@ -1,12 +1,12 @@
 package com.beansgalaxy.backpacks.client.renderer.features;
 
-import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.client.RendererHelper;
-import com.beansgalaxy.backpacks.client.renderer.BackpackModel;
+import com.beansgalaxy.backpacks.client.renderer.RenderHelper;
+import com.beansgalaxy.backpacks.client.renderer.models.BackpackModel;
+import com.beansgalaxy.backpacks.client.renderer.BackpackRenderer;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.items.WingedBackpack;
+import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
@@ -26,7 +26,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.awt.*;
 
-import static com.beansgalaxy.backpacks.client.RendererHelper.weld;
+import static com.beansgalaxy.backpacks.client.renderer.features.BackFeature.weld;
 
 public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
 
@@ -35,7 +35,7 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
     private final BackFeature<T, M> backFeature;
 
     public BackpackFeature(EntityModelSet loader, ModelManager modelManager, BackFeature<T, M> backFeature) {
-        this.backpackModel = new BackpackModel<>(loader.bakeLayer(RendererHelper.BACKPACK_MODEL));
+        this.backpackModel = new BackpackModel<>(loader.bakeLayer(RenderHelper.BACKPACK_MODEL));
         this.trimAtlas = modelManager.getAtlas(Sheets.ARMOR_TRIMS_SHEET);
         this.backFeature = backFeature;
     }
@@ -48,7 +48,7 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
         weld(backpackBody, torso);
         BackpackInventory.Viewable viewable = backData.backpackInventory.getViewable();
         viewable.updateOpen();
-        backpackModel.head.xRot = viewable.headPitch;
+        backpackModel.body.getChild("head").xRot = viewable.headPitch;
         int color = traits.color;
 
         float scale = backFeature.sneakInter / 3f;
@@ -64,13 +64,10 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
         Color tint = new Color(color);
         ResourceLocation texture = traits.kind.getAppendedResource(traits.key, "");
         VertexConsumer vc = mbs.getBuffer(backpackModel.renderType(texture));
-        backpackModel.mask.xScale = 0.999f;
-        backpackModel.mask.zScale = 0.93f;
-        backpackModel.mask.z = 0.4f;
         backpackModel.renderToBuffer(pose, vc, light, OverlayTexture.NO_OVERLAY, tint.getRed() / 255F, tint.getGreen() / 255F, tint.getBlue() / 255F, 1F);
 
         RegistryAccess registryAccess = player.getCommandSenderWorld().registryAccess();
-        RendererHelper.renderOverlays(pose, light, mbs, tint, registryAccess, traits, backData.getTrim(), backpackModel, this.trimAtlas);
+        BackpackRenderer.renderOverlays(pose, light, mbs, tint, registryAccess, traits, backpackModel, this.trimAtlas);
         pose.popPose();
     }
 }

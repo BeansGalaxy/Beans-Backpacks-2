@@ -5,19 +5,21 @@ import com.beansgalaxy.backpacks.entity.Kind;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.function.BiFunction;
 
 public class Traits {
-      public static final Traits EMPTY = new Traits("Err", 0, true, Button.NETHERITE);
-      public static final Traits LEATHER = new Traits("Backpack", 4, false, Button.GOLD);
-      public static final Traits IRON = new Traits("Iron Backpack", 7, false, Button.DIAMOND);
-      public static final Traits ENDER = new Traits("Ender Backpack", 4, false, Button.NONE);
-      public static final Traits WINGED = new Traits("Winged Backpack", 4, false, Button.GOLD);
-      public static final Traits POT = new Traits("Decorated Pot", 999, false, Button.NONE);
-      public static final Traits CAULDRON = new Traits("Cauldron", 999, false, Button.NONE);
+      public static final Traits EMPTY = new Traits("Err", 0, true, "none", null);
+      public static final Traits LEATHER = new Traits("Backpack", 4, false, "minecraft:gold", "leather");
+      public static final Traits IRON = new Traits("Iron Backpack", 7, false, "minecraft:diamond", "iron");
+      public static final Traits ENDER = new Traits("Ender Backpack", 4, false, "none", "turtle");
+      public static final Traits WINGED = new Traits("Winged Backpack", 4, false, "minecraft:gold", "leather");
+      public static final Traits POT = new Traits("Decorated Pot", 999, false, "none", null);
+      public static final Traits CAULDRON = new Traits("Cauldron", 999, false, "none", null);
 
       public static final BiFunction<Kind, String, ResourceLocation> DEFAULT_RESOURCE =
                   (kind, key) -> new ResourceLocation(Constants.MOD_ID, "textures/entity/" + kind.name().toLowerCase() + ".png");
@@ -25,20 +27,36 @@ public class Traits {
       public final String name;
       public final int maxStacks;
       public final boolean fireResistant;
-      public final Button button;
+      public final String button;
+      public final ArmorMaterial material;
 
-      public Traits(String name, int maxStacks, boolean fireResistant, Button button) {
+      public Traits(String name, int maxStacks, boolean fireResistant, String button, String material) {
             this.name = name;
             this.maxStacks = maxStacks;
             this.fireResistant = fireResistant;
             this.button = button;
+            this.material = getMaterial(material);
       }
 
       public Traits(CompoundTag tag) {
             this.maxStacks = tag.getInt("max_stacks");
             this.name = tag.getString("name");
             this.fireResistant = tag.getBoolean("fire_resistant");
-            this.button = Button.fromName(tag.getString("button"));
+            this.button = tag.getString("button");
+            this.material = getMaterial(tag.getString("material"));
+      }
+
+      static ArmorMaterials getMaterial(String key) {
+            if (Constants.isEmpty(key))
+                  return ArmorMaterials.LEATHER;
+
+            for (ArmorMaterials armorMaterial : ArmorMaterials.values()) {
+                  String armor = armorMaterial.getName();
+
+                  if (armor.equals(key))
+                        return armorMaterial;
+            }
+            return ArmorMaterials.LEATHER;
       }
 
       public static void clear() {
@@ -50,7 +68,8 @@ public class Traits {
             data.putString("name", name);
             data.putInt("max_stacks", maxStacks);
             data.putBoolean("fire_resistant", fireResistant);
-            data.putString("button", button.name());
+            data.putString("button", button);
+            data.putString("material", material.getName());
 
             return data;
       }
@@ -201,10 +220,6 @@ public class Traits {
                   return EMPTY;
             }
 
-            public boolean isSpecial() {
-                  return Kind.POT.is(kind) || Kind.CAULDRON.is(kind);
-            }
-
             public Traits traits() {
                   return kind.traits(key);
             }
@@ -221,7 +236,7 @@ public class Traits {
                   return traits().fireResistant;
             }
 
-            public Button button() {
+            public String button() {
                   return traits().button;
             }
 
@@ -231,6 +246,10 @@ public class Traits {
 
             public boolean isStorage() {
                   return !isEmpty && maxStacks() > 0;
+            }
+
+            public ArmorMaterial material() {
+                  return traits().material;
             }
       }
 

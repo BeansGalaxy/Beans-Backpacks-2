@@ -1,7 +1,11 @@
 package com.beansgalaxy.backpacks;
 
-import com.beansgalaxy.backpacks.client.RendererHelper;
+import com.beansgalaxy.backpacks.client.renderer.RenderHelper;
 import com.beansgalaxy.backpacks.client.renderer.*;
+import com.beansgalaxy.backpacks.client.renderer.models.BackpackModel;
+import com.beansgalaxy.backpacks.client.renderer.models.BackpackWingsModel;
+import com.beansgalaxy.backpacks.client.renderer.models.CauldronModel;
+import com.beansgalaxy.backpacks.client.renderer.models.PotModel;
 import com.beansgalaxy.backpacks.compat.TrinketsRegistry;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.data.EnderStorage;
@@ -26,7 +30,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -35,7 +38,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
-import java.awt.*;
 import java.util.UUID;
 
 public class FabricClient implements ClientModInitializer {
@@ -44,10 +46,10 @@ public class FabricClient implements ClientModInitializer {
       public void onInitializeClient() {
             NetworkPackages.registerS2CPackets();
 
-            EntityModelLayerRegistry.registerModelLayer(RendererHelper.POT_MODEL, PotModel::getTexturedModelData);
-            EntityModelLayerRegistry.registerModelLayer(RendererHelper.CAULDRON_MODEL, CauldronModel::createBodyLayer);
-            EntityModelLayerRegistry.registerModelLayer(RendererHelper.BACKPACK_MODEL, BackpackModel::getTexturedModelData);
-            EntityModelLayerRegistry.registerModelLayer(RendererHelper.PACK_WINGS_MODEL, BackpackWingsModel::createBodyLayer);
+            EntityModelLayerRegistry.registerModelLayer(RenderHelper.POT_MODEL, PotModel::getTexturedModelData);
+            EntityModelLayerRegistry.registerModelLayer(RenderHelper.CAULDRON_MODEL, CauldronModel::createBodyLayer);
+            EntityModelLayerRegistry.registerModelLayer(RenderHelper.BACKPACK_MODEL, BackpackModel::getTexturedModelData);
+            EntityModelLayerRegistry.registerModelLayer(RenderHelper.PACK_WINGS_MODEL, BackpackWingsModel::createBodyLayer);
             LivingEntityFeatureRendererRegistrationCallback.EVENT.register(new AppendModelLayers());
 
             EntityRendererRegistry.register(FabricMain.BACKPACK_ENTITY, BackpackRenderer::new);
@@ -66,9 +68,9 @@ public class FabricClient implements ClientModInitializer {
             }, FabricMain.WINGED_BACKPACK);
 
             ItemProperties.register(Services.REGISTRY.getLeather(),
-                        new ResourceLocation("is_yellow"), RendererHelper.IS_YELLOW_ITEM_PREDICATE);
+                        new ResourceLocation("is_yellow"), RenderHelper.IS_YELLOW_ITEM_PREDICATE);
             ItemProperties.register(Services.REGISTRY.getWinged(),
-                        new ResourceLocation("is_yellow"), RendererHelper.IS_YELLOW_ITEM_PREDICATE);
+                        new ResourceLocation("is_yellow"), RenderHelper.IS_YELLOW_ITEM_PREDICATE);
 
             ModelLoadingPlugin.register(new LoadItemModels());
 

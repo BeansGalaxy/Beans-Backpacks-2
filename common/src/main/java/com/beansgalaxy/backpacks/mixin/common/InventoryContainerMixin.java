@@ -103,7 +103,7 @@ public abstract class InventoryContainerMixin implements BackAccessor {
       @Inject(method = "add(Lnet/minecraft/world/item/ItemStack;)Z", at = @At("HEAD"), cancellable = true)
       public void checkCauldronPotItem(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
             Kind kind = Kind.fromStack(stack);
-            if (Kind.POT.is(kind) || Kind.CAULDRON.is(kind)) {
+            if (Kind.is(kind, Kind.POT, Kind.CAULDRON)) {
                   CompoundTag backTag = stack.getTagElement("back_slot");
                   if (backTag != null) {
                         BackData backData = getBackData();
@@ -200,7 +200,7 @@ public abstract class InventoryContainerMixin implements BackAccessor {
                   BackData backData = getBackData();
                   BackpackInventory backpackInventory = backData.backpackInventory;
                   Traits.LocalData traits = backData.getTraits();
-                  if (traits.isSpecial() && backpackInventory.isEmpty())
+                  if (Kind.is(traits.kind, Kind.POT, Kind.CAULDRON) && backpackInventory.isEmpty())
                         return;
 
                   if (!traits.isStorage())

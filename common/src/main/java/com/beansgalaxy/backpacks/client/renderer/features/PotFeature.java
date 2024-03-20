@@ -1,8 +1,8 @@
 package com.beansgalaxy.backpacks.client.renderer.features;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.client.RendererHelper;
-import com.beansgalaxy.backpacks.client.renderer.PotModel;
+import com.beansgalaxy.backpacks.client.renderer.RenderHelper;
+import com.beansgalaxy.backpacks.client.renderer.models.PotModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
@@ -25,7 +25,7 @@ public class PotFeature<T extends LivingEntity, M extends EntityModel<T>> {
     private final BackFeature<T, M> backFeature;
 
     public PotFeature(EntityModelSet loader, BackFeature<T, M> backFeature) {
-        this.potModel = new PotModel<>(loader.bakeLayer(RendererHelper.POT_MODEL));
+        this.potModel = new PotModel<>(loader.bakeLayer(RenderHelper.POT_MODEL));
         this.backFeature = backFeature;
     }
 
@@ -38,7 +38,7 @@ public class PotFeature<T extends LivingEntity, M extends EntityModel<T>> {
         pose.pushPose();
         for (int j = 0; j < potModel.getModelParts().size(); j++) {
             ModelPart modelPart = potModel.getModelParts().get(j);
-            RendererHelper.weld(modelPart, torso);
+            BackFeature.weld(modelPart, torso);
         }
 
         float scale = backFeature.sneakInter / 3f;

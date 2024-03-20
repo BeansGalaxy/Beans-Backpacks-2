@@ -2,9 +2,13 @@ package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.ForgeMain;
-import com.beansgalaxy.backpacks.client.RendererHelper;
+import com.beansgalaxy.backpacks.client.renderer.RenderHelper;
 import com.beansgalaxy.backpacks.client.renderer.*;
 import com.beansgalaxy.backpacks.client.renderer.features.BackFeature;
+import com.beansgalaxy.backpacks.client.renderer.models.BackpackModel;
+import com.beansgalaxy.backpacks.client.renderer.models.BackpackWingsModel;
+import com.beansgalaxy.backpacks.client.renderer.models.CauldronModel;
+import com.beansgalaxy.backpacks.client.renderer.models.PotModel;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
@@ -55,10 +59,10 @@ public class ClientModEvents {
 
       @SubscribeEvent
       public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
-            event.registerLayerDefinition(RendererHelper.BACKPACK_MODEL, BackpackModel::getTexturedModelData);
-            event.registerLayerDefinition(RendererHelper.PACK_WINGS_MODEL, BackpackWingsModel::createBodyLayer);
-            event.registerLayerDefinition(RendererHelper.POT_MODEL, PotModel::getTexturedModelData);
-            event.registerLayerDefinition(RendererHelper.CAULDRON_MODEL, CauldronModel::createBodyLayer);
+            event.registerLayerDefinition(RenderHelper.BACKPACK_MODEL, BackpackModel::getTexturedModelData);
+            event.registerLayerDefinition(RenderHelper.PACK_WINGS_MODEL, BackpackWingsModel::createBodyLayer);
+            event.registerLayerDefinition(RenderHelper.POT_MODEL, PotModel::getTexturedModelData);
+            event.registerLayerDefinition(RenderHelper.CAULDRON_MODEL, CauldronModel::createBodyLayer);
       }
 
       @SubscribeEvent
@@ -70,9 +74,9 @@ public class ClientModEvents {
                   case 2 -> WingedBackpack.shiftColorLayer2(((WingedBackpack) stack.getItem()).getColor(stack));
                   default -> 0xFFFFFF; }, ForgeMain.WINGED_BACKPACK.get());
             ItemProperties.register(Services.REGISTRY.getLeather(),
-                        new ResourceLocation(Constants.MOD_ID, "is_yellow"), RendererHelper.IS_YELLOW_ITEM_PREDICATE);
+                        new ResourceLocation(Constants.MOD_ID, "is_yellow"), RenderHelper.IS_YELLOW_ITEM_PREDICATE);
             ItemProperties.register(Services.REGISTRY.getWinged(),
-                        new ResourceLocation(Constants.MOD_ID, "is_yellow"), RendererHelper.IS_YELLOW_ITEM_PREDICATE);
+                        new ResourceLocation(Constants.MOD_ID, "is_yellow"), RenderHelper.IS_YELLOW_ITEM_PREDICATE);
       }
 
       @SubscribeEvent

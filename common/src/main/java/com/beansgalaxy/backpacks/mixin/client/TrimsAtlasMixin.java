@@ -22,13 +22,12 @@ import java.util.function.Supplier;
 
 @Mixin(PalettedPermutations.class)
 public abstract class TrimsAtlasMixin {
-    @Mutable
-    @Shadow @Final private List<ResourceLocation> textures;
-    @Unique private String backpackTrimsLocation = "beansbackpacks/trims";
+    @Mutable @Shadow @Final private List<ResourceLocation> textures;
+    @Unique private static final ResourceLocation BACKPACK_TRIMS = new ResourceLocation("beansbackpacks/trims");
 
     @Redirect(method = "run", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/texture/atlas/sources/PalettedPermutations;textures:Ljava/util/List;"))
     public List<ResourceLocation> injectBackpackTrims(PalettedPermutations instance, ResourceManager resourceManager) {
-        if(textures.size() == 1 && textures.get(0).equals(new ResourceLocation(backpackTrimsLocation))) {
+        if (textures.stream().anyMatch(in -> in.equals(BACKPACK_TRIMS))) {
             Set<ResourceLocation> resourceLocations =
                     resourceManager.listResources("textures/trims/backpacks", in ->
                             in.getPath().endsWith(".png"))
@@ -39,6 +38,8 @@ public abstract class TrimsAtlasMixin {
                         newLocations.add(in.withPath(path ->
                                     path.replace("textures/", "").replace(".png", ""))));
 
+            newLocations.addAll(textures);
+            newLocations.remove(BACKPACK_TRIMS);
             return newLocations.stream().toList();
         }
         return textures;
