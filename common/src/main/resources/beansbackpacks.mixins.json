@@ -9,13 +9,20 @@
     "common.ComparatorMixin",
     "common.DataResourcesMixin",
     "common.ElytraItemMixin",
+    "common.ExperienceOrbMixin",
     "common.HopperEntityMixin",
     "common.InteractWithPlayer",
     "common.InventoryContainerMixin",
     "common.InventoryMenuMixin",
     "common.ItemCombinerMixin",
+    "common.ItemEntityMixin",
     "common.ItemStackMixin",
-    "common.ServerPlayMixin"
+    "common.ServerPlayMixin",
+    "common.buckets.BeehiveBlockMixin",
+    "common.buckets.BucketItemMixin",
+    "common.buckets.BucketSolidsMixin",
+    "common.buckets.HoneyBlockMixin",
+    "common.buckets.HoneyBottleMixin"
   ],
   "client": [
     "client.ArmorTrimMixin",

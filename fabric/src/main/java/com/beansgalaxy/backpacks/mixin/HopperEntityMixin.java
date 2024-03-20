@@ -39,7 +39,7 @@ public class HopperEntityMixin {
             Direction direction = Direction.DOWN;
             boolean r = !isEmptyContainer(container, direction) && backpackInventory.hopperTakeOne(hopper);
             if (r)
-                PlaySound.TAKE.at(backpackInventory.getOwner(), backpackInventory.getLocalData().kind(), 0.8f);
+                PlaySound.TAKE.at(backpackInventory.getOwner(), backpackInventory.getTraits().kind, 0.8f);
             cir.setReturnValue(r);
         }
     }

@@ -4,8 +4,8 @@ import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.RendererHelper;
 import com.beansgalaxy.backpacks.client.renderer.BackpackModel;
 import com.beansgalaxy.backpacks.data.BackData;
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.data.Traits;
+import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.items.WingedBackpack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -42,7 +42,7 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
 
     public void render(PoseStack pose, MultiBufferSource mbs, int light, AbstractClientPlayer player, ModelPart torso, BackData backData) {
         ModelPart backpackBody = backpackModel.body;
-        Traits.LocalData traits = backData.backpackInventory.getLocalData();
+        Traits.LocalData traits = backData.getTraits();
 
         pose.pushPose();
         weld(backpackBody, torso);
@@ -62,7 +62,7 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
             pose.translate(0, (1 / 16f) * scale, (1 / 32f) * scale);
 
         Color tint = new Color(color);
-        ResourceLocation texture = new ResourceLocation(Constants.MOD_ID, "textures/entity/" + traits.key + ".png");
+        ResourceLocation texture = traits.kind.getAppendedResource(traits.key, "");
         VertexConsumer vc = mbs.getBuffer(backpackModel.renderType(texture));
         backpackModel.mask.xScale = 0.999f;
         backpackModel.mask.zScale = 0.93f;

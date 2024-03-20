@@ -16,9 +16,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
@@ -60,8 +59,9 @@ public class BackData {
                   return this.itemStacks;
             }
 
-            @Override public Traits.LocalData getLocalData() {
-                  return localData;
+            @Override
+            public Traits.LocalData getTraits() {
+                  return traits;
             }
 
             @Override
@@ -76,7 +76,7 @@ public class BackData {
       public final BackSlot backSlot = new BackSlot(this);
       public final InSlot inSlot = new InSlot(this);
       private final HashSet<EnderStorage.PackagedLocation> enderLocations = new HashSet<>();
-      private Traits.LocalData localData = Traits.LocalData.EMPTY;
+      private Traits.LocalData traits = Traits.LocalData.EMPTY;
       private ItemStack backStack = ItemStack.EMPTY;
       public boolean actionKeyPressed = false;
 
@@ -101,8 +101,8 @@ public class BackData {
             return Services.COMPAT.getBackSlotItem(this, backStack);
       }
 
-      public Traits.LocalData getLocalData() {
-            return localData;
+      public Traits.LocalData getTraits() {
+            return traits;
       }
 
       public boolean isEmpty() {
@@ -114,7 +114,7 @@ public class BackData {
                   UUID uuid = enderBackpack.getOrCreateUUID(owner.getUUID(), backStack);
                   return EnderStorage.getTrim(uuid, owner.level());
             }
-            return localData.trim;
+            return traits.getTrim();
       }
 
       public void set(ItemStack stack) {
@@ -127,7 +127,7 @@ public class BackData {
                   enderBackpack.getOrCreateUUID(owner.getUUID(), stack);
 
             this.backStack = stack;
-            this.localData = Traits.LocalData.fromstack(stack);
+            this.traits = Traits.LocalData.fromStack(stack);
             this.setChanged();
       }
 
@@ -181,7 +181,9 @@ public class BackData {
 
             NonNullList<ItemStack> droppedItems = drop(x, y, z, direction, yaw);
             while (!droppedItems.isEmpty()) {
-                  owner.spawnAtLocation(droppedItems.remove(0));
+                  ItemEntity itemEntity = owner.spawnAtLocation(droppedItems.remove(0));
+                  if (itemEntity != null)
+                        itemEntity.setExtendedLifetime();
             }
       }
 
@@ -202,27 +204,11 @@ public class BackData {
             ItemStack backStack = getStack();
             if (!Kind.isBackpack(backStack)) {
                   droppedItems.add(backStack.copy());
-                  if (Kind.POT.is(backStack)) {
-                        int iteration = 0;
-                        int maxIterations = 108;
-                        while (!itemStacks.isEmpty() && iteration < maxIterations) {
-                              ItemStack stack = itemStacks.remove(iteration);
-                              if (stack.getMaxStackSize() == 64) {
-                                    droppedItems.add(stack);
-                              } else while (stack.getCount() > 0) {
-                                    int removedCount = Math.min(stack.getCount(), stack.getMaxStackSize());
-                                    droppedItems.add(stack.copyWithCount(removedCount));
-                                    stack.shrink(removedCount);
-                              }
-                              iteration++;
-                        }
-                        SoundEvent soundEvent = iteration >= maxIterations ? SoundEvents.DECORATED_POT_BREAK : SoundEvents.DECORATED_POT_SHATTER;
-                        owner.playSound(soundEvent, 0.4f, 0.8f);
-                  }
+                  set(ItemStack.EMPTY);
                   return droppedItems;
             }
-
-            EntityAbstract.create(backStack, x, y, z, yaw, true, direction, owner, itemStacks);
+            if (!owner.level().isClientSide())
+                  EntityAbstract.create(backStack, x, y, z, yaw, true, direction, owner, itemStacks);
 
             set(ItemStack.EMPTY);
             return droppedItems;

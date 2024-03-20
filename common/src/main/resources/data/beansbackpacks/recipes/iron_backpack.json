@@ -1,9 +1,21 @@
 {
-  "type": "beansbackpacks:backpack_crafting",
-  "material":  "minecraft:iron_ingot",
-  "binder": "minecraft:phantom_membrane",
-  "name": "Iron Backpack",
-  "key": "iron",
-  "kind": "METAL",
-  "max_stacks": 7
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "iPi",
+    "i i",
+    "iPi"
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "P": {
+      "item": "minecraft:phantom_membrane"
+    }
+  },
+  "result": {
+    "item": "beansbackpacks:metal_backpack",
+    "count": 1
+  }
 }

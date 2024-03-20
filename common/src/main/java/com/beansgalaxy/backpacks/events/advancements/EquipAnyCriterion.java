@@ -25,7 +25,7 @@ public class EquipAnyCriterion extends SimpleCriterionTrigger<EquipAnyCriterion.
       @Override
       protected Conditions createInstance(JsonObject object, ContextAwarePredicate contextAwarePredicate, DeserializationContext var3) {
             Item item = GsonHelper.getAsItem(object, "item");
-            String key = GsonHelper.getAsString(object, "key", "");
+            String key = GsonHelper.getAsString(object, "backpack_id", "");
             boolean isDyed = GsonHelper.getAsBoolean(object, "is_dyed", false);
 
             return new Conditions(item, key, isDyed, contextAwarePredicate);
@@ -56,9 +56,9 @@ public class EquipAnyCriterion extends SimpleCriterionTrigger<EquipAnyCriterion.
                         return backpackDyed;
                   }
 
-                  CompoundTag display = backStack.getTagElement("display");
-                  if (!key.isEmpty() && display != null) {
-                        String key = display.getString("key");
+                  CompoundTag display = backStack.getTag();
+                  if (!Constants.isEmpty(key) && display != null) {
+                        String key = display.getString("backpack_id");
                         return Objects.equals(this.key, key);
                   }
 

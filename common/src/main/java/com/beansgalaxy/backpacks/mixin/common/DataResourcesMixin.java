@@ -2,21 +2,21 @@ package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.Traits;
-import com.mojang.authlib.minecraft.client.ObjectMapper;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.flag.FeatureFlagSet;
-import org.apache.commons.io.IOUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -52,18 +52,32 @@ public class DataResourcesMixin {
                         new HashSet<>(readStringList(resourceManager, "remove_backpack_keys"));
 
             Traits.clear();
-            resourceManager.listResources("recipes", (in) ->
+            resourceManager.listResources("recipes/backpacks", (in) ->
                   in.getPath().endsWith(".json") && in.getNamespace().equals(Constants.MOD_ID))
                         .forEach(((resourceLocation, resource) -> {
                   try {
-                        InputStream open = resource.open();
-                        String json = IOUtils.toString(open, StandardCharsets.UTF_8);
+                        BufferedReader bufferedReader = resource.openAsReader();
+                        StringBuilder sb = new StringBuilder();
+                        String line;
+                        while ((line = bufferedReader.readLine()) != null)
+                              sb.append(line);
+                        bufferedReader.close();
+                        String string = sb.toString();
 
-                        ObjectMapper map = ObjectMapper.create();
-                        Traits.Raw raw = map.readValue(json, Traits.Raw.class);
+                        JsonObject jsonObject = JsonParser.parseString(string).getAsJsonObject();
 
-                        if (!removedKeys.contains(raw.key))
-                              Traits.register(raw.key, new Traits(raw));
+                        String key = GsonHelper.getAsString(jsonObject, "backpack_id");
+                        if (!removedKeys.contains(key)) {
+                              JsonObject settings = GsonHelper.getAsJsonObject(jsonObject, "traits");
+                              String fallbackName = GsonHelper.getAsString(settings, "fallback_name", "Iron Backpack");
+                              int maxStacks = GsonHelper.getAsInt(settings, "max_stacks", 7);
+                              boolean fireResistant = GsonHelper.getAsBoolean(settings, "fire_resistant", false);
+                              String button_material = GsonHelper.getAsString(settings, "button_material", "diamond");
+                              Traits.Button button = Traits.Button.fromName(button_material);
+
+                              Traits.register(key, new Traits(fallbackName, maxStacks, fireResistant, button));
+                        }
+                        Traits.register("null", new Traits("Null Backpack", 11, true, Traits.Button.NONE));
 
                   } catch (IOException e) {
                         throw new RuntimeException(e);

@@ -3,15 +3,14 @@ package com.beansgalaxy.backpacks.mixin.common;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.access.BackAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
-import com.beansgalaxy.backpacks.screen.BackSlot;
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
-import com.beansgalaxy.backpacks.screen.InSlot;
+import com.beansgalaxy.backpacks.screen.*;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.SlotAccess;
@@ -19,6 +18,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,9 +31,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = InventoryMenu.class, priority = 899)
 public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftingContainer>{
-
-      @Shadow @Final private Player owner;
-      @Shadow @Final private static EquipmentSlot[] SLOT_IDS;
 
       @Shadow public abstract ItemStack quickMoveStack(Player player, int i);
 
@@ -83,7 +80,8 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
 
             BackData backData = BackData.get(player);
             ItemStack backStack = backData.getStack();
-            Kind kind = Kind.fromStack(backStack);
+            Traits.LocalData traits = backData.getTraits();
+            Kind kind = traits.kind;
             BackpackInventory backpackInventory = backData.backpackInventory;
             Slot slot = slots.get(slotIndex);
             ItemStack stack = slot.getItem();
@@ -105,29 +103,20 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                   return;
             }
 
+            Level level = player.level();
             if (!backData.isEmpty() && Constants.elytraOrDisables(cursorStack.getItem()))
             {
                   if (selectedEquipment && !slot.hasItem() && !cursorStack.isEmpty())
                   {
-                        if (player.level().isClientSide)
+                        if (level.isClientSide)
                               Tooltip.playSound(kind, PlaySound.HIT);
                         return;
                   }
                   if (actionType == ClickType.QUICK_MOVE && !selectedBackpackInventory) {
-                        if (player.level().isClientSide())
+                        if (level.isClientSide())
                               Tooltip.playSound(kind, PlaySound.HIT);
                         return;
                   }
-            }
-
-            if (selectedBackpackInventory && actionType == ClickType.THROW && cursorStack.isEmpty() && Kind.POT.is(kind))
-            {
-                  ItemStack backpackStack = backpackInventory.getItem(0);
-                  int maxStack = backpackStack.getMaxStackSize();
-                  int count = button == 0 ? 1 : Math.min(stack.getCount(), maxStack);
-                  ItemStack itemStack = backpackInventory.removeItem(0, count);
-                  owner.drop(itemStack, true);
-                  return;
             }
 
             if (slotIndex < InventoryMenu.INV_SLOT_START || actionType == ClickType.THROW) {
@@ -163,13 +152,27 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                   }
             }
 
-            if (backData.actionKeyPressed && selectedPlayerInventory) {
+            if (backData.actionKeyPressed && selectedPlayerInventory ) {
                   if (backStack.isEmpty() && backData.backSlot.isActive() && !stack.isEmpty() && Kind.isWearable(stack)) {
                         slot.set(backData.backSlot.safeInsert(stack));
                         return;
                   }
-                  else if (Kind.isStorage(backStack)) {
-                        if (!player.level().isClientSide() || !Kind.ENDER.is(kind))
+                  else if (Kind.POT.is(kind)) {
+                        PotInventory.add(backStack, stack, player);
+                        return;
+                  }
+                  else if (Kind.CAULDRON.is(kind)) {
+                        ItemStack returned = CauldronInventory.quickInsert(backStack, stack, level);
+                        if (!returned.isEmpty()) {
+                              if (stack.isEmpty())
+                                    slot.set(returned);
+                              else
+                                    player.getInventory().placeItemBackInInventory(returned);
+                        }
+                        return;
+                  }
+                  else if (traits.isStorage()) {
+                        if (!level.isClientSide() || !Kind.ENDER.is(kind))
                               slot.set(backpackInventory.insertItem(stack, stack.getCount()));
                         if (player instanceof ServerPlayer serverPlayer && Kind.ENDER.is(kind))
                               Services.NETWORK.sendEnderData2C(serverPlayer, serverPlayer.getUUID());

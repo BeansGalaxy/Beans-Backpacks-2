@@ -3,10 +3,10 @@ package com.beansgalaxy.backpacks.items;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
-import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -16,6 +16,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -24,6 +25,7 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,9 +49,21 @@ public class Tooltip {
             // IS BACKPACK EQUIPPED
             BackData backData = BackData.get(player);
             ItemStack equippedOnBack = backData.getStack();
-            if (!stack.equals(equippedOnBack) || backData.backpackInventory.isEmpty())
-                  return Optional.empty();
+            if (stack.equals(equippedOnBack)) {
+                  if (equippedOnBack.getTagElement("back_slot") != null)
+                        return specialTooltip(equippedOnBack, backData);
+                  if (!backData.backpackInventory.isEmpty())
+                        return backpackTooltip(player, backData);
+            }
+            return Optional.empty();
+      }
 
+      private static Optional<TooltipComponent> specialTooltip(ItemStack equippedOnBack, BackData backData) {
+            return Optional.empty();
+      }
+
+      @NotNull
+      private static Optional<TooltipComponent> backpackTooltip(Player player, BackData backData) {
             NonNullList<ItemStack> defaultedList = NonNullList.create();
             NonNullList<ItemStack> backpackList = BackData.get(player).backpackInventory.getItemStacks();
             backpackList.forEach(itemstack -> defaultedList.add(itemstack.copy()));
@@ -65,7 +79,7 @@ public class Tooltip {
                         defaultedList.removeIf(ItemStack::isEmpty);
                   }
             }
-            int totalWeight = getBundleOccupancy(defaultedList) / backData.backpackInventory.getLocalData().maxStacks();
+            int totalWeight = getBundleOccupancy(defaultedList) / backData.backpackInventory.getTraits().maxStacks();
             return Optional.of(new BundleTooltip(defaultedList, totalWeight));
       }
 
@@ -85,8 +99,7 @@ public class Tooltip {
 
       /** LORE AND NAME **/
       public static Component name(ItemStack stack) {
-            String key = stack.getOrCreateTagElement("display").getString("key");
-            return Component.literal(Traits.get(key).name);
+            return Component.literal(Kind.getTraits(stack).name);
       }
 
       private static final MutableComponent empty = Component.literal("");
@@ -99,6 +112,10 @@ public class Tooltip {
             components.add(Component.translatable("tooltip.beansbackpacks.empty_title_1", keyBind));
             MutableComponent t2 = Component.translatable("tooltip.beansbackpacks.empty_title_2", keyBind);
             if (!t2.getString().isEmpty()) components.add(t2);
+      }
+
+      public static void nullTitle(List<Component> components) {
+            components.add(Component.translatable("tooltip.beansbackpacks.null_title", Component.literal(keyBind.toLowerCase()).withStyle(ChatFormatting.GRAY)));
       }
 
       public static List<Component> addLore(List<Component> components, String kind, int lines) {
@@ -131,6 +148,23 @@ public class Tooltip {
             return components;
       }
 
+      public static List<Component> addNullLore(List<Component> components, Player player) {
+            components.add(Component.translatable("tooltip.beansbackpacks.help.null0"));
+            components.add(Component.translatable("tooltip.beansbackpacks.help.null1"));
+            components.add(empty);
+            components.add(Component.translatable("tooltip.beansbackpacks.help.null2"));
+            components.add(Component.translatable("tooltip.beansbackpacks.help.null3"));
+            components.add(Component.translatable("tooltip.beansbackpacks.help.null4"));
+            components.add(empty);
+            components.add(Component.translatable("tooltip.beansbackpacks.help.null5"));
+            components.add(Component.translatable("tooltip.beansbackpacks.help.null6"));
+            components.add(empty);
+            components.add(Component.translatable("tooltip.beansbackpacks.help.null7"));
+            components.add(Component.translatable("tooltip.beansbackpacks.help.null8", player.getName().plainCopy().withStyle(ChatFormatting.GOLD)));
+
+            return components;
+      }
+
       public static KeyMapping getKeyBinding() {
             Minecraft instance = Minecraft.getInstance();
             KeyMapping sprintKey = instance.options.keySprint;
@@ -157,7 +191,7 @@ public class Tooltip {
 
             BackpackInventory backpackInventory = backData.backpackInventory;
             int spaceLeft = backpackInventory.spaceLeft();
-            int maxStacks = backpackInventory.getLocalData().maxStacks();
+            int maxStacks = backpackInventory.getTraits().maxStacks();
 
             if (spaceLeft < 1) {
                   barColor = FULL_COLOR;
@@ -181,6 +215,10 @@ public class Tooltip {
       public static void playSound(Kind kind, PlaySound playSound, float volume) {
             Random rnd = new Random();
             float pitch = playSound.isRandom() ? (rnd.nextFloat() / 4f) + 0.8f : 1f;
-            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(Services.REGISTRY.getSound(kind, playSound), pitch, volume));
+            playSound(Services.REGISTRY.getSound(kind, playSound), pitch, volume);
+      }
+
+      public static void playSound(SoundEvent soundEvent, float pitch, float volume) {
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(soundEvent, pitch, volume));
       }
 }

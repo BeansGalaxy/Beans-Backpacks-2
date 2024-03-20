@@ -1,9 +1,21 @@
 {
-  "type": "beansbackpacks:backpack_crafting",
-  "material":  "minecraft:leather",
-  "binder": "minecraft:string",
-  "name": "Backpack",
-  "key": "leather",
-  "kind": "LEATHER",
-  "max_stacks": 4
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "iPi",
+    "i i",
+    "iPi"
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:leather"
+    },
+    "P": {
+      "item": "minecraft:string"
+    }
+  },
+  "result": {
+    "item": "beansbackpacks:backpack",
+    "count": 1
+  }
 }

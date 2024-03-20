@@ -54,7 +54,7 @@
   ],
   "rewards": {
     "recipes": [
-      "beansbackpacks:gold_backpack"
+      "beansbackpacks:backpacks/gold_backpack"
     ]
   },
   "sends_telemetry_event": false

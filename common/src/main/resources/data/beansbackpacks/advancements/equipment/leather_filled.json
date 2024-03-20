@@ -1,15 +1,14 @@
 {
   "display": {
     "icon": {
-      "item": "beansbackpacks:metal_backpack",
-      "nbt": "{display:{key:iron}}"
+      "item": "beansbackpacks:metal_backpack"
     },
     "title": "Time for an Upgrade",
     "description": "Fill a Leather Backpack",
     "show_toast": true,
     "announce_to_chat": true
   },
-  "parent": "beansbackpacks:place_backpack",
+  "parent": "beansbackpacks:interactions/place",
   "criteria": {
     "requirement": {
       "trigger": "minecraft:beansbackpacks/special",
@@ -20,7 +19,7 @@
   },
   "rewards": {
     "recipes": [
-      "beansbackpacks:gold_backpack",
+      "beansbackpacks:backpacks/gold_backpack",
       "beansbackpacks:iron_backpack"
     ]
   }

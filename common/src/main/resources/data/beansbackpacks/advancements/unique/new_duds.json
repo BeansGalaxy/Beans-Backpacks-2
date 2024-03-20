@@ -2,14 +2,14 @@
   "display": {
     "icon": {
       "item": "beansbackpacks:backpack",
-      "nbt": "{display:{color:11546150,key:leather}}"
+      "nbt": "{display:{color:11546150}}"
     },
     "title": "My New Duds",
     "description": "Equip a Dyed Backpack",
     "show_toast": true,
     "announce_to_chat": true
   },
-  "parent": "beansbackpacks:place_backpack",
+  "parent": "beansbackpacks:interactions/place",
   "criteria": {
     "requirement": {
       "trigger": "minecraft:beansbackpacks/equip_any",

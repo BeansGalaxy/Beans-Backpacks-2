@@ -1,19 +1,19 @@
 {
   "display": {
     "icon": {
-      "item": "minecraft:decorated_pot"
+      "item": "minecraft:cauldron"
     },
-    "title": "Hoarder",
-    "description": "Equip a Decorated Pot",
+    "title": "New Drip",
+    "description": "Equip a Cauldron",
     "show_toast": true,
     "announce_to_chat": true
   },
-  "parent": "beansbackpacks:filled_leather",
+  "parent": "beansbackpacks:equipment/leather_filled",
   "criteria": {
     "requirement": {
       "trigger": "minecraft:beansbackpacks/equip_any",
       "conditions": {
-        "item": "minecraft:decorated_pot"
+        "item": "minecraft:cauldron"
       }
     }
   }

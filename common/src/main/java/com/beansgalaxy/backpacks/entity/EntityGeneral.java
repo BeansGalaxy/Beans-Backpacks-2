@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.entity;
 
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.data.Traits;
+import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
@@ -41,8 +41,8 @@ public class EntityGeneral extends EntityAbstract {
             }
 
             @Override
-            public Traits.LocalData getLocalData() {
-                  return EntityGeneral.this.getLocalData();
+            public Traits.LocalData getTraits() {
+                  return EntityGeneral.this.getTraits();
             }
 
             @Override
@@ -61,9 +61,9 @@ public class EntityGeneral extends EntityAbstract {
             super(type, level);
       }
 
-      public EntityGeneral(Level level, UUID uuid, NonNullList<ItemStack> stacks) {
-            super(Services.REGISTRY.getGeneralEntity(), level);
-            this.entityData.set(PLACED_BY, Optional.of(uuid));
+      public EntityGeneral(Player player, NonNullList<ItemStack> stacks) {
+            super(Services.REGISTRY.getGeneralEntity(), player.level());
+            this.entityData.set(OWNER, Optional.of(player.getUUID()));
 
             if (stacks != null && !stacks.isEmpty()) {
                   getItemStacks().addAll(stacks);

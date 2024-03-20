@@ -1,15 +1,14 @@
 package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.data.BackData;
-import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.data.Traits;
+import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
@@ -49,24 +48,14 @@ public class BackpackMenu extends AbstractContainerMenu {
                         return backpackInventory.getPlacedBy();
                   }
 
-                  @Override
-                  public CompoundTag getTrim() {
-                        Traits.LocalData localData = getLocalData();
-                        if (Kind.ENDER.is(localData.kind()))
-                              return EnderStorage.getTrim(getPlacedBy(), level());
-
-                        return localData.trim;
-                  }
-
                   @Override public BackpackInventory.Viewable getViewable() {
                         return backpackInventory.getViewable();
                   }
-
-                  @Override public Traits.LocalData getLocalData() {
-                        return backpackInventory.getLocalData();
+                  @Override public Traits.LocalData getTraits() {
+                        return backpackInventory.getTraits();
                   }
             };
-            this.max_stacks = backpackInventory.getLocalData().maxStacks();
+            this.max_stacks = backpackInventory.getTraits().maxStacks();
             createInventorySlots(playerInventory);
             FIRST_SLOT_INDEX = slots.size();
             createBackpackSlots(backpackInventory);
@@ -127,7 +116,7 @@ public class BackpackMenu extends AbstractContainerMenu {
       }
 
       public void clicked(int slotIndex, int button, ClickType actionType, Player player) {
-            Kind kind = backpackInventory.getLocalData().kind();
+            Kind kind = backpackInventory.getTraits().kind;
             if (owner.level().isClientSide() && Kind.ENDER.is(kind))
                   return;
 

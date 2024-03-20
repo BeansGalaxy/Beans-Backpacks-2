@@ -2,6 +2,8 @@ package com.beansgalaxy.backpacks.platform.services;
 
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
+import com.beansgalaxy.backpacks.events.UseKeyEvent;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
@@ -33,4 +35,6 @@ public interface NetworkHelper {
       void sendEnderData2C(ServerPlayer player, UUID uuid);
 
       void sendEnderLocations2C(ServerPlayer serverPlayer, BackData backData);
+
+      void useCauldron2S(BlockPos pos, UseKeyEvent.Type type);
 }

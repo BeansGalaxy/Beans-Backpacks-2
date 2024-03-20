@@ -8,7 +8,7 @@
     "show_toast": true,
     "announce_to_chat": true
   },
-  "parent": "beansbackpacks:place_backpack",
+  "parent": "beansbackpacks:interactions/place",
   "criteria": {
     "requirement": {
       "trigger": "minecraft:beansbackpacks/special",

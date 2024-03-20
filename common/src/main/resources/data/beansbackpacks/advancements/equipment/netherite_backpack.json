@@ -1,8 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "beansbackpacks:upgraded_backpack",
-      "nbt": "{display:{key:netherite}}"
+      "item": "beansbackpacks:metal_backpack",
+      "nbt": "{backpack_id:netherite}"
     },
     "title": "Deep Pockets in Every Sense",
     "description": "Find a Place to Store Your Diamonds",
@@ -10,16 +10,16 @@
     "show_toast": true,
     "announce_to_chat": true
   },
-  "parent": "beansbackpacks:filled_leather",
+  "parent": "beansbackpacks:equipment/leather_filled",
   "criteria": {
     "requirement": {
       "conditions": {
         "items": [
           {
             "items": [
-              "beansbackpacks:upgraded_backpack"
+              "beansbackpacks:metal_backpack"
             ],
-            "nbt": "{display:{key:netherite}}"
+            "nbt": "{backpack_id:netherite}"
           }
         ]
       },

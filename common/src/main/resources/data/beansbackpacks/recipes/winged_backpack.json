@@ -1,10 +1,16 @@
 {
-  "type": "beansbackpacks:backpack_smithing",
-  "template": "minecraft:netherite_upgrade_smithing_template",
-  "base": "beansbackpacks:backpack",
-  "material": "minecraft:elytra",
-  "name": "Winged Backpack",
-  "key": "winged",
-  "kind": "WINGED",
-  "max_stacks": 4
+  "type": "minecraft:smithing_transform",
+  "category": "equipment",
+  "template": {
+    "item": "minecraft:netherite_upgrade_smithing_template"
+  },
+  "base": {
+    "item": "minecraft:elytra"
+  },
+  "addition": {
+    "item": "beansbackpacks:backpack"
+  },
+  "result": {
+    "item": "beansbackpacks:winged_backpack"
+  }
 }

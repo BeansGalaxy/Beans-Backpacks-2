@@ -2,8 +2,7 @@
 
 <h3> FYI <img align="right" src="assets/images/back_slot.gif" alt="Back Slot" style="margin:10px"> </h3>
 
-1.20.2 updates will come slower than 1.20.1 until a full release. If there are any critical bugs then 
-they will be patched but 1.20.1 will be the most up to date version. Ports to 1.20.4 will come after 
+1.20.2 is stable but development has been put on pause until 1.20.1 is out of beta. 1.20.1 is the most up-to-date version. Ports to 1.20.4+ will come after 
 we're out of beta. Ports to 1.19 and earlier is TBD.
 
 ### Grave Mod Developers
@@ -21,13 +20,49 @@ the issues tab. </p>
 
 <h1 align="center"> Changelog </h1>
 
-### 20.1-0.17-v3 & 20.2-0.17-v2
+### 20.1-0.19-v3 & 20.2-0.17-v2
 
+- Completely rewrote backpack traits *([how-to add custom backpacks](https://github.com/BeansGalaxy/Beans-Backpacks-2/wiki/Custom-Backpacks--20.1%E2%80%900.19%E2%80%90v2))*
+- Backpack Items now all have hard coded default traits w/o a `backpack_id`
+- Backpack traits identifier `display{key:_}` has now been renamed to `backpack_id`
+- Removed dyable backpacks through data
+- Adding backpacks through data has been streamlined for more functionality in the future
+- Added `fire_resistant` boolean to backpack traits
+- Removed `upgraded_backpack`
+- Replaced existing Netherite Backpacks with cosmetic Null Backpacks
+- Winged backpacks now keep their enchantments when placed
+- Updated Winged Backpack recipe to carry over elytra enchantments
+- Pots can now store items with nbt
+- Hotkey + RClick on Pots and Cauldrons to equip them
+- You can now pick up fluid out of placed cauldrons
+- Fixed crash when rendering any tooltip with Ender Backpack equipped
+
+With the changes to Backpack traits it is now impossible to change the sizes/disable default backpacks. 
+This will be re-introduced in an update soon to add config.
+
+<h3> 20.1-0.18-v2 & 20.2-0.17-v2 <img align="right" src="assets/images/updates/wet_update.png" alt="Back Slot" style="width:400px"> </h3>
+
+- Added wearable cauldrons
+  - Holds 24 buckets
+  - Fluids can be placed/picked-up with hotkey
+  - Hotkey + clicking on containers in inventory quickly empties
+  - You can carry water, lava, powdered snow, honey, and modded fluids
+- Changes to Decorated Pot
+  - Limited to 128 stacks
+  - Never deletes items if over 108 stacks on death
+  - Drops as item on death. Can only be picked up if back slot is empty
+  - Only hold items w/o nbt or damage
+- Enchanted Books act like they stack to 16 in backpacks 
+- Backpacks act like they stack to 16 in backpacks *(you can carry 16 in leather backpacks)*
+- Added many new Advancements for new features
+  - Re-organized Advancements so many will be lost
+- Fixed "Time for an Upgrade" Advancement again
+
+### 20.1-0.17-v3 & 20.2-0.17-v2
 - Added many methods for compatibility with other developers. *([You're In Grave Danger](https://modrinth.com/mod/yigd))*
 - That's it for now.
 
 ### 20.1-0.16-v3 & 20.2-0.17-v2
-
 - With various grave mods installed the backpack will try not to place in the grave on death.
 - Fixed elytra item not dropping on death
 - Fixed items being deleted while equipping a non-ender backpack

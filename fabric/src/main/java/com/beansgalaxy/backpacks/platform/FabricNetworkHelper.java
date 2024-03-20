@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.platform;
 
 import com.beansgalaxy.backpacks.FabricMain;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.events.UseKeyEvent;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
@@ -15,6 +16,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -144,5 +146,14 @@ public class FabricNetworkHelper implements NetworkHelper {
                   location.writeBuf(buf);
 
             ServerPlayNetworking.send(serverPlayer, NetworkPackages.ENDER_POS_2C, buf);
+      }
+
+      @Override
+      public void useCauldron2S(BlockPos pos, UseKeyEvent.Type type) {
+            FriendlyByteBuf buf = PacketByteBufs.create();
+            buf.writeBlockPos(pos);
+            buf.writeByte(type.id);
+
+            ClientPlayNetworking.send(NetworkPackages.USE_CAULDRON_2S, buf);
       }
 }

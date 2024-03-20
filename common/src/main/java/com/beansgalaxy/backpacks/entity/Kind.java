@@ -5,22 +5,50 @@ import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
+
+import java.util.function.Function;
 
 public enum Kind {
-      LEATHER(Services.REGISTRY.getLeather()),
-      METAL(Services.REGISTRY.getMetal()),
-      UPGRADED(Services.REGISTRY.getUpgraded()),
-      POT(Items.DECORATED_POT.asItem()),
-      WINGED(Services.REGISTRY.getWinged()),
-      ENDER(Services.REGISTRY.getEnder());
+      LEATHER(  Services.REGISTRY.getLeather(),  key -> Traits.LEATHER,  data -> Kind.getAppendedName("", "Backpack")),
+      METAL(    Services.REGISTRY.getMetal(),    Traits::get,            Traits::getName),
+      UPGRADED( Services.REGISTRY.getUpgraded(), Traits::get,            Traits::getName),
+      WINGED(   Services.REGISTRY.getWinged(),   key -> Traits.WINGED,   data -> Kind.getAppendedName("winged_", "Winged Backpack")),
+      ENDER(    Services.REGISTRY.getEnder(),    key -> Traits.ENDER,    data -> Kind.getAppendedName("ender_", "Ender Backpack")),
+      POT(      Items.DECORATED_POT.asItem(),    key -> Traits.POT,      data -> Component.empty()),
+      CAULDRON( Items.CAULDRON.asItem(),         key -> Traits.CAULDRON, data -> Component.empty());
 
       final Item item;
+      final Function<String, Traits> getTraits;
+      private final Function<Traits.LocalData, Component> getName;
 
-      Kind(Item item) {
+      Kind(Item item, Function<String, Traits> getTraits, Function<Traits.LocalData, Component> getName) {
             this.item = item;
+            this.getTraits = getTraits;
+            this.getName = getName;
+      }
+
+      public static Traits getTraits(ItemStack stack) {
+            Kind kind = Kind.fromStack(stack);
+            if (kind == null)
+                  return Traits.EMPTY;
+
+            CompoundTag tag = stack.getTag();
+            if (tag != null && tag.contains("backpack_id")) {
+                  String id = tag.getString("backpack_id");
+                  return kind.traits(id);
+            }
+
+            return Traits.IRON;
+      }
+
+      public Traits traits(String backpack_id) {
+            return getTraits.apply(backpack_id);
       }
 
       public static boolean isBackpack(ItemStack backpackStack) {
@@ -44,13 +72,10 @@ public enum Kind {
             if (stack.isEmpty())
                   return false;
 
-            if (stack.is(Items.DECORATED_POT) || stack.is(Services.REGISTRY.getEnder()))
+            if (stack.is(Services.REGISTRY.getEnder()))
                   return true;
 
-            CompoundTag tag = stack.getTag();
-            if (tag == null || !isBackpack(stack)) return false;
-
-            int maxStacks = Traits.LocalData.fromstack(stack).maxStacks();
+            int maxStacks = Traits.LocalData.fromStack(stack).maxStacks();
             return maxStacks > 0;
       }
 
@@ -62,13 +87,25 @@ public enum Kind {
       }
 
       public boolean isTrimmable() {
-            return this == Kind.METAL || this == Kind.UPGRADED || this == Kind.ENDER;
+            return isMetal() || this == Kind.ENDER;
+      }
+
+      @Deprecated // 20.1-0.18-v2
+      public boolean isMetal() {
+            return this == Kind.METAL || this == Kind.UPGRADED;
       }
 
 
       public static Kind fromStack(ItemStack stack) {
             for(Kind kind: Kind.values())
                   if (kind.is(stack))
+                        return kind;
+            return null;
+      }
+
+      public static Kind fromItem(ItemLike item) {
+            for(Kind kind: Kind.values())
+                  if (kind.item.equals(item.asItem()))
                         return kind;
             return null;
       }
@@ -91,5 +128,34 @@ public enum Kind {
 
       public boolean is(Kind kind) {
             return this == kind;
+      }
+
+      public ResourceLocation getAppendedResource(String key, String append) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("textures/entity/");
+            if (!Constants.isEmpty(key) && this.isMetal())
+                  stringBuilder.append("backpack/").append(key);
+            else
+                  stringBuilder.append(this.name().toLowerCase());
+
+            if (!Constants.isEmpty(append))
+                  stringBuilder.append(append);
+
+            stringBuilder.append(".png");
+            String location = stringBuilder.toString();
+            return new ResourceLocation(Constants.MOD_ID, location);
+      }
+
+      private static Component getAppendedName(String append, String fallback) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("item.beansbackpacks.");
+            if (append != null && !append.isEmpty() && !append.isBlank())
+                  stringBuilder.append(append.toLowerCase());
+            stringBuilder.append("backpack");
+            return Component.translatableWithFallback(stringBuilder.toString(), fallback);
+      }
+
+      public Component getName(Traits.LocalData traits) {
+            return getName.apply(traits);
       }
 }

@@ -3,8 +3,10 @@ package com.beansgalaxy.backpacks.mixin.common;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.phys.AABB;
@@ -37,5 +39,12 @@ public class HopperEntityMixin {
         if (container instanceof BackpackInventory backpackInventory && backpackInventory.isEmpty()) {
             cir.setReturnValue(IntStream.of(0));
         }
+    }
+
+    @Inject(method = "addItem(Lnet/minecraft/world/Container;Lnet/minecraft/world/entity/item/ItemEntity;)Z", at = @At("HEAD"), cancellable = true)
+    private static void cancelCauldronPotPickup(Container $$0, ItemEntity itemEntity, CallbackInfoReturnable<Boolean> cir) {
+        CompoundTag backSlot = itemEntity.getItem().getTagElement("back_slot");
+        if (backSlot != null)
+            cir.setReturnValue(false);
     }
 }

@@ -1,25 +1,29 @@
 package com.beansgalaxy.backpacks.items;
 
+import com.beansgalaxy.backpacks.access.BucketLikeAccess;
+import com.beansgalaxy.backpacks.access.BucketsAccess;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
-import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import com.beansgalaxy.backpacks.events.PlaySound;
+import com.beansgalaxy.backpacks.screen.CauldronInventory;
+import com.beansgalaxy.backpacks.screen.PotInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -28,9 +32,11 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class BackpackItem extends Item {
-      public BackpackItem(Item.Properties properties) {
+
+      public BackpackItem(Properties properties) {
             super(properties);
       }
 
@@ -56,18 +62,23 @@ public class BackpackItem extends Item {
 
             BackData backData = BackData.get(player);
             BackpackInventory backpackInventory = backData.backpackInventory;
-
             if (backStack != backData.getStack())
                   return false;
+
+            Level level = player.level();
+            boolean quickMove = backData.actionKeyPressed || shiftIsDown;
+            if (Kind.CAULDRON.is(kind))
+                  return handleCauldronClick(backStack, player, access, cursorStack, level);
+            if (Kind.POT.is(kind))
+                  return handlePotClick(backStack, player, access, cursorStack, quickMove, clickAction);
 
             if (backpackInventory.isEmpty())
                   if (cursorStack.isEmpty() || Kind.isWearable(cursorStack))
                         return false;
 
-            if (Kind.ENDER.is(kind) && player.level().isClientSide())
+            if (Kind.ENDER.is(kind) && level.isClientSide())
                   return true;
 
-            boolean quickMove = backData.actionKeyPressed || shiftIsDown;
             if (quickMove && clickAction != ClickAction.SECONDARY) {
                   handleQuickMove(player.getInventory(), backpackInventory);
                   return true;
@@ -77,9 +88,97 @@ public class BackpackItem extends Item {
                         cursorStack, 0, backpackInventory));
       }
 
+      private static boolean handlePotClick(ItemStack pot, Player player, SlotAccess access, ItemStack cursorStack, boolean quickMove, ClickAction clickAction) {
+            Level level = player.level();
+            if (quickMove && clickAction != ClickAction.SECONDARY) {
+                  Inventory inventory = player.getInventory();
+                  if (inventory.getFreeSlot() != -1) {
+                        ItemStack take = PotInventory.take(pot, false, level);
+                        if (take != null) {
+                              inventory.placeItemBackInInventory(take);
+                              return true;
+                        }
+                  }
+                  return pot.getTagElement("back_slot") != null;
+            }
+            ItemStack tookStack = null;
+            if (clickAction.equals(ClickAction.SECONDARY) && !cursorStack.isEmpty())
+            {
+                  ItemStack insertedStack = cursorStack.copyWithCount(1);
+                  ItemStack add = PotInventory.add(pot, insertedStack, player);
+                  if (add != null && add.isEmpty()) {
+                        cursorStack.shrink(1);
+                        return true;
+                  }
+            }
+            else if (cursorStack.isEmpty())
+                  tookStack = PotInventory.take(pot, ClickAction.SECONDARY.equals(clickAction), level);
+            else
+                  tookStack = PotInventory.add(pot, cursorStack, player);
+
+
+            if (tookStack != null) {
+                  access.set(tookStack);
+                  return true;
+            }
+
+            return pot.getTagElement("back_slot") != null;
+      }
+
+      private static boolean handleCauldronClick(ItemStack backStack, Player player, SlotAccess access, ItemStack cursorStack, Level level) {
+            Item bucket = cursorStack.getItem();
+
+            Item returned = null;
+            if (CauldronInventory.getBucket(backStack) instanceof BucketsAccess bucketsAccess && bucketsAccess.getEmptyInstance().equals(bucket))
+            {
+                  Item remove = CauldronInventory.remove(backStack);
+                  if (!remove.equals(Items.AIR)) {
+                        returned = remove;
+                  } else
+                        return backStack.hasTag() && backStack.getTagElement("back_slot") != null;
+            }
+            else if (CauldronInventory.sizeLeft(backStack) > 0)
+                  returned = CauldronInventory.add(backStack, bucket);
+
+            if (returned == null) return backStack.hasTag() && backStack.getTagElement("back_slot") != null;
+
+            ItemStack newStack = ItemStack.EMPTY;
+            Optional<SoundEvent> soundEvent = Optional.empty();
+            if (bucket instanceof BlockItem blockItem && blockItem.getBlock() instanceof BucketLikeAccess bucketLikeAccess)
+            {
+                  if (returned.equals(bucketLikeAccess.getEmptyInstance())) {
+                        newStack = bucketLikeAccess.getEmptyInstance().getDefaultInstance();
+                        soundEvent = Optional.of(bucketLikeAccess.defaultPlaceSound());
+                  } else {
+                        newStack = bucketLikeAccess.getFilledInstance().getDefaultInstance();
+                        soundEvent = bucketLikeAccess.getPickupSound();
+                  }
+            }
+            else if (bucket instanceof BucketsAccess bucketsAccess && returned.equals(bucketsAccess.getEmptyInstance())) {
+                  newStack = bucketsAccess.getEmptyInstance().getDefaultInstance();
+                  soundEvent = Optional.of(bucketsAccess.defaultPlaceSound());
+            }
+            else if (returned instanceof BucketsAccess bucketsAccess) {
+                  newStack = returned.getDefaultInstance();
+                  soundEvent = bucketsAccess.getPickupSound();
+            }
+
+            if (level.isClientSide() && soundEvent.isPresent())
+                  Tooltip.playSound(soundEvent.get(), 1, 0.4f);
+
+            if (cursorStack.getCount() == 1)
+                  access.set(newStack);
+            else {
+                  cursorStack.shrink(1);
+                  player.getInventory().placeItemBackInInventory(newStack);
+            }
+
+            return true;
+      }
+
       public static void handleQuickMove(Inventory playerInventory, BackpackInventory backpackInventory) {
             ItemStack stack = backpackInventory.getItem(0);
-            if (stack.isEmpty())
+            if (stack.isEmpty() || Kind.CAULDRON.is(backpackInventory.getTraits().kind))
                   return;
 
             ItemStack backpackStack = backpackInventory.removeItemSilent(0);
@@ -148,9 +247,9 @@ public class BackpackItem extends Item {
 
       public static InteractionResult hotkeyOnBlock(Player player, Direction direction, BlockPos clickedPos) {
             BackData backData = BackData.get(player);
-            ItemStack backpackStack = backData.getStack();
+            ItemStack backStack = backData.getStack();
 
-            if (useOnBlock(player, direction, clickedPos, backpackStack, true)) {
+            if (useOnBlock(player, direction, clickedPos, backStack, true)) {
                   backData.setChanged();
                   return InteractionResult.SUCCESS;
             }
@@ -209,15 +308,14 @@ public class BackpackItem extends Item {
       }
 
       public static boolean doesPlace(Player player, int x, double y, int z, Direction direction, ItemStack backpackStack, boolean fromBackSlot) {
-            Traits.LocalData traits = Traits.LocalData.fromstack(backpackStack);
-            if (traits == null || traits.key.isEmpty())
-                  return false;
-
             NonNullList<ItemStack> stacks = fromBackSlot ?
                         BackData.get(player).backpackInventory.getItemStacks() : NonNullList.create();
 
             BlockPos blockPos = BlockPos.containing(x, y, z);
             float yaw = rotFromBlock(blockPos, player) + 90;
+
+            if (player.level().isClientSide())
+                  return true;
 
             EntityAbstract entityAbstract =
                         EntityAbstract.create(backpackStack, x, y, z, yaw, false, direction, player, stacks);
@@ -236,8 +334,32 @@ public class BackpackItem extends Item {
 
       @Override
       public Component getName(ItemStack stack) {
-            String key = stack.getOrCreateTagElement("display").getString("key");
-            return Component.translatableWithFallback("tooltip.beansbackpacks.name." + key , Traits.get(key).name);
+            CompoundTag display = stack.getTag();
+            Traits traits = Kind.getTraits(stack);
+            if (display != null && display.contains("backpack_id")) {
+                  String key = display.getString("backpack_id");
+                  return Component.translatableWithFallback("tooltip.beansbackpacks.name." + key, traits.name);
+            }
+            return super.getName(stack);
+      }
+
+      @Override @Deprecated // Since 20.1-0.18-v2
+      public void verifyTagAfterLoad(CompoundTag tag) {
+            if (tag.contains("display")) {
+                  CompoundTag display = tag.getCompound("display");
+                  if (display.contains("key")) {
+                        String key = display.getString("key");
+                        display.remove("key");
+                        if (display.isEmpty())
+                              tag.remove("display");
+                        switch (key) {
+                              case "leather", "iron", "ender", "winged" -> {}
+                              case "netherite" -> tag.putString("backpack_id", "null");
+                              default -> tag.putString("backpack_id", key);
+                        }
+                  }
+            }
+            super.verifyTagAfterLoad(tag);
       }
 
       @Override
@@ -253,16 +375,5 @@ public class BackpackItem extends Item {
       @Override
       public int getBarColor(ItemStack $$0) {
             return Tooltip.barColor;
-      }
-
-      public static ItemStack stackFromKey(String key) {
-            Traits traits = Traits.get(key);
-            CompoundTag display = new CompoundTag();
-            display.putString("key", key);
-
-            ItemStack stack = traits.kind.getItem().getDefaultInstance();
-            stack.getOrCreateTag().put("display", display);
-
-            return stack;
       }
 }

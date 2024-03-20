@@ -29,6 +29,7 @@ public class NetworkPackages {
             CallBackInventory2S.register(index++);
             ConfigureKeys2C.register(index++);
             ReceiveEnderPos.register(index++);
+            UseCauldron2S.register(index++);
             PickBackpack2S.register(index);
       }
 
