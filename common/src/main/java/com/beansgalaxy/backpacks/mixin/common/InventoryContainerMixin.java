@@ -8,23 +8,18 @@ import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.screen.PotInventory;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -35,6 +30,8 @@ public abstract class InventoryContainerMixin implements BackAccessor {
 
       @Shadow @Final public Player player;
       @Shadow @Final public NonNullList<ItemStack> items;
+
+      @Shadow public abstract boolean add(int i, ItemStack itemStack);
 
       @Unique private BackData backData;
 
@@ -186,12 +183,12 @@ public abstract class InventoryContainerMixin implements BackAccessor {
             }
       }
 
-      @ModifyVariable(method = "add(ILnet/minecraft/world/item/ItemStack;)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isDamaged()Z", shift = At.Shift.BEFORE), argsOnly = true)
-      private int remapSlot(int slot) {
-            if (slot == -2)
-                  return -1;
-            else
-                  return slot;
+      @Inject(method = "add(ILnet/minecraft/world/item/ItemStack;)Z", cancellable = true,
+                  at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isDamaged()Z"))
+      private void remapSlot(int slot, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+            if (slot == -2) {
+                  cir.setReturnValue(add(-1, stack));
+            }
       }
 
       @Inject(method = "add(ILnet/minecraft/world/item/ItemStack;)Z", at = @At("RETURN"), cancellable = true)
@@ -200,13 +197,18 @@ public abstract class InventoryContainerMixin implements BackAccessor {
                   BackData backData = getBackData();
                   BackpackInventory backpackInventory = backData.backpackInventory;
                   Traits.LocalData traits = backData.getTraits();
-                  if (Kind.is(traits.kind, Kind.POT, Kind.CAULDRON) && backpackInventory.isEmpty())
+                  if (Kind.is(traits.kind, Kind.POT, Kind.CAULDRON))
                         return;
 
                   if (!traits.isStorage())
                         return;
 
-                  cir.setReturnValue(backpackInventory.insertItemSilent(stack, stack.getCount()).isEmpty());
+                  if (backpackInventory.insertItemSilent(stack, stack.getCount()).isEmpty()) {
+                        cir.setReturnValue(true);
+                        if (player instanceof ServerPlayer serverPlayer) {
+                              Services.NETWORK.backpackInventory2C(serverPlayer);
+                        }
+                  }
             }
       }
 }

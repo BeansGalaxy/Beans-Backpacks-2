@@ -102,19 +102,13 @@ public class BackData {
       }
 
       public Traits.LocalData getTraits() {
+            if (getStack().isEmpty())
+                  traits = Traits.LocalData.EMPTY;
             return traits;
       }
 
       public boolean isEmpty() {
             return backStack.isEmpty();
-      }
-
-      public CompoundTag getTrim() {
-            if (backStack.getItem() instanceof EnderBackpack enderBackpack) {
-                  UUID uuid = enderBackpack.getOrCreateUUID(owner.getUUID(), backStack);
-                  return EnderStorage.getTrim(uuid, owner.level());
-            }
-            return traits.getTrim();
       }
 
       public void set(ItemStack stack) {
