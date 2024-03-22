@@ -42,7 +42,7 @@ public class ElytraFeature<T extends LivingEntity, M extends EntityModel<T>> {
         ResourceLocation texture = getElytraResource(backStack, backData);
 
         Traits.LocalData traits = backData.getTraits();
-        int colorInt = backStack.getItem() instanceof WingedBackpack ? WingedBackpack.shiftColor(traits.color) : 0xFFFFFF;
+        int colorInt = backStack.getItem() instanceof WingedBackpack ? WingedBackpack.shiftColor(traits.color).getRGB() : 0xFFFFFF;
         Color tint = new Color(colorInt);
 
         pose.pushPose();

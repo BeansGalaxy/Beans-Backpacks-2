@@ -59,11 +59,11 @@ public class FabricClient implements ClientModInitializer {
 
             KeyBindingHelper.registerKeyBinding(KeyPress.INSTANCE.ACTION_KEY);
             ClientEntityEvents.ENTITY_LOAD.register(new LoadEntityEvent());
-            ColorProviderRegistry.ITEM.register((stack, layer) ->
-                        (layer != 1 ? ((DyableBackpack) stack.getItem()).getColor(stack) : 16777215), FabricMain.LEATHER_BACKPACK);
+            ColorProviderRegistry.ITEM.register((stack, layer) -> layer == 1 ? 16777215 :
+                        DyableBackpack.shiftColor(((DyableBackpack) stack.getItem()).getColor(stack)).getRGB(), FabricMain.LEATHER_BACKPACK);
             ColorProviderRegistry.ITEM.register((stack, layer) -> switch (layer) {
-                  case 0 -> WingedBackpack.shiftColorLayer0(((WingedBackpack) stack.getItem()).getColor(stack));
-                  case 2 -> WingedBackpack.shiftColorLayer2(((WingedBackpack) stack.getItem()).getColor(stack));
+                  case 0 -> WingedBackpack.shiftLayer0(((WingedBackpack) stack.getItem()).getColor(stack));
+                  case 2 -> WingedBackpack.shiftLayer2(((WingedBackpack) stack.getItem()).getColor(stack));
                   default -> 0xFFFFFF;
             }, FabricMain.WINGED_BACKPACK);
 

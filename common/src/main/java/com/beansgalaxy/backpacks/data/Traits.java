@@ -10,7 +10,9 @@ import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.ItemStack;
 
+import java.awt.*;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class Traits {
       public static final Traits EMPTY = new Traits("Err", 0, true, "none", null);
@@ -23,6 +25,8 @@ public class Traits {
 
       public static final BiFunction<Kind, String, ResourceLocation> DEFAULT_RESOURCE =
                   (kind, key) -> new ResourceLocation(Constants.MOD_ID, "textures/entity/" + kind.name().toLowerCase() + ".png");
+
+      public static final Function<Integer, Color> IGNORE_COLOR = i -> new Color(0xFFFFFF);
 
       public final String name;
       public final int maxStacks;
@@ -250,30 +254,6 @@ public class Traits {
 
             public ArmorMaterial material() {
                   return traits().material;
-            }
-      }
-
-      public enum Button {
-            GOLD,
-            AMETHYST,
-            DIAMOND,
-            NETHERITE,
-            NONE{
-                  @Override public ResourceLocation getResource() {
-                        return null;
-                  }
-            };
-
-            public ResourceLocation getResource() {
-                  return new ResourceLocation(Constants.MOD_ID, "textures/entity/overlay/" + this.name().toLowerCase() + ".png");
-            }
-
-            public static Button fromName(String name) {
-                  for (Button value : Button.values()) {
-                        if (value.name().equals(name.toUpperCase()))
-                              return value;
-                  }
-                  return DIAMOND;
             }
       }
 }

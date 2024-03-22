@@ -70,8 +70,8 @@ public class ClientModEvents {
             event.register((stack, layer) ->
                         (layer != 1 ? ((DyableBackpack) stack.getItem()).getColor(stack) : 16777215), ForgeMain.LEATHER_BACKPACK.get());
             event.register((stack, layer) -> switch (layer) {
-                  case 0 -> WingedBackpack.shiftColorLayer0(((WingedBackpack) stack.getItem()).getColor(stack));
-                  case 2 -> WingedBackpack.shiftColorLayer2(((WingedBackpack) stack.getItem()).getColor(stack));
+                  case 0 -> WingedBackpack.shiftLayer0(((WingedBackpack) stack.getItem()).getColor(stack));
+                  case 2 -> WingedBackpack.shiftLayer2(((WingedBackpack) stack.getItem()).getColor(stack));
                   default -> 0xFFFFFF; }, ForgeMain.WINGED_BACKPACK.get());
             ItemProperties.register(Services.REGISTRY.getLeather(),
                         new ResourceLocation(Constants.MOD_ID, "is_yellow"), RenderHelper.IS_YELLOW_ITEM_PREDICATE);

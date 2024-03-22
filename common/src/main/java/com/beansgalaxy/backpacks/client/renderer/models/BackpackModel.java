@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.client.renderer.models;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -65,9 +66,5 @@ public class BackpackModel<T extends Entity>
 			part.z = -4;
 			part.y = 9;
 		}
-
-		mask.xScale = 0.99f;
-		mask.zScale = 0.96f;
-		mask.z += 0.2f;
 	}
 }

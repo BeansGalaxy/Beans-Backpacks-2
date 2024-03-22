@@ -3,6 +3,8 @@ package com.beansgalaxy.backpacks.entity;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.items.BackpackItem;
+import com.beansgalaxy.backpacks.items.DyableBackpack;
+import com.beansgalaxy.backpacks.items.WingedBackpack;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -12,26 +14,29 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.function.Function;
 
 public enum Kind {
-      LEATHER(  Services.REGISTRY.getLeather(),  key -> Traits.LEATHER,  data -> Kind.getAppendedName("", "Backpack")),
-      METAL(    Services.REGISTRY.getMetal(),    Traits::get,            Traits::getName),
-      UPGRADED( Services.REGISTRY.getUpgraded(), Traits::get,            Traits::getName),
-      WINGED(   Services.REGISTRY.getWinged(),   key -> Traits.WINGED,   data -> Kind.getAppendedName("winged_", "Winged Backpack")),
-      ENDER(    Services.REGISTRY.getEnder(),    key -> Traits.ENDER,    data -> Kind.getAppendedName("ender_", "Ender Backpack")),
-      POT(      Items.DECORATED_POT.asItem(),    key -> Traits.POT,      data -> Component.empty()),
-      CAULDRON( Items.CAULDRON.asItem(),         key -> Traits.CAULDRON, data -> Component.empty());
+      LEATHER(  Services.REGISTRY.getLeather(),  key -> Traits.LEATHER,  DyableBackpack::shiftColor,  data -> Kind.getAppendedName("", "Backpack")),
+      METAL(    Services.REGISTRY.getMetal(),    Traits::get,            Traits.IGNORE_COLOR,         Traits::getName),
+      UPGRADED( Services.REGISTRY.getUpgraded(), Traits::get,            Traits.IGNORE_COLOR,         Traits::getName),
+      WINGED(   Services.REGISTRY.getWinged(),   key -> Traits.WINGED,   WingedBackpack::shiftColor,  data -> Kind.getAppendedName("winged_", "Winged Backpack")),
+      ENDER(    Services.REGISTRY.getEnder(),    key -> Traits.ENDER,    Traits.IGNORE_COLOR,         data -> Kind.getAppendedName("ender_", "Ender Backpack")),
+      POT(      Items.DECORATED_POT.asItem(),    key -> Traits.POT,      Traits.IGNORE_COLOR,         data -> Component.empty()),
+      CAULDRON( Items.CAULDRON.asItem(),         key -> Traits.CAULDRON, Traits.IGNORE_COLOR,         data -> Component.empty());
 
       final Item item;
       final Function<String, Traits> getTraits;
       private final Function<Traits.LocalData, Component> getName;
+      private final Function<Integer, Color> getColor;
 
-      Kind(Item item, Function<String, Traits> getTraits, Function<Traits.LocalData, Component> getName) {
+      Kind(Item item, Function<String, Traits> getTraits, Function<Integer, Color> getColor, Function<Traits.LocalData, Component> getName) {
             this.item = item;
             this.getTraits = getTraits;
             this.getName = getName;
+            this.getColor = getColor;
       }
 
       public static Traits getTraits(ItemStack stack) {
@@ -115,18 +120,24 @@ public enum Kind {
       }
 
       public ResourceLocation getAppendedResource(String key, String append) {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("textures/entity/");
-            if (!Constants.isEmpty(key) && Kind.is(this, Kind.METAL, Kind.UPGRADED))
-                  stringBuilder.append("backpack/").append(key);
-            else
-                  stringBuilder.append(this.name().toLowerCase());
+            StringBuilder string = new StringBuilder();
+            string.append("textures/entity/");
+
+            switch (this) {
+                  case LEATHER -> string.append("leather/leather");
+                  case METAL, UPGRADED -> {
+                        if (!Constants.isEmpty(key))
+                              string.append("backpack/").append(key);
+                        else string.append("metal");
+                  }
+                  default -> string.append(this.name().toLowerCase());
+            }
 
             if (!Constants.isEmpty(append))
-                  stringBuilder.append(append);
+                  string.append(append);
 
-            stringBuilder.append(".png");
-            String location = stringBuilder.toString();
+            string.append(".png");
+            String location = string.toString();
             return new ResourceLocation(Constants.MOD_ID, location);
       }
 
@@ -137,6 +148,10 @@ public enum Kind {
                   stringBuilder.append(append.toLowerCase());
             stringBuilder.append("backpack");
             return Component.translatableWithFallback(stringBuilder.toString(), fallback);
+      }
+
+      public Color getShiftedColor(int color) {
+            return getColor.apply(color);
       }
 
       public Component getName(Traits.LocalData traits) {

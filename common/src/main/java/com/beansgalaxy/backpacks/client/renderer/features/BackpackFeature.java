@@ -42,32 +42,37 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
 
     public void render(PoseStack pose, MultiBufferSource mbs, int light, AbstractClientPlayer player, ModelPart torso, BackData backData) {
         ModelPart backpackBody = backpackModel.body;
+        ModelPart backpackMask = backpackModel.mask;
         Traits.LocalData traits = backData.getTraits();
 
         pose.pushPose();
         weld(backpackBody, torso);
+        weld(backpackMask, torso);
         BackpackInventory.Viewable viewable = backData.backpackInventory.getViewable();
         viewable.updateOpen();
         backpackModel.body.getChild("head").xRot = viewable.headPitch;
+        backpackModel.mask.getChild("head").xRot = viewable.headPitch;
         int color = traits.color;
-
+        Color tint = new Color(color);
         float scale = backFeature.sneakInter / 3f;
         ItemStack backStack = backData.getStack();
         if (backStack.getItem() instanceof WingedBackpack) {
-            color = WingedBackpack.shiftColor(color);
-            if (!player.isFallFlying())
+            tint = WingedBackpack.shiftColor(color);
+            if (!player.isFallFlying()) {
                 backpackBody.xRot = 0.5f + ((scale - 1) / 5);
+                backpackMask.xRot = 0.5f + ((scale - 1) / 5);
+                }
             pose.translate(0, ((2 - scale) - (player.isFallFlying() ? 1 : 0)) / 16, (scale / 32));
         } else
             pose.translate(0, (1 / 16f) * scale, (1 / 32f) * scale);
 
-        Color tint = new Color(color);
+        float[] colors = {tint.getRed() / 255F, tint.getGreen() / 255F, tint.getBlue() / 255F};
         ResourceLocation texture = traits.kind.getAppendedResource(traits.key, "");
         VertexConsumer vc = mbs.getBuffer(backpackModel.renderType(texture));
-        backpackModel.renderToBuffer(pose, vc, light, OverlayTexture.NO_OVERLAY, tint.getRed() / 255F, tint.getGreen() / 255F, tint.getBlue() / 255F, 1F);
+        backpackModel.renderToBuffer(pose, vc, light, OverlayTexture.NO_OVERLAY, colors[0], colors[1], colors[2], 1F);
 
         RegistryAccess registryAccess = player.getCommandSenderWorld().registryAccess();
-        BackpackRenderer.renderOverlays(pose, light, mbs, tint, registryAccess, traits, backpackModel, this.trimAtlas);
+        BackpackRenderer.renderOverlays(pose, light, mbs, colors, backpackBody.yRot, registryAccess, traits, backpackModel, this.trimAtlas, 32);
         pose.popPose();
     }
 }
