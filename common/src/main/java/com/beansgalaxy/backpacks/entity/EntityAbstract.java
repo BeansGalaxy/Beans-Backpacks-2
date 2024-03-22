@@ -382,6 +382,8 @@ public abstract class EntityAbstract extends Backpack {
             if (tag.contains("display")) // TODO: FOR REMOVAL 20.1-0.18-v2 : DISPLAY TAG IS THE OLD METHOD FOR SAVING
                   this.setDisplay(tag.getCompound("display"));
             else {
+                  if (tag.contains("hanging")) // TODO: FOR REMOVAL 20.1-0.19-v2 : BACKPACK WITHOUT "hanging" TAG WILL FALL
+                        this.setNoGravity(tag.getBoolean("hanging"));
                   CompoundTag localData = tag.getCompound("local_data");
                   this.entityData.set(OWNER, Optional.of(localData.getUUID("owner")));
                   entityData.set(LOCAL_DATA, localData);
@@ -398,6 +400,7 @@ public abstract class EntityAbstract extends Backpack {
 
       protected void toNBT(CompoundTag tag) {
             tag.putByte("facing", (byte)this.direction.get3DDataValue());
+            tag.putBoolean("hanging", this.isNoGravity());
             CompoundTag traits = getTraits().toNBT();
             UUID placedBy = getPlacedBy();
             if (placedBy != this.uuid && placedBy != null)
