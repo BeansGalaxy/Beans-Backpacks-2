@@ -10,6 +10,7 @@
     "PlayerEntityMixin"
   ],
   "client": [
+    "CreativeInventoryMixin",
     "LocalPlayerMixin",
     "PickBlockMixin"
   ],

@@ -590,7 +590,6 @@ public abstract class EntityAbstract extends Backpack {
                   {
 /*                  Equips Backpack only if...
                       - damage source is player.
-                      - player is not creative.
                       - backSlot is not occupied */
                         if (this instanceof EntityEnder ender) {
                               if (ender.getPlacedBy() == null) {

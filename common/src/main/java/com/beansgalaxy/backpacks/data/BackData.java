@@ -14,7 +14,6 @@ import com.beansgalaxy.backpacks.screen.InSlot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -72,7 +71,8 @@ public class BackData {
             }
       };
 
-      public static final int[] UV = {59, 62};
+      public static final int[] UV_SURVIVAL = {59, 62};
+      public static final int[] UV_CREATIVE = {89, 33};
       public final BackSlot backSlot = new BackSlot(this);
       public final InSlot inSlot = new InSlot(this);
       private final HashSet<EnderStorage.PackagedLocation> enderLocations = new HashSet<>();
@@ -145,9 +145,6 @@ public class BackData {
       }
 
       public boolean backSlotDisabled() {
-            if (owner.isCreative() && !Constants.SLOTS_MOD_ACTIVE)
-                  return true;
-
             NonNullList<ItemStack> equipped = owner.getInventory().armor;
             return Services.COMPAT.backSlotDisabled(owner) || equipped.stream().anyMatch(stack -> !stack.isEmpty() && Constants.elytraOrDisables(stack.getItem()));
       }

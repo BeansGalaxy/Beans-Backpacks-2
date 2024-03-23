@@ -104,7 +104,6 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
 
       public static void renderOverlays(PoseStack pose, int light, MultiBufferSource source, float[] colors, float yaw, RegistryAccess registryAccess, Traits.LocalData traits, BackpackModel model, TextureAtlas atlas, double distance) {
             Screen currentScreen = Minecraft.getInstance().screen;
-            System.out.println(distance);
             float[] deflate = inflate(-0.02f);
 
             pose.pushPose();

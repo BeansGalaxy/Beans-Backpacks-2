@@ -18,6 +18,7 @@ public class NetworkPackages {
       public static final ResourceLocation PICK_BACKPACK_2S = new ResourceLocation(Constants.MOD_ID, "pick_backpack_s");
       public static final ResourceLocation ENDER_POS_2C = new ResourceLocation(Constants.MOD_ID, "ender_pos_c");
       public static final ResourceLocation USE_CAULDRON_2S = new ResourceLocation(Constants.MOD_ID, "use_cauldron_s");
+      public static final ResourceLocation CLEAR_BACK_SLOT_2S = new ResourceLocation(Constants.MOD_ID, "clear_back_slot_s");
 
       public static void registerC2SPackets() {
             ServerPlayNetworking.registerGlobalReceiver(SPRINT_KEY_2S, SprintKeyPacket2S::receiveAtServer);
@@ -26,6 +27,7 @@ public class NetworkPackages {
             ServerPlayNetworking.registerGlobalReceiver(INSTANT_PLACE_2S, InstantPlace2S::receiveAtServer);
             ServerPlayNetworking.registerGlobalReceiver(PICK_BACKPACK_2S, PickBackpack::receiveAtServer);
             ServerPlayNetworking.registerGlobalReceiver(USE_CAULDRON_2S, UseCauldron2S::receiveAtServer);
+            ServerPlayNetworking.registerGlobalReceiver(CLEAR_BACK_SLOT_2S, ClearBackSlot2S::receiveAtServer);
       }
 
       public static void registerS2CPackets() {

@@ -30,6 +30,7 @@ public class NetworkPackages {
             ConfigureKeys2C.register(index++);
             ReceiveEnderPos.register(index++);
             UseCauldron2S.register(index++);
+            ClearBackSlot2S.register(index++);
             PickBackpack2S.register(index);
       }
 

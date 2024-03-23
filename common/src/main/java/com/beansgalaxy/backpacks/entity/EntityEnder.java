@@ -115,8 +115,8 @@ public class EntityEnder extends EntityAbstract {
 
       @Override
       public @NotNull InteractionResult interact(Player player, InteractionHand hand) {
-            UUID placedBy;
-            if ((placedBy = getPlacedBy()) != null && (ServerSave.CONFIG.get(Config.ENDER_LOCK_LOGGED_OFF) && level().getPlayerByUUID(placedBy) == null)) {
+            UUID placedBy = getPlacedBy();
+            if (placedBy != null && (!player.isCreative() || (ServerSave.CONFIG.get(Config.ENDER_LOCK_LOGGED_OFF) && level().getPlayerByUUID(placedBy) == null))) {
                   PlaySound.HIT.at(this, getTraits().kind);
                   this.hop(.1);
                   return InteractionResult.SUCCESS;

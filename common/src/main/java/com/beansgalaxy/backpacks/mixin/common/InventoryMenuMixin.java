@@ -72,7 +72,7 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
       @Unique
       @Override
       public void clicked(int slotIndex, int button, ClickType actionType, Player player) {
-            if (slotIndex < 0 || slots.size() < slotIndex || player.isCreative()) {
+            if (slotIndex < 0 || slots.size() < slotIndex) {
                   super.clicked(slotIndex, button, actionType, player);
                   return;
             }

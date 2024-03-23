@@ -29,6 +29,7 @@
         "${mod_id}.mixins.json",
         "${mod_id}.fabric.mixins.json"
     ],
+    "accessWidener": "beansbackpacks.accesswidener",
     "depends": {
         "fabricloader": ">=0.14",
         "fabric-api": "*",

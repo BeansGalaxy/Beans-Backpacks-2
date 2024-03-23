@@ -25,7 +25,7 @@ public class BackSlot extends Slot {
       public int slotIndex = -1;
 
       public BackSlot(BackData backData) {
-            super(new SimpleContainer(1), 0, BackData.UV[0], BackData.UV[1]);
+            super(new SimpleContainer(1), 0, BackData.UV_SURVIVAL[0], BackData.UV_SURVIVAL[1]);
             this.backData = backData;
       }
 

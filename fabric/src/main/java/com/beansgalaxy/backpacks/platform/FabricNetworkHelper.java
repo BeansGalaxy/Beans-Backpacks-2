@@ -156,4 +156,12 @@ public class FabricNetworkHelper implements NetworkHelper {
 
             ClientPlayNetworking.send(NetworkPackages.USE_CAULDRON_2S, buf);
       }
+
+      @Override
+      public void clearBackSlot2S() {
+            FriendlyByteBuf buf = PacketByteBufs.create();
+            buf.writeBoolean(true);
+
+            ClientPlayNetworking.send(NetworkPackages.CLEAR_BACK_SLOT_2S, buf);
+      }
 }

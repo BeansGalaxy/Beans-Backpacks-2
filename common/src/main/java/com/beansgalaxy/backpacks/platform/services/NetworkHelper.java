@@ -37,4 +37,6 @@ public interface NetworkHelper {
       void sendEnderLocations2C(ServerPlayer serverPlayer, BackData backData);
 
       void useCauldron2S(BlockPos pos, UseKeyEvent.Type type);
+
+      void clearBackSlot2S();
 }
