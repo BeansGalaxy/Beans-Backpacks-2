@@ -119,7 +119,7 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
             CompoundTag trim = traits.getTrim();
             String button = traits.button();
             int color = traits.color;
-            if (button.equals("none") || !trim.contains("material") || !trim.contains("pattern")) {
+            if (!button.equals("none") && (!trim.contains("material") || !trim.contains("pattern"))) {
                   if (RenderHelper.isYellow(new Color(color))) {
                         button = "amethyst";
                   }
