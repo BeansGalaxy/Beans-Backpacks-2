@@ -8,6 +8,7 @@
     "HopperEntityMixin"
   ],
   "client": [
+    "CreativeInventoryMixin",
     "PickBlockMixin"
   ],
   "server": [
