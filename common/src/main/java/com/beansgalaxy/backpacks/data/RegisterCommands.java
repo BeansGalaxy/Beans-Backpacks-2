@@ -1,11 +1,10 @@
 package com.beansgalaxy.backpacks.data;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.data.Config;
-import com.beansgalaxy.backpacks.data.EnderStorage;
-import com.beansgalaxy.backpacks.data.ServerSave;
+import com.beansgalaxy.backpacks.platform.Services;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -14,8 +13,10 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,7 +25,46 @@ public class RegisterCommands {
             LiteralArgumentBuilder<CommandSourceStack> beansmod = Commands.literal("beansmod");
             registerEnderDataCommand(beansmod);
             registerConfigCommand(beansmod);
+            registerGiveCommand(beansmod);
             dispatcher.register(beansmod);
+      }
+
+      private static void registerGiveCommand(LiteralArgumentBuilder<CommandSourceStack> beansmod) {
+            beansmod.then(Commands.literal("give").requires(in -> in.hasPermission(4))
+                        .then(Commands.argument("targets", EntityArgument.players())
+                                    .then(Commands.argument("backpack_id", StringArgumentType.word())
+                                          .executes(ctx -> {
+                                                String backpack_id = StringArgumentType.getString(ctx, "backpack_id");
+                                                Collection<ServerPlayer> targets = EntityArgument.getPlayers(ctx, "targets");
+                                                if (!Constants.TRAITS_MAP.containsKey(backpack_id)) {
+                                                      ctx.getSource().sendFailure(Component.translatable("command.beansbackpacks.give.fail.no_id", backpack_id));
+                                                      return -1;
+                                                }
+
+                                                if (targets.isEmpty()) {
+                                                      ctx.getSource().sendFailure(Component.translatable("command.beansbackpacks.give.fail.no_players"));
+                                                      return -1;
+                                                }
+
+                                                ItemStack backpackStack = Services.REGISTRY.getMetal().getDefaultInstance();
+                                                backpackStack.getOrCreateTag().putString("backpack_id", backpack_id);
+                                                Component playerNames = null;
+                                                for (ServerPlayer player : targets) {
+                                                      player.getInventory().add(backpackStack.copy());
+                                                      if (playerNames != null) {
+                                                            playerNames.plainCopy().append(", ").append(player.getName());
+                                                      } else {
+                                                            playerNames = player.getDisplayName();
+                                                      }
+                                                }
+
+                                                Component finalPlayerNames = playerNames;
+                                                ctx.getSource().sendSuccess(() -> Component.translatable("command.beansbackpacks.give.success", backpackStack.getDisplayName(), finalPlayerNames), true);
+                                                return targets.size();
+                                          })
+                                    )
+                        )
+            );
       }
 
       private static void registerConfigCommand(LiteralArgumentBuilder<CommandSourceStack> beansmod) {
