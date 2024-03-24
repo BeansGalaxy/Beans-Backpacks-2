@@ -20,6 +20,18 @@ the issues tab. </p>
 
 <h1 align="center"> Changelog </h1>
 
+### 20.1-0.20-v3 & 20.2-0.17-v2
+
+- Added Back Slot into creative inventory
+- Added `/beansmod give` for metal backpacks with a `backpack_id` *([more info](https://github.com/BeansGalaxy/Beans-Backpacks-2/wiki/Commands#give))*
+- Added amethyst button to yellow Leather & Winged Backpack items
+- Rewrote backpack renderer
+- Tweaked Leather Backpack texture
+- Added Trims for [Alex's Caves](https://modrinth.com/mod/alexs-caves) & [Blue Skies](https://modrinth.com/mod/blue-skies) *([Adding Modded Trims](https://github.com/BeansGalaxy/Beans-Backpacks-2/wiki/Configurations#adding-modded-trims))*
+- Fixed manually equipping backpacks in the inventory can cause previous back inventory to appear as ghost items
+- Fixed Backpacks assuming they're hung if they're close to a block when loaded.
+- Fixed picked up items dissapearing with a full inventory after placing backpack using hotkey
+
 ### 20.1-0.19-v3 & 20.2-0.17-v2
 
 - Completely rewrote backpack traits *([how-to add custom backpacks](https://github.com/BeansGalaxy/Beans-Backpacks-2/wiki/Custom-Backpacks--20.1%E2%80%900.19%E2%80%90v2))*
