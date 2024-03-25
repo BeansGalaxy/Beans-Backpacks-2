@@ -29,6 +29,8 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Optional;
+
 @Mixin(InventoryScreen.class)
 public abstract class InventoryScreenMixin extends EffectRenderingInventoryScreen<InventoryMenu> implements ClickAccessor {
       @Unique private static final ResourceLocation INFO_BUTTON_LOCATION = new ResourceLocation(Constants.MOD_ID, "textures/gui/info_tab.png");
@@ -72,14 +74,16 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
       @Inject(method = "init", at = @At(value = "INVOKE", shift = At.Shift.AFTER,
                   target = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;setInitialFocus(Lnet/minecraft/client/gui/components/events/GuiEventListener;)V"))
       public void backpackHelpWidget(CallbackInfo ci) {
-            infoWidget.init(this.height, this.leftPos, this.topPos, this.minecraft, this.menu, () -> {
+            infoWidget.init(this.height, this.leftPos, this.topPos, this.minecraft, () -> {
                   this.leftPos = this.infoWidget.updateScreenPosition(this.recipeBookComponent.updateScreenPosition(this.width, this.imageWidth), recipeBookComponent.isVisible(), this.width, this.imageWidth);
                   this.buttonClicked = true;
             });
             this.addWidget(this.infoWidget);
-            this.addRenderableWidget(infoWidget.homeButton);
-            for (InfoWidget.InfoButton button : infoWidget.buttons)
-                  this.addRenderableWidget(button);
+            for (Optional<InfoWidget.InfoButton> button : infoWidget.buttons) {
+                  if (button.isPresent()) {
+                        this.addRenderableWidget(button.get());
+                  }
+            }
       }
 
       @ModifyArg(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;addRenderableWidget(Lnet/minecraft/client/gui/components/events/GuiEventListener;)Lnet/minecraft/client/gui/components/events/GuiEventListener;"))

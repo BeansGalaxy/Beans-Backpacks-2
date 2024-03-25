@@ -45,9 +45,10 @@
   "tooltip.beansbackpacks.help.pot6": "too heavy to be taken off,",
   "tooltip.beansbackpacks.help.pot7": "they must be emptied first.",
   "tooltip.beansbackpacks.help.pot10": "On death, the player drops",
-  "tooltip.beansbackpacks.help.pot11": "the equipped pot as an item",
-  "tooltip.beansbackpacks.help.pot12": "and cannot pick up that item",
-  "tooltip.beansbackpacks.help.pot13": "unless the back slot it empty.",
+  "tooltip.beansbackpacks.help.pot11": "their equipped pot. If that",
+  "tooltip.beansbackpacks.help.pot12": "pot is storing items, the item",
+  "tooltip.beansbackpacks.help.pot13": "can only be picked up while",
+  "tooltip.beansbackpacks.help.pot14": "the back slot is empty.",
 
   "tooltip.beansbackpacks.help.cauldron_title": "Cauldrons",
   "tooltip.beansbackpacks.help.cauldron0": "Click an equipped cauldron",
