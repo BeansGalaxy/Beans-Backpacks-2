@@ -7,6 +7,8 @@ import com.beansgalaxy.backpacks.screen.BackSlot;
 import com.beansgalaxy.backpacks.screen.InfoWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.inventory.CyclingSlotBackground;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -23,6 +25,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -69,15 +72,30 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
       @Inject(method = "init", at = @At(value = "INVOKE", shift = At.Shift.AFTER,
                   target = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;setInitialFocus(Lnet/minecraft/client/gui/components/events/GuiEventListener;)V"))
       public void backpackHelpWidget(CallbackInfo ci) {
-            infoWidget.init(this.width, this.height, this.leftPos, this.topPos, this.minecraft, this.menu, () -> this.buttonClicked = true);
+            infoWidget.init(this.height, this.leftPos, this.topPos, this.minecraft, this.menu, () -> {
+                  this.leftPos = this.infoWidget.updateScreenPosition(this.recipeBookComponent.updateScreenPosition(this.width, this.imageWidth), recipeBookComponent.isVisible(), this.width, this.imageWidth);
+                  this.buttonClicked = true;
+            });
             this.addWidget(this.infoWidget);
             this.addRenderableWidget(infoWidget.homeButton);
             for (InfoWidget.InfoButton button : infoWidget.buttons)
                   this.addRenderableWidget(button);
       }
 
-      @Inject(method = "mouseClicked", at = @At("RETURN"))
+      @ModifyArg(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;addRenderableWidget(Lnet/minecraft/client/gui/components/events/GuiEventListener;)Lnet/minecraft/client/gui/components/events/GuiEventListener;"))
+      private GuiEventListener captureRecipeBookButton(GuiEventListener button) {
+            if (button instanceof ImageButton imageButton)
+                  infoWidget.recipeButton = imageButton;
+            return button;
+      }
+
+      @Inject(method = "mouseClicked", at = @At(value = "RETURN", ordinal = 1))
       public void hideHelpWidget(double $$0, double $$1, int $$2, CallbackInfoReturnable<Boolean> cir) {
-            infoWidget.homeButton.setVisible(!this.recipeBookComponent.isVisible() && !infoWidget.isFocused());
+            infoWidget.updateButtonPositions(leftPos);
+            boolean recipeBookComponentVisible = recipeBookComponent.isVisible();
+            infoWidget.homeButton.setVisible(!recipeBookComponentVisible);
+            if (recipeBookComponentVisible && infoWidget.isFocused()) {
+                  infoWidget.toggleFocus();
+            }
       }
 }

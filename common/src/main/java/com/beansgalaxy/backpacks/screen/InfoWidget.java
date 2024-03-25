@@ -1,7 +1,11 @@
 package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.items.Tooltip;
+import com.beansgalaxy.backpacks.platform.Services;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Renderable;
@@ -9,40 +13,148 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.core.NonNullList;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
+import java.util.Iterator;
 
 public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry {
       private static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/info_tab.png");
-      private static final int[] INFO_TEXT_UV = {85, 137};
+      public ImageButton recipeButton;
       private Minecraft minecraft;
-      private int width;
       private int height;
       private int leftPos;
       private int topPos;
-      private InventoryMenu menu;
       private boolean focused = false;
       private Runnable onClick;
-      private Tab selected = Tab.HOME;
+      private Tab selected = Tab.BACKPACK;
       public NonNullList<InfoButton> buttons = NonNullList.create();
       public HomeButton homeButton;
 
+      public int updateScreenPosition(int i, boolean visible, int width, int imageWidth) {
+            homeButton.setVisible(!visible);
+            if (visible && focused) {
+                  toggleFocus();
+            }
+            else i = ((width - imageWidth) / 2) + (focused ? 60 : 0);
+
+
+            this.leftPos = i;
+            recipeButton.setPosition(this.leftPos + 104, this.height / 2 - 22);
+            updateButtonPositions(leftPos);
+            return i;
+      }
+
+      public void updateButtonPositions(int leftPos) {
+            int index = 1;
+            for (InfoButton button : buttons) {
+                  button.setPosition(leftPos - (23 * index), topPos);
+                  index++;
+            }
+      }
+
       public enum Tab {
-            HOME,
-            BACKPACK,
-            ENDER,
-            POT,
-            CAULDRON
+            BACKPACK    (0),
+            ENDER       (1),
+            POT         (2),
+            CAULDRON    (3);
+
+            final int index;
+            Tab(int i) {
+                  index = i;
+            }
       }
 
       @Override
       public void render(GuiGraphics guiGraphics, int i, int i1, float v) {
             if (focused) {
-                  guiGraphics.blit(TEXTURE, leftPos - 85, topPos + 26, 0, 1, 53, 85, 137, 256, 256);
-                  guiGraphics.drawString(minecraft.font, Component.literal(selected.name().toLowerCase()), this.leftPos - 60, this.topPos + 50, 4210752, false);
+                  guiGraphics.blit(TEXTURE, leftPos - 166, topPos + 22, 0, 1, 53, 167, 144, 256, 256);
+                  MutableComponent title = Component.translatable("tooltip.beansbackpacks.help." + selected.name().toLowerCase() + "_title");
+                  FormattedCharSequence titleSequence = title.withStyle(ChatFormatting.BOLD).getVisualOrderText();
+                  int titleY = this.topPos + 29;
+                  drawCenteredText(guiGraphics, titleSequence, titleY);
+                  drawCenteredLine(guiGraphics, minecraft.font.width(titleSequence), titleY + 10);
+                  NonNullList<String> keys = NonNullList.create();
+                  int buffer = 0;
+                  for (int j = 0; j < 16; j++) {
+                        String key = "tooltip.beansbackpacks.help." + selected.name().toLowerCase() + (j);
+                        if (Language.getInstance().has(key)) {
+                              while (buffer > 0) {
+                                    keys.add("");
+                                    buffer--;
+                              }
+                              keys.add(key);
+                        }
+                        else buffer++;
+                  }
+
+                  String keyBind = "§0" + Tooltip.getKeyBinding().getTranslatedKeyMessage().getString()
+                              .replace("Left ", "L")
+                              .replace("Right ", "R")
+                              .replace("Control", "Ctrl");
+                  String useKey = "§0" + minecraft.options.keyUse.getTranslatedKeyMessage().getString()
+                              .replace("Right Button", "RClick")
+                              .replace("Left Button", "LClick")
+                              .replace("Left ", "L")
+                              .replace("Right ", "R");
+
+                  int stringY = 43;
+                  int hLineY = -1;
+                  int width = -1;
+                  FormattedCharSequence visualOrderText = null;
+                  Iterator<String> iterator = keys.iterator();
+                  while (iterator.hasNext()) {
+                        String key = iterator.next();
+                        if (!Language.getInstance().has(key) && iterator.hasNext()) {
+                              if (visualOrderText == null && hLineY == -1 && width == -1) {
+                                    stringY += 2;
+                                    continue;
+                              }
+                              if (visualOrderText != null) {
+                                    width = minecraft.font.width(visualOrderText);
+                                    visualOrderText = null;
+                                    hLineY = stringY + 1;
+                                    stringY += 5;
+                                    continue;
+                              }
+                              hLineY += 2;
+                              stringY += 4;
+                        }
+                        else {
+                              if (visualOrderText != null && hLineY != -1)
+                                    drawCenteredLine(guiGraphics, width, this.topPos + hLineY);
+                              visualOrderText = Component.translatableWithFallback(key, "", keyBind, useKey).getVisualOrderText();
+                              drawCenteredText(guiGraphics, visualOrderText, this.topPos + stringY);
+                              stringY += 9;
+                        }
+                  }
+                  int x = leftPos + 4;
+                  int y = topPos + 4;
+                  guiGraphics.renderFakeItem(Services.REGISTRY.getLeather().getDefaultInstance(), x -= 23, y);
+                  guiGraphics.renderFakeItem(Services.REGISTRY.getEnder().getDefaultInstance(), x -= 23, y);
+                  guiGraphics.renderFakeItem(Items.DECORATED_POT.getDefaultInstance(), x -= 23, y);
+                  guiGraphics.renderFakeItem(Items.CAULDRON.getDefaultInstance(), x - 22, y - 1);
             }
+      }
+
+      private void drawCenteredText(GuiGraphics gui, FormattedCharSequence text, int topPos) {
+            Font font = minecraft.font;
+            gui.drawString(font, text, (this.leftPos - 79 + 2) - (font.width(text) / 2), topPos, 4210752, false);
+
+      }
+
+      private void drawCenteredLine(GuiGraphics gui, int width, int topPos) {
+            int left = (this.leftPos - 79 + 2) - (width / 2);
+            int average = (100 - width) / 10;
+            gui.hLine(left + width + average, left - average, topPos, 0xff8b8b8b);
+
       }
 
       @Override
@@ -65,22 +177,18 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
 
       }
 
-      public void init(int width, int height, int leftPos, int topPos, Minecraft minecraft, InventoryMenu menu, Runnable onClick) {
+      public void init(int height, int leftPos, int topPos, Minecraft minecraft, InventoryMenu menu, Runnable onClick) {
             this.minecraft = minecraft;
-            this.width = width;
             this.height = height;
             this.leftPos = leftPos;
-            this.topPos = topPos;
-            this.menu = menu;
+            this.topPos = topPos + 1;
             this.onClick = onClick;
             focused = false;
-            buttons.clear();
-            this.homeButton = new HomeButton(this.leftPos, this.topPos, (button) -> {
-                  onButtonClick(Tab.HOME);
-            });
-            buttons.add(new InfoButton(1, this.leftPos, this.topPos, (button) -> {
+            this.homeButton = new HomeButton(this.leftPos, this.topPos, this, (button) -> {
                   onButtonClick(Tab.BACKPACK);
-            }));
+            });
+            buttons.clear();
+            buttons.add(homeButton);
             buttons.add(new InfoButton(2, this.leftPos, this.topPos, (button) -> {
                   onButtonClick(Tab.ENDER);
             }));
@@ -93,15 +201,13 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
       }
 
       private void onButtonClick(Tab selected) {
-            if (selected == Tab.HOME) {
+            if (this.selected == selected) {
                   setSelected(Tab.BACKPACK);
                   this.toggleFocus();
             }
-            else if (this.selected == selected) {
-                  setSelected(Tab.HOME);
-                  this.toggleFocus();
+            else {
+                  setSelected(selected);
             }
-            else setSelected(selected);
             onClick.run();
       }
 
@@ -112,22 +218,25 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
       public void toggleFocus() {
             setFocused(!focused);
             for (InfoButton button : buttons) {
-                  button.setVisible(focused);
+                  if (button != homeButton)
+                        button.setVisible(focused);
                   if (!focused)
                         button.setFocused(false);
             }
-            homeButton.setVisible(!focused);
-            homeButton.setFocused(focused);
       }
 
       public static class InfoButton extends ImageButton {
             public InfoButton(int index, int leftPos, int topPos, OnPress o) {
-                  super(leftPos - (21 * index), topPos + 4, 21, 25, 24 * index, 0, 25, TEXTURE, o);
+                  super(leftPos - (23 * index), topPos, 24, 25, 24 * index, 0, 25, TEXTURE, o);
+                  init();
+            }
+
+            public void init() {
                   visible = false;
             }
 
-            public void setVisible(boolean hidden) {
-                  this.visible = hidden;
+            public void setVisible(boolean visible) {
+                  this.visible = visible;
             }
 
             @Override
@@ -136,18 +245,26 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
             }
       }
 
-      public static class HomeButton extends ImageButton {
-            public HomeButton(int leftPos, int topPos, OnPress o) {
-                  super(leftPos - 21, topPos + 4, 21, 24, 0, 0, 25, TEXTURE, o);
-            }
+      public static class HomeButton extends InfoButton {
+            private final InfoWidget parent;
 
-            public void setVisible(boolean hidden) {
-                  this.visible = hidden;
+            public HomeButton(int leftPos, int topPos, InfoWidget parent, OnPress o) {
+                  super(1, leftPos, topPos, o);
+                  this.parent = parent;
             }
 
             @Override
-            public void setFocused(boolean focused) {
-                  super.setFocused(focused);
+            public void init() {
+
+            }
+
+            @Override
+            public void renderWidget(GuiGraphics $$0, int $$1, int $$2, float $$3) {
+                  if (!parent.focused)
+                        this.renderTexture($$0, this.resourceLocation, this.getX(), this.getY(), 0, this.yTexStart, this.yDiffTex, this.width, this.height, this.textureWidth, this.textureHeight);
+                  else
+                        super.renderWidget($$0, $$1, $$2, $$3);
+
             }
       }
 }
