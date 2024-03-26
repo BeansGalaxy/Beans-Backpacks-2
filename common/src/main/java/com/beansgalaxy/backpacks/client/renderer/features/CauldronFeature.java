@@ -49,7 +49,7 @@ public class CauldronFeature<T extends LivingEntity, M extends EntityModel<T>> {
         this.backFeature = backFeature;
     }
 
-    public void render(PoseStack pose, MultiBufferSource mbs, int light, AbstractClientPlayer player, ModelPart torso, ItemStack backStack) {
+    public void render(PoseStack pose, MultiBufferSource mbs, int light, ModelPart torso, ItemStack backStack) {
         pose.pushPose();
         float scale = backFeature.sneakInter / 3f;
 

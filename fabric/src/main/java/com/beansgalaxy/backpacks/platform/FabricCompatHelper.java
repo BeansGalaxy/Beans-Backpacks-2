@@ -5,6 +5,10 @@ import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.beansgalaxy.backpacks.screen.CauldronInventory;
 import dev.architectury.hooks.fluid.FluidStackHooks;
+import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandler;
+import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.impl.client.rendering.fluid.FluidRenderHandlerRegistryImpl;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -43,8 +47,9 @@ public class FabricCompatHelper implements CompatHelper {
 
       @Override
       public CauldronInventory.FluidAttributes getFluidTexture(Fluid fluid, TextureAtlas blocksAtlas) {
-            TextureAtlasSprite sprite = FluidStackHooks.getStillTexture(fluid);
-            int color = FluidStackHooks.getColor(fluid);
+            FluidVariant fluidVariant = FluidVariant.of(fluid);
+            TextureAtlasSprite sprite = FluidVariantRendering.getSprite(fluidVariant);
+            int color = FluidVariantRendering.getColor(fluidVariant);
             return new CauldronInventory.FluidAttributes(sprite, new Color(color));
       }
 }
