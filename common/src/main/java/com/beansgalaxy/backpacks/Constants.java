@@ -54,6 +54,12 @@ public class Constants {
 		}
 	};
 
+	public static ItemStack createLabeledBackpack(String backpack_id) {
+		ItemStack backpackStack = Services.REGISTRY.getMetal().getDefaultInstance();
+		backpackStack.getOrCreateTag().putString("backpack_id", backpack_id);
+		return backpackStack;
+	}
+
 	public static boolean isEmpty(String string) {
 		return string == null || string.isEmpty() || string.isBlank();
 	}

@@ -5,22 +5,16 @@ import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.List;
-
 public class BackSlot extends Slot {
-      private static final ResourceLocation SLOT_BACKPACK = new ResourceLocation("sprites/empty_slot_backpack");
-      private static final ResourceLocation SLOT_ELYTRA = new ResourceLocation("sprites/empty_slot_elytra");
       public final BackData backData;
       public int slotIndex = -1;
 
@@ -56,17 +50,6 @@ public class BackSlot extends Slot {
       public void setChanged() {
             backData.update(this.getItem());
             super.setChanged();
-      }
-
-      public static List<ResourceLocation> getTextures() {
-            if (Constants.ELYTRA_ITEMS.contains(Items.ELYTRA.asItem())
-                  && Minecraft.getInstance().getConnection().getAdvancements().getAdvancements()
-                        .get(ResourceLocation.tryParse("end/root")) != null)
-            {
-                  return List.of(SLOT_ELYTRA, SLOT_BACKPACK);
-            }
-
-            return List.of(SLOT_BACKPACK);
       }
 
       public static InteractionResult openPlayerBackpackMenu(Player viewer, Player owner) {

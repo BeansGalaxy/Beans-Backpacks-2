@@ -1,12 +1,18 @@
 package com.beansgalaxy.backpacks.items;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.data.EnderStorage;
+import com.beansgalaxy.backpacks.data.Traits;
+import com.beansgalaxy.backpacks.screen.BackSlot;
 import com.beansgalaxy.backpacks.screen.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
+import com.beansgalaxy.backpacks.screen.InfoWidget;
 import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.AdvancementList;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
@@ -27,11 +33,14 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 
 public class Tooltip {
 
@@ -110,61 +119,8 @@ public class Tooltip {
                   .replace("Right ", "R")
                   .replace("Control", "Ctrl");
 
-      public static void loreTitle(List<Component> components) {
-            components.add(Component.translatable("tooltip.beansbackpacks.empty_title_1", keyBind));
-            MutableComponent t2 = Component.translatable("tooltip.beansbackpacks.empty_title_2", keyBind);
-            if (!t2.getString().isEmpty()) components.add(t2);
-      }
-
       public static void nullTitle(List<Component> components) {
-            components.add(Component.translatable("tooltip.beansbackpacks.null_title", Component.literal(keyBind.toLowerCase()).withStyle(ChatFormatting.GRAY)));
-      }
-
-      public static List<Component> addLore(List<Component> components, String kind, int lines) {
-            Minecraft instance = Minecraft.getInstance();
-            String useKey = "§6" + instance.options.keyUse.getTranslatedKeyMessage().getString()
-                    .replace("Right Button", "RClick")
-                    .replace("Left Button", "LClick")
-                    .replace("Left ", "L")
-                    .replace("Right ", "R");
-
-            for (int i = 0; i <= lines; i++) {
-                  components.add(Component.translatable("tooltip.beansbackpacks.help." + kind + i, keyBind, useKey));
-
-                  if (i != lines && (i + 1) % 2 == 0)
-                        components.add(empty);
-            }
-
-            return components;
-      }
-
-      public static List<Component> addLoreEnder(List<Component> components, MutableComponent playerName) {
-            int lines = 5;
-            for (int i = 0; i <= lines; i++) {
-                  components.add(Component.translatable("tooltip.beansbackpacks.help.ender" + i, playerName));
-
-                  if (i != lines && (i + 1) % 2 == 0)
-                        components.add(empty);
-            }
-
-            return components;
-      }
-
-      public static List<Component> addNullLore(List<Component> components, Player player) {
-            components.add(Component.translatable("tooltip.beansbackpacks.help.null0"));
-            components.add(Component.translatable("tooltip.beansbackpacks.help.null1"));
-            components.add(empty);
-            components.add(Component.translatable("tooltip.beansbackpacks.help.null2"));
-            components.add(Component.translatable("tooltip.beansbackpacks.help.null3"));
-            components.add(Component.translatable("tooltip.beansbackpacks.help.null4"));
-            components.add(empty);
-            components.add(Component.translatable("tooltip.beansbackpacks.help.null5"));
-            components.add(Component.translatable("tooltip.beansbackpacks.help.null6"));
-            components.add(empty);
-            components.add(Component.translatable("tooltip.beansbackpacks.help.null7"));
-            components.add(Component.translatable("tooltip.beansbackpacks.help.null8", player.getName().plainCopy().withStyle(ChatFormatting.GOLD)));
-
-            return components;
+            components.add(Component.translatable("tooltip.beansbackpacks.null_title", Component.literal(keyBind).withStyle(ChatFormatting.GOLD)));
       }
 
       public static KeyMapping getKeyBinding() {
@@ -222,5 +178,69 @@ public class Tooltip {
 
       public static void playSound(SoundEvent soundEvent, float pitch, float volume) {
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(soundEvent, pitch, volume));
+      }
+
+      public static void appendTooltip(Player player, TooltipFlag flag, List<Component> components, Traits.LocalData traits, ItemStack instance) {
+            Kind kind = traits.kind;
+            components.add(empty);
+            switch (kind) {
+                  case POT -> {
+                        components.add(Component.translatable("tooltip.beansbackpacks.special_title"));
+                        components.add(Component.translatable("tooltip.beansbackpacks.storage.stacks", "§9" + 128));
+                        components.add(Component.translatable("tooltip.beansbackpacks.pot"));
+                  }
+                  case CAULDRON -> {
+                        components.add(Component.translatable("tooltip.beansbackpacks.special_title"));
+                        components.add(Component.translatable("tooltip.beansbackpacks.cauldron"));
+                  }
+                  default -> {
+                        components.add(Component.translatable("tooltip.beansbackpacks.storage_title"));
+                        int maxStacks = traits.maxStacks();
+                        components.add(Component.translatable("tooltip.beansbackpacks.storage.stacks", "§9" + maxStacks));
+
+                        if (traits.fireResistant())
+                              components.add(Component.translatable("tooltip.beansbackpacks.storage.fire_resistant"));
+
+                        if (Kind.ENDER.is(kind)) {
+                              EnderBackpack enderBackpack = (EnderBackpack) instance.getItem();
+                              UUID uuid = enderBackpack.getOrCreateUUID(player.getUUID(), instance);
+                              Level level = player.level();
+                              EnderStorage.Data enderData = EnderStorage.getEnderData(uuid, level);
+                              MutableComponent playerName = enderData.getPlayerNameColored(level.registryAccess());
+                              components.add(Component.translatable("tooltip.beansbackpacks.ender", playerName));
+                        }
+
+                        String key = traits.key;
+                        if (flag.isAdvanced() && !Constants.isEmpty(key))
+                              components.add(Component.translatable("tooltip.beansbackpacks.hidden.backpack_id", "§8" + key));
+                  }
+            }
+      }
+
+      private static final ResourceLocation SLOT_BACKPACK = new ResourceLocation("sprites/empty_slot_backpack");
+      private static final ResourceLocation SLOT_ELYTRA = new ResourceLocation("sprites/empty_slot_elytra");
+      private static final ResourceLocation SLOT_CAULDRON = new ResourceLocation("sprites/empty_slot_cauldron");
+      private static final ResourceLocation SLOT_POT = new ResourceLocation("sprites/empty_slot_pot");
+
+      public static List<ResourceLocation> getTextures() {
+            NonNullList<ResourceLocation> list = NonNullList.create();
+            list.add(SLOT_BACKPACK);
+
+            ClientPacketListener connection = Minecraft.getInstance().getConnection();
+            if (connection == null)
+                  return list;
+
+            AdvancementList advancements = connection.getAdvancements().getAdvancements();
+            if (Constants.ELYTRA_ITEMS.contains(Items.ELYTRA.asItem()) && advancements.get(ResourceLocation.tryParse("end/root")) != null)
+                  list.add(SLOT_ELYTRA);
+
+            if (advancements.get(ResourceLocation.tryParse("beansbackpacks:info/decorated_pots")) != null)
+                  list.add(SLOT_POT);
+
+            if (advancements.get(ResourceLocation.tryParse("beansbackpacks:info/fluid_cauldrons")) != null)
+                  list.add(SLOT_CAULDRON);
+
+
+            return list;
       }
 }

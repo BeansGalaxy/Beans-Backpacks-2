@@ -3,6 +3,7 @@ package com.beansgalaxy.backpacks.mixin.client;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.access.ClickAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import com.beansgalaxy.backpacks.screen.InfoWidget;
 import net.minecraft.client.Minecraft;
@@ -29,15 +30,27 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.List;
 import java.util.Optional;
 
 @Mixin(InventoryScreen.class)
 public abstract class InventoryScreenMixin extends EffectRenderingInventoryScreen<InventoryMenu> implements ClickAccessor {
-      @Unique private static final ResourceLocation INFO_BUTTON_LOCATION = new ResourceLocation(Constants.MOD_ID, "textures/gui/info_tab.png");
       @Shadow @Final private RecipeBookComponent recipeBookComponent;
       @Shadow private boolean buttonClicked;
-      @Shadow private boolean widthTooNarrow;
-      @Unique private final CyclingSlotBackground backSlotIcon = new CyclingSlotBackground(BackData.get(Minecraft.getInstance().player).backSlot.slotIndex);
+      @Unique private final CyclingSlotBackground backSlotIcon = new CyclingSlotBackground(BackData.get(Minecraft.getInstance().player).backSlot.slotIndex) {
+            int buffer = 0;
+
+            @Override
+            public void tick(List<ResourceLocation> $$0) {
+                  buffer++;
+
+                  if (buffer < 30 && buffer > -1) {
+                        super.tick($$0);
+                  }
+                  if (buffer == 30)
+                        buffer = -40;
+            }
+      };
 
       public InventoryScreenMixin(InventoryMenu screenHandler, Inventory playerInventory, Component text) {
             super(screenHandler, playerInventory, text);
@@ -45,7 +58,7 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
 
       @Inject(method = "containerTick", at = @At("HEAD"))
       public void containerTick(CallbackInfo ci) {
-            this.backSlotIcon.tick(BackSlot.getTextures());
+            this.backSlotIcon.tick(Tooltip.getTextures());
       }
 
       @Inject(method = "renderBg", at = @At("TAIL"))
@@ -74,7 +87,7 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
       @Inject(method = "init", at = @At(value = "INVOKE", shift = At.Shift.AFTER,
                   target = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;setInitialFocus(Lnet/minecraft/client/gui/components/events/GuiEventListener;)V"))
       public void backpackHelpWidget(CallbackInfo ci) {
-            infoWidget.init(this.height, this.leftPos, this.topPos, this.minecraft, () -> {
+            infoWidget.init(this.height, this.leftPos, this.topPos, this.minecraft, this.recipeBookComponent, () -> {
                   this.leftPos = this.infoWidget.updateScreenPosition(this.recipeBookComponent.updateScreenPosition(this.width, this.imageWidth), recipeBookComponent.isVisible(), this.width, this.imageWidth);
                   this.buttonClicked = true;
             });
@@ -96,10 +109,6 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
       @Inject(method = "mouseClicked", at = @At(value = "RETURN", ordinal = 1))
       public void hideHelpWidget(double $$0, double $$1, int $$2, CallbackInfoReturnable<Boolean> cir) {
             infoWidget.updateButtonPositions(leftPos);
-            boolean recipeBookComponentVisible = recipeBookComponent.isVisible();
-            infoWidget.homeButton.setVisible(!recipeBookComponentVisible);
-            if (recipeBookComponentVisible && infoWidget.isFocused()) {
-                  infoWidget.toggleFocus();
-            }
+            infoWidget.updateVisible();
       }
 }

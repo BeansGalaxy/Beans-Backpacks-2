@@ -40,10 +40,5 @@
       "has_chests"
     ]
   ],
-  "rewards": {
-    "recipes": [
-      "beansbackpacks:ender_backpack"
-    ]
-  },
   "sends_telemetry_event": false
 }

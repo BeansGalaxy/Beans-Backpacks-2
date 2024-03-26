@@ -46,8 +46,7 @@ public class RegisterCommands {
                                                       return -1;
                                                 }
 
-                                                ItemStack backpackStack = Services.REGISTRY.getMetal().getDefaultInstance();
-                                                backpackStack.getOrCreateTag().putString("backpack_id", backpack_id);
+                                                ItemStack backpackStack = Constants.createLabeledBackpack(backpack_id);
                                                 Component playerNames = null;
                                                 for (ServerPlayer player : targets) {
                                                       player.getInventory().add(backpackStack.copy());
