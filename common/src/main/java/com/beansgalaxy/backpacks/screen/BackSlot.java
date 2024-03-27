@@ -47,9 +47,9 @@ public class BackSlot extends Slot {
       }
 
       @Override
-      public void setChanged() {
-            backData.update(this.getItem());
-            super.setChanged();
+      public void set(ItemStack $$0) {
+            backData.update($$0);
+            super.set($$0);
       }
 
       public static InteractionResult openPlayerBackpackMenu(Player viewer, Player owner) {

@@ -98,11 +98,12 @@ public class BackData {
       }
 
       public ItemStack getStack() {
-            return Services.COMPAT.getBackSlotItem(this, backStack);
+            ItemStack backSlotItem = Services.COMPAT.getBackSlotItem(this, backStack);
+            return backSlotItem.isEmpty() ? ItemStack.EMPTY : backSlotItem;
       }
 
       public Traits.LocalData getTraits() {
-            if (getStack().isEmpty())
+            if (isEmpty())
                   traits = Traits.LocalData.EMPTY;
             return traits;
       }
@@ -120,19 +121,14 @@ public class BackData {
             if (stack.getItem() instanceof EnderBackpack enderBackpack)
                   enderBackpack.getOrCreateUUID(owner.getUUID(), stack);
 
+            if (stack.isEmpty())
+                  backpackInventory.clearViewers();
+
             this.backStack = stack;
             this.traits = Traits.LocalData.fromStack(stack);
-            this.setChanged();
       }
 
       public void setChanged() {
-            ItemStack stack = this.getStack();
-            if (stack.isEmpty())
-                  backpackInventory.clearViewers();
-            if (owner instanceof ServerPlayer serverPlayer) {
-                  Services.REGISTRY.triggerEquipAny(serverPlayer);
-                  Services.NETWORK.SyncBackSlot(serverPlayer);
-            }
       }
 
       public void playEquipSound(ItemStack stack) {
