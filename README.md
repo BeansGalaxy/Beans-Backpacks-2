@@ -20,6 +20,17 @@ the issues tab. </p>
 
 <h1 align="center"> Changelog </h1>
 
+<h3> 20.1-0.21-v2 & 20.2-0.17-v2 <img align="right" src="assets/images/updates/tooltip_update_1.png" alt="Back Slot" style="width:202px"> </h3>
+
+- All Backpack items now have persistent tooltips unique to their traits
+- Cauldrons & Pots now visually show their contents in their tooltips
+- Added a Backpack Help button onto inventory screen
+  - Clicking it opens pages with how-tos for each major milestone of the mod
+  - Each tab unlocks when they become relevant in progression (4 total)
+  - Replaces the help tooltip on equipped backpacks.
+- Fixed Fabric crashing when rendering fluid in cauldrons
+- Fixed JEI tooltips not loading properly
+
 ### 20.1-0.20-v3 & 20.2-0.17-v2
 
 - Added Back Slot into creative inventory
