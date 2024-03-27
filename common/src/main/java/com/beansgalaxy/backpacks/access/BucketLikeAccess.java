@@ -22,6 +22,4 @@ public interface BucketLikeAccess extends BucketsAccess {
 
       Item getFilledInstance();
 
-      int fullScale();
-
 }

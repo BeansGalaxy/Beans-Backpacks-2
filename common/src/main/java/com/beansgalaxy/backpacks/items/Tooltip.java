@@ -4,13 +4,12 @@ import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.data.Traits;
-import com.beansgalaxy.backpacks.screen.BackSlot;
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
+import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.events.PlaySound;
+import com.beansgalaxy.backpacks.inventory.SpecialTooltip;
 import com.beansgalaxy.backpacks.platform.Services;
-import com.beansgalaxy.backpacks.screen.InfoWidget;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.AdvancementList;
 import net.minecraft.client.KeyMapping;
@@ -19,6 +18,7 @@ import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -30,10 +30,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.tooltip.BundleTooltip;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -69,7 +66,22 @@ public class Tooltip {
             return Optional.empty();
       }
 
-      private static Optional<TooltipComponent> specialTooltip(ItemStack equippedOnBack, BackData backData) {
+      private static Optional<TooltipComponent> specialTooltip(ItemStack backStack, BackData backData) {
+            CompoundTag backTag = backStack.getTagElement("back_slot");
+            Traits.LocalData traits = backData.getTraits();
+            if (backTag != null && backTag.contains("id") && backTag.contains("amount")) {
+                  String string = backTag.getString("id");
+                  Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(string));
+                  int amount = backTag.getInt("amount");
+                  switch (traits.kind) {
+                        case POT -> {
+                              return Optional.of(new SpecialTooltip.Pot(item, amount));
+                        }
+                        case CAULDRON -> {
+                              return Optional.of(new SpecialTooltip.Cauldron(item, amount));
+                        }
+                  }
+            }
             return Optional.empty();
       }
 
@@ -185,13 +197,17 @@ public class Tooltip {
             components.add(empty);
             switch (kind) {
                   case POT -> {
-                        components.add(Component.translatable("tooltip.beansbackpacks.special_title"));
-                        components.add(Component.translatable("tooltip.beansbackpacks.storage.stacks", "§9" + 128));
-                        components.add(Component.translatable("tooltip.beansbackpacks.pot"));
+                        if (!instance.hasTag() || !instance.getTag().contains("back_slot")) {
+                              components.add(Component.translatable("tooltip.beansbackpacks.special_title"));
+                              components.add(Component.translatable("tooltip.beansbackpacks.storage.stacks", "§9" + 128));
+                              components.add(Component.translatable("tooltip.beansbackpacks.pot"));
+                        }
                   }
                   case CAULDRON -> {
-                        components.add(Component.translatable("tooltip.beansbackpacks.special_title"));
-                        components.add(Component.translatable("tooltip.beansbackpacks.cauldron"));
+                        if (!instance.hasTag() || !instance.getTag().contains("back_slot")) {
+                              components.add(Component.translatable("tooltip.beansbackpacks.special_title"));
+                              components.add(Component.translatable("tooltip.beansbackpacks.cauldron"));
+                        }
                   }
                   default -> {
                         components.add(Component.translatable("tooltip.beansbackpacks.storage_title"));

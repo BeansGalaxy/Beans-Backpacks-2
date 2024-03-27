@@ -6,7 +6,7 @@ import com.beansgalaxy.backpacks.client.renderer.BackpackRenderer;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.items.WingedBackpack;
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
+import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;

@@ -3,7 +3,7 @@ package com.beansgalaxy.backpacks;
 import com.beansgalaxy.backpacks.items.recipes.Conversion;
 import com.beansgalaxy.backpacks.items.recipes.Crafting;
 import com.beansgalaxy.backpacks.items.recipes.Smithing;
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
+import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.data.RegisterCommands;
 import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.entity.*;

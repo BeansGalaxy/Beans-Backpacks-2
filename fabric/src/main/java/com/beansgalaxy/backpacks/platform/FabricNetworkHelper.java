@@ -3,7 +3,7 @@ package com.beansgalaxy.backpacks.platform;
 import com.beansgalaxy.backpacks.FabricMain;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.events.UseKeyEvent;
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
+import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;

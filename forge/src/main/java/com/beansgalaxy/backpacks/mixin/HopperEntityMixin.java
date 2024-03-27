@@ -1,6 +1,6 @@
 package com.beansgalaxy.backpacks.mixin;
 
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
+import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

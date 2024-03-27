@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.data;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
+import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.ChatFormatting;

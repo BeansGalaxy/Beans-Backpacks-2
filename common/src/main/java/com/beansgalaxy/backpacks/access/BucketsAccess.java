@@ -23,4 +23,8 @@ public interface BucketsAccess {
       @NotNull
       Item getEmptyInstance();
 
+      default int fullScale() {
+            return 4;
+      }
+
 }

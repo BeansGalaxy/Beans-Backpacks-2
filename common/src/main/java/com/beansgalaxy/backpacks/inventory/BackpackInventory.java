@@ -1,4 +1,4 @@
-package com.beansgalaxy.backpacks.screen;
+package com.beansgalaxy.backpacks.inventory;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.BackData;

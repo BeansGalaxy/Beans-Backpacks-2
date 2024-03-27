@@ -9,6 +9,7 @@ import com.beansgalaxy.backpacks.client.renderer.models.BackpackModel;
 import com.beansgalaxy.backpacks.client.renderer.models.BackpackWingsModel;
 import com.beansgalaxy.backpacks.client.renderer.models.CauldronModel;
 import com.beansgalaxy.backpacks.client.renderer.models.PotModel;
+import com.beansgalaxy.backpacks.inventory.SpecialTooltip;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
@@ -88,6 +89,12 @@ public class ClientModEvents {
       public static void loadItemModels(ModelEvent.RegisterAdditional event) {
             for(ModelResourceLocation modelId : ModelResources.get())
                   event.register(modelId);
+      }
+
+      @SubscribeEvent
+      public static void tooltipImageEvent(RegisterClientTooltipComponentFactoriesEvent event) {
+            event.register(SpecialTooltip.Pot.class, ClientSpecialTooltip.Pot::new);
+            event.register(SpecialTooltip.Cauldron.class, ClientSpecialTooltip.Cauldron::new);
       }
 
 }

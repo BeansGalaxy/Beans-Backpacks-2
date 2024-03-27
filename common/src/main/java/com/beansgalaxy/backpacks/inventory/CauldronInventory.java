@@ -1,4 +1,4 @@
-package com.beansgalaxy.backpacks.screen;
+package com.beansgalaxy.backpacks.inventory;
 
 import com.beansgalaxy.backpacks.access.BucketLikeAccess;
 import com.beansgalaxy.backpacks.access.BucketsAccess;

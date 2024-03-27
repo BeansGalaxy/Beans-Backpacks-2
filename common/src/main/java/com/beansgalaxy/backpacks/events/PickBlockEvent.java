@@ -2,7 +2,7 @@ package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
+import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.platform.Services;

@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.network.packages;
 
 import com.beansgalaxy.backpacks.data.BackData;
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
+import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;

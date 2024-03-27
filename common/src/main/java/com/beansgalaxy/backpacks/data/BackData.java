@@ -9,7 +9,7 @@ import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.screen.BackSlot;
-import com.beansgalaxy.backpacks.screen.BackpackInventory;
+import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.screen.InSlot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
