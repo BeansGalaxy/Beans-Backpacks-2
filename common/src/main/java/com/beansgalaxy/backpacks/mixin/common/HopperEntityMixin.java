@@ -36,8 +36,14 @@ public class HopperEntityMixin {
 
     @Inject(method = "getSlots", cancellable = true, at = @At("HEAD"))
     private static void addBackpackSlotsCheck(Container container, Direction $$1, CallbackInfoReturnable<IntStream> cir) {
-        if (container instanceof BackpackInventory backpackInventory && backpackInventory.isEmpty()) {
-            cir.setReturnValue(IntStream.of(0));
+        if (container instanceof BackpackInventory backpackInventory) {
+            int containerSize = backpackInventory.getContainerSize();
+            if (backpackInventory.spaceLeft() < 1) {
+                containerSize -= 2;
+            }
+            IntStream range = IntStream.range(0, containerSize + 1);
+            cir.setReturnValue(range);
+
         }
     }
 

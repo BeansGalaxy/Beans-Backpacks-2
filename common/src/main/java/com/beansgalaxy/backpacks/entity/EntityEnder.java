@@ -58,8 +58,8 @@ public class EntityEnder extends EntityAbstract {
 
             @Override
             public void setChanged() {
-                  if (EntityEnder.this.level() instanceof ServerLevel serverLevel)
-                        EnderStorage.flagForUpdate(EntityEnder.this, serverLevel.getServer());
+                  if (EntityEnder.this.level() instanceof ServerLevel)
+                        EnderStorage.get().syncViewers(EntityEnder.this.getPlacedBy());
 
                   BackpackInventory.super.setChanged();
             }
@@ -89,7 +89,7 @@ public class EntityEnder extends EntityAbstract {
 
                         @Override
                         public CompoundTag getTrim() {
-                              return EnderStorage.getTrim(getPlacedBy(), level());
+                              return EnderStorage.getTrim(getPlacedBy());
                         }
 
                   };
@@ -116,10 +116,13 @@ public class EntityEnder extends EntityAbstract {
       @Override
       public @NotNull InteractionResult interact(Player player, InteractionHand hand) {
             UUID placedBy = getPlacedBy();
-            if (placedBy != null && (!player.isCreative() || (ServerSave.CONFIG.get(Config.ENDER_LOCK_LOGGED_OFF) && level().getPlayerByUUID(placedBy) == null))) {
-                  PlaySound.HIT.at(this, getTraits().kind);
-                  this.hop(.1);
-                  return InteractionResult.SUCCESS;
+            if (placedBy != null) {
+                  EnderStorage.get().addViewer(placedBy, getInventory());
+                  if (!player.isCreative() && ServerSave.CONFIG.get(Config.ENDER_LOCK_LOGGED_OFF) && level().getPlayerByUUID(placedBy) == null) {
+                        PlaySound.HIT.at(this, getTraits().kind);
+                        this.hop(.1);
+                        return InteractionResult.SUCCESS;
+                  }
             }
 
             return super.interact(player, hand);
@@ -130,6 +133,15 @@ public class EntityEnder extends EntityAbstract {
             EnderStorage.removeLocation(getPlacedBy(), getUUID());
             super.kill();
             level().updateNeighbourForOutputSignal(pos, Blocks.AIR);
+      }
+
+      @Override
+      public void remove(RemovalReason $$0) {
+            UUID placedBy = getPlacedBy();
+            if (placedBy != null)
+                  EnderStorage.get().removeViewer(placedBy, getInventory());
+
+            super.remove($$0);
       }
 
       @Override
@@ -150,11 +162,14 @@ public class EntityEnder extends EntityAbstract {
       protected void reapplyPosition() {
             super.reapplyPosition();
             level().updateNeighbourForOutputSignal(pos, Blocks.AIR);
+
+            EnderStorage.get().addViewer(getPlacedBy(), getInventory());
       }
 
       @Override
       protected void readAdditionalSaveData(CompoundTag tag) {
             fromNBT(tag);
+            EnderStorage.get().addViewer(getPlacedBy(), getInventory());
       }
 
       @Override

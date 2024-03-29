@@ -51,7 +51,7 @@ public class BackData {
 
             @Override public NonNullList<ItemStack> getItemStacks() {
                   ItemStack backStack = BackData.this.getStack();
-                  if (backStack.getItem() instanceof EnderBackpack enderBackpack) {
+                  if (!backStack.isEmpty() && backStack.getItem() instanceof EnderBackpack enderBackpack) {
                         UUID uuid = enderBackpack.getOrCreateUUID(owner.getUUID(), backStack);
                         return EnderStorage.getEnderData(uuid, owner.level()).getItemStacks();
                   }
@@ -68,6 +68,16 @@ public class BackData {
                   if (backStack.getItem() instanceof EnderBackpack enderBackpack)
                         return enderBackpack.getOrCreateUUID(owner.getUUID(), backStack);
                   return owner.getUUID();
+            }
+
+            @Override
+            public void setChanged() {
+                  ItemStack backStack = BackData.this.getStack();
+                  if (!owner.level().isClientSide && backStack.getItem() instanceof EnderBackpack enderBackpack) {
+                        UUID uuid = enderBackpack.getOrCreateUUID(owner.getUUID(), backStack);
+                        EnderStorage.get().syncViewers(uuid);
+                  }
+                  BackpackInventory.super.setChanged();
             }
       };
 
@@ -118,11 +128,12 @@ public class BackData {
       }
 
       public void update(ItemStack stack) {
-            if (stack.getItem() instanceof EnderBackpack enderBackpack)
-                  enderBackpack.getOrCreateUUID(owner.getUUID(), stack);
-
             if (stack.isEmpty())
                   backpackInventory.clearViewers();
+            else if (stack.getItem() instanceof EnderBackpack enderBackpack) {
+                  UUID uuid = enderBackpack.getOrCreateUUID(owner.getUUID(), stack);
+                  EnderStorage.get().addViewer(uuid, backpackInventory);
+            }
 
             this.backStack = stack;
             this.traits = Traits.LocalData.fromStack(stack);

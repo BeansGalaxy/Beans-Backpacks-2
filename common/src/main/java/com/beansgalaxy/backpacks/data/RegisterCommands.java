@@ -1,7 +1,6 @@
 package com.beansgalaxy.backpacks.data;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.platform.Services;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -15,10 +14,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class RegisterCommands {
       public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -104,18 +100,19 @@ public class RegisterCommands {
             beansmod.then(Commands.literal("enderdata").requires(in -> in.hasPermission(4))
                         .then(Commands.literal("list")
                                     .executes(ctx -> {
-                                          int size = ServerSave.MAPPED_ENDER_DATA.size();
+                                          HashMap<UUID, EnderStorage.Data> enderStorage = EnderStorage.get().MAPPED_DATA;
+                                          int size = enderStorage.size();
                                           MutableComponent literal = Component.translatableWithFallback("command.beansbackpacks.enderdata.list.success", "%d entries found: ", size);
 
                                           boolean addBreak = false;
-                                          for (UUID uuid : ServerSave.MAPPED_ENDER_DATA.keySet()) {
+                                          for (UUID uuid : enderStorage.keySet()) {
                                                 if (addBreak)
                                                       literal.append(", ");
                                                 else
                                                       literal.append(": ");
                                                 addBreak = true;
 
-                                                EnderStorage.Data enderData = ServerSave.MAPPED_ENDER_DATA.get(uuid);
+                                                EnderStorage.Data enderData = enderStorage.get(uuid);
                                                 if (Constants.isEmpty(enderData.getPlayerName()))
                                                       literal.append(Component.literal("(" + uuid + ")").withStyle(ChatFormatting.GRAY).withStyle(ChatFormatting.ITALIC));
                                                 else
@@ -126,19 +123,21 @@ public class RegisterCommands {
                                     })
                         ).then(Commands.literal("clear_player")
                                     .executes(ctx -> {
+                                          HashMap<UUID, EnderStorage.Data> enderStorage = EnderStorage.get().MAPPED_DATA;
                                           ServerPlayer player = ctx.getSource().getPlayerOrException();
-                                          int sizeS = ServerSave.MAPPED_ENDER_DATA.size();
-                                          ServerSave.MAPPED_ENDER_DATA.remove(player.getUUID());
-                                          int sizeE = ServerSave.MAPPED_ENDER_DATA.size();
+                                          int sizeS = enderStorage.size();
+                                          enderStorage.remove(player.getUUID());
+                                          int sizeE = enderStorage.size();
                                           ctx.getSource().sendSuccess(() -> Component.translatable("command.beansbackpacks.enderdata.clear.success", player.getName()), true);
                                           return sizeE - sizeS;
                                     }).then(Commands.argument("targets", EntityArgument.players())
                                                 .executes(ctx -> {
+                                                      HashMap<UUID, EnderStorage.Data> enderStorage = EnderStorage.get().MAPPED_DATA;
                                                       List<ServerPlayer> targets = (List<ServerPlayer>) EntityArgument.getPlayers(ctx, "targets");
 
                                                       int total = 0;
                                                       for (ServerPlayer player : targets) {
-                                                            ServerSave.MAPPED_ENDER_DATA.remove(player.getUUID());
+                                                            enderStorage.remove(player.getUUID());
                                                             total++;
                                                       }
                                                       Component who = total == 1 ? targets.get(0).getName() : Component.literal(String.valueOf(total));
@@ -147,17 +146,19 @@ public class RegisterCommands {
                                                 }))
                         ).then(Commands.literal("clear_all")
                                     .executes(ctx -> {
-                                          int size = ServerSave.MAPPED_ENDER_DATA.size();
-                                          ServerSave.MAPPED_ENDER_DATA.clear();
+                                          HashMap<UUID, EnderStorage.Data> enderStorage = EnderStorage.get().MAPPED_DATA;
+                                          int size = enderStorage.size();
+                                          enderStorage.clear();
                                           ctx.getSource().sendSuccess(() -> Component.translatable("command.beansbackpacks.enderdata.clear.success", size), true);
                                           return size;
                                     }).then(Commands.literal("no_data")
                                                 .executes(ctx -> {
+                                                      HashMap<UUID, EnderStorage.Data> enderStorage = EnderStorage.get().MAPPED_DATA;
                                                       int total = 0;
-                                                      for (UUID uuid : ServerSave.MAPPED_ENDER_DATA.keySet()) {
-                                                            EnderStorage.Data enderData = ServerSave.MAPPED_ENDER_DATA.get(uuid);
+                                                      for (UUID uuid : enderStorage.keySet()) {
+                                                            EnderStorage.Data enderData = enderStorage.get(uuid);
                                                             if (enderData.getItemStacks().isEmpty() && enderData.getTrim().isEmpty()) {
-                                                                  ServerSave.MAPPED_ENDER_DATA.remove(uuid);
+                                                                  enderStorage.remove(uuid);
                                                                   total++;
                                                             }
                                                       }
@@ -167,30 +168,32 @@ public class RegisterCommands {
                                                 })
                                     ).then(Commands.literal("empty_inventories")
                                                 .executes(ctx -> {
+                                                      HashMap<UUID, EnderStorage.Data> enderStorage = EnderStorage.get().MAPPED_DATA;
                                                       List<UUID> forRemoval = new ArrayList<>();
-                                                      for (UUID uuid : ServerSave.MAPPED_ENDER_DATA.keySet()) {
-                                                            EnderStorage.Data enderData = ServerSave.MAPPED_ENDER_DATA.get(uuid);
+                                                      for (UUID uuid : enderStorage.keySet()) {
+                                                            EnderStorage.Data enderData = enderStorage.get(uuid);
                                                             if (enderData.getItemStacks().isEmpty())
                                                                   forRemoval.add(uuid);
                                                       }
                                                       int total = forRemoval.size();
                                                       for (UUID uuid : forRemoval)
-                                                            ServerSave.MAPPED_ENDER_DATA.remove(uuid);
+                                                            enderStorage.remove(uuid);
 
                                                       ctx.getSource().sendSuccess(() -> Component.translatable("command.beansbackpacks.enderdata.clear.success", String.valueOf(total)), true);
                                                       return total;
                                                 })
                                     ).then(Commands.literal("empty_name")
                                                 .executes(ctx -> {
+                                                      HashMap<UUID, EnderStorage.Data> enderStorage = EnderStorage.get().MAPPED_DATA;
                                                       List<UUID> forRemoval = new ArrayList<>();
-                                                      for (UUID uuid : ServerSave.MAPPED_ENDER_DATA.keySet()) {
-                                                            EnderStorage.Data enderData = ServerSave.MAPPED_ENDER_DATA.get(uuid);
+                                                      for (UUID uuid : enderStorage.keySet()) {
+                                                            EnderStorage.Data enderData = enderStorage.get(uuid);
                                                             if (Constants.isEmpty(enderData.getPlayerName()))
                                                                   forRemoval.add(uuid);
                                                       }
                                                       int total = forRemoval.size();
                                                       for (UUID uuid : forRemoval)
-                                                            ServerSave.MAPPED_ENDER_DATA.remove(uuid);
+                                                            enderStorage.remove(uuid);
 
                                                       ctx.getSource().sendSuccess(() -> Component.translatable("command.beansbackpacks.enderdata.clear.success", String.valueOf(total)), true);
                                                       return total;

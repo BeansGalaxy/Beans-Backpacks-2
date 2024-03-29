@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.data;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.items.EnderBackpack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -11,6 +12,7 @@ import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.ItemStack;
 
 import java.awt.*;
+import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -171,7 +173,7 @@ public class Traits {
                         data.putBoolean("empty", true);
                   else {
                         data.putInt("color", color);
-                        data.put("Trim", trim);
+                        data.put("Trim", getTrim());
                         data.putString("name", Component.Serializer.toJson(hoverName));
                   }
                   return data;
@@ -210,8 +212,19 @@ public class Traits {
                               return new LocalData("", Kind.WINGED, itemColor, null, hoverName);
                         }
                         case ENDER -> {
-                              CompoundTag trim = stack.getTagElement("Trim");
-                              return new LocalData("", Kind.ENDER, 0xFFFFFF, trim, hoverName);
+                              CompoundTag tag = stack.getTag();
+
+                              UUID uuid;
+                              if (tag != null && tag.contains("owner")) {
+                                    uuid = tag.getUUID("owner");
+                              } else uuid = null;
+
+                              return new LocalData("", Kind.ENDER, 0xFFFFFF, null, hoverName) {
+                                    @Override
+                                    public CompoundTag getTrim() {
+                                          return EnderStorage.getTrim(uuid);
+                                    }
+                              };
                         }
                         case CAULDRON -> {
                               return CAULDRON;

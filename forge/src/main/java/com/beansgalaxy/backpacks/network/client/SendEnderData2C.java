@@ -2,7 +2,6 @@ package com.beansgalaxy.backpacks.network.client;
 
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.data.EnderStorage;
-import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -53,7 +52,7 @@ public class SendEnderData2C {
       }
 
       public void handle(Supplier<NetworkEvent.Context> context) {
-            EnderStorage.Data computed = ServerSave.MAPPED_ENDER_DATA.computeIfAbsent(uuid, in -> new EnderStorage.Data());
+            EnderStorage.Data computed = EnderStorage.get().MAPPED_DATA.computeIfAbsent(uuid, in -> new EnderStorage.Data());
             computed.setPlayerName(enderData.getPlayerName()).setTrim(enderData.getTrim()).setItemStacks(enderData.getItemStacks());
       }
 }

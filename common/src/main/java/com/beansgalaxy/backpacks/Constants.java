@@ -1,6 +1,5 @@
 package com.beansgalaxy.backpacks;
 
-import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -11,8 +10,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -30,7 +27,6 @@ import java.util.HashSet;
 import java.util.Map;
 
 public class Constants {
-
 	public static final String MOD_ID = "beansbackpacks";
 	public static final String MOD_NAME = "Beans' Backpacks";
 	public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);

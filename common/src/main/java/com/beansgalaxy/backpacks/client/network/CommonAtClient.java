@@ -39,8 +39,6 @@ public class CommonAtClient {
 
             LocalPlayer player = Minecraft.getInstance().player;
             BackpackInventory backpackInventory = BackData.get(player).backpackInventory;
-            backpackInventory.getItemStacks().clear();
-
             backpackInventory.readStackNbt(tag);
       }
 

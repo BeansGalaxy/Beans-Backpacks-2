@@ -95,11 +95,11 @@ public class CommonForgeEvents {
                   ItemStack stack = BackData.get(player).getStack();
                   NetworkPackages.S2C(new SyncBackSlot2C(player.getUUID(), stack), player);
 
-                  ServerSave.MAPPED_ENDER_DATA.forEach(((uuid, enderData) -> {
+                  EnderStorage.get().MAPPED_DATA.forEach(((uuid, enderData) -> {
                         NetworkPackages.S2C(new SendEnderData2C(uuid, enderData), player);
                   }));
 
-                  EnderStorage.updateLocations(player.getUUID(), player.serverLevel());
+                  EnderStorage.Location.update(player.getUUID(), player.serverLevel());
             }
       }
 
@@ -133,13 +133,13 @@ public class CommonForgeEvents {
       @SubscribeEvent
       public static void serverStartedEvent(ServerStartedEvent event) {
             MinecraftServer server = event.getServer();
-            ServerSave.updateSave(server);
+            ServerSave.getSave(server, true);
       }
 
       @SubscribeEvent
       public static void serverStoppingEvent(ServerStoppingEvent event) {
             MinecraftServer server = event.getServer();
-            ServerSave.updateSave(server);
+            ServerSave.getSave(server, true);
       }
 
       @SubscribeEvent

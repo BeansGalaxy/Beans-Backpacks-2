@@ -1,7 +1,6 @@
 package com.beansgalaxy.backpacks.items;
 
 import com.beansgalaxy.backpacks.data.EnderStorage;
-import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -9,7 +8,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ItemCombinerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -39,7 +37,7 @@ public class EnderBackpack extends BackpackItem {
             if (tag == null || !tag.contains("owner"))
                   return uuid;
 
-            if (ServerSave.MAPPED_ENDER_DATA.containsKey(uuid))
+            if (EnderStorage.get().MAPPED_DATA.containsKey(uuid))
                   uuid = tag.getUUID("owner");
 
             tag.putUUID("owner", uuid);

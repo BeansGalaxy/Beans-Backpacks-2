@@ -147,11 +147,8 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                               return true;
                         }
                   };
-                  if (BackpackItem.interact(backStack, clickAction, player, slotAccess, actionType == ClickType.QUICK_MOVE)) {
-                        if (player instanceof ServerPlayer serverPlayer && Kind.ENDER.is(kind))
-                              Services.NETWORK.sendEnderData2C(serverPlayer, serverPlayer.getUUID());
+                  if (BackpackItem.interact(backStack, clickAction, player, slotAccess, actionType == ClickType.QUICK_MOVE))
                         return;
-                  }
             }
 
             if (backData.actionKeyPressed && selectedPlayerInventory ) {
@@ -176,8 +173,6 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                   else if (traits.isStorage()) {
                         if (!level.isClientSide() || !Kind.ENDER.is(kind))
                               slot.set(backpackInventory.insertItem(stack, stack.getCount()));
-                        if (player instanceof ServerPlayer serverPlayer && Kind.ENDER.is(kind))
-                              Services.NETWORK.sendEnderData2C(serverPlayer, serverPlayer.getUUID());
                         return;
                   }
             }

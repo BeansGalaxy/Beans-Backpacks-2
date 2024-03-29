@@ -153,7 +153,7 @@ public abstract class EntityAbstract extends Backpack {
                   stack.setTag(itemTags);
 
             if (item instanceof EnderBackpack enderBackpack && backpack.getPlacedBy() != null) {
-                  enderBackpack.getOrCreateUUID(backpack.getPlacedBy(), stack);
+                  enderBackpack.setUUID(backpack.getPlacedBy(), stack);
             } else {
                   CompoundTag trim = traits.getTrim();
                   if (!trim.isEmpty())

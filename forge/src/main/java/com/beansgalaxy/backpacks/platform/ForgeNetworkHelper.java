@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.platform;
 
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.events.UseKeyEvent;
+import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.network.packages.*;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.data.EnderStorage;
@@ -19,6 +20,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
@@ -81,7 +83,14 @@ public class ForgeNetworkHelper implements NetworkHelper {
 
       @Override
       public void backpackInventory2C(ServerPlayer owner) {
-            BackpackInventory backpackInventory = BackData.get(owner).backpackInventory;
+            BackData backData = BackData.get(owner);
+            ItemStack backStack = backData.getStack();
+            if (backStack.getItem() instanceof EnderBackpack backpack) {
+                  if (!backStack.isEmpty())
+                        Services.NETWORK.sendEnderData2C(owner, backpack.getOrCreateUUID(owner.getUUID(), backStack));
+                  return;
+            }
+            BackpackInventory backpackInventory = backData.backpackInventory;
             CompoundTag compound = new CompoundTag();
             backpackInventory.writeNbt(compound);
             String stacks = compound.getAsString();

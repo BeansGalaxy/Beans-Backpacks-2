@@ -62,7 +62,7 @@ public class BackpackMenu extends AbstractContainerMenu {
             createBackpackSlots(backpackInventory);
 
             if (owner instanceof EntityEnder ender && viewer instanceof ServerPlayer serverPlayer) {
-                  EnderStorage.updateLocations(ender.getPlacedBy(), serverPlayer.serverLevel());
+                  EnderStorage.Location.update(ender.getPlacedBy(), serverPlayer.serverLevel());
             }
       }
 

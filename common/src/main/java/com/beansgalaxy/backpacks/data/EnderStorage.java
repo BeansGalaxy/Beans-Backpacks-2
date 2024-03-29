@@ -1,8 +1,10 @@
 package com.beansgalaxy.backpacks.data;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.EntityEnder;
+import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -27,6 +29,7 @@ import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,60 +37,75 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class EnderStorage {
-      public static void toNBT(@NotNull CompoundTag tag) {
-            CompoundTag enderTag = new CompoundTag();
+      public final HashMap<UUID, Data> MAPPED_DATA = new HashMap<>();
+      private final HashMap<UUID, HashSet<BackpackInventory>> VIEWERS = new HashMap<>();
 
-            ServerSave.MAPPED_ENDER_DATA.forEach(((uuid, enderData) -> {
-                  if (uuid != null && (!enderData.getItemStacks().isEmpty() || !enderData.getTrim().isEmpty() || !enderData.locations.isEmpty())) {
-                        CompoundTag data = new CompoundTag();
-                        BackpackInventory.writeNbt(data, enderData.getItemStacks());
-                        data.put("Trim", enderData.getTrim());
-                        data.putString("player_name", Component.Serializer.toJson(enderData.getPlayerName()));
-
-                        CompoundTag locations = new CompoundTag();
-                        for (UUID backpack : enderData.locations.keySet()) {
-                              CompoundTag location = new CompoundTag();
-                              enderData.locations.get(backpack).toNBT(location);
-                              locations.put(backpack.toString(), location);
-                        }
-
-                        data.put("locations", locations);
-                        enderTag.put(uuid.toString(), data);
-                  }
-            }));
-            tag.put("EnderData", enderTag);
+      public static EnderStorage get() {
+            return ServerSave.ENDER_STORAGE;
       }
 
-      public static void fromNbt(CompoundTag tag) {
-            if (tag.contains("EnderData"))
-                  fromNbtDeprecated(tag.getCompound("EnderData"));
-      }
+      public void addViewer(UUID viewed, BackpackInventory viewer) {
+            if (viewed == null || viewer == null) return;
 
-      // TODO: MERGE DEPRECATED AFTER FULL RELEASE (20.1-0.14)
-      public static boolean fromNbtDeprecated(CompoundTag tag) {
-            boolean isOldLoad = false; // TODO: FOR COMPATIBILITY FOR PREVIOUS VERSION
-            for (String key : tag.getAllKeys()) {
-                  if (key.equals("EnderData") || key.equals("Config")) // TODO: FOR COMPATIBILITY FOR PREVIOUS VERSION
-                        continue;
-                  CompoundTag dataTags = tag.getCompound(key);
-                  NonNullList<ItemStack> itemStacks = NonNullList.create();
-                  BackpackInventory.readStackNbt(dataTags, itemStacks);
-                  CompoundTag trim = dataTags.getCompound("Trim");
-                  MutableComponent playerName = Component.Serializer.fromJson(dataTags.getString("player_name"));
-                  EnderStorage.Data enderData = new EnderStorage.Data(itemStacks, trim, playerName);
+            Entity owner = viewer.getOwner();
+            if (owner instanceof ServerPlayer) {
+                  HashSet<BackpackInventory> inventories = VIEWERS.computeIfAbsent(viewed, uuid -> new HashSet<>());
 
-                  CompoundTag locations = dataTags.getCompound("locations");
-                  for (String backpack : locations.getAllKeys()) {
-                        Location location = new Location(locations.getCompound(backpack));
-                        enderData.locations.put(UUID.fromString(backpack), location);
-                  }
+                  for (BackpackInventory inventory : inventories)
+                        if (inventory.getOwner().is(owner)) return;
 
-                  UUID uuid = UUID.fromString(key);
-                  ServerSave.MAPPED_ENDER_DATA.put(uuid, enderData);
-                  isOldLoad = true;
+                  inventories.add(viewer);
+            } else if (owner instanceof EntityEnder && !owner.level().isClientSide()) {
+                  VIEWERS.computeIfAbsent(viewed, uuid -> new HashSet<>()).add(viewer);
             }
-            ServerSave.MAPPED_ENDER_DATA.remove(null);
-            return isOldLoad;
+      }
+
+      public void syncViewers(UUID viewed) {
+            if (viewed == null) return;
+
+            HashSet<BackpackInventory> inventories = VIEWERS.get(viewed);
+            if (inventories == null) return;
+
+            HashSet<BackpackInventory> forRemoval = new HashSet<>();
+            for (BackpackInventory inventory : inventories) {
+                  Entity owner = inventory.getOwner();
+                  if (owner instanceof ServerPlayer player) {
+                        BackData backData = BackData.get(player);
+                        ItemStack backStack = backData.getStack();
+                        if (backStack.getItem() instanceof EnderBackpack item) {
+                              UUID uuid = item.getOrCreateUUID(viewed, backStack);
+                              if (uuid.equals(viewed)) {
+                                    for (ServerPlayer viewer : backData.backpackInventory.getPlayersViewing())
+                                          Services.NETWORK.sendEnderData2C(viewer, viewed);
+                                    Services.NETWORK.sendEnderData2C(player, viewed);
+                              }
+                        }
+                  }
+                  else if (owner instanceof EntityEnder ender && ender.level() instanceof ServerLevel serverLevel && !ender.isRemoved()) {
+                        UUID placedBy = ender.getPlacedBy();
+                        if (placedBy.equals(viewed)) {
+                              NonNullList<ServerPlayer> playersViewing = ender.getInventory().getPlayersViewing();
+                              EnderStorage.flagForUpdate(viewed, serverLevel.getServer());
+                              for (ServerPlayer player : playersViewing)
+                                    Services.NETWORK.sendEnderData2C(player, viewed);
+                        }
+                  }
+                  else {
+                        forRemoval.add(inventory);
+                  }
+            }
+
+            for (BackpackInventory inventory : forRemoval)
+                  removeViewer(viewed, inventory);
+
+            if (inventories.isEmpty()) VIEWERS.remove(viewed);
+      }
+
+      public void removeViewer(UUID viewed, BackpackInventory inventory) {
+            HashSet<BackpackInventory> inventories = VIEWERS.get(viewed);
+            if (inventories == null) return;
+
+            inventories.remove(inventory);
       }
 
       public static Data getEnderData(Player player) {
@@ -100,7 +118,7 @@ public class EnderStorage {
                   return new Data();
             }
 
-            Data enderData = ServerSave.MAPPED_ENDER_DATA.computeIfAbsent(uuid, uuid1 -> new Data());
+            Data enderData = EnderStorage.get().MAPPED_DATA.computeIfAbsent(uuid, uuid1 -> new Data());
             Player player = level.getPlayerByUUID(uuid);
 
             if (player != null)
@@ -109,11 +127,13 @@ public class EnderStorage {
             return enderData;
       }
 
-      public static CompoundTag getTrim(UUID uuid, Level level) {
-            if (uuid == null)
-                  return new CompoundTag();
+      public static CompoundTag getTrim(@Nullable UUID uuid) {
+            if (uuid == null) return new CompoundTag();
 
-            return getEnderData(uuid, level).getTrim();
+            Data data = EnderStorage.get().MAPPED_DATA.get(uuid);
+            if (data == null) return new CompoundTag();
+
+            return data.getTrim();
       }
 
       public static void setLocation(UUID owner, UUID backpack, BlockPos location, ServerLevel level) {
@@ -125,16 +145,15 @@ public class EnderStorage {
       }
 
       public static void removeLocation(UUID owner, UUID backpack) {
-            Data enderData = ServerSave.MAPPED_ENDER_DATA.get(owner);
+            Data enderData = EnderStorage.get().MAPPED_DATA.get(owner);
             if (enderData != null)
                   enderData.locations.remove(backpack);
       }
 
-      public static void flagForUpdate(EntityEnder ender, MinecraftServer server) {
-            UUID placedBy = ender.getPlacedBy();
+      public static void flagForUpdate(UUID placedBy, MinecraftServer server) {
             if (placedBy == null) return;
 
-            Data data = ServerSave.MAPPED_ENDER_DATA.get(placedBy);
+            Data data = EnderStorage.get().MAPPED_DATA.get(placedBy);
             if (data == null) return;
 
             int limit = 64;
@@ -147,48 +166,6 @@ public class EnderStorage {
                   level.updateNeighbourForOutputSignal(location.location, Blocks.AIR);
 
                   limit--;
-            }
-      }
-
-      public static HashSet<PackagedLocation> getLocations(UUID owner, MinecraftServer minecraftServer) {
-            Data enderData = getEnderData(owner, minecraftServer.getLevel(Level.OVERWORLD));
-            HashSet<PackagedLocation> locations = new HashSet<>();
-            for (UUID backpack : enderData.locations.keySet()) {
-
-                  Location location = enderData.locations.get(backpack);
-                  ResourceKey<Level> dimension = location.dimension;
-                  BlockPos blockPos = location.location;
-
-                  ServerLevel level = minecraftServer.getLevel(dimension);
-                  if (level == null) {
-                        locations.add(new PackagedLocation(false, blockPos, dimension));
-                        continue;
-                  }
-
-                  Entity entity = level.getEntity(backpack);
-                  if (entity == null) {
-                        locations.add(new PackagedLocation(false, blockPos, dimension));
-                        continue;
-                  }
-
-                  if (entity.isRemoved()) {
-                        enderData.locations.remove(backpack);
-                        continue;
-                  }
-
-                  BlockPos newBlockPos = entity.blockPosition();
-                  enderData.locations.put(backpack, new Location(newBlockPos, dimension));
-                  locations.add(new PackagedLocation(true, newBlockPos, dimension));
-            }
-            return locations;
-      }
-
-      public static void updateLocations(UUID uuid, Level serverLevel) {
-            Player owner = serverLevel.getPlayerByUUID(uuid);
-            if (owner instanceof ServerPlayer serverPlayer && serverPlayer.getServer() != null) {
-                  BackData backData = BackData.get(owner);
-                  backData.setEnderLocations(getLocations(serverPlayer.getUUID(), serverPlayer.getServer()));
-                  Services.NETWORK.sendEnderLocations2C(serverPlayer, backData);
             }
       }
 
@@ -270,6 +247,48 @@ public class EnderStorage {
                   this.dimension = dimension;
             }
 
+            public static void update(UUID uuid, Level serverLevel) {
+                  Player owner = serverLevel.getPlayerByUUID(uuid);
+                  if (owner instanceof ServerPlayer serverPlayer && serverPlayer.getServer() != null) {
+                        BackData backData = BackData.get(owner);
+                        backData.setEnderLocations(asPackaged(serverPlayer.getUUID(), serverPlayer.getServer()));
+                        Services.NETWORK.sendEnderLocations2C(serverPlayer, backData);
+                  }
+            }
+
+            public static HashSet<PackagedLocation> asPackaged(UUID owner, MinecraftServer minecraftServer) {
+                  Data enderData = getEnderData(owner, minecraftServer.getLevel(Level.OVERWORLD));
+                  HashSet<PackagedLocation> locations = new HashSet<>();
+                  for (UUID backpack : enderData.locations.keySet()) {
+
+                        Location location = enderData.locations.get(backpack);
+                        ResourceKey<Level> dimension = location.dimension;
+                        BlockPos blockPos = location.location;
+
+                        ServerLevel level = minecraftServer.getLevel(dimension);
+                        if (level == null) {
+                              locations.add(new PackagedLocation(false, blockPos, dimension));
+                              continue;
+                        }
+
+                        Entity entity = level.getEntity(backpack);
+                        if (entity == null) {
+                              locations.add(new PackagedLocation(false, blockPos, dimension));
+                              continue;
+                        }
+
+                        if (entity.isRemoved()) {
+                              enderData.locations.remove(backpack);
+                              continue;
+                        }
+
+                        BlockPos newBlockPos = entity.blockPosition();
+                        enderData.locations.put(backpack, new Location(newBlockPos, dimension));
+                        locations.add(new PackagedLocation(true, newBlockPos, dimension));
+                  }
+                  return locations;
+            }
+
             public void toNBT(CompoundTag tag) {
                   int[] pos = {location.getX(), location.getY(), location.getZ()};
                   tag.putIntArray("BlockPos", pos);
@@ -337,5 +356,61 @@ public class EnderStorage {
                   this.location = buf.readBlockPos();
                   this.dimension = buf.readResourceLocation();
             }
+      }
+
+      public void toNBT(@NotNull CompoundTag tag) {
+            CompoundTag enderTag = new CompoundTag();
+
+            MAPPED_DATA.forEach(((uuid, enderData) -> {
+                  if (uuid != null && (!enderData.getItemStacks().isEmpty() || !enderData.getTrim().isEmpty() || !enderData.locations.isEmpty())) {
+                        CompoundTag data = new CompoundTag();
+                        BackpackInventory.writeNbt(data, enderData.getItemStacks());
+                        data.put("Trim", enderData.getTrim());
+                        data.putString("player_name", Component.Serializer.toJson(enderData.getPlayerName()));
+
+                        CompoundTag locations = new CompoundTag();
+                        for (UUID backpack : enderData.locations.keySet()) {
+                              CompoundTag location = new CompoundTag();
+                              enderData.locations.get(backpack).toNBT(location);
+                              locations.put(backpack.toString(), location);
+                        }
+
+                        data.put("locations", locations);
+                        enderTag.put(uuid.toString(), data);
+                  }
+            }));
+            tag.put("EnderData", enderTag);
+      }
+
+      public void fromNbt(CompoundTag tag) {
+            if (tag.contains("EnderData"))
+                  fromNbtDeprecated(tag.getCompound("EnderData"));
+      }
+
+      // TODO: MERGE DEPRECATED AFTER FULL RELEASE (20.1-0.14)
+      public boolean fromNbtDeprecated(CompoundTag tag) {
+            boolean isOldLoad = false; // TODO: FOR COMPATIBILITY FOR PREVIOUS VERSION
+            for (String key : tag.getAllKeys()) {
+                  if (key.equals("EnderData") || key.equals("Config")) // TODO: FOR COMPATIBILITY FOR PREVIOUS VERSION
+                        continue;
+                  CompoundTag dataTags = tag.getCompound(key);
+                  NonNullList<ItemStack> itemStacks = NonNullList.create();
+                  BackpackInventory.readStackNbt(dataTags, itemStacks);
+                  CompoundTag trim = dataTags.getCompound("Trim");
+                  MutableComponent playerName = Component.Serializer.fromJson(dataTags.getString("player_name"));
+                  EnderStorage.Data enderData = new EnderStorage.Data(itemStacks, trim, playerName);
+
+                  CompoundTag locations = dataTags.getCompound("locations");
+                  for (String backpack : locations.getAllKeys()) {
+                        Location location = new Location(locations.getCompound(backpack));
+                        enderData.locations.put(UUID.fromString(backpack), location);
+                  }
+
+                  UUID uuid = UUID.fromString(key);
+                  MAPPED_DATA.put(uuid, enderData);
+                  isOldLoad = true;
+            }
+            MAPPED_DATA.remove(null);
+            return isOldLoad;
       }
 }

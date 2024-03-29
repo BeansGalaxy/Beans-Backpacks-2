@@ -7,11 +7,11 @@ import net.minecraft.server.MinecraftServer;
 public class ServerLifecycleEvent implements ServerLifecycleEvents.ServerStarted, ServerLifecycleEvents.ServerStopping {
       @Override
       public void onServerStarted(MinecraftServer server) {
-            ServerSave.updateSave(server);
+            ServerSave.getSave(server, true);
       }
 
       @Override
       public void onServerStopping(MinecraftServer server) {
-            ServerSave.updateSave(server);
+            ServerSave.getSave(server, true);
       }
 }

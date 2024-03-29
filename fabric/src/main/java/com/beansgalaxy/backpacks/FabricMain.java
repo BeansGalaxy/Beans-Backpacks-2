@@ -1,11 +1,11 @@
 package com.beansgalaxy.backpacks;
 
+import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.items.recipes.Conversion;
 import com.beansgalaxy.backpacks.items.recipes.Crafting;
 import com.beansgalaxy.backpacks.items.recipes.Smithing;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.data.RegisterCommands;
-import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.entity.*;
 import com.beansgalaxy.backpacks.events.*;
 import com.beansgalaxy.backpacks.events.advancements.EquipAnyCriterion;
@@ -66,7 +66,7 @@ public class FabricMain implements ModInitializer {
                     RegisterCommands.register(dispatcher));
 
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            ServerSave.MAPPED_ENDER_DATA.forEach(((uuid, enderData) -> {
+            EnderStorage.get().MAPPED_DATA.forEach(((uuid, enderData) -> {
                 FriendlyByteBuf buf = PacketByteBufs.create();
                 buf.writeUUID(uuid);
                 buf.writeNbt(enderData.getTrim());

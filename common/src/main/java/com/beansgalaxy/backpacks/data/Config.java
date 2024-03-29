@@ -2,9 +2,7 @@ package com.beansgalaxy.backpacks.data;
 
 import net.minecraft.nbt.CompoundTag;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public enum Config {
       UNBIND_ENDER_ON_DEATH(false, "unbindEnderOnDeath"),
@@ -22,10 +20,10 @@ public enum Config {
             return readable;
       }
 
-      public static CompoundTag toNBT(CompoundTag tag) {
+      public static CompoundTag toNBT(CompoundTag tag, HashMap<Config, Boolean> values) {
             CompoundTag configTag = new CompoundTag();
-            for (Config config : ServerSave.CONFIG.keySet()) {
-                  Boolean b = ServerSave.CONFIG.get(config);
+            for (Config config : values.keySet()) {
+                  Boolean b = values.get(config);
                   configTag.putBoolean(config.name(), b);
             }
 
@@ -33,23 +31,24 @@ public enum Config {
             return tag;
       }
 
-      public static CompoundTag fromNBT(CompoundTag tag) {
+      public static HashMap<Config, Boolean> fromNBT(CompoundTag tag) {
             CompoundTag configTag;
-            if (tag.contains("Config"))
-                  configTag = tag.getCompound("Config");
-            else
-                  configTag = new CompoundTag();
+            HashMap<Config, Boolean> values = new HashMap<>();
 
-            for (Config config : values()) {
-                  String name = config.name();
-                  if (configTag.contains(name)) {
-                        boolean b = configTag.getBoolean(name);
-                        ServerSave.CONFIG.put(config, b);
+            if (tag.contains("Config")) {
+                  configTag = tag.getCompound("Config");
+                  for (Config value : Config.values()) {
+                        String name = value.name();
+                        boolean isEnabled = value.defaultValue;
+
+                        if (configTag.contains(name))
+                              isEnabled = configTag.getBoolean(name);
+
+                        values.put(value, isEnabled);
                   }
             }
 
-            tag.put("Config", configTag);
-            return tag;
+            return values;
       }
 
 
