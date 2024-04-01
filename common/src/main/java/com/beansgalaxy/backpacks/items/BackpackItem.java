@@ -193,11 +193,23 @@ public class BackpackItem extends Item {
                   backpackStack.grow(normalizedCount);
             }
 
+            handleQuickMove(playerInventory, backpackInventory, backpackStack, 0);
+      }
+
+      public static void handleQuickMove(Inventory playerInventory, BackpackInventory backpackInventory, int index) {
+            if (playerInventory.getFreeSlot() != -1) {
+                  ItemStack backpackStack = backpackInventory.removeItemSilent(index);
+                  handleQuickMove(playerInventory, backpackInventory, backpackStack, index);
+            }
+      }
+
+      private static void handleQuickMove(Inventory playerInventory, BackpackInventory backpackInventory, ItemStack backpackStack, int index) {
+            int maxStackSize = backpackStack.getMaxStackSize();
             boolean inserted = false;
             boolean canceled = false;
             while (!canceled)
             {
-                  int i = playerInventory.getSlotWithRemainingSpace(stack);
+                  int i = playerInventory.getSlotWithRemainingSpace(backpackStack);
                   if (i == -1)
                         i = playerInventory.getFreeSlot();
 
@@ -243,9 +255,10 @@ public class BackpackItem extends Item {
             if (!backpackStack.isEmpty())
                   backpackInventory.insertItemSilent(backpackStack, backpackStack.getCount());
 
-            if (!backpackInventory.isEmpty() && backpackInventory.getItem(0).isEmpty())
-                  backpackInventory.removeItemNoUpdate(0);
+            if (backpackInventory.getContainerSize() > index && backpackInventory.getItem(index).isEmpty())
+                  backpackInventory.removeItemNoUpdate(index);
       }
+
 
       public static InteractionResult hotkeyOnBlock(Player player, Direction direction, BlockPos clickedPos) {
             BackData backData = BackData.get(player);

@@ -95,7 +95,7 @@ public class FabricNetworkHelper implements NetworkHelper {
       }
 
       @Override
-      public void SyncBackSlot(ServerPlayer owner) {
+      public void syncBackSlot2All(ServerPlayer owner) {
             SyncBackSlot2All.S2All(owner, BackData.get(owner).getStack());
       }
 

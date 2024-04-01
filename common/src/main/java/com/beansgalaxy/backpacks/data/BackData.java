@@ -137,9 +137,13 @@ public class BackData {
 
             this.backStack = stack;
             this.traits = Traits.LocalData.fromStack(stack);
+            setChanged();
       }
 
       public void setChanged() {
+            if (owner instanceof ServerPlayer serverPlayer) {
+                  Services.NETWORK.syncBackSlot2All(serverPlayer);
+            }
       }
 
       public void playEquipSound(ItemStack stack) {

@@ -24,7 +24,7 @@ public interface NetworkHelper {
 
       MenuProvider getMenuProvider(Entity backpack);
 
-      void SyncBackSlot(ServerPlayer owner);
+      void syncBackSlot2All(ServerPlayer owner);
 
       void backpackInventory2C(ServerPlayer owner);
 

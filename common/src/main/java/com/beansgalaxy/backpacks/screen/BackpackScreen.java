@@ -3,6 +3,7 @@ package com.beansgalaxy.backpacks.screen;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.EnderStorage;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
@@ -20,6 +21,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
 import org.joml.Vector3f;
 
 import java.util.HashSet;
@@ -60,14 +63,17 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
 
       @Override
       public void render(GuiGraphics ctx, int mouseX, int mouseY, float delta) {
-            int maxStacks = handler.backpackInventory.getTraits().maxStacks();
-            if (maxStacks == 0 || handler.owner.isRemoved()) {
+            Traits.LocalData traits = handler.backpackInventory.getTraits();
+            int maxStacks = traits.maxStacks();
+            boolean empty = traits.isEmpty();
+            if (empty || maxStacks == 0 || handler.owner.isRemoved()) {
                   onClose();
                   return;
             }
             renderBackground(ctx);
             super.render(ctx, mouseX, mouseY, delta);
             renderTooltip(ctx, mouseX, mouseY);
+            menu.updateSlots();
       }
 
       @Override

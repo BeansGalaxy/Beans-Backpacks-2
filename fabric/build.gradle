@@ -27,7 +27,9 @@ dependencies {
 }
 
 loom {
-    accessWidenerPath = file("src/main/resources/beansbackpacks.accesswidener")
+    if (project(":common").file("src/main/resources/${mod_id}.accesswidener").exists()) {
+        accessWidenerPath.set(project(":common").file("src/main/resources/${mod_id}.accesswidener"))
+    }
     mixin {
         defaultRefmapName.set("${mod_id}.refmap.json")
     }

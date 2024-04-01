@@ -26,7 +26,7 @@ public class InSlot extends Slot {
 
       @Override
       public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-            return Pair.of(BACKPACK_ATLAS, Constants.SLOTS_MOD_ACTIVE ? INPUT_ALT : INPUT);
+            return Pair.of(BACKPACK_ATLAS, INPUT_ALT);
       }
 
       @Override

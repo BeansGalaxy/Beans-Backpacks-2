@@ -8,11 +8,14 @@ import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
+import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -32,7 +35,7 @@ public class BackpackMenu extends AbstractContainerMenu {
       protected final Entity owner;
       protected final BlockPos ownerPos;
       protected final float ownerYaw;
-      private final int max_stacks;
+      private final NonNullList<MenuSlot> backpackSlots = NonNullList.create();
       public int invOffset = 108;
 
       // SERVER CONSTRUCTOR
@@ -56,10 +59,10 @@ public class BackpackMenu extends AbstractContainerMenu {
                         return backpackInventory.getTraits();
                   }
             };
-            this.max_stacks = backpackInventory.getTraits().maxStacks();
+
             createInventorySlots(playerInventory);
-            FIRST_SLOT_INDEX = slots.size();
             createBackpackSlots(backpackInventory);
+            FIRST_SLOT_INDEX = slots.size();
 
             if (owner instanceof EntityEnder ender && viewer instanceof ServerPlayer serverPlayer) {
                   EnderStorage.Location.update(ender.getPlacedBy(), serverPlayer.serverLevel());
@@ -68,6 +71,8 @@ public class BackpackMenu extends AbstractContainerMenu {
 
       @Override
       public void broadcastChanges() {
+            if (owner instanceof ServerPlayer serverPlayer)
+                  Services.NETWORK.backpackInventory2C(serverPlayer);
             super.broadcastChanges();
       }
 
@@ -86,23 +91,41 @@ public class BackpackMenu extends AbstractContainerMenu {
             return BackpackInventory.get(entity);
       }
 
+      private void createBackpackSlots(BackpackInventory inventory) {
+            for (int i = 0; i < MenuSlot.MAX_SLOTS + 1; i++)
+                  backpackSlots.add(new MenuSlot(inventory, i, this::updateSlots));
 
-      private void createBackpackSlots(Container inventory) {
-            final int columns = Math.min(4 + (max_stacks / 3), 11);
-            final int rows = 4;
-            final int spacing = 17;
-            int bpCenter = (columns / 2) * spacing;
-            int x = 80 - bpCenter;
-            x += spacing / 2 * -((columns % 2) - 1);
-            int y = invOffset - rows * spacing + 35;
+            for (Slot backpackSlot : backpackSlots) {
+                  addSlot(backpackSlot);
+            }
 
-            for(int r = 0; r < rows; ++r)
-                  for(int c = 0; c < columns; ++c)
-                        this.addSlot(new Slot(inventory, c + r * columns, x + c * spacing, y + r * spacing) {
-                              public boolean mayPlace(ItemStack p_40231_) {
-                                    return false;
-                              }
-                        });
+            updateSlots();
+      }
+
+      public void updateSlots() {
+            for (MenuSlot backpackSlot : backpackSlots) {
+                  int backIndex = backpackSlot.backIndex;
+                  int size = backpackInventory.getContainerSize();
+                  int shift = Math.max(0, size - MenuSlot.MAX_SLOTS);
+                  if (backIndex + shift < size) {
+                        backpackSlot.index = backIndex + 36;
+                        backpackSlot.state = MenuSlot.State.ACTIVE;
+                        int[] xy = MenuSlot.getXY(backpackInventory, backIndex);
+                        backpackSlot.x = xy[0];
+                        backpackSlot.y = xy[1];
+                  } else if (backIndex + shift == size) {
+                        backpackSlot.index = size + 36;
+                        backpackSlot.state = MenuSlot.State.EMPTY;
+                        int[] xy = MenuSlot.getXY(backpackInventory, -1);
+                        backpackSlot.x = xy[0];
+                        backpackSlot.y = xy[1];
+                  } else {
+                        backpackSlot.index = backIndex + 36;
+                        backpackSlot.state = MenuSlot.State.HIDDEN;
+                        backpackSlot.x = 0;
+                        backpackSlot.y = 0;
+                  }
+            }
       }
 
       private void createInventorySlots(Inventory playerInventory) {
@@ -116,19 +139,27 @@ public class BackpackMenu extends AbstractContainerMenu {
             }
       }
 
+      @Override
       public void clicked(int slotIndex, int button, ClickType actionType, Player player) {
+            handleClick(slotIndex, button, actionType, player);
+            updateSlots();
+      }
+
+      private void handleClick(int slotIndex, int button, ClickType actionType, Player player) {
             Kind kind = backpackInventory.getTraits().kind;
-            if (owner.level().isClientSide() && Kind.ENDER.is(kind))
+            boolean clientSide = owner.level().isClientSide();
+            if (clientSide && Kind.ENDER.is(kind))
                   return;
 
-            int backpackSlot = slotIndex - FIRST_SLOT_INDEX;
+            boolean clickedInBackpack = slotIndex > 0 && getSlot(slotIndex) instanceof MenuSlot;
+
             if (actionType == ClickType.THROW) {
                   super.clicked(slotIndex, button, actionType, player);
                   return;
             }
 
             if (actionType == ClickType.PICKUP_ALL) {
-                  if (!(backpackSlot > -1))
+                  if (!clickedInBackpack)
                         super.clicked(slotIndex, button, actionType, player);
                   return;
             }
@@ -137,11 +168,16 @@ public class BackpackMenu extends AbstractContainerMenu {
                   actionType = ClickType.QUICK_MOVE;
 
 
-            if (actionType != ClickType.QUICK_MOVE && backpackSlot > -1) {
-                  ItemStack cursorStack = this.getCarried();
-                  setCarried(menuInsert(button, cursorStack, backpackSlot, backpackInventory));
+            if (slotIndex > 0 && getSlot(slotIndex) instanceof MenuSlot slot) {
+                  int backIndex = slot.backIndex;
+                  if (actionType == ClickType.QUICK_MOVE)
+                        BackpackItem.handleQuickMove(player.getInventory(), backpackInventory, backIndex);
+                  else
+                        setCarried(menuInsert(button, getCarried(), backIndex, backpackInventory));
+
                   return;
             }
+
             super.clicked(slotIndex, button, actionType, player);
       }
 

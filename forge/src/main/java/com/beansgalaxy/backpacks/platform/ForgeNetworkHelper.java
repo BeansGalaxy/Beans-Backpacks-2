@@ -77,7 +77,7 @@ public class ForgeNetworkHelper implements NetworkHelper {
       }
 
       @Override
-      public void SyncBackSlot(ServerPlayer owner) {
+      public void syncBackSlot2All(ServerPlayer owner) {
             NetworkPackages.S2All(new SyncBackSlot2C(owner.getUUID(), BackData.get(owner).getStack()));
       }
 

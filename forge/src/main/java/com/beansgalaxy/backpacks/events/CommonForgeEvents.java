@@ -69,7 +69,7 @@ public class CommonForgeEvents {
 
                   BackData.get(oldPlayer).copyTo(BackData.get(newPlayer));
                   if (oldPlayer instanceof ServerPlayer serverPlayer)
-                        Services.NETWORK.SyncBackSlot(serverPlayer);
+                        Services.NETWORK.syncBackSlot2All(serverPlayer);
             }
       }
 
