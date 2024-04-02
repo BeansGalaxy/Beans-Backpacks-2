@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.network;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.network.CommonAtClient;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
@@ -12,6 +13,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
@@ -34,7 +36,7 @@ public class ReceiveAtClient {
             CommonAtClient.syncViewersPacket(id, viewers);
       }
 
-      public static void ConfigBackpackData(Minecraft minecraft, ClientPacketListener clientPacketListener, FriendlyByteBuf buf, PacketSender packetSender) {
+      public static void ConfigTraits(Minecraft minecraft, ClientPacketListener clientPacketListener, FriendlyByteBuf buf, PacketSender packetSender) {
             Map<String, CompoundTag> map = buf.readMap(FriendlyByteBuf::readUtf, FriendlyByteBuf::readNbt);
             for (String key: map.keySet())
             {
@@ -43,6 +45,11 @@ public class ReceiveAtClient {
 
                   Traits.register(key, traits);
             }
+      }
+
+      public static void ConfigLists(Minecraft minecraft, ClientPacketListener clientPacketListener, FriendlyByteBuf buf, PacketSender packetSender) {
+            Map<String, String> map = buf.readMap(FriendlyByteBuf::readUtf, FriendlyByteBuf::readUtf);
+            Constants.receiveItemLists(map);
       }
 
       public static void recieveEnderPos(Minecraft minecraft, ClientPacketListener clientPacketListener, FriendlyByteBuf buf, PacketSender packetSender) {

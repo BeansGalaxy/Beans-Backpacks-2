@@ -3,7 +3,8 @@ package com.beansgalaxy.backpacks.events;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.*;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
-import com.beansgalaxy.backpacks.network.client.ConfigureKeys2C;
+import com.beansgalaxy.backpacks.network.client.ConfigureLists2C;
+import com.beansgalaxy.backpacks.network.client.ConfigureTraits2C;
 import com.beansgalaxy.backpacks.network.client.SendEnderData2C;
 import com.beansgalaxy.backpacks.network.client.SyncBackSlot2C;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -107,18 +108,28 @@ public class CommonForgeEvents {
       public static void syncDataPackEvent(OnDatapackSyncEvent event)
       {
             ServerPlayer player = event.getPlayer();
-            Map<String, CompoundTag> map = new HashMap<>();
+            Map<String, CompoundTag> traitMap = new HashMap<>();
 
             for (String key : Constants.TRAITS_MAP.keySet()) {
                   Traits traits = Traits.get(key);
-                  map.put(key, traits.toTag());
+                  traitMap.put(key, traits.toTag());
             }
 
+            HashMap<String, String> listMap = new HashMap<>();
+            listMap.put("disables_back_slot", Constants.writeList(Constants.DISABLES_BACK_SLOT));
+            listMap.put("chestplate_disabled", Constants.writeList(Constants.CHESTPLATE_DISABLED));
+            listMap.put("elytra_items", Constants.writeList(Constants.ELYTRA_ITEMS));
+            listMap.put("blacklist_items", Constants.writeList(Constants.BLACKLIST_ITEMS));
+
             // Null Player means data pack is being sent to all players
-            if (player == null)
-                  NetworkPackages.S2All(new ConfigureKeys2C(map));
-            else
-                  NetworkPackages.S2C(new ConfigureKeys2C(map), player);
+            if (player == null) {
+                  NetworkPackages.S2All(new ConfigureTraits2C(traitMap));
+                  NetworkPackages.S2All(new ConfigureLists2C(listMap));
+            }
+            else {
+                  NetworkPackages.S2C(new ConfigureTraits2C(traitMap), player);
+                  NetworkPackages.S2C(new ConfigureLists2C(listMap), player);
+            }
 
             String syncedPlayers = player == null ? "all players" : "\"" + player.getDisplayName().getString() + "\"";
             Constants.LOG.info("Syncing {} data to {}", Constants.MOD_ID, syncedPlayers);

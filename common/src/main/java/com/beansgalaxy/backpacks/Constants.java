@@ -21,10 +21,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 public class Constants {
 	public static final String MOD_ID = "beansbackpacks";
@@ -150,5 +147,44 @@ public class Constants {
 		strings.removeAll(removedStrings);
 		return strings;
 
+	}
+
+	public static void receiveItemLists(Map<String, String> map) {
+		for (String key : map.keySet()) {
+			String ids = map.get(key);
+			HashSet<Item> list;
+			switch (key) {
+				case "disables_back_slot" -> list = DISABLES_BACK_SLOT;
+				case "chestplate_disabled" -> list = CHESTPLATE_DISABLED;
+				case "elytra_items" -> list = ELYTRA_ITEMS;
+				case "blacklist_items" -> list = BLACKLIST_ITEMS;
+				default -> {
+					continue;
+				}
+			}
+
+			list.clear();
+			if (isEmpty(ids))
+				continue;
+
+			String[] split = ids.split(",");
+			for (String string : split) {
+				list.add(itemFromString(string));
+			}
+			LOG.info("Configured " + MOD_ID + " item list: " + key);
+		}
+	}
+
+	public static String writeList(HashSet<Item> list) {
+		StringBuilder sb = new StringBuilder();
+		Iterator<Item> iterator = list.iterator();
+		while (iterator.hasNext()) {
+			Item item = iterator.next();
+			sb.append(BuiltInRegistries.ITEM.getKey(item));
+			if (iterator.hasNext())
+				sb.append(",");
+		}
+
+		return sb.toString();
 	}
 }

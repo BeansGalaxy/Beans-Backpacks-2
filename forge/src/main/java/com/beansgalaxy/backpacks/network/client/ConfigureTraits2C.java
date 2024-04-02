@@ -10,19 +10,19 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class ConfigureKeys2C {
+public class ConfigureTraits2C {
       public static void register(int i) {
-            NetworkPackages.INSTANCE.messageBuilder(ConfigureKeys2C.class, i, NetworkDirection.PLAY_TO_CLIENT)
-                        .encoder(ConfigureKeys2C::encode).decoder(ConfigureKeys2C::new).consumerMainThread(ConfigureKeys2C::handle).add();
+            NetworkPackages.INSTANCE.messageBuilder(ConfigureTraits2C.class, i, NetworkDirection.PLAY_TO_CLIENT)
+                        .encoder(ConfigureTraits2C::encode).decoder(ConfigureTraits2C::new).consumerMainThread(ConfigureTraits2C::handle).add();
       }
 
       final Map<String, CompoundTag> map;
 
-      public ConfigureKeys2C(Map<String, CompoundTag> map) {
+      public ConfigureTraits2C(Map<String, CompoundTag> map) {
             this.map = map;
       }
 
-      public ConfigureKeys2C(FriendlyByteBuf buf) {
+      public ConfigureTraits2C(FriendlyByteBuf buf) {
             this(buf.readMap(FriendlyByteBuf::readUtf, FriendlyByteBuf::readNbt));
       }
 

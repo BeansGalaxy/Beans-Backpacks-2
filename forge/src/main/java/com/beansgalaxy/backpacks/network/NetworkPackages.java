@@ -27,7 +27,8 @@ public class NetworkPackages {
             CallBackSlot2S.register(index++);
             SyncBackInventory2C.register(index++);
             CallBackInventory2S.register(index++);
-            ConfigureKeys2C.register(index++);
+            ConfigureTraits2C.register(index++);
+            ConfigureLists2C.register(index++);
             ReceiveEnderPos.register(index++);
             UseCauldron2S.register(index++);
             ClearBackSlot2S.register(index++);

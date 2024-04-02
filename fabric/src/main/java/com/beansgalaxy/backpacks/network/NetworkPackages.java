@@ -13,7 +13,8 @@ public class NetworkPackages {
       public static final ResourceLocation CALL_BACK_SLOT_2S = new ResourceLocation(Constants.MOD_ID, "call_back_slot_s");
       public static final ResourceLocation SYNC_BACK_INV_2C = new ResourceLocation(Constants.MOD_ID, "backpack_inventory_c");
       public static final ResourceLocation CALL_BACK_INV_2S = new ResourceLocation(Constants.MOD_ID, "call_backpack_inventory_s");
-      public static final ResourceLocation CONFIG_DATA_2C = new ResourceLocation(Constants.MOD_ID, "backpack_config_c");
+      public static final ResourceLocation CONFIG_TRAITS_2C = new ResourceLocation(Constants.MOD_ID, "backpack_traits_c");
+      public static final ResourceLocation CONFIG_LISTS_2C = new ResourceLocation(Constants.MOD_ID, "backpack_lists_c");
       public static final ResourceLocation INSTANT_PLACE_2S = new ResourceLocation(Constants.MOD_ID, "instant_place_s");
       public static final ResourceLocation PICK_BACKPACK_2S = new ResourceLocation(Constants.MOD_ID, "pick_backpack_s");
       public static final ResourceLocation ENDER_POS_2C = new ResourceLocation(Constants.MOD_ID, "ender_pos_c");
@@ -34,7 +35,8 @@ public class NetworkPackages {
             ClientPlayNetworking.registerGlobalReceiver(SYNC_VIEWERS_2All, ReceiveAtClient::SyncViewers);
             ClientPlayNetworking.registerGlobalReceiver(SYNC_BACK_SLOT_2C, ReceiveAtClient::syncBackSlot);
             ClientPlayNetworking.registerGlobalReceiver(SYNC_BACK_INV_2C, ReceiveAtClient::SyncBackInventory);
-            ClientPlayNetworking.registerGlobalReceiver(CONFIG_DATA_2C, ReceiveAtClient::ConfigBackpackData);
+            ClientPlayNetworking.registerGlobalReceiver(CONFIG_TRAITS_2C, ReceiveAtClient::ConfigTraits);
+            ClientPlayNetworking.registerGlobalReceiver(CONFIG_LISTS_2C, ReceiveAtClient::ConfigLists);
             ClientPlayNetworking.registerGlobalReceiver(ENDER_POS_2C, ReceiveAtClient::recieveEnderPos);
       }
 }
