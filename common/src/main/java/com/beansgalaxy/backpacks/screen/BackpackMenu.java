@@ -35,7 +35,7 @@ public class BackpackMenu extends AbstractContainerMenu {
       protected final Entity owner;
       protected final BlockPos ownerPos;
       protected final float ownerYaw;
-      private final NonNullList<MenuSlot> backpackSlots = NonNullList.create();
+      protected final NonNullList<MenuSlot> backpackSlots = NonNullList.create();
       public int invOffset = 108;
 
       // SERVER CONSTRUCTOR
@@ -51,7 +51,6 @@ public class BackpackMenu extends AbstractContainerMenu {
                   public UUID getPlacedBy() {
                         return backpackInventory.getPlacedBy();
                   }
-
                   @Override public BackpackInventory.Viewable getViewable() {
                         return backpackInventory.getViewable();
                   }
@@ -113,7 +112,7 @@ public class BackpackMenu extends AbstractContainerMenu {
                         int[] xy = MenuSlot.getXY(backpackInventory, backIndex);
                         backpackSlot.x = xy[0];
                         backpackSlot.y = xy[1];
-                  } else if (backIndex + shift == size) {
+                  } else if (backpackInventory.spaceLeft() > 0 && backIndex + shift == size) {
                         backpackSlot.index = size + 36;
                         backpackSlot.state = MenuSlot.State.EMPTY;
                         int[] xy = MenuSlot.getXY(backpackInventory, -1);

@@ -44,7 +44,7 @@ public class MenuSlot extends Slot {
 
       @Override
       public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-            return Pair.of(InSlot.BACKPACK_ATLAS, INPUT);
+            return null;
       }
 
       @Override
@@ -84,11 +84,20 @@ public class MenuSlot extends Slot {
             HIDDEN
       }
 
-      public static int[] getXY(BackpackInventory inventory, int index) {
-            if (inventory.spaceLeft() > 0) index++;
-
+      public static int[] getXY(BackpackInventory inventory, int slot) {
             int size = Math.min(MAX_SLOTS, inventory.getContainerSize());
-            int slots = size + 1;
+            int slots;
+            int index;
+
+            if (inventory.spaceLeft() > 0) {
+                  index = slot + 1;
+                  slots = size + 1;
+            }
+            else {
+                  index = slot;
+                  slots = size;
+            }
+
 
             int columns = COLUMN_START;
             int limit = COLUMN_START * MAX_ROWS;
@@ -102,7 +111,7 @@ public class MenuSlot extends Slot {
             }
 
             int shift = slots % columns;
-            int firstRowSize = size % columns + 1;
+            int firstRowSize = (slots - 1) % columns + 1;
             float offset;
             if (index < shift)
                   offset = (columns * 2 - firstRowSize) / 2f;
@@ -115,7 +124,7 @@ public class MenuSlot extends Slot {
 
             int row = (index - firstRowSize + columns) / columns;
             int pos = row * SPACING;
-            int rows = size / columns;
+            int rows = (slots - 1) / columns;
             int top = rows * (SPACING / 2);
             int y = (pos - top) + 99;
             //System.out.println("index:" + index + "  row:" + row + "  rows:" + rows + "  first:" + firstRowSize + "  columns:" + columns);

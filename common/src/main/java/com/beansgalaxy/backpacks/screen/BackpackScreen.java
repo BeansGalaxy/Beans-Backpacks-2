@@ -9,6 +9,7 @@ import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -16,13 +17,19 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.TextureAtlasHolder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.HashSet;
@@ -85,6 +92,16 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
             context.blit(TEXTURE, leftPos, j - 123, 0, 0, 0, imageWidth, imageHeight, 256, 256);
             drawBackpack(context, width / 2, j, 202, this.handler.mirror, mouseX, mouseY);
 
+            for (MenuSlot backpackSlot : menu.backpackSlots) {
+                  if (MenuSlot.State.HIDDEN.equals(backpackSlot.state)) continue;
+
+                  int x = backpackSlot.x + leftPos - 1;
+                  int y = backpackSlot.y + topPos - 1;
+                  int z = 200;
+                  int color = 0x55888888;
+                  context.fill(x, y, x + MenuSlot.SPACING, y + MenuSlot.SPACING, z, color);
+            }
+
             if (minecraft.options.renderDebug && handler.owner instanceof EntityEnder ender) {
                   UUID placedBy = ender.getPlacedBy();
                   UUID uuid = handler.viewer.getUUID();
@@ -103,14 +120,25 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
       private void drawBackpack(GuiGraphics context, int x, int y, int scale, Backpack entity, int mouseX, int mouseY) {
             context.pose().pushPose();
             context.enableScissor(x - 80, y - 220, x + 80, y + 36);
-            float relX = -((width / 2f) - mouseX);
-            float relY = (height / 2f) - mouseY - (height / 2f);
-            float h = (float) (Math.atan(relX) * Math.atan(Math.pow(relX, 4) / (width * width * 1500))) * 2;
-            float g = Math.max(Math.abs(h), Math.abs(relX / 150));
-            int i = relX > 0 ? 1 : -1;
-            context.pose().translate(x, y + 40 - mouseY / 14f, 50);
-            context.pose().mulPose(Axis.XP.rotationDegrees(relY / 14 - 10));
-            context.pose().mulPose(Axis.YP.rotation(i * g / 2));
+            context.pose().translate(x, y + 37, 70);
+            int center = leftPos + imageWidth / 2;
+            int abs = (mouseX - center) * (mouseX - center);
+
+            double pro = abs / 25000.0;
+
+            double rot = pro == 0
+                        ? 0
+                        : pro == 1
+                        ? 1
+                        : pro < 0.5 ? Math.pow(2, 20 * pro - 10) / 2
+                        : (2 - Math.pow(2, -20 * pro + 10)) / 2;
+
+            double sign = mouseX - center < 0 ? -1 : 1;
+            rot *= sign;
+
+            int i = (mouseY - topPos);
+            context.pose().mulPose(Axis.XP.rotationDegrees((i == 0 ? 1 : -i) / 25f));
+            context.pose().mulPose(Axis.YP.rotationDegrees((float) ((rot * 140) + (pro * sign * 20))));
             context.pose().scale(scale, -scale, scale);
             EntityRenderDispatcher entRD = Minecraft.getInstance().getEntityRenderDispatcher();
             Lighting.setupFor3DItems();
