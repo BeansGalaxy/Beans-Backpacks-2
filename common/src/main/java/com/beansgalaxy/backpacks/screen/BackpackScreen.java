@@ -98,7 +98,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
                   int x = backpackSlot.x + leftPos - 1;
                   int y = backpackSlot.y + topPos - 1;
                   int z = 200;
-                  int color = 0x55888888;
+                  int color = 0x44777777;
                   context.fill(x, y, x + MenuSlot.SPACING, y + MenuSlot.SPACING, z, color);
             }
 

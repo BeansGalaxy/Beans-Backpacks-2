@@ -39,7 +39,7 @@ public class MenuSlot extends Slot {
 
       @Override
       public boolean isHighlightable() {
-            return State.ACTIVE.equals(state);
+            return !State.HIDDEN.equals(state);
       }
 
       @Override
