@@ -68,9 +68,6 @@ public class FabricClient implements ClientModInitializer {
 
             ModelLoadingPlugin.register(new LoadItemModels());
 
-            if (Services.COMPAT.isModLoaded(CompatHelper.TRINKETS))
-                  TrinketsRegistry.register();
-
             ClientPlayNetworking.registerGlobalReceiver(FabricMain.INITIAL_SYNC, (client, handler, buf, responseSender) -> {
                   UUID uuid = buf.readUUID();
                   CompoundTag trim = buf.readNbt();

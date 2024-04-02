@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.compat;
 
+import com.beansgalaxy.backpacks.CommonClass;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.entity.Kind;
@@ -19,6 +20,7 @@ public class TrinketsRegistry {
             Trinket trinket = new Trinket() {
                   @Override
                   public TrinketEnums.DropRule getDropRule(ItemStack stack, SlotReference slot, LivingEntity entity) {
+                        CommonClass.test();
                         return TrinketEnums.DropRule.KEEP;
                   }
 
