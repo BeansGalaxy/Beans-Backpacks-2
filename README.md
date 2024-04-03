@@ -20,6 +20,18 @@ the issues tab. </p>
 
 <h1 align="center"> Changelog </h1>
 
+### 20.1-0.22-v3 & 20.2-0.17-v2
+
+- New Backpack Menu!
+  - Number of slots now update depending on the number of items stored
+  - Slots now have a transparent background to see where to insert items
+  - The rendered backpack has more subtle and sharp movements
+- Added colors to the Backpack Help tabs
+- The equipped cauldron tooltip now uses bucket and bottle emojis instead of `x` & `+`
+- Fixed many cases of Ender Backpack de-sync
+- Fixed Backpack being dropped as an item on death in servers with trinkets installed
+- Fixed Back Slot updating multiple times each equip
+
 <h3> 20.1-0.21-v2 & 20.2-0.17-v2 <img align="right" src="assets/images/updates/tooltip_update_1.png" alt="Back Slot" style="width:202px"> </h3>
 
 - All Backpack items now have persistent tooltips unique to their traits
