@@ -47,7 +47,7 @@ public class SendEnderData2C {
             buf.writeNbt(tag);
 
             buf.writeNbt(enderData.getTrim());
-            MutableComponent playerName = enderData.getPlayerName();
+            Component playerName = enderData.getPlayerName();
             buf.writeUtf(Component.Serializer.toJson(playerName));
       }
 

@@ -172,7 +172,7 @@ public class EnderStorage {
       public static class Data {
             private NonNullList<ItemStack> itemStacks = NonNullList.create();
             private CompoundTag trim = new CompoundTag();
-            private MutableComponent playerName = Component.empty();
+            private Component playerName = Component.empty();
             private final HashMap<UUID, Location> locations = new HashMap<>();
 
             public Data(NonNullList<ItemStack> itemStacks, CompoundTag trim, MutableComponent playerName) {
@@ -210,14 +210,14 @@ public class EnderStorage {
                   return this;
             }
 
-            public Data setPlayerName(MutableComponent name) {
+            public Data setPlayerName(Component name) {
                   if (name != null || !name.equals(ComponentContents.EMPTY)) {
                         playerName = name;
                   }
                   return this;
             }
 
-            public MutableComponent getPlayerName() {
+            public Component getPlayerName() {
                   return playerName;
             }
 

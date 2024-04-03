@@ -49,9 +49,17 @@ public class EnderBackpack extends BackpackItem {
             tag.putUUID("owner", uuid);
       }
 
+      public boolean isPersistent(ItemStack stack) {
+            CompoundTag tag = stack.getTag();
+            if (tag == null) {
+                  return false;
+            }
+            return tag.contains("owner") && tag.getBoolean("persistent_ender");
+      }
+
       @Override
       public void onCraftedBy(ItemStack stack, Level level, Player player) {
-            if (player instanceof ServerPlayer serverPlayer) {
+            if (!isPersistent(stack) && player instanceof ServerPlayer serverPlayer) {
                   UUID uuid = player.getUUID();
                   setUUID(uuid, stack);
                   EnderStorage.Data enderData = EnderStorage.getEnderData(uuid, level);
@@ -66,8 +74,7 @@ public class EnderBackpack extends BackpackItem {
                   for (ServerPlayer players : serverPlayer.server.getPlayerList().getPlayers()) {
                         Services.NETWORK.sendEnderData2C(players, uuid);
                   }
-
-                  super.onCraftedBy(stack, level, player);
             }
+            super.onCraftedBy(stack, level, player);
       }
 }

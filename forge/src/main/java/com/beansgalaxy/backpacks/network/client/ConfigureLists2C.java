@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 
 public class ConfigureLists2C {
       public static void register(int i) {
-            NetworkPackages.INSTANCE.messageBuilder(ConfigureLists2C.class, i, NetworkDirection.PLAY_TO_SERVER)
+            NetworkPackages.INSTANCE.messageBuilder(ConfigureLists2C.class, i, NetworkDirection.PLAY_TO_CLIENT)
                         .encoder(ConfigureLists2C::encode).decoder(ConfigureLists2C::new).consumerMainThread(ConfigureLists2C::handle).add();
       }
 
