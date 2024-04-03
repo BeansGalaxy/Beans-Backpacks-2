@@ -49,6 +49,7 @@ public class BackSlot extends Slot {
       @Override
       public void set(ItemStack $$0) {
             backData.update($$0);
+            backData.setChanged();
             super.set($$0);
       }
 

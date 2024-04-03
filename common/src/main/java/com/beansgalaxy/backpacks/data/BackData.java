@@ -137,7 +137,6 @@ public class BackData {
 
             this.backStack = stack;
             this.traits = Traits.LocalData.fromStack(stack);
-            setChanged();
       }
 
       public void setChanged() {

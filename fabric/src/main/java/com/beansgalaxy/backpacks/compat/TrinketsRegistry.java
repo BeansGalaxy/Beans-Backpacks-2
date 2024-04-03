@@ -37,7 +37,26 @@ public class TrinketsRegistry {
                   public boolean canUnequip(ItemStack stack, SlotReference slot, LivingEntity entity) {
                         if (entity instanceof Player player)
                               return BackData.get(player).backSlot.mayPickup(player);
+
                         return Trinket.super.canUnequip(stack, slot, entity);
+                  }
+
+                  @Override
+                  public void onEquip(ItemStack stack, SlotReference slot, LivingEntity entity) {
+                        if (entity instanceof Player player && slot.index() == 0)
+                              BackData.get(player).update(stack);
+                        System.out.println("EQUIP " + stack);
+
+                        Trinket.super.onEquip(stack, slot, entity);
+                  }
+
+                  @Override
+                  public void onUnequip(ItemStack stack, SlotReference slot, LivingEntity entity) {
+                        if (entity instanceof Player player && slot.index() == 0)
+                              BackData.get(player).update(ItemStack.EMPTY);
+                        System.out.println("DEQUIP" + stack);
+
+                        Trinket.super.onUnequip(stack, slot, entity);
                   }
             };
 
@@ -78,11 +97,7 @@ public class TrinketsRegistry {
             if (slots == null)
                   return stack;
 
-            ItemStack stackInSlot = slots.getItem(0);
-            if (stackInSlot != stack)
-                  backData.update(stackInSlot);
-
-            return stackInSlot;
+            return slots.getItem(0);
       }
 
       public static boolean backSlotDisabled(LivingEntity entity) {
