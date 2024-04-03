@@ -238,7 +238,7 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
                         Services.REGISTRY.getEnder().getDefaultInstance(),
                         in -> getAdvancement(in.getConnection(), "beansbackpacks:info/ender_backpacks"),
                         in -> Component.literal(InfoWidget.keyBind),
-                        0x106600FF
+                        0x108800FF
             ),
             POT         (3, new int[]{-69, 0},
                         Items.DECORATED_POT.getDefaultInstance(),

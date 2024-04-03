@@ -82,7 +82,7 @@ public class BackData {
       };
 
       public static final int[] UV_SURVIVAL = {59, 62};
-      public static final int[] UV_CREATIVE = {89, 33};
+      public static final int[] UV_CREATIVE = Constants.SLOTS_MOD_ACTIVE ? new int[]{-2000, -2000} : new int[]{89, 33};
       public final BackSlot backSlot = new BackSlot(this);
       public final InSlot inSlot = new InSlot(this);
       private final HashSet<EnderStorage.PackagedLocation> enderLocations = new HashSet<>();

@@ -109,15 +109,25 @@ public abstract class ClientSpecialTooltip implements ClientTooltipComponent {
                         int scale = access.fullScale();
                         int count = amount / scale;
                         int remainder = amount % scale;
-                        StringBuilder builder = new StringBuilder().append("x").append(count);
+                        StringBuilder builder = new StringBuilder().append("\uD83E\uDEA3").append(count);
                         int amountLineY = y + 4 + h;
                         if (remainder != 0) {
-                              gui.drawString(font, "+" + remainder, x + 19, amountLineY + 4, 0xFFFFFFFF);
-                              amountLineY -= 4;
+                              gui.drawString(font, "\uD83E\uDEA3", x + 19, amountLineY - 5, 0xFFFFFFFF);
+                              gui.drawString(font, String.valueOf(count), x + 28, amountLineY - 4, 0xFFFFFFFF);
+                              gui.drawString(font, "\uD83E\uDDEA", x + 19, amountLineY + 5, 0xFFFFFFFF);
+                              gui.drawString(font, String.valueOf(remainder), x + 28, amountLineY + 5, 0xFFFFFFFF);
+                        } else {
+                              gui.drawString(font, "\uD83E\uDEA3", x + 19, amountLineY, 0xFFFFFFFF);
+                              gui.drawString(font, String.valueOf(count), x + 28, amountLineY, 0xFFFFFFFF);
                         }
 
-                        gui.drawString(font, builder.toString(), x + 19, amountLineY, 0xFFFFFFFF);
                   }
+            }
+
+            @Override
+            public int getWidth(@NotNull Font font) {
+                  int count = amount / 4;
+                  return 21 + font.width("x" + count);
             }
       }
 }
