@@ -29,7 +29,7 @@ public class Constants {
 	public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
 
 	public static final HashMap<String, Traits> TRAITS_MAP = new HashMap<>();
-	public static final boolean SLOTS_MOD_ACTIVE = Services.COMPAT.anyModsLoaded(new String[]{CompatHelper.CURIOS, CompatHelper.TRINKETS});
+	public static final boolean SLOTS_MOD_ACTIVE = Services.COMPAT.anyModsLoaded(CompatHelper.CURIOS, CompatHelper.TRINKETS);
 	public static final HashSet<Item> CHESTPLATE_DISABLED = new HashSet<>();
 	public static final HashSet<Item> DISABLES_BACK_SLOT = new HashSet<>();
 	public static final HashSet<Item> BLACKLIST_ITEMS = new HashSet<>();

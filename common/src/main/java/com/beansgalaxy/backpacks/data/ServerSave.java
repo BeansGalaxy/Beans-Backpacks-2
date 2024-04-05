@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.data;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.data.config.Gamerules;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.Level;
@@ -12,21 +13,12 @@ import java.util.HashMap;
 
 public class ServerSave extends SavedData {
       public static final EnderStorage ENDER_STORAGE = new EnderStorage();
-      public static final HashMap<Config, Boolean> CONFIG = new HashMap<>(Config.getDefaults());
-
-      public static Boolean getConfig(Config config) {
-            return CONFIG.get(config);
-      }
-
-      public static Boolean setConfig(Config config, Boolean value) {
-            if (CONFIG.get(config) == value) return false;
-            return CONFIG.put(config, value);
-      }
+      public static final HashMap<Gamerules, Boolean> CONFIG = new HashMap<>(Gamerules.getDefaults());
 
       @Override @NotNull
       public CompoundTag save(@NotNull CompoundTag tag) {
             ENDER_STORAGE.toNBT(tag);
-            Config.toNBT(tag, CONFIG);
+            Gamerules.toNBT(tag, CONFIG);
             return tag;
       }
 
@@ -35,7 +27,7 @@ public class ServerSave extends SavedData {
             boolean isOldSave = EnderStorage.get().fromNbtDeprecated(tag);
             if (!isOldSave) {
                   EnderStorage.get().fromNbt(tag);
-                  Config.fromNBT(tag);
+                  Gamerules.fromNBT(tag);
             }
             return save;
       }

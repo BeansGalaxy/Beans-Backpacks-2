@@ -68,7 +68,7 @@
   "help.beansbackpacks.cauldron10": "----------------------",
   "help.beansbackpacks.cauldron11": "Cauldrons with fluids are",
   "help.beansbackpacks.cauldron12": "too heavy to take off and",
-  "help.beansbackpacks.cauldron13": "drops on death like pots.",
+  "help.beansbackpacks.cauldron13": "drop on death like pots.",
 
   "help.beansbackpacks.null_title": "beansgalaxy.thanks.title",
   "help.beansbackpacks.null0": "This item acts identical to",
@@ -86,15 +86,16 @@
   "help.beansbackpacks.null13": "This mod's come a long way,",
   "help.beansbackpacks.null14": "Thank you %d",
 
+  "help.beansbackpacks.hide": "Hide this menu until a new backpack is discovered",
+
   "tooltip.beansbackpacks.special_title": "§7When on Back:",
   "tooltip.beansbackpacks.pot": "§9Must be the Same Item",
-  "tooltip.beansbackpacks.cauldron": "§9Holds 24 Buckets",
+  "tooltip.beansbackpacks.cauldron": "§9Holds %d §9Buckets",
   "tooltip.beansbackpacks.ender": "§9Bound to %d",
   "tooltip.beansbackpacks.storage_title": "§7Storage:",
   "tooltip.beansbackpacks.storage.stacks": "§9Holds %d §9Stacks",
   "tooltip.beansbackpacks.storage.fire_resistant": "§9Fire Resistant",
   "tooltip.beansbackpacks.hidden.backpack_id": "§8backpack_id: %d",
-
 
   "tooltip.beansbackpacks.null_title": "%d §7for more info.",
   "tooltip.beansbackpacks.null0": "§7This is a legacy netherite",
@@ -105,15 +106,6 @@
   "tooltip.beansbackpacks.null5": "§7converts to §6Netherite§7,",
   "tooltip.beansbackpacks.null6": "§7this cannot be undone.",
 
-  "sounds.beansbackpacks.place": "Backpack Placed",
-  "sounds.beansbackpacks.equip": "Backpack Equipped",
-  "sounds.beansbackpacks.hit": "Hit Backpack",
-  "sounds.beansbackpacks.break": "Broke Backpack",
-  "sounds.beansbackpacks.insert": "Inserted into Backpack",
-  "sounds.beansbackpacks.take": "Took from Backpack",
-  "sounds.beansbackpacks.open": "Opened Backpack",
-  "sounds.beansbackpacks.close": "Closed Backpack",
-
   "command.beansbackpacks.enderdata.clear.success": "Successfully removed %d.",
   "command.beansbackpacks.enderdata.list.success": "%d entries found",
   "command.beansbackpacks.enderdata.fail": "No entries matching that criteria.",
@@ -121,5 +113,23 @@
   "command.beansbackpacks.config.fail": "%d is already set to %d",
   "command.beansbackpacks.give.success": "Gave %d to: %d",
   "command.beansbackpacks.give.fail.no_id": "No backpack exists with the id: %d",
-  "command.beansbackpacks.give.fail.no_players": "No players found"
+  "command.beansbackpacks.give.fail.no_players": "No players found",
+
+  "text.autoconfig.beansbackpacks.title": "Beans' Backpacks",
+
+  "text.autoconfig.beansbackpacks.option.clientConfig": "Client Sided Configurations",
+  "text.autoconfig.beansbackpacks.option.clientConfig.menuVisibility": "Inventory Help Menu Visibility",
+  "text.autoconfig.beansbackpacks.option.clientConfig.HiddenHelpTabs": "Hidden Help Tabs",
+
+  "text.autoconfig.beansbackpacks.option.maximumStacks": "Configure the Maximum Size of Backpacks",
+  "text.autoconfig.beansbackpacks.option.maximumStacks.leather": "Leather Backpacks",
+  "text.autoconfig.beansbackpacks.option.maximumStacks.ender": "Ender Backpacks",
+  "text.autoconfig.beansbackpacks.option.maximumStacks.winged": "Winged Backpacks",
+  "text.autoconfig.beansbackpacks.option.maximumStacks.metal": "Iron Backpacks & Undefined Metal Backpacks",
+  "text.autoconfig.beansbackpacks.option.maximumStacks.pot": "Decorated Pots",
+  "text.autoconfig.beansbackpacks.option.maximumStacks.cauldron": "Cauldrons",
+
+  "text.autoconfig.beansbackpacks.option.gamerules": "Configure Default Gamerules",
+  "text.autoconfig.beansbackpacks.option.gamerules.unbindEnderOnDeath": "unbindEnderOnDeath",
+  "text.autoconfig.beansbackpacks.option.gamerules.lockEnderOffline": "lockEnderOffline"
 }

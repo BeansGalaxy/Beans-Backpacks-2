@@ -43,7 +43,7 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
       @Inject(method = "<init>", at = @At("TAIL"))
       private void onConstructed(Inventory playerInventory, boolean isServerSide, Player player, CallbackInfo ci) {
             BackData backData = ((BackAccessor) playerInventory).getBackData();
-            if (!Services.COMPAT.anyModsLoaded(new String[]{CompatHelper.CURIOS, CompatHelper.TRINKETS}))
+            if (!Services.COMPAT.anyModsLoaded(CompatHelper.CURIOS, CompatHelper.TRINKETS))
             {
                   backData.backSlot.slotIndex = slots.size();
                   this.addSlot(backData.backSlot);

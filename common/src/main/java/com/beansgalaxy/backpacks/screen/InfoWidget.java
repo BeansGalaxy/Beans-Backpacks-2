@@ -1,12 +1,14 @@
 package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.data.config.MenuVisibility;
 import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -16,6 +18,7 @@ import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.NonNullList;
 import net.minecraft.locale.Language;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -25,8 +28,10 @@ import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry {
       private static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/info_tab.png");
@@ -41,6 +46,7 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
       private Tab selected = Tab.BACKPACK;
       public NonNullList<Optional<InfoButton>> buttons = NonNullList.create();
       public HomeButton homeButton;
+      public HideButton hideButton;
 
       public int updateScreenPosition(int i, boolean visible, int width, int imageWidth) {
             homeButton.setVisible(!visible);
@@ -137,16 +143,6 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
 
       }
 
-      @Override
-      public void setFocused(boolean b) {
-            focused = b;
-      }
-
-      @Override
-      public boolean isFocused() {
-            return focused;
-      }
-
       @Override @NotNull
       public NarrationPriority narrationPriority() {
             return NarrationPriority.NONE;
@@ -165,8 +161,13 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
             this.onClick = onClick;
             this.recipeBook = recipeBookComponent;
             focused = false;
-            this.homeButton = new HomeButton(this.leftPos, this.topPos, this, (button) -> {
-                  onButtonClick(Tab.BACKPACK);
+
+            if (Services.CONFIG.getMenuVisibility().equals(MenuVisibility.HIDE_ABLE))
+                  hiddenTabs = Services.CONFIG.getHiddenTabs();
+            this.homeButton = new HomeButton(this, (button) -> onButtonClick(Tab.BACKPACK));
+            this.hideButton = new HideButton(this, (button) -> {
+                  toggleHidden();
+                  onClick.run();
             });
 
             updateVisible();
@@ -180,9 +181,10 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
       }
 
       public void updateVisible() {
+            boolean menuEnabled = !isHidden() || focused;
             boolean RecipeBookClosed = !recipeBook.isVisible();
             Boolean BeganProgress = Tab.BACKPACK.tabUnlocked.apply(minecraft);
-            homeButton.setVisible(RecipeBookClosed && BeganProgress);
+            homeButton.setVisible(menuEnabled && RecipeBookClosed && BeganProgress);
       }
 
       private Optional<InfoButton> createInfoButton(Tab tab) {
@@ -219,6 +221,54 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
                               button.setFocused(false);
                   });
             }
+
+            hideButton.setVisible(focused);
+            if (!focused) {
+                  hideButton.setFocused(false);
+            }
+      }
+
+      @Override
+      public void setFocused(boolean b) {
+            focused = b;
+      }
+
+      @Override
+      public boolean isFocused() {
+            return focused;
+      }
+      private boolean isHidden() {
+            MenuVisibility menuVisibility = Services.CONFIG.getMenuVisibility();
+            boolean menuEnabled;
+            switch (menuVisibility) {
+                  case HIDE_ABLE -> menuEnabled = anyUnlockedNonHidden(hiddenTabs);
+                  case DISABLE -> menuEnabled = false;
+                  default -> menuEnabled = true;
+            }
+
+            return !menuEnabled;
+      }
+
+
+      HashSet<Tab> hiddenTabs = new HashSet<>();
+      private boolean anyUnlockedNonHidden(HashSet<Tab> hiddenTabs) {
+            for (Tab value : Tab.values()) {
+                  if (!hiddenTabs.contains(value) && value.isUnlocked(minecraft))
+                        return true;
+            }
+            return false;
+      }
+
+      private void toggleHidden() {
+            boolean hidden = anyUnlockedNonHidden(Services.CONFIG.getHiddenTabs());
+            HashSet<Tab> hiddenTabs = new HashSet<>();
+            if (hidden) {
+                  for (Tab tab : Tab.values())
+                        if (tab.tabUnlocked.apply(minecraft))
+                              hiddenTabs.add(tab);
+            }
+
+            Services.CONFIG.saveHiddenTabs(hiddenTabs);
       }
 
       public static String keyBind = "§0" + Tooltip.getKeyBinding().getTranslatedKeyMessage().getString()
@@ -324,9 +374,10 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
       public static class HomeButton extends InfoButton {
             private final InfoWidget parent;
 
-            public HomeButton(int leftPos, int topPos, InfoWidget parent, OnPress o) {
-                  super(Tab.BACKPACK, leftPos, topPos, o);
+            public HomeButton(InfoWidget parent, OnPress o) {
+                  super(Tab.BACKPACK, parent.leftPos, parent.topPos, o);
                   this.parent = parent;
+                  setVisible(!parent.isHidden());
             }
 
             @Override
@@ -349,6 +400,30 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
                   else
                         super.renderWidget($$0, $$1, $$2, $$3);
 
+            }
+      }
+
+      public static class HideButton extends Button {
+            private final InfoWidget parent;
+
+            public HideButton(InfoWidget parent, OnPress onPress) {
+                  super(parent.leftPos + 44, parent.topPos + 146, 15, 16, CommonComponents.EMPTY, onPress, Supplier::get);
+                  this.parent = parent;
+                  setVisible(false);
+                  setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.translatable("help.beansbackpacks.hide")));
+            }
+
+            public void setVisible(boolean visible) {
+                  boolean equals = Services.CONFIG.getMenuVisibility().equals(MenuVisibility.HIDE_ABLE);
+                  this.visible = visible && equals;
+            }
+
+            @Override
+            protected void renderWidget(GuiGraphics $$0, int $$1, int $$2, float $$3) {
+                  if (!parent.anyUnlockedNonHidden(Services.CONFIG.getHiddenTabs()))
+                        this.renderTexture($$0, TEXTURE, this.getX(), this.getY(), 16, 198, getHeight(), getWidth(), getHeight(), 256, 256);
+                  else
+                        this.renderTexture($$0, TEXTURE, this.getX(), this.getY(), 0, 198, getHeight(), getWidth(), getHeight(), 256, 256);
             }
       }
 }

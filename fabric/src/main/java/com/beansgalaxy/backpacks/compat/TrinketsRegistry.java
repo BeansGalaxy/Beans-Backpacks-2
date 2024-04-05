@@ -45,7 +45,6 @@ public class TrinketsRegistry {
                   public void onEquip(ItemStack stack, SlotReference slot, LivingEntity entity) {
                         if (entity instanceof Player player && slot.index() == 0)
                               BackData.get(player).update(stack);
-                        System.out.println("EQUIP " + stack);
 
                         Trinket.super.onEquip(stack, slot, entity);
                   }
@@ -54,7 +53,6 @@ public class TrinketsRegistry {
                   public void onUnequip(ItemStack stack, SlotReference slot, LivingEntity entity) {
                         if (entity instanceof Player player && slot.index() == 0)
                               BackData.get(player).update(ItemStack.EMPTY);
-                        System.out.println("DEQUIP" + stack);
 
                         Trinket.super.onUnequip(stack, slot, entity);
                   }

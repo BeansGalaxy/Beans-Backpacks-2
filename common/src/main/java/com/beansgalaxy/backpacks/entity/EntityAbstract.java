@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.entity;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.*;
+import com.beansgalaxy.backpacks.data.config.Gamerules;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
@@ -80,7 +81,7 @@ public abstract class EntityAbstract extends Backpack {
             EntityAbstract backpack;
             if (backpackStack.getItem() instanceof EnderBackpack ender) {
                   Optional<UUID> uuid;
-                  if (onDeath && !ender.isPersistent(backpackStack) && ServerSave.CONFIG.get(Config.UNBIND_ENDER_ON_DEATH))
+                  if (onDeath && !ender.isPersistent(backpackStack) && ServerSave.CONFIG.get(Gamerules.UNBIND_ENDER_ON_DEATH))
                         uuid = Optional.empty();
                   else
                         uuid = Optional.of(ender.getOrCreateUUID(player.getUUID(), backpackStack));

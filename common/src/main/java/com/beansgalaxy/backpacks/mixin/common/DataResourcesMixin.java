@@ -10,7 +10,6 @@ import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.flag.FeatureFlagSet;
-import net.minecraft.world.item.ArmorMaterial;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -69,16 +68,17 @@ public class DataResourcesMixin {
 
                         String key = GsonHelper.getAsString(jsonObject, "backpack_id");
                         if (!removedKeys.contains(key)) {
+                              Traits ironTraits = Traits.IRON;
                               JsonObject settings = GsonHelper.getAsJsonObject(jsonObject, "traits");
-                              String fallbackName = GsonHelper.getAsString(settings, "fallback_name", "Iron Backpack");
-                              int maxStacks = GsonHelper.getAsInt(settings, "max_stacks", 7);
-                              boolean fireResistant = GsonHelper.getAsBoolean(settings, "fire_resistant", false);
-                              String button = GsonHelper.getAsString(settings, "button", "minecraft:diamond");
-                              String material = GsonHelper.getAsString(settings, "material", "diamond");
+                              String fallbackName = GsonHelper.getAsString(settings, "fallback_name", ironTraits.name);
+                              int maxStacks = GsonHelper.getAsInt(settings, "max_stacks", ironTraits.maxStacks);
+                              boolean fireResistant = GsonHelper.getAsBoolean(settings, "fire_resistant", ironTraits.fireResistant);
+                              String button = GsonHelper.getAsString(settings, "button", ironTraits.button);
+                              String material = GsonHelper.getAsString(settings, "material", null);
 
-                              Traits.register(key, new Traits(fallbackName, maxStacks, fireResistant, button, material));
+                              Traits.register(key, new Traits(fallbackName, fireResistant, button, material, maxStacks));
                         }
-                        Traits.register("null", new Traits("Null Backpack", 11, true, "none", null));
+                        Traits.register("null", new Traits("Null Backpack", true, "none", null, 11));
 
                   } catch (IOException e) {
                         throw new RuntimeException(e);

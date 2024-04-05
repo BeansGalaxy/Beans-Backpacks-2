@@ -1,8 +1,9 @@
 package com.beansgalaxy.backpacks.data;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.data.config.Config;
 import com.beansgalaxy.backpacks.entity.Kind;
-import com.beansgalaxy.backpacks.items.EnderBackpack;
+import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -17,13 +18,13 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class Traits {
-      public static final Traits EMPTY = new Traits("Err", 0, true, "none", null);
-      public static final Traits LEATHER = new Traits("Backpack", 4, false, "minecraft:gold", "leather");
-      public static final Traits IRON = new Traits("Iron Backpack", 7, false, "minecraft:diamond", "iron");
-      public static final Traits ENDER = new Traits("Ender Backpack", 4, false, "none", "turtle");
-      public static final Traits WINGED = new Traits("Winged Backpack", 4, false, "minecraft:gold", "leather");
-      public static final Traits POT = new Traits("Decorated Pot", 999, false, "none", null);
-      public static final Traits CAULDRON = new Traits("Cauldron", 999, false, "none", null);
+      public static final Traits EMPTY = new Traits("Err", true, "none", null, 0);
+      public static final Traits LEATHER;
+      public static final Traits IRON;
+      public static final Traits ENDER;
+      public static final Traits WINGED;
+      public static final Traits POT;
+      public static final Traits CAULDRON;
 
       public static final BiFunction<Kind, String, ResourceLocation> DEFAULT_RESOURCE =
                   (kind, key) -> new ResourceLocation(Constants.MOD_ID, "textures/entity/" + kind.name().toLowerCase() + ".png");
@@ -36,7 +37,7 @@ public class Traits {
       public final String button;
       public final ArmorMaterial material;
 
-      public Traits(String name, int maxStacks, boolean fireResistant, String button, String material) {
+      public Traits(String name, boolean fireResistant, String button, String material, int maxStacks) {
             this.name = name;
             this.maxStacks = maxStacks;
             this.fireResistant = fireResistant;
@@ -268,5 +269,31 @@ public class Traits {
             public ArmorMaterial material() {
                   return traits().material;
             }
+      }
+
+      static {
+            LEATHER = new Traits("Backpack",
+                        false, "minecraft:gold", "leather",
+                        Services.CONFIG.getIntConfig(Config.LEATHER_MAX_STACKS));
+
+            IRON = new Traits("Iron Backpack",
+                        false, "minecraft:diamond", "iron",
+                        Services.CONFIG.getIntConfig(Config.METAL_MAX_STACKS));
+
+            ENDER = new Traits("Ender Backpack",
+                        false, "none", "turtle",
+                        Services.CONFIG.getIntConfig(Config.ENDER_MAX_STACKS));
+
+            WINGED = new Traits("Winged Backpack",
+                        false, "minecraft:gold", "leather",
+                        Services.CONFIG.getIntConfig(Config.WINGED_MAX_STACKS));
+
+            POT = new Traits("Decorated Pot",
+                        false, "none", null,
+                        Services.CONFIG.getIntConfig(Config.POT_MAX_STACKS));
+
+            CAULDRON= new Traits("Cauldron",
+                        false, "none", null,
+                        Services.CONFIG.getIntConfig(Config.CAULDRON_MAX_BUCKETS));
       }
 }

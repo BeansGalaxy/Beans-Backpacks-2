@@ -7,6 +7,11 @@ plugins {
 base {
     archivesName = "${mod_name}-fabric-${minecraft_version}"
 }
+
+repositories {
+    maven { url = 'https://maven.terraformersmc.com/releases' }
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.officialMojangMappings()
@@ -24,6 +29,8 @@ dependencies {
     // TRINKETS
     modCompileOnly "dev.emi:trinkets:${trinkets_version}"
     modCompileOnly "dev.onyxstudios.cardinal-components-api:cardinal-components-base:${cardinal_components_version}"
+    // MOD MENU
+    modImplementation "com.terraformersmc:modmenu:${mod_menu_version}"
 }
 
 loom {

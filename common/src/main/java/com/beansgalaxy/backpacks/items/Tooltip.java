@@ -4,6 +4,7 @@ import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.data.Traits;
+import com.beansgalaxy.backpacks.data.config.Config;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.KeyPress;
@@ -199,14 +200,16 @@ public class Tooltip {
                   case POT -> {
                         if (!instance.hasTag() || !instance.getTag().contains("back_slot")) {
                               components.add(Component.translatable("tooltip.beansbackpacks.special_title"));
-                              components.add(Component.translatable("tooltip.beansbackpacks.storage.stacks", "§9" + 128));
+                              components.add(Component.translatable("tooltip.beansbackpacks.storage.stacks",
+                                          "§9" + Traits.POT.maxStacks));
                               components.add(Component.translatable("tooltip.beansbackpacks.pot"));
                         }
                   }
                   case CAULDRON -> {
                         if (!instance.hasTag() || !instance.getTag().contains("back_slot")) {
                               components.add(Component.translatable("tooltip.beansbackpacks.special_title"));
-                              components.add(Component.translatable("tooltip.beansbackpacks.cauldron"));
+                              components.add(Component.translatable("tooltip.beansbackpacks.cauldron",
+                                          "§9" + Traits.CAULDRON.maxStacks));
                         }
                   }
                   default -> {

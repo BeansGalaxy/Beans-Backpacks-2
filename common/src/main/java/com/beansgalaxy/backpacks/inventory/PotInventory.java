@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.inventory;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
@@ -16,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class PotInventory {
-      public static final int MAX_SIZE = 128;
+      public static final int MAX_SIZE = Traits.POT.maxStacks;
 
       public static ItemStack add(ItemStack pot, ItemStack inserted, Player player) {
             Level level = player.level();

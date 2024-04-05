@@ -92,10 +92,9 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
                   this.buttonClicked = true;
             });
             this.addWidget(this.infoWidget);
+            this.addRenderableWidget(infoWidget.hideButton);
             for (Optional<InfoWidget.InfoButton> button : infoWidget.buttons) {
-                  if (button.isPresent()) {
-                        this.addRenderableWidget(button.get());
-                  }
+                  button.ifPresent(this::addRenderableWidget);
             }
       }
 

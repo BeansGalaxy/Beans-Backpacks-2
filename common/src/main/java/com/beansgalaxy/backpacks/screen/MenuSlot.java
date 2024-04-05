@@ -127,7 +127,6 @@ public class MenuSlot extends Slot {
             int rows = (slots - 1) / columns;
             int top = rows * (SPACING / 2);
             int y = (pos - top) + 99;
-            //System.out.println("index:" + index + "  row:" + row + "  rows:" + rows + "  first:" + firstRowSize + "  columns:" + columns);
 
             return new int[]{x, y};
       }

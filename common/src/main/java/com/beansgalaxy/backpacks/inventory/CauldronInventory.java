@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.inventory;
 
 import com.beansgalaxy.backpacks.access.BucketLikeAccess;
 import com.beansgalaxy.backpacks.access.BucketsAccess;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.items.Tooltip;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -13,7 +14,7 @@ import net.minecraft.world.level.Level;
 import java.awt.*;
 
 public class CauldronInventory {
-      public static final int MAX_SIZE = 24 * 4;
+      public static final int MAX_SIZE = Traits.CAULDRON.maxStacks * 4;
 
       public static int sizeLeft(ItemStack cauldron) {
             if (!cauldron.hasTag()) return MAX_SIZE;

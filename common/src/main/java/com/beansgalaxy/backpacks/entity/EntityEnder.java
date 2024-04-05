@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.entity;
 
 import com.beansgalaxy.backpacks.data.*;
+import com.beansgalaxy.backpacks.data.config.Gamerules;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -118,7 +119,7 @@ public class EntityEnder extends EntityAbstract {
             UUID placedBy = getPlacedBy();
             if (placedBy != null) {
                   EnderStorage.get().addViewer(placedBy, getInventory());
-                  if (!player.isCreative() && ServerSave.CONFIG.get(Config.ENDER_LOCK_LOGGED_OFF) && level().getPlayerByUUID(placedBy) == null) {
+                  if (!player.isCreative() && ServerSave.CONFIG.get(Gamerules.ENDER_LOCK_LOGGED_OFF) && level().getPlayerByUUID(placedBy) == null) {
                         PlaySound.HIT.at(this, getTraits().kind);
                         this.hop(.1);
                         return InteractionResult.SUCCESS;

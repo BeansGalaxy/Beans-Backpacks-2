@@ -1,6 +1,9 @@
-package com.beansgalaxy.backpacks.data;
+package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.data.EnderStorage;
+import com.beansgalaxy.backpacks.data.ServerSave;
+import com.beansgalaxy.backpacks.data.config.Gamerules;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -63,33 +66,33 @@ public class RegisterCommands {
       }
 
       private static void registerConfigCommand(LiteralArgumentBuilder<CommandSourceStack> beansmod) {
-            beansmod.then(Commands.literal("config").requires(in -> in.hasPermission(4))
-                        .then(Commands.literal(Config.UNBIND_ENDER_ON_DEATH.readable()).then(Commands.argument(Config.UNBIND_ENDER_ON_DEATH.readable(), BoolArgumentType.bool())
+            beansmod.then(Commands.literal("gamerule").requires(in -> in.hasPermission(4))
+                        .then(Commands.literal(Gamerules.UNBIND_ENDER_ON_DEATH.readable()).then(Commands.argument(Gamerules.UNBIND_ENDER_ON_DEATH.readable(), BoolArgumentType.bool())
                                     .executes(ctx -> {
-                                          String readable = Config.UNBIND_ENDER_ON_DEATH.readable();
+                                          String readable = Gamerules.UNBIND_ENDER_ON_DEATH.readable();
                                           boolean newValue = BoolArgumentType.getBool(ctx, readable);
 
-                                          if (ServerSave.CONFIG.get(Config.UNBIND_ENDER_ON_DEATH).equals(newValue)) {
+                                          if (ServerSave.CONFIG.get(Gamerules.UNBIND_ENDER_ON_DEATH).equals(newValue)) {
                                                 ctx.getSource().sendFailure(Component.translatable("command.beansbackpacks.config.fail", readable, newValue));
                                                 return -1;
                                           }
 
                                           ctx.getSource().sendSuccess(() -> Component.translatable("command.beansbackpacks.config.success", readable, newValue), true);
-                                          ServerSave.CONFIG.put(Config.UNBIND_ENDER_ON_DEATH, newValue);
+                                          ServerSave.CONFIG.put(Gamerules.UNBIND_ENDER_ON_DEATH, newValue);
                                           return 1;
                                     })
-                        )).then(Commands.literal(Config.ENDER_LOCK_LOGGED_OFF.readable()).then(Commands.argument(Config.ENDER_LOCK_LOGGED_OFF.readable(), BoolArgumentType.bool())
+                        )).then(Commands.literal(Gamerules.ENDER_LOCK_LOGGED_OFF.readable()).then(Commands.argument(Gamerules.ENDER_LOCK_LOGGED_OFF.readable(), BoolArgumentType.bool())
                                     .executes(ctx -> {
-                                          String readable = Config.ENDER_LOCK_LOGGED_OFF.readable();
+                                          String readable = Gamerules.ENDER_LOCK_LOGGED_OFF.readable();
                                           boolean newValue = BoolArgumentType.getBool(ctx, readable);
 
-                                          if (ServerSave.CONFIG.get(Config.ENDER_LOCK_LOGGED_OFF).equals(newValue)) {
+                                          if (ServerSave.CONFIG.get(Gamerules.ENDER_LOCK_LOGGED_OFF).equals(newValue)) {
                                                 ctx.getSource().sendFailure(Component.translatable("command.beansbackpacks.config.fail", readable, newValue));
                                                 return -1;
                                           }
 
                                           ctx.getSource().sendSuccess(() -> Component.translatable("command.beansbackpacks.config.success", readable, newValue), true);
-                                          ServerSave.CONFIG.put(Config.ENDER_LOCK_LOGGED_OFF, newValue);
+                                          ServerSave.CONFIG.put(Gamerules.ENDER_LOCK_LOGGED_OFF, newValue);
                                           return 1;
                                     })
                         ))

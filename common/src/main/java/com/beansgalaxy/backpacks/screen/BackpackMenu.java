@@ -150,7 +150,11 @@ public class BackpackMenu extends AbstractContainerMenu {
             if (clientSide && Kind.ENDER.is(kind))
                   return;
 
-            boolean clickedInBackpack = slotIndex > 0 && getSlot(slotIndex) instanceof MenuSlot;
+            boolean clickedInBackpack = false;
+            if (slotIndex > 0 && getSlot(slotIndex) instanceof MenuSlot menuSlot) {
+                  if (menuSlot.backIndex == MenuSlot.MAX_SLOTS && menuSlot.getItem().isEmpty()) return;
+                  clickedInBackpack = true;
+            }
 
             if (actionType == ClickType.THROW) {
                   super.clicked(slotIndex, button, actionType, player);
