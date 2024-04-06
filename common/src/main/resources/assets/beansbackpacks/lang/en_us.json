@@ -115,11 +115,16 @@
   "command.beansbackpacks.give.fail.no_id": "No backpack exists with the id: %d",
   "command.beansbackpacks.give.fail.no_players": "No players found",
 
+  "entity.beansbackpacks.locked.owner_offline": "This backpack's owner is not online.",
+  "entity.beansbackpacks.locked.not_owner": "You do not own this backpack.",
+  "entity.beansbackpacks.locked.ender_offline": "This backpack's owner is not online.",
+  "entity.beansbackpacks.locked.ender_no_owner": "This backpack has no inventory",
+
   "text.autoconfig.beansbackpacks.title": "Beans' Backpacks",
 
   "text.autoconfig.beansbackpacks.option.clientConfig": "Client Sided Configurations",
-  "text.autoconfig.beansbackpacks.option.clientConfig.menuVisibility": "Inventory Help Menu Visibility",
-  "text.autoconfig.beansbackpacks.option.clientConfig.hiddenHelpTabs": "Hidden Help Tabs",
+  "text.autoconfig.beansbackpacks.option.clientConfig.menuVisibility": "Inventory help menu visibility",
+  "text.autoconfig.beansbackpacks.option.clientConfig.hiddenHelpTabs": "Hidden help menu tabs",
   "text.autoconfig.beansbackpacks.option.clientConfig.instantPlace": "Instantly place backpack on hotkey press",
 
   "text.autoconfig.beansbackpacks.option.maximumStacks": "Configure the Maximum Size of Backpacks",
@@ -131,6 +136,9 @@
   "text.autoconfig.beansbackpacks.option.maximumStacks.cauldron": "Cauldrons",
 
   "text.autoconfig.beansbackpacks.option.gamerules": "Configure Default Gamerules",
+  "text.autoconfig.beansbackpacks.option.gamerules.lockBackpackNotOwner": "lockBackpackNotOwner",
+  "text.autoconfig.beansbackpacks.option.gamerules.lockBackpackOffline": "lockBackpackOffline",
   "text.autoconfig.beansbackpacks.option.gamerules.unbindEnderOnDeath": "unbindEnderOnDeath",
-  "text.autoconfig.beansbackpacks.option.gamerules.lockEnderOffline": "lockEnderOffline"
+  "text.autoconfig.beansbackpacks.option.gamerules.lockEnderOffline": "lockEnderOffline",
+  "text.autoconfig.beansbackpacks.option.gamerules.keepBackSlot": "keepBackSlot"
 }

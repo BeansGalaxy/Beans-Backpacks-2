@@ -8,6 +8,8 @@ import com.beansgalaxy.backpacks.network.client.ConfigureTraits2C;
 import com.beansgalaxy.backpacks.network.client.SendEnderData2C;
 import com.beansgalaxy.backpacks.network.client.SyncBackSlot2C;
 import com.beansgalaxy.backpacks.platform.Services;
+import com.beansgalaxy.backpacks.platform.services.CompatHelper;
+import com.beansgalaxy.backpacks.platform.services.ConfigHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -58,14 +60,14 @@ public class CommonForgeEvents {
 
       @SubscribeEvent
       public static void LivingEntityDeath(LivingDeathEvent event) {
-            if (event.getEntity() instanceof Player player && !player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
+            if (event.getEntity() instanceof Player player && !ConfigHelper.keepBackSlot(player.level()))
                   BackData.get(player).drop();
       }
 
       @SubscribeEvent
       public static void PlayerCloneEvent(PlayerEvent.Clone event) {
             Player oldPlayer = event.getOriginal();
-            if (!event.isWasDeath() || oldPlayer.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
+            if (!event.isWasDeath() || ConfigHelper.keepBackSlot(oldPlayer.level())) {
                   Player newPlayer = event.getEntity();
 
                   BackData.get(oldPlayer).copyTo(BackData.get(newPlayer));

@@ -45,6 +45,15 @@ public class ForgeConfigHelper implements ConfigHelper {
                   case LOCK_ENDER_OFFLINE -> {
                         return LOCK_ENDER_OFFLINE.get();
                   }
+                  case LOCK_BACKPACK_OFFLINE -> {
+                        return LOCK_BACKPACK_OFFLINE.get();
+                  }
+                  case LOCK_BACKPACK_NOT_OWNER -> {
+                        return LOCK_BACKPACK_NOT_OWNER.get();
+                  }
+                  case KEEP_BACK_SLOT -> {
+                        return KEEP_BACK_SLOT.get();
+                  }
             }
             return config.get(Boolean.class);
       }

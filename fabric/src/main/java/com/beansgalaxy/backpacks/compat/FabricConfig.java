@@ -22,24 +22,30 @@ public class FabricConfig implements ConfigData {
       Gamerules gamerules = new Gamerules();
 
       static class Gamerules {
-            @Comment("Unbind an equipped Ender Backpack when the player dies")
-            boolean unbindEnderOnDeath = UNBIND_ENDER_ON_DEATH.get(Boolean.class);
+            @Comment("Lock placed Backpacks if a player did not place it")
+            boolean lockBackpackNotOwner = LOCK_BACKPACK_NOT_OWNER.get(Boolean.class);
+            @Comment("Lock placed Backpacks while their owner is offline")
+            boolean lockBackpackOffline = LOCK_BACKPACK_OFFLINE.get(Boolean.class);
             @Comment("Lock Ender Backpacks while their owner is offline")
             boolean lockEnderOffline = LOCK_ENDER_OFFLINE.get(Boolean.class);
+            @Comment("Unbind an equipped Ender Backpack when the player dies")
+            boolean unbindEnderOnDeath = UNBIND_ENDER_ON_DEATH.get(Boolean.class);
+            @Comment("Does the player keep their Back Slot on death")
+            boolean keepBackSlot = KEEP_BACK_SLOT.get(Boolean.class);
       }
 
       static class MaximumStacks {
-            @Comment("Range: 1 - 64")
+            @Comment("Range: 1 - " + MAX_STACKS_RANGE)
             int leather = LEATHER_MAX_STACKS.get(Integer.class);
-            @Comment("Range: 1 - 64")
+            @Comment("Range: 1 - " + MAX_STACKS_RANGE)
             int winged = WINGED_MAX_STACKS.get(Integer.class);
-            @Comment("Range: 1 - 64")
+            @Comment("Range: 1 - " + MAX_STACKS_RANGE)
             int metal = METAL_MAX_STACKS.get(Integer.class);
-            @Comment("Range: 1 - 8")
+            @Comment("Range: 1 - " + MAX_ENDER_RANGE)
             int ender = ENDER_MAX_STACKS.get(Integer.class);
-            @Comment("Range: 1 - 128")
+            @Comment("Range: 1 - " + MAX_SPECIAL_RANGE)
             int pot = POT_MAX_STACKS.get(Integer.class);
-            @Comment("Range: 1 - 128")
+            @Comment("Range: 1 - " + MAX_SPECIAL_RANGE)
             int cauldron = CAULDRON_MAX_BUCKETS.get(Integer.class);
       }
 

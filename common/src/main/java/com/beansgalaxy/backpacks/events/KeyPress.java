@@ -32,11 +32,8 @@ public final class KeyPress {
             if (hitResult == null || hitResult.getType() == HitResult.Type.MISS)
                   return;
 
-            if (hitResult instanceof EntityHitResult entityHitResult && entityHitResult.getEntity() instanceof EntityAbstract entityAbstract)
-            {
-                  InteractionResult interact = entityAbstract.interact(localPlayer);
-                  if (interact.consumesAction())
-                        Services.NETWORK.instantPlace(entityAbstract.getId(), null);
+            if (hitResult instanceof EntityHitResult entityHitResult && entityHitResult.getEntity() instanceof EntityAbstract entityAbstract) {
+                  Services.NETWORK.instantPlace(entityAbstract.getId(), null);
             }
 
             if (hitResult instanceof BlockHitResult blockHitResult)

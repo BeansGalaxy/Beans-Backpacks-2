@@ -27,7 +27,8 @@ public class ServerSave extends SavedData {
             boolean isOldSave = EnderStorage.get().fromNbtDeprecated(tag);
             if (!isOldSave) {
                   EnderStorage.get().fromNbt(tag);
-                  Gamerules.fromNBT(tag);
+                  CONFIG.clear();
+                  CONFIG.putAll(Gamerules.fromNBT(tag));
             }
             return save;
       }

@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.compat;
 
+import com.beansgalaxy.backpacks.data.config.Config;
 import com.beansgalaxy.backpacks.data.config.MenuVisibility;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
@@ -8,6 +9,7 @@ import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
+import net.minecraft.util.Mth;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,29 +28,22 @@ public class ModMenu implements ModMenuApi {
 
       public static int getIntConfig(com.beansgalaxy.backpacks.data.config.Config config) {
             FabricConfig instance = AutoConfig.getConfigHolder(FabricConfig.class).getConfig();
-
+            int value = config.get(Integer.class);
             switch (config) {
-                  case LEATHER_MAX_STACKS -> {
-                        return instance.maximumStacks.leather;
-                  }
-                  case ENDER_MAX_STACKS -> {
-                        return instance.maximumStacks.ender;
-                  }
-                  case WINGED_MAX_STACKS -> {
-                        return instance.maximumStacks.winged;
-                  }
-                  case METAL_MAX_STACKS -> {
-                        return instance.maximumStacks.metal;
-                  }
-                  case POT_MAX_STACKS -> {
-                        return instance.maximumStacks.pot;
-                  }
-                  case CAULDRON_MAX_BUCKETS -> {
-                        return instance.maximumStacks.cauldron;
-                  }
+                  case LEATHER_MAX_STACKS -> value =
+                              Mth.clamp(instance.maximumStacks.leather, 1, Config.MAX_STACKS_RANGE);
+                  case ENDER_MAX_STACKS -> value =
+                              Mth.clamp(instance.maximumStacks.ender, 1, Config.MAX_ENDER_RANGE);
+                  case WINGED_MAX_STACKS -> value =
+                              Mth.clamp(instance.maximumStacks.winged, 1, Config.MAX_STACKS_RANGE);
+                  case METAL_MAX_STACKS -> value =
+                              Mth.clamp(instance.maximumStacks.metal, 1, Config.MAX_STACKS_RANGE);
+                  case POT_MAX_STACKS -> value =
+                              Mth.clamp(instance.maximumStacks.pot, 1, Config.MAX_SPECIAL_RANGE);
+                  case CAULDRON_MAX_BUCKETS -> value =
+                              Mth.clamp(instance.maximumStacks.cauldron, 1, Config.MAX_SPECIAL_RANGE);
             }
-
-            return config.get(Integer.class);
+            return value;
       }
 
       public static boolean getBoolConfig(com.beansgalaxy.backpacks.data.config.Config config) {
@@ -60,6 +55,15 @@ public class ModMenu implements ModMenuApi {
                   }
                   case LOCK_ENDER_OFFLINE -> {
                         return instance.gamerules.lockEnderOffline;
+                  }
+                  case LOCK_BACKPACK_OFFLINE -> {
+                        return instance.gamerules.lockBackpackOffline;
+                  }
+                  case LOCK_BACKPACK_NOT_OWNER -> {
+                        return instance.gamerules.lockBackpackNotOwner;
+                  }
+                  case KEEP_BACK_SLOT -> {
+                        return instance.gamerules.keepBackSlot;
                   }
                   case INSTANT_PLACE -> {
                         return instance.clientConfig.instantPlace;

@@ -66,37 +66,25 @@ public class RegisterCommands {
       }
 
       private static void registerConfigCommand(LiteralArgumentBuilder<CommandSourceStack> beansmod) {
-            beansmod.then(Commands.literal("gamerule").requires(in -> in.hasPermission(4))
-                        .then(Commands.literal(Gamerules.UNBIND_ENDER_ON_DEATH.readable()).then(Commands.argument(Gamerules.UNBIND_ENDER_ON_DEATH.readable(), BoolArgumentType.bool())
-                                    .executes(ctx -> {
-                                          String readable = Gamerules.UNBIND_ENDER_ON_DEATH.readable();
-                                          boolean newValue = BoolArgumentType.getBool(ctx, readable);
+            LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal("gamerule").requires(in -> in.hasPermission(4));
+            for (Gamerules value : Gamerules.values()) {
+                  builder.then(Commands.literal(value.readable()).then(Commands.argument(value.readable(), BoolArgumentType.bool())
+                              .executes(ctx -> {
+                                    String readable = value.readable();
+                                    boolean newValue = BoolArgumentType.getBool(ctx, readable);
 
-                                          if (ServerSave.CONFIG.get(Gamerules.UNBIND_ENDER_ON_DEATH).equals(newValue)) {
-                                                ctx.getSource().sendFailure(Component.translatable("command.beansbackpacks.config.fail", readable, newValue));
-                                                return -1;
-                                          }
+                                    if (ServerSave.CONFIG.get(value).equals(newValue)) {
+                                          ctx.getSource().sendFailure(Component.translatable("command.beansbackpacks.config.fail", readable, newValue));
+                                          return -1;
+                                    }
 
-                                          ctx.getSource().sendSuccess(() -> Component.translatable("command.beansbackpacks.config.success", readable, newValue), true);
-                                          ServerSave.CONFIG.put(Gamerules.UNBIND_ENDER_ON_DEATH, newValue);
-                                          return 1;
-                                    })
-                        )).then(Commands.literal(Gamerules.ENDER_LOCK_LOGGED_OFF.readable()).then(Commands.argument(Gamerules.ENDER_LOCK_LOGGED_OFF.readable(), BoolArgumentType.bool())
-                                    .executes(ctx -> {
-                                          String readable = Gamerules.ENDER_LOCK_LOGGED_OFF.readable();
-                                          boolean newValue = BoolArgumentType.getBool(ctx, readable);
-
-                                          if (ServerSave.CONFIG.get(Gamerules.ENDER_LOCK_LOGGED_OFF).equals(newValue)) {
-                                                ctx.getSource().sendFailure(Component.translatable("command.beansbackpacks.config.fail", readable, newValue));
-                                                return -1;
-                                          }
-
-                                          ctx.getSource().sendSuccess(() -> Component.translatable("command.beansbackpacks.config.success", readable, newValue), true);
-                                          ServerSave.CONFIG.put(Gamerules.ENDER_LOCK_LOGGED_OFF, newValue);
-                                          return 1;
-                                    })
-                        ))
-            );
+                                    ctx.getSource().sendSuccess(() -> Component.translatable("command.beansbackpacks.config.success", readable, newValue), true);
+                                    ServerSave.CONFIG.put(value, newValue);
+                                    return 1;
+                              })
+                  ));
+            }
+            beansmod.then(builder);
       }
 
       private static void registerEnderDataCommand(LiteralArgumentBuilder<CommandSourceStack> beansmod) {

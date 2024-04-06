@@ -44,6 +44,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.BiFunction;
 
 public abstract class EntityAbstract extends Backpack {
       public Direction direction;
@@ -543,31 +544,70 @@ public abstract class EntityAbstract extends Backpack {
             return true;
       }
 
+      public enum LockedReason {
+            ENDER_NO_OWNER(null, (player, entityAbstract) ->
+                        entityAbstract instanceof EntityEnder ender && ender.getPlacedBy() == null),
+            NOT_OWNER(Gamerules.LOCK_BACKPACK_NOT_OWNER, (player, entityAbstract) -> {
+                  UUID playerUUID = player.getUUID();
+                  UUID placedBy = entityAbstract.getPlacedBy();
+                  return playerUUID != placedBy || placedBy == entityAbstract.uuid;
+            }),
+            OWNER_OFFLINE(Gamerules.LOCK_BACKPACK_OFFLINE, (player, entityAbstract) -> {
+                  UUID placedBy = entityAbstract.getPlacedBy();
+                  return placedBy != entityAbstract.uuid && player.serverLevel().getPlayerByUUID(placedBy) == null;
+            }),
+            ENDER_OFFLINE(Gamerules.ENDER_LOCK_LOGGED_OFF, (player, entityAbstract) ->
+                        entityAbstract instanceof EntityEnder && OWNER_OFFLINE.apply(player, entityAbstract));
+
+            final BiFunction<ServerPlayer, EntityAbstract, Boolean> isLocked;
+            final Gamerules gamerule;
+
+            LockedReason(Gamerules gamerule, BiFunction<ServerPlayer, EntityAbstract, Boolean> isLocked) {
+                  this.gamerule = gamerule;
+                  this.isLocked = isLocked;
+            }
+
+            public boolean apply(ServerPlayer player, EntityAbstract backpack) {
+                  return isLocked.apply(player, backpack);
+            }
+      }
+
+      public boolean isLocked(ServerPlayer player, Kind kind) {
+            if (player.isCreative())
+                  return false;
+
+            for (LockedReason value : LockedReason.values()) {
+                  boolean enabled = value.gamerule == null || ServerSave.CONFIG.get(value.gamerule);
+                  if (enabled && value.apply(player, this)) {
+                        player.displayClientMessage(Component.translatable("entity.beansbackpacks.locked." + value.toString().toLowerCase()), true);
+                        PlaySound.HIT.at(this, kind);
+                        this.hop(.1);
+                        return true;
+                  }
+            }
+            return false;
+      }
+
       // PREFORMS THIS ACTION WHEN IT IS RIGHT-CLICKED
       @Override @NotNull
       public InteractionResult interact(Player player, InteractionHand hand) {
-            InteractionResult interact = interact(player);
-            if (interact.consumesAction())
-                  return interact;
+            if (player instanceof ServerPlayer serverPlayer) {
+                  InteractionResult interact = interact(serverPlayer);
+                  if (interact.consumesAction())
+                        return interact;
 
-            Kind kind = getTraits().kind;
-            if (this instanceof EntityEnder ender)
-            {
-                  UUID placedBy = ender.getPlacedBy();
-                  if (placedBy == null) {
-                        PlaySound.HIT.at(this, kind);
-                        this.hop(.1);
-                        return InteractionResult.SUCCESS;
-                  }
+                  if (viewable.viewers < 1)
+                        PlaySound.OPEN.at(this, getTraits().kind);
+                  Services.NETWORK.openBackpackMenu(player, this);
             }
-
-            if (viewable.viewers < 1)
-                  PlaySound.OPEN.at(this, kind);
-            Services.NETWORK.openBackpackMenu(player, this);
             return InteractionResult.SUCCESS;
       }
 
-      public InteractionResult interact(Player player) {
+      public InteractionResult interact(ServerPlayer player) {
+            Kind kind = getTraits().kind;
+            if (isLocked(player, kind))
+                  return InteractionResult.SUCCESS;
+
             BackData backData = BackData.get(player);
             boolean actionKeyPressed = backData.actionKeyPressed;
             ItemStack backStack = backData.getStack();
@@ -581,7 +621,6 @@ public abstract class EntityAbstract extends Backpack {
                   boolean b = !backData.isEmpty();
                   boolean b1 = backData.backSlotDisabled();
                   boolean b2 = this.isRemoved();
-                  Kind kind = getTraits().kind;
                   if (b || b1 || b2)
                   {
                         PlaySound.HIT.at(this, kind);
@@ -605,10 +644,9 @@ public abstract class EntityAbstract extends Backpack {
                         }
                         backData.set(toStack(this));
                         PlaySound.EQUIP.at(player, kind);
-                        if (player instanceof ServerPlayer serverPlayer)
-                              Services.NETWORK.backpackInventory2C(serverPlayer);
+                        Services.NETWORK.backpackInventory2C(player);
 
-                        if (!this.isRemoved() && !player.level().isClientSide())
+                        if (!this.isRemoved())
                         {
                               this.kill();
                               this.markHurt();
