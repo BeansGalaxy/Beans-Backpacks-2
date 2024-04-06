@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.mixin.client;
 
 import com.beansgalaxy.backpacks.access.ClickAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.data.config.Config;
 import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.items.Tooltip;
@@ -45,7 +46,8 @@ public class UpdateSprintKey {
             backData.actionKeyPressed = actionKeyPressed;
             Services.NETWORK.SprintKey(actionKeyPressed);
 
-            if (isMouseKey && actionKeyPressed) {
+            boolean instantPlace = isMouseKey || Services.CONFIG.getBoolConfig(Config.INSTANT_PLACE);
+            if (instantPlace && actionKeyPressed) {
                   if (instance.screen instanceof ClickAccessor clickAccessor)
                         clickAccessor.beans_Backpacks_2$instantPlace();
                   else if (!(instance.screen instanceof BackpackScreen))

@@ -61,6 +61,9 @@ public class ModMenu implements ModMenuApi {
                   case LOCK_ENDER_OFFLINE -> {
                         return instance.gamerules.lockEnderOffline;
                   }
+                  case INSTANT_PLACE -> {
+                        return instance.clientConfig.instantPlace;
+                  }
             }
 
             return config.get(Boolean.class);
@@ -75,7 +78,7 @@ public class ModMenu implements ModMenuApi {
             ConfigHolder<FabricConfig> holder = AutoConfig.getConfigHolder(FabricConfig.class);
             holder.load();
             FabricConfig instance = holder.getConfig();
-            String hiddenHelpTabs = instance.clientConfig.HiddenHelpTabs;
+            String hiddenHelpTabs = instance.clientConfig.hiddenHelpTabs;
 
             String[] split = hiddenHelpTabs.split(",");
             HashSet<InfoWidget.Tab> tabs = new HashSet<>();
@@ -101,7 +104,7 @@ public class ModMenu implements ModMenuApi {
 
             ConfigHolder<FabricConfig> holder = AutoConfig.getConfigHolder(FabricConfig.class);
             FabricConfig instance = holder.get();
-            instance.clientConfig.HiddenHelpTabs = sb.toString();
+            instance.clientConfig.hiddenHelpTabs = sb.toString();
             holder.save();
       }
 

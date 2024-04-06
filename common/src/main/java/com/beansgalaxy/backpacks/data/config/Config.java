@@ -13,7 +13,8 @@ public enum Config {
       LOCK_ENDER_OFFLINE(     new Entry<>(false)),
 
       // Client Config
-      MENU_VISIBILITY         (new Entry<>(MenuVisibility.SHOWN));
+      MENU_VISIBILITY         (new Entry<>(MenuVisibility.HIDE_ABLE)),
+      INSTANT_PLACE           (new Entry<>(false));
 
       public static final int[] MAX_STACKS_RANGE = {1, 64};
       public static final int[] MAX_BUCKETS_RANGE = {1, 128};

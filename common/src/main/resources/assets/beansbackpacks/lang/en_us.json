@@ -119,7 +119,8 @@
 
   "text.autoconfig.beansbackpacks.option.clientConfig": "Client Sided Configurations",
   "text.autoconfig.beansbackpacks.option.clientConfig.menuVisibility": "Inventory Help Menu Visibility",
-  "text.autoconfig.beansbackpacks.option.clientConfig.HiddenHelpTabs": "Hidden Help Tabs",
+  "text.autoconfig.beansbackpacks.option.clientConfig.hiddenHelpTabs": "Hidden Help Tabs",
+  "text.autoconfig.beansbackpacks.option.clientConfig.instantPlace": "Instantly place backpack on hotkey press",
 
   "text.autoconfig.beansbackpacks.option.maximumStacks": "Configure the Maximum Size of Backpacks",
   "text.autoconfig.beansbackpacks.option.maximumStacks.leather": "Leather Backpacks",

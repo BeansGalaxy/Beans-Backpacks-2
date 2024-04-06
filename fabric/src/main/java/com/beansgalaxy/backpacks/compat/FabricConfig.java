@@ -46,7 +46,8 @@ public class FabricConfig implements ConfigData {
       static class ClientConfig {
             @Comment("HIDDEN / HIDE_ABLE / SHOWN")
             MenuVisibility menuVisibility = MENU_VISIBILITY.get(MenuVisibility.class);
-            String HiddenHelpTabs = "";
+            String hiddenHelpTabs = "";
+            boolean instantPlace = INSTANT_PLACE.get(Boolean.class);
       }
 
 }
