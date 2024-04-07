@@ -70,9 +70,8 @@ public class EntityEnder extends EntityAbstract {
             super(type, level);
       }
 
-      public EntityEnder(Player player, Optional<UUID> uuid) {
-            super(Services.REGISTRY.getEnderEntity(), player.level());
-            entityData.set(OWNER, uuid);
+      public EntityEnder(Level level) {
+            super(Services.REGISTRY.getEnderEntity(), level);
 
             if (level() instanceof ServerLevel serverLevel)
                   EnderStorage.setLocation(getPlacedBy(), this.uuid, blockPosition(), serverLevel);

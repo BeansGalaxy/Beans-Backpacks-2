@@ -20,6 +20,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
@@ -72,6 +73,20 @@ public abstract class EntityAbstract extends Backpack {
                                           Direction direction, Player player, NonNullList<ItemStack> stacks)
       {
             Traits.LocalData traits = Traits.LocalData.fromStack(backpackStack);
+            EntityAbstract entityAbstract = create(backpackStack, x, y, z, yaw, onDeath, direction, player.level(), player.getUUID(), stacks);
+            if (entityAbstract != null && player instanceof ServerPlayer serverPlayer) {
+                  Services.REGISTRY.triggerPlace(serverPlayer, traits.key);
+                  player.level().gameEvent(player, GameEvent.ENTITY_PLACE, entityAbstract.position());
+            }
+
+            return entityAbstract;
+      }
+
+      @Nullable
+      public static EntityAbstract create(ItemStack backpackStack, int x, double y, int z, float yaw, boolean onDeath,
+                                          Direction direction, Level level, UUID uuid, NonNullList<ItemStack> stacks)
+      {
+            Traits.LocalData traits = Traits.LocalData.fromStack(backpackStack);
             if (traits == null)
                   return null;
 
@@ -80,20 +95,22 @@ public abstract class EntityAbstract extends Backpack {
                   return null;
 
             EntityAbstract backpack;
+            Optional<UUID> placedBy = Optional.of(uuid);
             if (backpackStack.getItem() instanceof EnderBackpack ender) {
-                  Optional<UUID> uuid;
                   if (onDeath && !ender.isPersistent(backpackStack) && ServerSave.CONFIG.get(Gamerules.UNBIND_ENDER_ON_DEATH))
-                        uuid = Optional.empty();
+                        placedBy = Optional.empty();
                   else
-                        uuid = Optional.of(ender.getOrCreateUUID(player.getUUID(), backpackStack));
+                        placedBy = Optional.of(ender.getOrCreateUUID(uuid, backpackStack));
 
-                  backpack = new EntityEnder(player, uuid);
+                  backpack = new EntityEnder(level);
             }
             else if (backpackStack.getItem() instanceof WingedBackpack) {
                   int damage = backpackStack.getDamageValue();
-                  backpack = new EntityFlight(player, stacks, damage);
+                  backpack = new EntityFlight(level, stacks, damage);
             }
-            else backpack = new EntityGeneral(player, stacks);
+            else backpack = new EntityGeneral(level, stacks);
+
+            backpack.entityData.set(OWNER, placedBy);
 
             backpack.actualY = y;
             backpack.pos = BlockPos.containing(x, y, z);
@@ -108,11 +125,8 @@ public abstract class EntityAbstract extends Backpack {
             boolean isHorizontal = direction.getAxis().isHorizontal();
             if (!isHorizontal) backpack.setYRot(yaw);
 
-            Level level = player.level();
             PlaySound.PLACE.at(backpack, Kind.fromStack(backpackStack));
-            if (player instanceof ServerPlayer serverPlayer) {
-                  Services.REGISTRY.triggerPlace(serverPlayer, traits.key);
-                  level.gameEvent(player, GameEvent.ENTITY_PLACE, backpack.position());
+            if (level instanceof ServerLevel) {
                   level.addFreshEntity(backpack);
             }
 

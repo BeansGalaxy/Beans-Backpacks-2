@@ -65,10 +65,9 @@ public class EntityFlight extends EntityAbstract {
             this.damage = 0;
       }
 
-      public EntityFlight(Player player, NonNullList<ItemStack> stacks, int damage) {
-            super(Services.REGISTRY.getWingedEntity(), player.level());
+      public EntityFlight(Level level, NonNullList<ItemStack> stacks, int damage) {
+            super(Services.REGISTRY.getWingedEntity(), level);
             this.damage = damage;
-            this.entityData.set(OWNER, Optional.of(player.getUUID()));
 
             if (stacks != null && !stacks.isEmpty()) {
                   getItemStacks().addAll(stacks);
