@@ -3,7 +3,6 @@ package com.beansgalaxy.backpacks.platform.services;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.EnderStorage;
-import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.inventory.CauldronInventory;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -13,12 +12,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
@@ -62,6 +59,8 @@ public interface CompatHelper {
 
       ItemStack getBackSlotItem(BackData backData, ItemStack defaultItem);
 
+      boolean invokeListenersOnDeath(BackData backData);
+
       /* =============== METHODS BELOW ARE IN A PERMANENT LOCATION SAFE TO CALL FOR COMPATIBILITY ================ */
 
       /**
@@ -69,7 +68,7 @@ public interface CompatHelper {
        * @param uuid Entry to look up the specific ender entry.
        * @param name The displayed name of a bound ender backpack.
        * @param trim Taken directly from a trimmed ItemStack. The tag must contain a "pattern" & "material" string tag.
-       *             If you are able to view a trimmed ItemStack, the tag is the contents of "Trim" and not trim itself.
+       *             If you are able to view a trimmed ItemStack, the tag is the contents of "Trim" and not "Trim" itself.
        **/
       default void updateEnderEntry(@NotNull UUID uuid, Optional<Component> name, Optional<CompoundTag> trim) {
             EnderStorage.Data data = EnderStorage.get().MAPPED_DATA.computeIfAbsent(uuid, uuid1 -> new EnderStorage.Data());
@@ -123,19 +122,9 @@ public interface CompatHelper {
       }
 
       /**
-       * This collects what it can from a player's BackData and drops it as a backpack <br>
-       * Any items that are not safely inside a backpack it will be returned as a NonNullList ae. equipped elytras <br>
-       * @param direction Direction.UP / Direction.DOWN implies the backpack is centered in the block, otherwise it will be hung and yaw will be ignored
-       * @return Any items NOT safely inside a backpack ae. equipped elytras or items stored in a pot
-       **/
-      static NonNullList<ItemStack> dropAndCollectBackData(Player player, int x, double y, int z, Direction direction, float yaw) {
-            return BackData.get(player).drop(x, y, z, direction, yaw);
-      }
-
-      /**
        * This method places a new backpack dependent on the ItemStack. If a backpack cannot be created from the ItemStack null will be returned <br>
        * @param onDeath Determines whether to unbind an Ender Backpack if config allows
-       * @param direction Direction.UP / Direction.DOWN implies the backpack is centered in the block, otherwise it will be hung and yaw will be ignored
+       * @param direction Direction.UP & Direction.DOWN implies the backpack is centered in the block, otherwise it will be hung and yaw will be ignored
        * @param uuid uuid of the player it is placed by or in the case of Ender Backpacks, the owner of the inventory
        * @param stacks ItemStacks of the backpack. Can be null or empty. Will be ignored if Ender Backpack
        * @return The Backpack entity , else <code>null</code> if ItemStack cant turn into entity.

@@ -12,7 +12,7 @@ public class LivingEntityDeath implements ServerLivingEntityEvents.AllowDeath {
 
       @Override
       public boolean allowDeath(LivingEntity entity, DamageSource damageSource, float damageAmount) {
-            if (entity instanceof Player player && !ConfigHelper.keepBackSlot(player.level()))
+            if (entity instanceof Player player)
                   BackData.get(player).drop();
             return true;
       }

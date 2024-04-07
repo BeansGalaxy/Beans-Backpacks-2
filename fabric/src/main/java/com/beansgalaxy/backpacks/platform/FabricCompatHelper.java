@@ -4,11 +4,15 @@ import com.beansgalaxy.backpacks.compat.TrinketsRegistry;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.beansgalaxy.backpacks.inventory.CauldronInventory;
+import com.beansgalaxy.backpacks.platform.services.ConfigHelper;
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
@@ -48,5 +52,55 @@ public class FabricCompatHelper implements CompatHelper {
             TextureAtlasSprite sprite = FluidVariantRendering.getSprite(fluidVariant);
             int color = FluidVariantRendering.getColor(fluidVariant);
             return new CauldronInventory.FluidAttributes(sprite, new Color(color));
+      }
+
+      @Override
+      public boolean invokeListenersOnDeath(BackData backData) {
+            Context context = new Context(backData);
+            OnDeathCallback.EVENT.invoker().onDeath(context);
+            return context.isCancelled;
+      }
+
+      public interface OnDeathCallback {
+            Event<OnDeathCallback> EVENT = EventFactory.createArrayBacked(OnDeathCallback.class, listeners -> (context) -> {
+                  for (OnDeathCallback listener : listeners) {
+                        listener.onDeath(context);
+                  }
+            });
+
+            void onDeath(Context context);
+      }
+
+      public class Context {
+            private final BackData backData;
+            private boolean isCancelled = false;
+
+            public Context(BackData backData) {
+                  this.backData = backData;
+            }
+
+            public Player getPlayer() {
+                  return backData.owner;
+            }
+
+            public Container getBackInventory() {
+                  return backData.backpackInventory;
+            }
+
+            public ItemStack getBackStack() {
+                  return backData.getStack();
+            }
+
+            public void setBackStack(ItemStack backStack) {
+                  backData.set(backStack);
+            }
+
+            public boolean keepBackSlotGamerule() {
+                  return !ConfigHelper.keepBackSlot(getPlayer().level());
+            }
+
+            public void cancel() {
+                  isCancelled = true;
+            }
       }
 }

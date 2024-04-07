@@ -1,14 +1,16 @@
 package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.data.*;
+import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.data.EnderStorage;
+import com.beansgalaxy.backpacks.data.ServerSave;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.network.client.ConfigureLists2C;
 import com.beansgalaxy.backpacks.network.client.ConfigureTraits2C;
 import com.beansgalaxy.backpacks.network.client.SendEnderData2C;
 import com.beansgalaxy.backpacks.network.client.SyncBackSlot2C;
 import com.beansgalaxy.backpacks.platform.Services;
-import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.beansgalaxy.backpacks.platform.services.ConfigHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,7 +21,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -60,14 +61,14 @@ public class CommonForgeEvents {
 
       @SubscribeEvent
       public static void LivingEntityDeath(LivingDeathEvent event) {
-            if (event.getEntity() instanceof Player player && !ConfigHelper.keepBackSlot(player.level()))
+            if (event.getEntity() instanceof Player player)
                   BackData.get(player).drop();
       }
 
       @SubscribeEvent
       public static void PlayerCloneEvent(PlayerEvent.Clone event) {
             Player oldPlayer = event.getOriginal();
-            if (!event.isWasDeath() || ConfigHelper.keepBackSlot(oldPlayer.level())) {
+            if (!event.isWasDeath()) {
                   Player newPlayer = event.getEntity();
 
                   BackData.get(oldPlayer).copyTo(BackData.get(newPlayer));

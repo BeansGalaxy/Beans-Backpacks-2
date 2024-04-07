@@ -8,6 +8,7 @@ import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.platform.Services;
+import com.beansgalaxy.backpacks.platform.services.ConfigHelper;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.screen.InSlot;
@@ -16,7 +17,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
@@ -160,9 +160,13 @@ public class BackData {
       }
 
       public void drop() {
+            Level level = owner.level();
+            boolean isCanceled = Services.COMPAT.invokeListenersOnDeath(this);
+            if (isCanceled || ConfigHelper.keepBackSlot(level))
+                  return;
+
             BlockPos blockPos = owner.getOnPos();
             float yaw = owner.yBodyRot + 180;
-
             int x = blockPos.getX();
             double y = blockPos.getY() + 1.5;
             int z = blockPos.getZ();
@@ -180,15 +184,25 @@ public class BackData {
                         direction = Direction.fromYRot(yaw + 90);
             }
 
-            NonNullList<ItemStack> droppedItems = drop(x, y, z, direction, yaw);
-            while (!droppedItems.isEmpty()) {
-                  ItemEntity itemEntity = owner.spawnAtLocation(droppedItems.remove(0));
-                  if (itemEntity != null)
-                        itemEntity.setExtendedLifetime();
+            ItemStack backStack = this.getStack();
+            if (!Kind.isBackpack(backStack)) {
+                  owner.spawnAtLocation(backStack.copy());
+                  set(ItemStack.EMPTY);
             }
+
+            if (!level.isClientSide()) {
+                  NonNullList<ItemStack> itemStacks = NonNullList.create();
+                  for (int i = 0; i < backpackInventory.getContainerSize(); i++) {
+                        ItemStack item = backpackInventory.getItem(i);
+                        itemStacks.add(item);
+                  }
+                  EntityAbstract.create(backStack, x, y, z, yaw, true, direction, owner, itemStacks);
+            }
+
+            set(ItemStack.EMPTY);
       }
 
-      private boolean canPlaceBackpackSafely(Player player, BlockPos blockPos) {
+      private static boolean canPlaceBackpackSafely(Player player, BlockPos blockPos) {
             Level level = player.level();
             BlockState blockState = level.getBlockState(blockPos.above());
             BlockGetter chunkForCollisions = level.getChunk(blockPos);
@@ -197,22 +211,6 @@ public class BackData {
 
             BlockState blockStateBelow = level.getBlockState(blockPos);
             return blockStateBelow.entityCanStandOn(chunkForCollisions, blockPos, player);
-      }
-
-      public NonNullList<ItemStack> drop(int x, double y, int z, Direction direction, float yaw) {
-            NonNullList<ItemStack> droppedItems = NonNullList.create();
-            NonNullList<ItemStack> itemStacks = backpackInventory.getItemStacks();
-            ItemStack backStack = getStack();
-            if (!Kind.isBackpack(backStack)) {
-                  droppedItems.add(backStack.copy());
-                  set(ItemStack.EMPTY);
-                  return droppedItems;
-            }
-            if (!owner.level().isClientSide())
-                  EntityAbstract.create(backStack, x, y, z, yaw, true, direction, owner, itemStacks);
-
-            set(ItemStack.EMPTY);
-            return droppedItems;
       }
 
       public void copyTo(BackData newBackData) {
