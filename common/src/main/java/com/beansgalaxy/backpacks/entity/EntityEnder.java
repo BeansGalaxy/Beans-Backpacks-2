@@ -114,21 +114,6 @@ public class EntityEnder extends EntityAbstract {
       }
 
       @Override
-      public @NotNull InteractionResult interact(Player player, InteractionHand hand) {
-            UUID placedBy = getPlacedBy();
-            if (placedBy != null) {
-                  EnderStorage.get().addViewer(placedBy, getInventory());
-                  if (!player.isCreative() && ServerSave.CONFIG.get(Gamerules.ENDER_LOCK_LOGGED_OFF) && level().getPlayerByUUID(placedBy) == null) {
-                        PlaySound.HIT.at(this, getTraits().kind);
-                        this.hop(.1);
-                        return InteractionResult.SUCCESS;
-                  }
-            }
-
-            return super.interact(player, hand);
-      }
-
-      @Override
       public void kill() {
             EnderStorage.removeLocation(getPlacedBy(), getUUID());
             super.kill();

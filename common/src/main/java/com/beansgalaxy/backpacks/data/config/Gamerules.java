@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public enum Gamerules {
       UNBIND_ENDER_ON_DEATH(Services.CONFIG.getBoolConfig(Config.UNBIND_ENDER_ON_DEATH), "unbindEnderOnDeath"),
-      ENDER_LOCK_LOGGED_OFF(Services.CONFIG.getBoolConfig(Config.LOCK_ENDER_OFFLINE), "lockEnderWhenLoggedOff"),
+      LOCK_ENDER_OFFLINE(Services.CONFIG.getBoolConfig(Config.LOCK_ENDER_OFFLINE), "lockEnderOffline"),
       LOCK_BACKPACK_OFFLINE(Services.CONFIG.getBoolConfig(Config.LOCK_BACKPACK_OFFLINE), "lockBackpackOffline"),
       LOCK_BACKPACK_NOT_OWNER(Services.CONFIG.getBoolConfig(Config.LOCK_BACKPACK_NOT_OWNER), "lockBackpackNotOwner"),
       KEEP_BACK_SLOT(Services.CONFIG.getBoolConfig(Config.KEEP_BACK_SLOT), "keepBackSlot");

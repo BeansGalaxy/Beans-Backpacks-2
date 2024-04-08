@@ -28,6 +28,7 @@ the issues tab. </p>
   - Set the defaulted value of all gamerules
   - Adjust the Help Menu visibility
 - `/beansmod config` has been renamed to `/beansmod gamerule`
+- The gamerule `lockEnderWhenLoggedOff` has been renamed to `lockEnderOffline`
 - Added new gamerules *([more info](https://github.com/BeansGalaxy/Beans-Backpacks-2/wiki/Commands#gamerule))*
   - `lockBackpackOffline`
   - `lockBackpackNotOwner`

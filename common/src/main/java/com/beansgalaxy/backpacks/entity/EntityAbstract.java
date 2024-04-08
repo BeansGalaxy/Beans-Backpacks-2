@@ -570,7 +570,7 @@ public abstract class EntityAbstract extends Backpack {
                   UUID placedBy = entityAbstract.getPlacedBy();
                   return placedBy != entityAbstract.uuid && player.serverLevel().getPlayerByUUID(placedBy) == null;
             }),
-            ENDER_OFFLINE(Gamerules.ENDER_LOCK_LOGGED_OFF, (player, entityAbstract) ->
+            ENDER_OFFLINE(Gamerules.LOCK_ENDER_OFFLINE, (player, entityAbstract) ->
                         entityAbstract instanceof EntityEnder && OWNER_OFFLINE.apply(player, entityAbstract));
 
             final BiFunction<ServerPlayer, EntityAbstract, Boolean> isLocked;
