@@ -11,7 +11,6 @@ import com.beansgalaxy.backpacks.network.client.ConfigureTraits2C;
 import com.beansgalaxy.backpacks.network.client.SendEnderData2C;
 import com.beansgalaxy.backpacks.network.client.SyncBackSlot2C;
 import com.beansgalaxy.backpacks.platform.Services;
-import com.beansgalaxy.backpacks.platform.services.ConfigHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

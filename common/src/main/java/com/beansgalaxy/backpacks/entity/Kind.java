@@ -19,22 +19,22 @@ import java.util.Arrays;
 import java.util.function.Function;
 
 public enum Kind {
-      LEATHER(  Services.REGISTRY.getLeather(),  key -> Traits.LEATHER,  DyableBackpack::shiftColor,  data -> Kind.getAppendedName("", "Backpack")),
-      METAL(    Services.REGISTRY.getMetal(),    Traits::get,            Traits.IGNORE_COLOR,         Traits::getName),
-      UPGRADED( Services.REGISTRY.getUpgraded(), Traits::get,            Traits.IGNORE_COLOR,         Traits::getName),
-      WINGED(   Services.REGISTRY.getWinged(),   key -> Traits.WINGED,   WingedBackpack::shiftColor,  data -> Kind.getAppendedName("winged_", "Winged Backpack")),
-      ENDER(    Services.REGISTRY.getEnder(),    key -> Traits.ENDER,    Traits.IGNORE_COLOR,         data -> Kind.getAppendedName("ender_", "Ender Backpack")),
-      POT(      Items.DECORATED_POT.asItem(),    key -> Traits.POT,      Traits.IGNORE_COLOR,         data -> Component.empty()),
-      CAULDRON( Items.CAULDRON.asItem(),         key -> Traits.CAULDRON, Traits.IGNORE_COLOR,         data -> Component.empty());
+      LEATHER(  Services.REGISTRY.getLeather(),  Traits.LEATHER,  DyableBackpack::shiftColor, data -> Kind.getAppendedName("", "Backpack")),
+      METAL(    Services.REGISTRY.getMetal(),    Traits.METAL,    Traits.IGNORE_COLOR,        Traits::getName),
+      UPGRADED( Services.REGISTRY.getUpgraded(), Traits.METAL,    Traits.IGNORE_COLOR,        Traits::getName),
+      WINGED(   Services.REGISTRY.getWinged(),   Traits.WINGED,   WingedBackpack::shiftColor, data -> Kind.getAppendedName("winged_", "Winged Backpack")),
+      ENDER(    Services.REGISTRY.getEnder(),    Traits.ENDER,    Traits.IGNORE_COLOR,        data -> Kind.getAppendedName("ender_", "Ender Backpack")),
+      POT(      Items.DECORATED_POT.asItem(),    Traits.POT,      Traits.IGNORE_COLOR,        data -> Component.empty()),
+      CAULDRON( Items.CAULDRON.asItem(),         Traits.CAULDRON, Traits.IGNORE_COLOR,        data -> Component.empty());
 
       final Item item;
-      final Function<String, Traits> getTraits;
       private final Function<Traits.LocalData, Component> getName;
       private final Function<Integer, Color> getColor;
+      public final Traits defaultTraits;
 
-      Kind(Item item, Function<String, Traits> getTraits, Function<Integer, Color> getColor, Function<Traits.LocalData, Component> getName) {
+      Kind(Item item, Traits defaultTraits, Function<Integer, Color> getColor, Function<Traits.LocalData, Component> getName) {
             this.item = item;
-            this.getTraits = getTraits;
+            this.defaultTraits = defaultTraits;
             this.getName = getName;
             this.getColor = getColor;
       }
@@ -50,11 +50,18 @@ public enum Kind {
                   return kind.traits(id);
             }
 
-            return Traits.IRON;
+            return Traits.METAL;
       }
 
       public Traits traits(String backpack_id) {
-            return getTraits.apply(backpack_id);
+            if (Kind.METAL.is(this))
+                  return Traits.get(backpack_id);
+
+            Traits traits = Constants.TRAITS_MAP.get(this.name());
+            if (traits != null)
+                  return traits;
+
+            return defaultTraits;
       }
 
       public static boolean isBackpack(ItemStack backpackStack) {

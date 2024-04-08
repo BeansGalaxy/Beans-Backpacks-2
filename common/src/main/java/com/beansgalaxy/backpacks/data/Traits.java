@@ -6,7 +6,6 @@ import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.DyeableLeatherItem;
@@ -14,20 +13,16 @@ import net.minecraft.world.item.ItemStack;
 
 import java.awt.*;
 import java.util.UUID;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class Traits {
       public static final Traits EMPTY = new Traits("Err", true, "none", null, 0);
       public static final Traits LEATHER;
-      public static final Traits IRON;
+      public static final Traits METAL;
       public static final Traits ENDER;
       public static final Traits WINGED;
       public static final Traits POT;
       public static final Traits CAULDRON;
-
-      public static final BiFunction<Kind, String, ResourceLocation> DEFAULT_RESOURCE =
-                  (kind, key) -> new ResourceLocation(Constants.MOD_ID, "textures/entity/" + kind.name().toLowerCase() + ".png");
 
       public static final Function<Integer, Color> IGNORE_COLOR = i -> new Color(0xFFFFFF);
 
@@ -88,25 +83,21 @@ public class Traits {
             Constants.TRAITS_MAP.put(key, traits);
       }
 
-      public static String last_troubled_key = null;
       public static Traits get(String key) {
-            if (Constants.isEmpty(key)) {
-                  return IRON;
+            Traits metal = Constants.TRAITS_MAP.get("METAL");
+            if (Constants.isEmpty(key)) {;
+                  return metal;
             }
+
             Traits traits = Constants.TRAITS_MAP.get(key);
-            if (traits == null)
-            {
-                  if (!key.equals(last_troubled_key)) {
-                        Constants.LOG.warn("Requested Traits for key: \"" + key + "\" but Traits returned null");
-                        last_troubled_key = key;
-                  }
-                  return EMPTY;
-            }
-            return traits;
+            if (traits != null)
+                  return traits;
+
+            return metal;
       }
 
       public static Component getName(LocalData traits) {
-            String key = traits.key;
+            String key = traits.backpack_id;
             if (Constants.isEmpty(key))
                   return Component.translatableWithFallback("item.beansbackpacks.metal_backpack", "Iron Backpack");
             return Component.translatableWithFallback("tooltip.beansbackpacks.name." + key, traits.name());
@@ -129,13 +120,13 @@ public class Traits {
 
             private boolean isEmpty;
             public final Kind kind;
-            public final String key;
+            public final String backpack_id;
             public int color = 0xFFFFFF;
             private CompoundTag trim = new CompoundTag();
             public Component hoverName = Component.empty();
 
-            public LocalData(String key, Kind kind, int color, CompoundTag trim, Component hoverName) {
-                  this.key = key == null ? "": key;
+            public LocalData(String backpack_id, Kind kind, int color, CompoundTag trim, Component hoverName) {
+                  this.backpack_id = backpack_id == null ? "": backpack_id;
                   this.kind = kind;
                   this.color = color;
                   this.trim = trim == null ? new CompoundTag(): trim;
@@ -143,14 +134,14 @@ public class Traits {
             }
 
             private LocalData(Kind kind) {
-                  this.key = "";
+                  this.backpack_id = "";
                   this.kind = kind;
             }
 
             public LocalData(CompoundTag tag) {
                   String kindString = tag.getString("kind");
                   this.kind = Kind.fromName(kindString);
-                  this.key = tag.getString("backpack_id");
+                  this.backpack_id = tag.getString("backpack_id");
                   if (tag.contains("empty") && tag.getBoolean("empty"))
                         this.isEmpty = true;
                   else {
@@ -161,7 +152,7 @@ public class Traits {
             }
 
             public LocalData() {
-                  this.key = "";
+                  this.backpack_id = "";
                   this.kind = Kind.METAL;
                   this.isEmpty = true;
             }
@@ -169,7 +160,7 @@ public class Traits {
             public CompoundTag toNBT() {
                   CompoundTag data = new CompoundTag();
                   data.putString("kind", kind.name());
-                  data.putString("backpack_id", key);
+                  data.putString("backpack_id", backpack_id);
                   if (isEmpty())
                         data.putBoolean("empty", true);
                   else {
@@ -239,7 +230,10 @@ public class Traits {
             }
 
             public Traits traits() {
-                  return kind.traits(key);
+                  Traits traits = kind.traits(backpack_id);
+                  if (traits == null)
+                        System.out.println("NUULLL");
+                  return traits;
             }
 
             public String name() {
@@ -276,7 +270,7 @@ public class Traits {
                         false, "minecraft:gold", "leather",
                         Services.CONFIG.getIntConfig(Config.LEATHER_MAX_STACKS));
 
-            IRON = new Traits("Iron Backpack",
+            METAL = new Traits("Iron Backpack",
                         false, "minecraft:diamond", "iron",
                         Services.CONFIG.getIntConfig(Config.METAL_MAX_STACKS));
 

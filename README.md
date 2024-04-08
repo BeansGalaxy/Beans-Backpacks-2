@@ -20,6 +20,21 @@ the issues tab. </p>
 
 <h1 align="center"> Changelog </h1>
 
+### 20.1-0.23-v3 & 20.2-0.17-v2
+
+- Added Config (Mod Menu & Cloth Config required for Fabric) *([more info](https://github.com/BeansGalaxy/Beans-Backpacks-2/wiki/Configurations#mod-loader-config))*
+  - Adjustable Max Stacks for backpacks
+  - Pressing the hotkey may place an equipped backpack with no right click
+  - Set the defaulted value of all gamerules
+  - Adjust the Help Menu visibility
+- `/beansmod config` has been renamed to `/beansmod gamerule`
+- Added new gamerules *([more info](https://github.com/BeansGalaxy/Beans-Backpacks-2/wiki/Commands#gamerule))*
+  - `lockBackpackOffline`
+  - `lockBackpackNotOwner`
+  - `keepBackSlot`
+- Backpack Help menu now has a button to hide the menu until a new tab is discovered
+- Added Cancellable Events for both Fabric & Forge modders when the BackSlot tries to drop its contents on death
+
 ### 20.1-0.22-v3 & 20.2-0.17-v2
 
 - New Backpack Menu!

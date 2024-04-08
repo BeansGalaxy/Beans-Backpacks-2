@@ -4,11 +4,12 @@ import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.data.Traits;
-import com.beansgalaxy.backpacks.data.config.Config;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.events.PlaySound;
+import com.beansgalaxy.backpacks.inventory.CauldronInventory;
+import com.beansgalaxy.backpacks.inventory.PotInventory;
 import com.beansgalaxy.backpacks.inventory.SpecialTooltip;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.ChatFormatting;
@@ -201,7 +202,7 @@ public class Tooltip {
                         if (!instance.hasTag() || !instance.getTag().contains("back_slot")) {
                               components.add(Component.translatable("tooltip.beansbackpacks.special_title"));
                               components.add(Component.translatable("tooltip.beansbackpacks.storage.stacks",
-                                          "§9" + Traits.POT.maxStacks));
+                                          "§9" + PotInventory.getMaxSize()));
                               components.add(Component.translatable("tooltip.beansbackpacks.pot"));
                         }
                   }
@@ -209,7 +210,7 @@ public class Tooltip {
                         if (!instance.hasTag() || !instance.getTag().contains("back_slot")) {
                               components.add(Component.translatable("tooltip.beansbackpacks.special_title"));
                               components.add(Component.translatable("tooltip.beansbackpacks.cauldron",
-                                          "§9" + Traits.CAULDRON.maxStacks));
+                                          "§9" + (CauldronInventory.getMaxSize() / 4)));
                         }
                   }
                   default -> {
@@ -229,7 +230,7 @@ public class Tooltip {
                               components.add(Component.translatable("tooltip.beansbackpacks.ender", playerName));
                         }
 
-                        String key = traits.key;
+                        String key = traits.backpack_id;
                         if (flag.isAdvanced() && !Constants.isEmpty(key))
                               components.add(Component.translatable("tooltip.beansbackpacks.hidden.backpack_id", "§8" + key));
                   }

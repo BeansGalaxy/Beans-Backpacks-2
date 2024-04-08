@@ -2,6 +2,9 @@ package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.Traits;
+import com.beansgalaxy.backpacks.data.config.Config;
+import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.platform.Services;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.minecraft.commands.Commands;
@@ -17,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -66,12 +70,12 @@ public class DataResourcesMixin {
 
                         JsonObject jsonObject = JsonParser.parseString(string).getAsJsonObject();
 
-                        String key = GsonHelper.getAsString(jsonObject, "backpack_id");
+                        String key = GsonHelper.getAsString(jsonObject, "backpack_id").toLowerCase();
                         if (!removedKeys.contains(key)) {
-                              Traits ironTraits = Traits.IRON;
+                              Traits ironTraits = Traits.METAL;
                               JsonObject settings = GsonHelper.getAsJsonObject(jsonObject, "traits");
                               String fallbackName = GsonHelper.getAsString(settings, "fallback_name", ironTraits.name);
-                              int maxStacks = GsonHelper.getAsInt(settings, "max_stacks", ironTraits.maxStacks);
+                              int maxStacks = GsonHelper.getAsInt(settings, "max_stacks", Services.CONFIG.getIntConfig(Config.METAL_MAX_STACKS));
                               boolean fireResistant = GsonHelper.getAsBoolean(settings, "fire_resistant", ironTraits.fireResistant);
                               String button = GsonHelper.getAsString(settings, "button", ironTraits.button);
                               String material = GsonHelper.getAsString(settings, "material", null);
@@ -79,6 +83,10 @@ public class DataResourcesMixin {
                               Traits.register(key, new Traits(fallbackName, fireResistant, button, material, maxStacks));
                         }
                         Traits.register("null", new Traits("Null Backpack", true, "none", null, 11));
+
+                        for (Kind kind : Kind.values()) {
+                              Traits.register(kind.name(), kind.defaultTraits);
+                        }
 
                   } catch (IOException e) {
                         throw new RuntimeException(e);

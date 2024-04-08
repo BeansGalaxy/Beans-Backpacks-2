@@ -75,7 +75,7 @@ public abstract class EntityAbstract extends Backpack {
             Traits.LocalData traits = Traits.LocalData.fromStack(backpackStack);
             EntityAbstract entityAbstract = create(backpackStack, x, y, z, yaw, onDeath, direction, player.level(), player.getUUID(), stacks);
             if (entityAbstract != null && player instanceof ServerPlayer serverPlayer) {
-                  Services.REGISTRY.triggerPlace(serverPlayer, traits.key);
+                  Services.REGISTRY.triggerPlace(serverPlayer, traits.backpack_id);
                   player.level().gameEvent(player, GameEvent.ENTITY_PLACE, entityAbstract.position());
             }
 
@@ -181,7 +181,7 @@ public abstract class EntityAbstract extends Backpack {
 
             switch (kind) {
                   case METAL, UPGRADED -> {
-                        String key = traits.key;
+                        String key = traits.backpack_id;
                         if (!Constants.isEmpty(key) && !key.equals("iron")) // TODO: 20.1-0.18-v2 REMOVE KEY EQUALS IRON CHECK
                               stack.getOrCreateTag().putString("backpack_id", key);
                   }

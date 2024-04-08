@@ -46,7 +46,7 @@ public class Constants {
 				output.accept(value.getItem());
 			if (Kind.METAL.is(value))
 				Constants.TRAITS_MAP.keySet().forEach(key -> {
-					if (!key.equals("null"))
+					if (!key.equals("null") && isLowercase(key))
 						output.accept(Traits.toStack(key));
 				});
 		}
@@ -64,6 +64,14 @@ public class Constants {
 
 	public static boolean isEmpty(Component component) {
 		return component == null || component.getContents().toString().equals("empty");
+	}
+
+	public static boolean isLowercase(String string) {
+		for (char c : string.toCharArray()) {
+			if (Character.isUpperCase(c))
+				return false;
+		}
+		return true;
 	}
 
 	public static boolean elytraOrDisables(Item item) {

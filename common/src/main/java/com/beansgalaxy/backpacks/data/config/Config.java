@@ -1,5 +1,8 @@
 package com.beansgalaxy.backpacks.data.config;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum Config {
 
       // Common Config

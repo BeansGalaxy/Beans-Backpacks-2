@@ -86,7 +86,7 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
             pose.mulPose(Axis.YN.rotationDegrees(yaw));
 
             float[] colors = {tint.getRed() / 255F, tint.getGreen() / 255F, tint.getBlue() / 255F};
-            ResourceLocation texture = kind.getAppendedResource(traits.key, "");
+            ResourceLocation texture = kind.getAppendedResource(traits.backpack_id, "");
             VertexConsumer outer = source.getBuffer(RenderType.entityCutout(texture));
             this.model.renderToBuffer(pose, outer, light, OverlayTexture.NO_OVERLAY, colors[0], colors[1], colors[2], 1F);
             pose.popPose();
@@ -110,7 +110,7 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
             pose.scale(deflate[0], deflate[1], deflate[2]);
             pose.translate(0, deflate[3] * 2, -deflate[3]);
             Kind kind = traits.kind;
-            ResourceLocation texture = kind.getAppendedResource(traits.key, "");
+            ResourceLocation texture = kind.getAppendedResource(traits.backpack_id, "");
             VertexConsumer inner = source.getBuffer(RenderType.entitySmoothCutout(texture));
             model.renderMask(pose, inner, light, OverlayTexture.NO_OVERLAY, colors[0], colors[1], colors[2], 1F);
             pose.popPose();

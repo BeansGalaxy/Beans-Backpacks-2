@@ -67,7 +67,7 @@ public interface CompatHelper {
        * Updates an Ender Entry. If fields "name" or "trim" is Optional.empty(), it will not update those fields. <br>
        * @param uuid Entry to look up the specific ender entry.
        * @param name The displayed name of a bound ender backpack.
-       * @param trim Taken directly from a trimmed ItemStack. The tag must contain a "pattern" & "material" string tag.
+       * @param trim Taken directly from a trimmed ItemStack. The tag must contain a "pattern" and "material" string tag.
        *             If you are able to view a trimmed ItemStack, the tag is the contents of "Trim" and not "Trim" itself.
        **/
       default void updateEnderEntry(@NotNull UUID uuid, Optional<Component> name, Optional<CompoundTag> trim) {
@@ -124,7 +124,7 @@ public interface CompatHelper {
       /**
        * This method places a new backpack dependent on the ItemStack. If a backpack cannot be created from the ItemStack null will be returned <br>
        * @param onDeath Determines whether to unbind an Ender Backpack if config allows
-       * @param direction Direction.UP & Direction.DOWN implies the backpack is centered in the block, otherwise it will be hung and yaw will be ignored
+       * @param direction Direction.UP and Direction.DOWN implies the backpack is centered in the block, otherwise it will be hung and yaw will be ignored
        * @param uuid uuid of the player it is placed by or in the case of Ender Backpacks, the owner of the inventory
        * @param stacks ItemStacks of the backpack. Can be null or empty. Will be ignored if Ender Backpack
        * @return The Backpack entity , else <code>null</code> if ItemStack cant turn into entity.

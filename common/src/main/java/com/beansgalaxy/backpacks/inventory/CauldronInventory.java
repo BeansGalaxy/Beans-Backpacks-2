@@ -3,7 +3,9 @@ package com.beansgalaxy.backpacks.inventory;
 import com.beansgalaxy.backpacks.access.BucketLikeAccess;
 import com.beansgalaxy.backpacks.access.BucketsAccess;
 import com.beansgalaxy.backpacks.data.Traits;
+import com.beansgalaxy.backpacks.data.config.Config;
 import com.beansgalaxy.backpacks.items.Tooltip;
+import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -14,18 +16,21 @@ import net.minecraft.world.level.Level;
 import java.awt.*;
 
 public class CauldronInventory {
-      public static final int MAX_SIZE = Traits.CAULDRON.maxStacks * 4;
+      public static int getMaxSize() {
+            return Traits.get("CAULDRON").maxStacks * 4;
+      }
 
       public static int sizeLeft(ItemStack cauldron) {
-            if (!cauldron.hasTag()) return MAX_SIZE;
+            int maxSize = getMaxSize();
+            if (!cauldron.hasTag()) return maxSize;
 
             CompoundTag fluidTag = cauldron.getTagElement("back_slot");
-            if (fluidTag == null) return MAX_SIZE;
+            if (fluidTag == null) return maxSize;
 
             if (fluidTag.contains("amount")) {
-                  return MAX_SIZE - fluidTag.getInt("amount");
+                  return maxSize - fluidTag.getInt("amount");
             }
-            return MAX_SIZE;
+            return maxSize;
       }
 
       public static Item add(ItemStack cauldron, Item bucket) {
@@ -57,7 +62,7 @@ public class CauldronInventory {
                   fluidTag.putString("id", key.toString());
             }
 
-            if (amount > MAX_SIZE) return null;
+            if (amount > getMaxSize()) return null;
             fluidTag.putInt("amount", amount);
             return access.getEmptyInstance();
       }
@@ -77,7 +82,7 @@ public class CauldronInventory {
                   fluidTag.putString("id", key.toString());
             }
 
-            if (amount > MAX_SIZE) return null;
+            if (amount > getMaxSize()) return null;
             fluidTag.putInt("amount", amount);
             return access.getEmptyInstance();
 

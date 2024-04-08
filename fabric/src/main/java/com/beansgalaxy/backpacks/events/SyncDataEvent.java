@@ -2,8 +2,7 @@ package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.BackData;
-import com.beansgalaxy.backpacks.network.packages.ConfigureLists2C;
-import com.beansgalaxy.backpacks.network.packages.ConfigureTraits2C;
+import com.beansgalaxy.backpacks.network.packages.SyncConfig;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,8 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 public class SyncDataEvent implements ServerLifecycleEvents.SyncDataPackContents {
       @Override
       public void onSyncDataPackContents(ServerPlayer player, boolean joined) {
-            ConfigureTraits2C.S2C(player);
-            ConfigureLists2C.S2C(player);
+            SyncConfig.S2C(player);
 
             Constants.LOG.info("Syncing {} data to \"{}\"", Constants.MOD_ID, player.getDisplayName().getString());
             if (joined) {

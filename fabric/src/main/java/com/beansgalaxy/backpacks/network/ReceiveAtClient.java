@@ -5,6 +5,7 @@ import com.beansgalaxy.backpacks.client.network.CommonAtClient;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.data.EnderStorage;
+import com.beansgalaxy.backpacks.data.config.Config;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;

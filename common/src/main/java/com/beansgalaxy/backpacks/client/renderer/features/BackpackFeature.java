@@ -67,7 +67,7 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
             pose.translate(0, (1 / 16f) * scale, (1 / 32f) * scale);
 
         float[] colors = {tint.getRed() / 255F, tint.getGreen() / 255F, tint.getBlue() / 255F};
-        ResourceLocation texture = traits.kind.getAppendedResource(traits.key, "");
+        ResourceLocation texture = traits.kind.getAppendedResource(traits.backpack_id, "");
         VertexConsumer vc = mbs.getBuffer(backpackModel.renderType(texture));
         backpackModel.renderToBuffer(pose, vc, light, OverlayTexture.NO_OVERLAY, colors[0], colors[1], colors[2], 1F);
 
