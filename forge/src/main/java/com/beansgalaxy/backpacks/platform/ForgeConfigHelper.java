@@ -71,6 +71,5 @@ public class ForgeConfigHelper implements ConfigHelper {
       @Override
       public void saveHiddenTabs(HashSet<InfoWidget.Tab> hiddenTabs) {
             HIDDEN_TABS.set(hiddenTabs.stream().toList());
-            HIDDEN_TABS.save();
       }
 }

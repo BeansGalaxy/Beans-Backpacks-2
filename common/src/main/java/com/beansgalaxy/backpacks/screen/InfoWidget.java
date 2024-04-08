@@ -328,15 +328,16 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
             private boolean isUnlocked(Minecraft minecraft) {
                   return tabUnlocked.apply(minecraft);
             }
-            public static boolean getAdvancement(ClientPacketListener connection, String location) {
+            public static boolean getAdvancement(ClientPacketListener connection, String... locations) {
                   if (connection == null)
                         return false;
 
-                  ResourceLocation resourceLocation = ResourceLocation.tryParse(location);
-                  if (resourceLocation == null) {
-                        return false;
+                  for (String location : locations) {
+                        ResourceLocation resourceLocation = ResourceLocation.tryParse(location);
+                        if (resourceLocation != null && connection.getAdvancements().getAdvancements().get(resourceLocation) != null)
+                              return true;
                   }
-                  return connection.getAdvancements().getAdvancements().get(resourceLocation) != null;
+                  return false;
             }
 
             public void render(GuiGraphics gui, int x, int y) {
