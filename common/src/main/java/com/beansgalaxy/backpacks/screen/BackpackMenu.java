@@ -105,14 +105,18 @@ public class BackpackMenu extends AbstractContainerMenu {
             for (MenuSlot backpackSlot : backpackSlots) {
                   int backIndex = backpackSlot.backIndex;
                   int size = backpackInventory.getContainerSize();
-                  int shift = Math.max(0, size - MenuSlot.MAX_SLOTS);
+                  int i = backpackInventory.spaceLeft();
+                  boolean hasSpace = i > 0;
+                  int shift = Math.max(0, size - MenuSlot.MAX_SLOTS) - (hasSpace ? 0 : 1);
                   if (backIndex + shift < size) {
                         backpackSlot.index = backIndex + 36;
                         backpackSlot.state = MenuSlot.State.ACTIVE;
                         int[] xy = MenuSlot.getXY(backpackInventory, backIndex);
                         backpackSlot.x = xy[0];
                         backpackSlot.y = xy[1];
-                  } else if (backpackInventory.spaceLeft() > 0 && backIndex + shift == size) {
+                        continue;
+                  }
+                  if (hasSpace && backIndex + shift == size) {
                         backpackSlot.index = size + 36;
                         backpackSlot.state = MenuSlot.State.EMPTY;
                         int[] xy = MenuSlot.getXY(backpackInventory, -1);
@@ -147,13 +151,20 @@ public class BackpackMenu extends AbstractContainerMenu {
       private void handleClick(int slotIndex, int button, ClickType actionType, Player player) {
             Kind kind = backpackInventory.getTraits().kind;
             boolean clientSide = owner.level().isClientSide();
-            if (clientSide && Kind.ENDER.is(kind))
-                  return;
+            if (clientSide && Kind.ENDER.is(kind)) return;
 
-            boolean clickedInBackpack = false;
+            boolean carriedEmpty = getCarried().isEmpty();
+            if (slotIndex >= slots.size()) {
+                  if (carriedEmpty)
+                        return;
+                  else
+                        slotIndex = slots.size() - 1;
+            }
+
+            int backIndex = -1;
             if (slotIndex > 0 && getSlot(slotIndex) instanceof MenuSlot menuSlot) {
-                  if (menuSlot.backIndex == MenuSlot.MAX_SLOTS && menuSlot.getItem().isEmpty()) return;
-                  clickedInBackpack = true;
+                  if (carriedEmpty && menuSlot.getItem().isEmpty()) return;
+                  backIndex = menuSlot.backIndex;
             }
 
             if (actionType == ClickType.THROW) {
@@ -162,7 +173,7 @@ public class BackpackMenu extends AbstractContainerMenu {
             }
 
             if (actionType == ClickType.PICKUP_ALL) {
-                  if (!clickedInBackpack)
+                  if (backIndex != -1)
                         super.clicked(slotIndex, button, actionType, player);
                   return;
             }
@@ -171,8 +182,7 @@ public class BackpackMenu extends AbstractContainerMenu {
                   actionType = ClickType.QUICK_MOVE;
 
 
-            if (slotIndex > 0 && getSlot(slotIndex) instanceof MenuSlot slot) {
-                  int backIndex = slot.backIndex;
+            if (backIndex != -1) {
                   if (actionType == ClickType.QUICK_MOVE)
                         BackpackItem.handleQuickMove(player.getInventory(), backpackInventory, backIndex);
                   else

@@ -48,19 +48,6 @@ public abstract class ClientSpecialTooltip implements ClientTooltipComponent {
             return 19 + font.width("x" + this.amount);
       }
 
-      private int getAmountOffset(Font font) {
-            int offset = -font.width(String.valueOf(this.amount));
-            return offset + getAmountOverflow(font);
-      }
-
-      private int getAmountOverflow(Font font) {
-            if (this.amount > 999) {
-                  int floor = Mth.floor(this.amount / 1000f);
-                  return font.width(String.valueOf(floor));
-            }
-            return 0;
-      }
-
       public static class Pot extends ClientSpecialTooltip {
             private final Item item;
 

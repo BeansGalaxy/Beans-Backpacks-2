@@ -4,13 +4,10 @@ import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.data.Traits;
-import com.beansgalaxy.backpacks.inventory.BackpackInventory;
+import com.beansgalaxy.backpacks.inventory.*;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.events.PlaySound;
-import com.beansgalaxy.backpacks.inventory.CauldronInventory;
-import com.beansgalaxy.backpacks.inventory.PotInventory;
-import com.beansgalaxy.backpacks.inventory.SpecialTooltip;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.AdvancementList;
@@ -30,7 +27,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.inventory.tooltip.BundleTooltip;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
@@ -63,7 +59,7 @@ public class Tooltip {
                   if (equippedOnBack.getTagElement("back_slot") != null)
                         return specialTooltip(equippedOnBack, backData);
                   if (!backData.backpackInventory.isEmpty())
-                        return backpackTooltip(player, backData);
+                        return backpackTooltip(backData);
             }
             return Optional.empty();
       }
@@ -88,24 +84,12 @@ public class Tooltip {
       }
 
       @NotNull
-      private static Optional<TooltipComponent> backpackTooltip(Player player, BackData backData) {
-            NonNullList<ItemStack> defaultedList = NonNullList.create();
-            NonNullList<ItemStack> backpackList = BackData.get(player).backpackInventory.getItemStacks();
-            backpackList.forEach(itemstack -> defaultedList.add(itemstack.copy()));
-            if (!defaultedList.isEmpty())
-            {
-                  for (int j = 0; j < defaultedList.size(); j++)
-                  {
-                        ItemStack itemStack = defaultedList.get(j);
-                        int count = defaultedList.stream()
-                                    .filter(itemStacks -> itemStacks.is(itemStack.getItem()) && !itemStack.equals(itemStacks))
-                                    .mapToInt(itemStacks -> itemStacks.copyAndClear().getCount()).sum();
-                        itemStack.setCount(count + itemStack.getCount());
-                        defaultedList.removeIf(ItemStack::isEmpty);
-                  }
-            }
-            int totalWeight = getBundleOccupancy(defaultedList) / backData.backpackInventory.getTraits().maxStacks();
-            return Optional.of(new BundleTooltip(defaultedList, totalWeight));
+      private static Optional<TooltipComponent> backpackTooltip(BackData backData) {
+            NonNullList<ItemStack> backpackList = backData.backpackInventory.getItemStacks();
+            if (backpackList.isEmpty())
+                  return Optional.empty();
+
+            return Optional.of(new BackpackTooltip(backpackList));
       }
 
       private static int getItemOccupancy(ItemStack stack) {
