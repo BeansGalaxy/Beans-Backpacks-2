@@ -20,9 +20,11 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import java.awt.*;
 
@@ -48,6 +50,27 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
         pose.pushPose();
         weld(backpackBody, torso);
         weld(backpackMask, torso);
+
+        ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
+        if (chestStack.isEmpty()) {
+            backpackBody.z += 1/16f;
+            backpackMask.z += 3/32f;
+        }
+        else {
+            if (player.isCrouching()) {
+                backpackBody.z += 19/16f;
+                backpackMask.z += 39/32f;
+                backpackMask.y -= 1/32f;
+            } else {
+                backpackBody.z += 17/16f;
+                backpackMask.z += 35/32f;
+                backpackBody.y += 4 / 8f;
+                backpackMask.y += 4 / 8f;
+            }
+
+        }
+
+
         BackpackInventory.Viewable viewable = backData.backpackInventory.getViewable();
         viewable.updateOpen();
         backpackModel.body.getChild("head").xRot = viewable.headPitch;
@@ -65,6 +88,8 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
             pose.translate(0, ((2 - scale) - (player.isFallFlying() ? 1 : 0)) / 16, (scale / 32));
         } else
             pose.translate(0, (1 / 16f) * scale, (1 / 32f) * scale);
+        float noClippingPlease = 1.001f;
+        pose.scale(noClippingPlease, noClippingPlease, noClippingPlease);
 
         float[] colors = {tint.getRed() / 255F, tint.getGreen() / 255F, tint.getBlue() / 255F};
         ResourceLocation texture = traits.kind.getAppendedResource(traits.backpack_id, "");

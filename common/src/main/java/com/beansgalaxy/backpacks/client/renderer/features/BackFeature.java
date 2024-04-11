@@ -57,7 +57,7 @@ public class BackFeature<T extends LivingEntity, M extends EntityModel<T>>
             else if (Kind.POT.is(kind))
                 potFeature.render(pose, mbs, light, player, torso, backStack);
             else if (Kind.CAULDRON.is(kind))
-                cauldronFeature.render(pose, mbs, light, torso, backStack);
+                cauldronFeature.render(pose, mbs, player, light, torso, backStack);
 
             if (Kind.isWings(backStack))
                 elytraFeature.render(pose, mbs, light, entity, limbAngle, limbDistance, animationProgress, yHeadRot, headPitch, this.getParentModel(), backData);

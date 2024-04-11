@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -23,6 +24,7 @@ import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -48,12 +50,16 @@ public class CauldronFeature<T extends LivingEntity, M extends EntityModel<T>> {
         this.backFeature = backFeature;
     }
 
-    public void render(PoseStack pose, MultiBufferSource mbs, int light, ModelPart torso, ItemStack backStack) {
+    public void render(PoseStack pose, MultiBufferSource mbs, AbstractClientPlayer player, int light, ModelPart torso, ItemStack backStack) {
         pose.pushPose();
         float scale = backFeature.sneakInter / 3f;
 
+        boolean hasChestplate = !player.getItemBySlot(EquipmentSlot.CHEST).isEmpty();
+
         pose.mulPose(new Quaternionf().rotationXYZ(torso.xRot, torso.yRot, torso.zRot));
-        pose.translate(0, -17/16f + (0.18 * scale), 5/16f - (0.096f * scale) + 0.001f);
+        pose.translate(0,
+                    -17/16d + (0.18 * scale) + (hasChestplate ? 0.02 : 0),
+                    5/16d - (0.096 * scale) + (hasChestplate ? 0.065 : 0.001));
         VertexConsumer cauldVC = mbs.getBuffer(cauldronModel.renderType(TEXTURE));
         cauldronModel.renderToBuffer(pose, cauldVC, light, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
 

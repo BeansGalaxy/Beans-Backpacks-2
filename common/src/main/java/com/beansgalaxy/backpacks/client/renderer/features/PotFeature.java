@@ -13,10 +13,12 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.DecoratedPotBlockEntity;
+import org.joml.Quaternionf;
 
 public class PotFeature<T extends LivingEntity, M extends EntityModel<T>> {
 
@@ -36,13 +38,14 @@ public class PotFeature<T extends LivingEntity, M extends EntityModel<T>> {
 
         DecoratedPotBlockEntity.Decorations sherds = DecoratedPotBlockEntity.Decorations.load(nbt);
         pose.pushPose();
-        for (int j = 0; j < potModel.getModelParts().size(); j++) {
-            ModelPart modelPart = potModel.getModelParts().get(j);
-            BackFeature.weld(modelPart, torso);
-        }
 
         float scale = backFeature.sneakInter / 3f;
-        pose.translate(0, (1 / 16f) * scale, (1 / 32f) * scale);
+        boolean hasChestplate = !player.getItemBySlot(EquipmentSlot.CHEST).isEmpty();
+        pose.mulPose(new Quaternionf().rotationXYZ(torso.xRot, torso.yRot, torso.zRot));
+        pose.translate(0,
+                    -.02f + (0.18 * scale) + (hasChestplate ? 0.02 : 0),
+                    -1/16f - (0.096 * scale) + (hasChestplate ? 0.065 : 0.001));
+
         VertexConsumer vc = mbs.getBuffer(potModel.renderType(TEXTURE));
         potModel.renderBody(pose, vc, light, OverlayTexture.NO_OVERLAY);
         potModel.renderDetail(pose, mbs, light, OverlayTexture.NO_OVERLAY, sherds);
