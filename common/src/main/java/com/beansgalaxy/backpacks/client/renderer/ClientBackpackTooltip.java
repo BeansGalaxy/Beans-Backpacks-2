@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.NonNullList;
@@ -51,17 +52,8 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
       @Override
       public void renderImage(Font font, int mouseX, int mouseY, GuiGraphics gui) {
             Minecraft minecraft = Minecraft.getInstance();
-            int i = 0;
-            //gui.fillGradient(mouseX, mouseY - 2, mouseX + 16, mouseY + 14, 0xFF260051, 0xFF110040);
-//            int topColor = 0xFF260051;
-//            int botColor = 0xFF160038;
-//            int height = getHeight();
-//            for (int j = 0; j < size / columns - 1; j++)
-//                  hline(mouseX, mouseY, gui, topColor, botColor, height, j);
-//
-//            for (int j = 0; j < columns - 1; j++)
-//                  vLine(mouseX, mouseY, gui, topColor, botColor, height - 16, j);
 
+            int i = 0;
             Iterator<ItemStack> iterator = itemStacks.iterator();
             while (iterator.hasNext() && i < MAX_DISPLAY) {
                   ItemStack stack = iterator.next();
@@ -76,7 +68,7 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
 
                   int x = mouseX + column * 17 + 8;
                   int y = mouseY + row * 17 + 6;
-                  int z = -i * 2 + 150;
+                  int z = 250;
 
                   if (row == rowLimit) {
                         float row2 = size - 1 - (columns * rowLimit);
@@ -85,50 +77,63 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
                               double ease = Math.lerp(progress, Math.sin((progress * Math.PI) / 2), Math.min(1, (row2 - columns + 2) / 8));
                               x = Mth.ceil(Math.lerp(mouseX + 8, mouseX + (columns * 17) - 9, ease));
                               y += (i + (itemStacks.size() % 2)) % 2;
+                              z -= column * 12;
                         }
-                        //int light = (int) (15728880 * Math.max(1 - progress, 0.2f));
                         int light = 15728880 / Mth.clamp(column / 2, 1, 6);
                         renderItem(minecraft, gui, stack, x, y, z, light);
-                        renderItem(minecraft, gui, stack, x + 1, y + 1, z - 1, 0);
+                        renderItemDecorations(gui, font, stack, x - 8, y - 8, z);
                   }
-                  else renderItem(minecraft, gui, stack, x, y, z, 15728880);
+                  else {
+                        renderItem(minecraft, gui, stack, x, y, z, 15728880);
+                        renderItemDecorations(gui, font, stack, x - 8, y - 8, z);
+                  }
                   i++;
             }
       }
 
-      private void hline(int mouseX, int mouseY, GuiGraphics gui, int topColor, int botColor, int height, int row) {
-            int y = (row * 17) + 14;
-            Color top = new Color(topColor);
-            Color bot = new Color(botColor);
-            float progress = Mth.clamp((float) y / height, 0, 1);
-            int r = (int) Math.lerp(top.getRed(),     bot.getRed(),     progress);
-            int g = (int) Math.lerp(top.getGreen(),   bot.getGreen(),   progress);
-            int b = (int) Math.lerp(top.getBlue(),    bot.getBlue(),    progress);
-            Color color = new Color(r, g, b, 255);
-            gui.hLine(mouseX, mouseX + (columns * 17) - 2, mouseY + y, color.getRGB());
-      }
-
-      private void vLine(int mouseX, int mouseY, GuiGraphics gui, int topColor, int botColor, int height, int column) {
-            int x = mouseX + (column * 17) + 16;
-            int y = mouseY - 2;
-            gui.fillGradient(x, y, x + 1, y + height, topColor, botColor);
+      public void renderItemDecorations(GuiGraphics gui, Font $$0, ItemStack $$1, int x, int y, int z) {
+            if (!$$1.isEmpty()) {
+                  PoseStack pose = gui.pose();
+                  pose.pushPose();
+                  pose.translate(0.0F, 0.0F, z + 5);
+                  float value = (z / 250f) * (z / 250f) * (z / 250f);
+                  if ($$1.getCount() != 1) {
+                        String $$5 = String.valueOf($$1.getCount());
+                        gui.drawString($$0, $$5, x + 19 - 2 - $$0.width($$5), y + 6 + 3, new Color(value, value, value).getRGB(), true);
+                  }
+                  else if ($$1.isBarVisible()) {
+                        int $$6 = $$1.getBarWidth();
+                        int $$7 = $$1.getBarColor();
+                        int barX = x + 2;
+                        int barY = y + 13;
+                        Color barColor = new Color($$7);
+                        gui.fill(barX, barY, barX + 13, barY + 2, new Color(0, 0, 0, (int)((z / 250f) * value * 255)).getRGB());
+                        gui.fill(barX, barY, barX + $$6, barY + 1, new Color((int)(barColor.getRed() * value), (int)(barColor.getGreen() * value), (int)(barColor.getBlue() * value), 255).getRGB() | -16777216);
+                  }
+                  pose.popPose();
+            }
       }
 
       private void renderItem(Minecraft minecraft, GuiGraphics gui, ItemStack stack, int x, int y, int z, int light) {
             PoseStack pose = gui.pose();
             pose.pushPose();
-            BakedModel $$7 = minecraft.getItemRenderer().getModel(stack, minecraft.level, minecraft.player, 0);
+            BakedModel model = minecraft.getItemRenderer().getModel(stack, minecraft.level, minecraft.player, 0);
             pose.translate(x, y, z);
 
             try {
                   pose.mulPoseMatrix((new Matrix4f()).scaling(1.0F, -1.0F, 1.0F));
                   pose.scale(16.0F, 16.0F, 16.0F);
-                  boolean $$8 = !$$7.usesBlockLight();
+                  boolean $$8 = !model.usesBlockLight();
                   if ($$8) {
                         Lighting.setupForFlatItems();
                   }
 
-                  minecraft.getItemRenderer().render(stack, ItemDisplayContext.GUI, false, pose, gui.bufferSource(), light, OverlayTexture.NO_OVERLAY, $$7);
+                  minecraft.getItemRenderer().render(stack, ItemDisplayContext.GUI, false, pose, gui.bufferSource(), light, OverlayTexture.NO_OVERLAY, model);
+                  if (!model.isGui3d()) {
+                        pose.translate(1/16f, -1/16f, -1/16f);
+                        minecraft.getItemRenderer().render(stack, ItemDisplayContext.GUI, false, pose, gui.bufferSource(), 0, OverlayTexture.NO_OVERLAY, model);
+                  }
+
                   gui.flush();
                   if ($$8) {
                         Lighting.setupFor3DItems();

@@ -24,6 +24,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
+import java.util.Iterator;
 import java.util.UUID;
 
 public interface BackpackInventory extends Container {
@@ -245,10 +246,11 @@ public interface BackpackInventory extends Container {
             if (getTraits().kind == null)
                   return 0;
 
-            int totalWeight = this.getItemStacks().stream().mapToInt(
-                        itemStacks -> weightByItem(itemStacks) * itemStacks.getCount()).sum();
+            int weight = 0;
+            for (ItemStack stack : getItemStacks())
+                  weight += weightByItem(stack) * stack.getCount();
 
-            return this.getTraits().maxStacks() * 64 - totalWeight;
+            return this.getTraits().maxStacks() * 64 - weight;
       }
 
       default int weightByItem(ItemStack stack) {
