@@ -43,8 +43,8 @@ public class PotFeature<T extends LivingEntity, M extends EntityModel<T>> {
         boolean hasChestplate = !player.getItemBySlot(EquipmentSlot.CHEST).isEmpty();
         pose.mulPose(new Quaternionf().rotationXYZ(torso.xRot, torso.yRot, torso.zRot));
         pose.translate(0,
-                    -.02f + (0.18 * scale) + (hasChestplate ? 0.02 : 0),
-                    -1/16f - (0.096 * scale) + (hasChestplate ? 0.065 : 0.001));
+                    -12/16f + (0.24 * scale) + (hasChestplate ? 0.02 : 0),
+                    5/16f - (0.1 * scale) + (hasChestplate ? 0.065 : 0.001));
 
         VertexConsumer vc = mbs.getBuffer(potModel.renderType(TEXTURE));
         potModel.renderBody(pose, vc, light, OverlayTexture.NO_OVERLAY);

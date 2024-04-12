@@ -40,7 +40,7 @@ public abstract class ClientSpecialTooltip implements ClientTooltipComponent {
 
       @Override
       public int getHeight() {
-            return 7;
+            return 17;
       }
 
       @Override

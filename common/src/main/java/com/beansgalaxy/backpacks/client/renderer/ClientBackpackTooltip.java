@@ -95,7 +95,7 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
             if (!$$1.isEmpty()) {
                   PoseStack pose = gui.pose();
                   pose.pushPose();
-                  pose.translate(0.0F, 0.0F, z + 5);
+                  pose.translate(0.0F, 0.0F, z + 10);
                   float value = (z / 250f) * (z / 250f) * (z / 250f);
                   if ($$1.getCount() != 1) {
                         String $$5 = String.valueOf($$1.getCount());

@@ -80,9 +80,12 @@ public abstract class ItemStackMixin {
                   return;
             }
 
-            if ((instance != backStack || backData.backpackInventory.isEmpty()) && instanceKind != null) {
+
+            boolean notEmpty = (instance.hasTag() && instance.getTag().contains("back_slot")) || !backData.backpackInventory.isEmpty();
+            if (instance == backStack && notEmpty)
+                  cir.setReturnValue(components);
+            else if (instanceKind != null)
                   Tooltip.appendTooltip(player, flag, components, traits, instance);
-            }
       }
 
 }
