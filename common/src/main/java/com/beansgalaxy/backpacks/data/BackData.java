@@ -201,14 +201,12 @@ public class BackData {
             if (!Kind.isBackpack(backStack)) {
                   owner.spawnAtLocation(backStack.copy());
                   set(ItemStack.EMPTY);
+                  return;
             }
 
             if (!level.isClientSide()) {
                   NonNullList<ItemStack> itemStacks = NonNullList.create();
-                  for (int i = 0; i < backpackInventory.getContainerSize(); i++) {
-                        ItemStack item = backpackInventory.getItem(i);
-                        itemStacks.add(item);
-                  }
+                  itemStacks.addAll(backpackInventory.getItemStacks());
                   EntityAbstract.create(backStack, x, y, z, yaw, true, direction, owner, itemStacks);
             }
 
