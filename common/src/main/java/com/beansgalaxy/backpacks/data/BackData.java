@@ -19,12 +19,15 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Equipable;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 
 public class BackData {
@@ -155,8 +158,18 @@ public class BackData {
       }
 
       public boolean backSlotDisabled() {
-            NonNullList<ItemStack> equipped = owner.getInventory().armor;
-            return Services.COMPAT.backSlotDisabled(owner) || equipped.stream().anyMatch(stack -> !stack.isEmpty() && Constants.elytraOrDisables(stack.getItem()));
+            return !getDisabling().isEmpty();
+      }
+
+      public List<ItemStack> getDisabling() {
+            List<ItemStack> items = Services.COMPAT.backSlotDisabled(owner);
+            NonNullList<ItemStack> disabling = NonNullList.create();
+            for (ItemStack stack : owner.getInventory().armor) {
+                  if (!stack.isEmpty() && Constants.elytraOrDisables(stack.getItem()))
+                        disabling.add(stack);
+            }
+            disabling.addAll(items);
+            return disabling;
       }
 
       public void drop() {

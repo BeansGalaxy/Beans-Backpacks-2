@@ -24,6 +24,7 @@ public abstract class CreativeInventoryMixin extends EffectRenderingInventoryScr
             super(p_98701_, p_98702_, p_98703_);
       }
 
+      @SuppressWarnings("mapping")
       @Inject(method = "selectTab", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE",
                   shift = At.Shift.AFTER, ordinal = 2, target = "Lnet/minecraft/core/NonNullList;add(Ljava/lang/Object;)Z"))
       private void addBackSlot(CreativeModeTab p_98561_, CallbackInfo ci, CreativeModeTab creativemodetab, AbstractContainerMenu abstractcontainermenu, int k, int l, int i1, Slot slot) {

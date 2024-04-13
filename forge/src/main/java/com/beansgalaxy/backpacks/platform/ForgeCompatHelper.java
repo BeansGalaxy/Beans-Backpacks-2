@@ -6,10 +6,13 @@ import com.beansgalaxy.backpacks.data.config.Gamerules;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.beansgalaxy.backpacks.inventory.CauldronInventory;
 import com.beansgalaxy.backpacks.platform.services.ConfigHelper;
+import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
@@ -20,6 +23,7 @@ import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.List;
 
 public class ForgeCompatHelper implements CompatHelper {
 
@@ -42,10 +46,17 @@ public class ForgeCompatHelper implements CompatHelper {
       }
 
       @Override
-      public boolean backSlotDisabled(Player owner) {
+      public List<ItemStack> backSlotDisabled(Player owner) {
             if (isModLoaded(CURIOS))
                   return CurioRegistry.backSlotDisables(owner);
-            return false;
+            return List.of();
+      }
+
+      @Override
+      public boolean isBackSlot(Slot slot) {
+            if (isModLoaded(CURIOS))
+                  return CurioRegistry.isBackSlot(slot);
+            return slot instanceof BackSlot;
       }
 
       @Override

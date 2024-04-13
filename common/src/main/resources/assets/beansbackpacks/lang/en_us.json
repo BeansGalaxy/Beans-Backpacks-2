@@ -119,6 +119,7 @@
   "entity.beansbackpacks.locked.not_owner": "You do not own this backpack.",
   "entity.beansbackpacks.locked.ender_offline": "This backpack's owner is not online.",
   "entity.beansbackpacks.locked.ender_no_owner": "This backpack has no inventory",
+  "entity.beansbackpacks.locked.back_slot_blocked": " is already equipped",
 
   "text.autoconfig.beansbackpacks.title": "Beans' Backpacks",
 

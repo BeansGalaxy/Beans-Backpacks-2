@@ -32,7 +32,7 @@ public class ElytraItemMixin {
 
                   cir.setReturnValue(InteractionResultHolder.fail(itemStack));
             }
-            else if (Constants.ELYTRA_ITEMS.contains(item)) {
+            else if (Kind.isWearableElytra(item)) {
                   if (backData.isEmpty() && !backData.backSlotDisabled()) {
                         if (!level.isClientSide())
                               player.awardStat(Stats.ITEM_USED.get(item));

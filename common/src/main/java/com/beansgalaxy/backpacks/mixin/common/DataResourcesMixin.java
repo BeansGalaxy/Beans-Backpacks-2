@@ -5,6 +5,7 @@ import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.data.config.Config;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.platform.Services;
+import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.minecraft.commands.Commands;
@@ -32,32 +33,32 @@ public class DataResourcesMixin {
 
       @Inject(method = "loadResources", at = @At("HEAD"))
       private static void catchDataPacks(ResourceManager resourceManager, RegistryAccess.Frozen frozen, FeatureFlagSet flagSet, Commands.CommandSelection commandSelection, int $$4, Executor $$5, Executor $$6, CallbackInfoReturnable<CompletableFuture<ReloadableServerResources>> cir) {
-            Constants.LOG.info("Reading Data for " + MOD_ID);
+            LOG.info("Reading Data for " + MOD_ID);
 
-            Constants.CHESTPLATE_DISABLED.clear();
-            Constants.DISABLES_BACK_SLOT.clear();
-            Constants.BLACKLIST_ITEMS.clear();
+            CHESTPLATE_DISABLED.clear();
+            DISABLES_BACK_SLOT.clear();
+            BLACKLIST_ITEMS.clear();
 
-            Constants.addToList(Constants.BLACKLIST_ITEMS,
+            addToList(BLACKLIST_ITEMS,
                     readItemList(resourceManager, "blacklist_items"));
 
-            Constants.addToList(Constants.ELYTRA_ITEMS,
-                    readItemList(resourceManager, "elytra_items"));
-
-            Constants.addToList(Constants.CHESTPLATE_DISABLED,
+            addToList(CHESTPLATE_DISABLED,
                         readItemList(resourceManager, "disable_chestplate"));
 
-            Constants.addToList(Constants.DISABLES_BACK_SLOT,
+            addToList(DISABLES_BACK_SLOT,
                         readItemList(resourceManager, "disables_back_slot"));
 
-            Constants.CHESTPLATE_DISABLED.removeAll(Constants.DISABLES_BACK_SLOT);
+            addToList(ELYTRA_ITEMS,
+                        readItemList(resourceManager, "elytra_items"));
+
+            CHESTPLATE_DISABLED.removeAll(DISABLES_BACK_SLOT);
 
             HashSet<String> removedKeys =
                         new HashSet<>(readStringList(resourceManager, "remove_backpack_keys"));
 
             Traits.clear();
             resourceManager.listResources("recipes/backpacks", (in) ->
-                  in.getPath().endsWith(".json") && in.getNamespace().equals(Constants.MOD_ID))
+                  in.getPath().endsWith(".json") && in.getNamespace().equals(MOD_ID))
                         .forEach(((resourceLocation, resource) -> {
                   try {
                         BufferedReader bufferedReader = resource.openAsReader();

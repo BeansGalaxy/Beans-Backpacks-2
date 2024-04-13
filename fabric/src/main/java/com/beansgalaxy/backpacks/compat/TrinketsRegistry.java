@@ -4,16 +4,24 @@ import com.beansgalaxy.backpacks.CommonClass;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.platform.Services;
+import com.beansgalaxy.backpacks.platform.services.CompatHelper;
+import dev.emi.trinkets.TrinketSlot;
 import dev.emi.trinkets.api.*;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class TrinketsRegistry {
       public static void register() {
@@ -61,7 +69,9 @@ public class TrinketsRegistry {
             for (Kind kind: Kind.values())
                   TrinketsApi.registerTrinket(kind.getItem(), trinket);
 
-            TrinketsApi.registerTrinket(Items.ELYTRA.asItem(), trinket);
+            if (!Services.COMPAT.isModLoaded(CompatHelper.ELYTRA_SLOT))
+                  TrinketsApi.registerTrinket(Items.ELYTRA.asItem(), trinket);
+
       }
 
       public static void setBackStack(ItemStack stack, BackData backData) {
@@ -98,8 +108,24 @@ public class TrinketsRegistry {
             return slots.getItem(0);
       }
 
-      public static boolean backSlotDisabled(LivingEntity entity) {
-            return TrinketsApi.getTrinketComponent(entity).stream().anyMatch(in -> in.isEquipped(
-                        wornStack -> Constants.elytraOrDisables(wornStack.getItem())));
+      public static List<ItemStack> backSlotDisabled(LivingEntity entity) {
+            Optional<TrinketComponent> trinketComponent = TrinketsApi.getTrinketComponent(entity);
+            return trinketComponent.map(component -> component.getAllEquipped().stream().map((ref -> {
+                  ItemStack item = ref.getB();
+                  if (Constants.elytraOrDisables(item.getItem()))
+                        return item;
+                  return ItemStack.EMPTY;
+            })).toList()).orElse(List.of());
+      }
+
+      public static boolean isBackSlot(Slot slot) {
+            if (slot instanceof TrinketSlot trinket) {
+                  SlotType slotType = trinket.getType();
+                  boolean isChest = slotType.getGroup().equals("chest");
+                  boolean isBack = slotType.getName().equals("back");
+                  return isBack && isChest;
+
+            }
+            return false;
       }
 }

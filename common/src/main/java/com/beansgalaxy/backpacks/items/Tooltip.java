@@ -235,7 +235,7 @@ public class Tooltip {
                   return list;
 
             AdvancementList advancements = connection.getAdvancements().getAdvancements();
-            if (Constants.ELYTRA_ITEMS.contains(Items.ELYTRA.asItem()) && advancements.get(ResourceLocation.tryParse("end/root")) != null)
+            if (Kind.isWearableElytra(Items.ELYTRA.asItem()) && advancements.get(ResourceLocation.tryParse("end/root")) != null)
                   list.add(SLOT_ELYTRA);
 
             if (advancements.get(ResourceLocation.tryParse("beansbackpacks:info/decorated_pots")) != null)

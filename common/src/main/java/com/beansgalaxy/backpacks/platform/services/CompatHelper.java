@@ -16,18 +16,22 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface CompatHelper {
       String CURIOS = "curios";
       String TRINKETS = "trinkets";
+      String ELYTRA_SLOT = "elytraslot";
       String MOD_MENU = "modmenu";
       String CLOTH_CONFIG = "cloth-config";
 
@@ -47,7 +51,9 @@ public interface CompatHelper {
             return true;
       }
 
-      boolean backSlotDisabled(Player owner);
+      List<ItemStack> backSlotDisabled(Player owner);
+
+      boolean isBackSlot(Slot slot);
 
       CauldronInventory.FluidAttributes getFluidTexture(Fluid fluid, TextureAtlas blocksAtlas);
 

@@ -57,7 +57,8 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
             BackData backData = ((BackAccessor) player.getInventory()).getBackData();
             Slot slot = this.slots.get(slotInt);
             ItemStack stack = slot.getItem();
-            if ((Kind.isWearable(stack)) && backData.isEmpty() && !backData.backSlotDisabled()) {
+            boolean canQuickEquip = !Constants.SLOTS_MOD_ACTIVE || !player.isCreative();
+            if (canQuickEquip && (Kind.isWearable(stack)) && backData.isEmpty() && !backData.backSlotDisabled()) {
                   backData.set(stack);
                   slot.set(ItemStack.EMPTY);
                   cir.setReturnValue(ItemStack.EMPTY);

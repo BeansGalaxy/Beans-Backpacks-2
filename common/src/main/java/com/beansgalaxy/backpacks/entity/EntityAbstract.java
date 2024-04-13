@@ -11,6 +11,7 @@ import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.items.WingedBackpack;
 import com.beansgalaxy.backpacks.platform.Services;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -39,13 +40,14 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.PlayerTeam;
+import org.apache.commons.lang3.function.TriFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.BiFunction;
 
 public abstract class EntityAbstract extends Backpack {
       public Direction direction;
@@ -559,40 +561,48 @@ public abstract class EntityAbstract extends Backpack {
       }
 
       public enum LockedReason {
-            ENDER_NO_OWNER(null, (player, entityAbstract) ->
+            IS_REMOVED((backData, level, entityAbstract) ->
+                        entityAbstract.isRemoved()),
+            ENDER_NO_OWNER((backData, level, entityAbstract) ->
                         entityAbstract instanceof EntityEnder ender && ender.getPlacedBy() == null),
-            NOT_OWNER(Gamerules.LOCK_BACKPACK_NOT_OWNER, (player, entityAbstract) -> {
-                  UUID playerUUID = player.getUUID();
-                  UUID placedBy = entityAbstract.getPlacedBy();
-                  return playerUUID != placedBy || placedBy == entityAbstract.uuid;
+            NOT_OWNER((backData, level, entityAbstract) -> {
+                  if (ServerSave.CONFIG.get(Gamerules.LOCK_BACKPACK_NOT_OWNER)) {
+                        UUID placedBy = entityAbstract.getPlacedBy();
+                        return backData.owner.getUUID() != placedBy || placedBy == entityAbstract.uuid;
+                  }
+                  return false;
             }),
-            OWNER_OFFLINE(Gamerules.LOCK_BACKPACK_OFFLINE, (player, entityAbstract) -> {
-                  UUID placedBy = entityAbstract.getPlacedBy();
-                  return placedBy != entityAbstract.uuid && player.serverLevel().getPlayerByUUID(placedBy) == null;
+            OWNER_OFFLINE((backData, level, entityAbstract) -> {
+                  if (ServerSave.CONFIG.get(Gamerules.LOCK_BACKPACK_OFFLINE)) {
+                        UUID placedBy = entityAbstract.getPlacedBy();
+                        return placedBy != null && placedBy != entityAbstract.uuid && level.getPlayerByUUID(placedBy) == null;
+                  }
+                  return false;
             }),
-            ENDER_OFFLINE(Gamerules.LOCK_ENDER_OFFLINE, (player, entityAbstract) ->
-                        entityAbstract instanceof EntityEnder && OWNER_OFFLINE.apply(player, entityAbstract));
+            ENDER_OFFLINE((backData, level, entityAbstract) -> {
+                  if (ServerSave.CONFIG.get(Gamerules.LOCK_ENDER_OFFLINE)) {
+                        return entityAbstract instanceof EntityEnder && OWNER_OFFLINE.apply(backData, level, entityAbstract);
+                  }
+                  return false;
+            });
 
-            final BiFunction<ServerPlayer, EntityAbstract, Boolean> isLocked;
-            final Gamerules gamerule;
-
-            LockedReason(Gamerules gamerule, BiFunction<ServerPlayer, EntityAbstract, Boolean> isLocked) {
-                  this.gamerule = gamerule;
+            final TriFunction<BackData, ServerLevel, EntityAbstract, Boolean> isLocked;
+            LockedReason(TriFunction<BackData, ServerLevel, EntityAbstract, Boolean> isLocked) {
                   this.isLocked = isLocked;
             }
 
-            public boolean apply(ServerPlayer player, EntityAbstract backpack) {
-                  return isLocked.apply(player, backpack);
+            public boolean apply(BackData backData, ServerLevel player, EntityAbstract backpack) {
+                  return isLocked.apply(backData, player, backpack);
             }
       }
 
-      public boolean isLocked(ServerPlayer player, Kind kind) {
+      public boolean isLocked(BackData backData, ServerLevel level, Kind kind) {
+            Player player = backData.owner;
             if (player.isCreative())
                   return false;
 
             for (LockedReason value : LockedReason.values()) {
-                  boolean enabled = value.gamerule == null || ServerSave.CONFIG.get(value.gamerule);
-                  if (enabled && value.apply(player, this)) {
+                  if (value.apply(backData, level, this)) {
                         player.displayClientMessage(Component.translatable("entity.beansbackpacks.locked." + value.toString().toLowerCase()), true);
                         PlaySound.HIT.at(this, kind);
                         this.hop(.1);
@@ -600,6 +610,29 @@ public abstract class EntityAbstract extends Backpack {
                   }
             }
             return false;
+      }
+
+      public boolean mayPickup(BackData backData, Kind kind) {
+            List<ItemStack> disabling = backData.getDisabling();
+            if (!backData.isEmpty())
+                  disabling.add(backData.getStack());
+
+            Iterator<ItemStack> iterator = disabling.iterator();
+            if (iterator.hasNext()) {
+                  PlaySound.HIT.at(this, kind);
+                  this.hop(.1);
+                  MutableComponent message = iterator.next().getDisplayName().copy();
+                  while (iterator.hasNext()) {
+                        ItemStack stack = iterator.next();
+                        message.append(iterator.hasNext() ? ", " : " and ");
+                        message.append(stack.getDisplayName());
+                  }
+                  message.append(Component.translatable("entity.beansbackpacks.locked.back_slot_blocked").withStyle(ChatFormatting.WHITE));
+                  backData.owner.displayClientMessage(message, true);
+                  return false;
+            }
+
+            return true;
       }
 
       // PREFORMS THIS ACTION WHEN IT IS RIGHT-CLICKED
@@ -619,32 +652,22 @@ public abstract class EntityAbstract extends Backpack {
 
       public InteractionResult interact(ServerPlayer player) {
             Kind kind = getTraits().kind;
-            if (isLocked(player, kind))
-                  return InteractionResult.SUCCESS;
-
             BackData backData = BackData.get(player);
             boolean actionKeyPressed = backData.actionKeyPressed;
+
+            if (isLocked(backData, player.serverLevel(), kind))
+                  return InteractionResult.SUCCESS;
+
             ItemStack backStack = backData.getStack();
             ItemStack handStack = player.getMainHandItem();
             ItemStack backpackStack = actionKeyPressed ? backStack : handStack;
 
-            if (Kind.isBackpack(backpackStack))
-                  return BackpackItem.useOnBackpack(player, this, backpackStack, actionKeyPressed);
+            if (Kind.isBackpack(backpackStack) && BackpackItem.useOnBackpack(player, this, backpackStack, actionKeyPressed).consumesAction())
+                  return InteractionResult.SUCCESS;
 
             if (actionKeyPressed) {
-                  boolean b = !backData.isEmpty();
-                  boolean b1 = backData.backSlotDisabled();
-                  boolean b2 = this.isRemoved();
-                  if (b || b1 || b2)
+                  if (mayPickup(backData, kind))
                   {
-                        PlaySound.HIT.at(this, kind);
-                        this.hop(.1);
-                  }
-                  else
-                  {
-/*                  Equips Backpack only if...
-                      - damage source is player.
-                      - backSlot is not occupied */
                         if (this instanceof EntityEnder ender) {
                               if (ender.getPlacedBy() == null) {
                                     ender.setPlacedBy(Optional.of(player.getUUID()));

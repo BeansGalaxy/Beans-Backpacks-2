@@ -6,6 +6,7 @@ import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.beansgalaxy.backpacks.items.WingedBackpack;
 import com.beansgalaxy.backpacks.platform.Services;
+import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -77,15 +78,18 @@ public enum Kind {
             for(Kind kind: Kind.values())
                   if(item.equals(kind.getItem()))
                         return true;
-            return Constants.CHESTPLATE_DISABLED.contains(item) || Constants.ELYTRA_ITEMS.contains(item);
-
+            return Constants.CHESTPLATE_DISABLED.contains(item) || isWearableElytra(item);
       }
 
       public static boolean isWings(ItemStack backStack) {
             if (backStack.is(Services.REGISTRY.getWinged()))
                   return true;
 
-            return Constants.ELYTRA_ITEMS.contains(backStack.getItem());
+            return isWearableElytra(backStack.getItem());
+      }
+
+      public static boolean isWearableElytra(Item item) {
+            return Constants.ELYTRA_ITEMS.contains(item) && !Services.COMPAT.isModLoaded(CompatHelper.ELYTRA_SLOT);
       }
 
       public static Kind fromStack(ItemStack stack) {

@@ -5,6 +5,7 @@ import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.beansgalaxy.backpacks.inventory.CauldronInventory;
 import com.beansgalaxy.backpacks.platform.services.ConfigHelper;
+import com.beansgalaxy.backpacks.screen.BackSlot;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
@@ -14,10 +15,14 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluid;
 
 import java.awt.*;
+import java.util.List;
 
 public class FabricCompatHelper implements CompatHelper {
 
@@ -40,10 +45,17 @@ public class FabricCompatHelper implements CompatHelper {
       }
 
       @Override
-      public boolean backSlotDisabled(Player owner) {
+      public List<ItemStack> backSlotDisabled(Player owner) {
             if (isModLoaded(TRINKETS))
                   return TrinketsRegistry.backSlotDisabled(owner);
-            return false;
+            return List.of();
+      }
+
+      @Override
+      public boolean isBackSlot(Slot slot) {
+            if (isModLoaded(TRINKETS))
+                  return TrinketsRegistry.isBackSlot(slot);
+            return slot instanceof BackSlot;
       }
 
       @Override

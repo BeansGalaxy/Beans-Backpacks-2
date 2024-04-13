@@ -24,7 +24,7 @@ import java.awt.*;
 import java.util.Iterator;
 
 public class ClientBackpackTooltip implements ClientTooltipComponent {
-      public static final int MAX_DISPLAY = 32;
+      public static final int MAX_DISPLAY = 34;
       private final NonNullList<ItemStack> itemStacks;
       private final int size;
       private final int columns;
@@ -35,7 +35,7 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
             int size = itemStacks.size();
             this.size = Math.min(size, MAX_DISPLAY);
             this.columns = Mth.ceil(Math.sqrt(this.size + 1)) + 1;
-            this.rowLimit = size > MAX_DISPLAY ? 3 : 2;
+            this.rowLimit = size > 28 ? 3 : 2;
       }
 
       @Override
@@ -52,6 +52,7 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
       @Override
       public void renderImage(Font font, int mouseX, int mouseY, GuiGraphics gui) {
             Minecraft minecraft = Minecraft.getInstance();
+            int spacing = 17;
 
             int i = 0;
             Iterator<ItemStack> iterator = itemStacks.iterator();
@@ -66,16 +67,16 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
                         row = rowLimit;
                   }
 
-                  int x = mouseX + column * 17 + 8;
-                  int y = mouseY + row * 17 + 6;
-                  int z = 250;
+                  int x = mouseX + column * spacing + 8;
+                  int y = mouseY + row * spacing + 6;
+                  int z = 300 - (column + row) * 2;
 
                   if (row == rowLimit) {
                         float row2 = size - 1 - (columns * rowLimit);
                         if (row2 >= columns) {
                               double progress = column / row2;
                               double ease = Math.lerp(progress, Math.sin((progress * Math.PI) / 2), Math.min(1, (row2 - columns + 2) / 8));
-                              x = Mth.ceil(Math.lerp(mouseX + 8, mouseX + (columns * 17) - 9, ease));
+                              x = Mth.ceil(Math.lerp(mouseX + 8, mouseX + (columns * spacing) - 9, ease));
                               y += (i + (itemStacks.size() % 2)) % 2;
                               z -= column * 12;
                         }
@@ -96,7 +97,7 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
                   PoseStack pose = gui.pose();
                   pose.pushPose();
                   pose.translate(0.0F, 0.0F, z + 10);
-                  float value = (z / 250f) * (z / 250f) * (z / 250f);
+                  float value = (z / 300f) * (z / 300f) * (z / 300f);
                   if ($$1.getCount() != 1) {
                         String $$5 = String.valueOf($$1.getCount());
                         gui.drawString($$0, $$5, x + 19 - 2 - $$0.width($$5), y + 6 + 3, new Color(value, value, value).getRGB(), true);
@@ -107,7 +108,7 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
                         int barX = x + 2;
                         int barY = y + 13;
                         Color barColor = new Color($$7);
-                        gui.fill(barX, barY, barX + 13, barY + 2, new Color(0, 0, 0, (int)((z / 250f) * value * 255)).getRGB());
+                        gui.fill(barX, barY, barX + 13, barY + 2, new Color(0, 0, 0, (int)((z / 300f) * value * 255)).getRGB());
                         gui.fill(barX, barY, barX + $$6, barY + 1, new Color((int)(barColor.getRed() * value), (int)(barColor.getGreen() * value), (int)(barColor.getBlue() * value), 255).getRGB() | -16777216);
                   }
                   pose.popPose();

@@ -41,6 +41,7 @@ public class Backpack extends Entity {
             return viewable;
       }
 
+
       public UUID getPlacedBy() {
             Optional<UUID> uuid = entityData.get(OWNER);
             return uuid.orElseGet(() -> this.uuid);
