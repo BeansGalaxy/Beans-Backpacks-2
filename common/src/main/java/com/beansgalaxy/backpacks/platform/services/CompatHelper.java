@@ -58,7 +58,7 @@ public interface CompatHelper {
       CauldronInventory.FluidAttributes getFluidTexture(Fluid fluid, TextureAtlas blocksAtlas);
 
       default boolean graveModLoaded() {
-            return anyModsLoaded("universal-graves", "yigd", "gravestones");
+            return anyModsLoaded("universal-graves", "yigd", "gravestones", "forgottengraves");
       }
 
       void setBackSlotItem(BackData data, ItemStack stack);

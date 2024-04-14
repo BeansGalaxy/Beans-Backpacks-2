@@ -17,6 +17,7 @@
     "common.ItemCombinerMixin",
     "common.ItemEntityMixin",
     "common.ItemStackMixin",
+    "common.LivingEntityMixin",
     "common.ServerPlayMixin",
     "common.buckets.BeehiveBlockMixin",
     "common.buckets.BucketItemMixin",

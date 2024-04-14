@@ -73,7 +73,6 @@ public class FabricMain implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTED.register(new ServerLifecycleEvent());
         ServerLifecycleEvents.SERVER_STOPPING.register(new ServerLifecycleEvent());
         ServerPlayerEvents.COPY_FROM.register(new CopyPlayerEvent());
-        ServerLivingEntityEvents.ALLOW_DEATH.register(new LivingEntityDeath());
         EntityElytraEvents.CUSTOM.register(new ElytraFlightEvent());
         UseBlockCallback.EVENT.register(new PlayerInteractEvent());
         Sounds.register();

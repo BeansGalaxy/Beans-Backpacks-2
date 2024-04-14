@@ -59,12 +59,6 @@ public class CommonForgeEvents {
       }
 
       @SubscribeEvent
-      public static void LivingEntityDeath(LivingDeathEvent event) {
-            if (event.getEntity() instanceof Player player)
-                  BackData.get(player).drop();
-      }
-
-      @SubscribeEvent
       public static void PlayerCloneEvent(PlayerEvent.Clone event) {
             Player oldPlayer = event.getOriginal();
             if (!event.isWasDeath()) {
