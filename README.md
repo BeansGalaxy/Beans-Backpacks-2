@@ -2,11 +2,14 @@
 
 <h3> FYI <img align="right" src="assets/images/back_slot.gif" alt="Back Slot" style="margin:10px"> </h3>
 
-1.20.2 is stable but development has been put on pause until 1.20.1 is out of beta. 1.20.1 is the most up-to-date version. Ports to 1.20.4+ will come after 
-we're out of beta. Ports to 1.19 and earlier is TBD.
+1.20.1 is the most up-to-date version. 1.20.2 development has been canceled and updates to 
+other 1.20 versions are unlikely until a 1.21 version is released. 
 
-### Grave Mod Developers
-I have added many methods in [CompatHelper](https://github.com/BeansGalaxy/Beans-Backpacks-2/tree/20.1/common/src/main/java/com/beansgalaxy/backpacks/platform/services) to hopefully help you out. Inventory expansion mods and grave mods should get along! End the suffering!
+Ports to previous versions 
+are difficult since trims and the decorated pot were added in 1.20. A simplified version for 1.18.2 is the most likely if any back port does happen.
+
+### Mod Developers
+I have added many methods in [CompatHelper](https://github.com/BeansGalaxy/Beans-Backpacks-2/tree/20.1/common/src/main/java/com/beansgalaxy/backpacks/platform/services) to hopefully help you out. I've also added Cancelable Events for both [Forge](https://github.com/BeansGalaxy/Beans-Backpacks-2/blob/3611f372af03a57efae49abbb9c8a4b1d6c4b4c5/forge/src/main/java/com/beansgalaxy/backpacks/platform/ForgeCompatHelper.java#L69) and [Fabric](https://github.com/BeansGalaxy/Beans-Backpacks-2/blob/3611f372af03a57efae49abbb9c8a4b1d6c4b4c5/fabric/src/main/java/com/beansgalaxy/backpacks/platform/FabricCompatHelper.java#L64) if your mod needs to interact with how the backpack is dropped on death.
 
 ### Mod Packs
 <p>
@@ -20,7 +23,20 @@ the issues tab. </p>
 
 <h1 align="center"> Changelog </h1>
 
-### 20.1-0.23-v3 & 20.2-0.17-v2
+### 20.1-0.24-v3
+
+- Equipped Backpacks have a new tooltip
+  - Made more compat
+  - Displays up to 34 unique items
+- Placed Backpack Menus may now have 5 rows and display up to 70 different stacks
+- Backpacks that cannot be equipped now always display an explanation
+- Backpacks displayed on the player's back no longer clips with the chestplate
+- Added Compatibility with Elytra Slot
+- Solved many grave mods deleting Back Inventory on death
+- Fixed Trim Registry throwing errors on startup
+- Fixed Creative Mode Back Slot not updating to the server causing de-sync
+
+### 20.1-0.23-v3
 
 - Added Config (Mod Menu & Cloth Config required for Fabric) *([more info](https://github.com/BeansGalaxy/Beans-Backpacks-2/wiki/Configurations#mod-loader-config))*
   - Adjustable Max Stacks for backpacks
