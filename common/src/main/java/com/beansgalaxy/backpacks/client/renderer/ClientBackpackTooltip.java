@@ -10,7 +10,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.NonNullList;
@@ -24,70 +23,87 @@ import java.awt.*;
 import java.util.Iterator;
 
 public class ClientBackpackTooltip implements ClientTooltipComponent {
-      public static final int MAX_DISPLAY = 34;
+      private static final int MAX_DISPLAY = 48;
+      private static final int SPACING = 17;
       private final NonNullList<ItemStack> itemStacks;
+      private final Minecraft minecraft;
       private final int size;
       private final int columns;
-      private final int rowLimit;
+      private final int rows;
 
       public ClientBackpackTooltip(BackpackTooltip tooltip) {
             this.itemStacks = tooltip.itemStacks;
-            int size = itemStacks.size();
-            this.size = Math.min(size, MAX_DISPLAY);
-            this.columns = Mth.ceil(Math.sqrt(this.size + 1)) + 1;
-            this.rowLimit = size > 28 ? 3 : 2;
+            this.minecraft = Minecraft.getInstance();
+            this.size = Math.min(45, itemStacks.size());
+            double sqrt = Math.sqrt(this.size);
+
+            int columns = Math.min(Mth.ceil(sqrt + 6) / 2, Mth.ceil(sqrt));
+            this.columns = columns > 5
+                        ? columns
+                        : size < 5
+                        ? size
+                        : (columns + 5) / 2;
+            int rows = Mth.ceil(((float) size) / this.columns);
+            this.rows = rows > 2
+                        ? (rows + 2) / 2
+                        : rows;
+
       }
 
       @Override
       public int getHeight() {
-            int row = Mth.ceil(size / (float) columns);
-            return Math.min(row, rowLimit + 1) * 17;
+            return rows * SPACING;
       }
 
       @Override
       public int getWidth(Font font) {
-            return columns * 17 - 1;
+            return columns * SPACING - 1;
       }
 
       @Override
       public void renderImage(Font font, int mouseX, int mouseY, GuiGraphics gui) {
-            Minecraft minecraft = Minecraft.getInstance();
-            int spacing = 17;
-
-            int i = 0;
             Iterator<ItemStack> iterator = itemStacks.iterator();
-            while (iterator.hasNext() && i < MAX_DISPLAY) {
-                  ItemStack stack = iterator.next();
-                  if (stack.isEmpty()) continue;
-
-                  int row = i / columns;
-                  int column = i % columns;
-                  if (row > rowLimit) {
-                        column += (row - rowLimit) * columns;
-                        row = rowLimit;
-                  }
-
-                  int x = mouseX + column * spacing + 8;
-                  int y = mouseY + row * spacing + 6;
-                  int z = 300 - (column + row) * 2;
-
-                  if (row == rowLimit) {
-                        float row2 = size - 1 - (columns * rowLimit);
-                        if (row2 >= columns) {
-                              double progress = column / row2;
-                              double ease = Math.lerp(progress, Math.sin((progress * Math.PI) / 2), Math.min(1, (row2 - columns + 2) / 8));
-                              x = Mth.ceil(Math.lerp(mouseX + 8, mouseX + (columns * spacing) - 9, ease));
-                              y += (i + (itemStacks.size() % 2)) % 2;
-                              z -= column * 12;
-                        }
-                        int light = 15728880 / Mth.clamp(column / 2, 1, 6);
-                        renderItem(minecraft, gui, stack, x, y, z, light);
-                        renderItemDecorations(gui, font, stack, x - 8, y - 8, z);
+            int rows = this.rows;
+            int overflow = size - (rows * columns);
+            int remaining = size;
+            for (int i = 0; remaining > 0; i++) {
+                  int count;
+                  if (rows == i + 1) {
+                        count = remaining;
                   }
                   else {
-                        renderItem(minecraft, gui, stack, x, y, z, 15728880);
-                        renderItemDecorations(gui, font, stack, x - 8, y - 8, z);
+                        double progress = (i) / (rows - 1.0);
+                        double lerp = Mth.lerp(overflow, 0, progress * 0.5);
+                        int add = Mth.floor(lerp);
+                        count = columns + add;
                   }
+                  renderRow(gui, font, iterator, Math.max(count, this.columns), mouseX, mouseY + (SPACING * i), 15728880);
+                  remaining -= count;
+            }
+
+      }
+
+      public void renderRow(GuiGraphics gui, Font font, Iterator<ItemStack> stacks, int columns, int leftPos, int topPos, int light) {
+            int i = 0;
+            while (stacks.hasNext() && i < columns) {
+                  ItemStack stack = stacks.next();
+                  if (stack.isEmpty()) continue;
+
+                  int column = i % columns;
+                  int x ;
+                  if (columns > this.columns) {
+                        double linear = (double) column / (columns - 1);
+                        double lerp = Mth.lerp(this.columns - 1, 0, linear);
+                        x = Mth.ceil(lerp * SPACING);
+                  }
+                  else x = Mth.ceil(column * SPACING);
+
+
+                  x += leftPos + 8;
+                  int y = topPos + 8;
+                  int z = -i * 12 + 200;
+                  renderItem(minecraft, gui, stack, x, y, z, light);
+                  renderItemDecorations(gui, font, stack, x, y, z);
                   i++;
             }
       }
@@ -97,19 +113,16 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
                   PoseStack pose = gui.pose();
                   pose.pushPose();
                   pose.translate(0.0F, 0.0F, z + 10);
-                  float value = (z / 300f) * (z / 300f) * (z / 300f);
                   if ($$1.getCount() != 1) {
                         String $$5 = String.valueOf($$1.getCount());
-                        gui.drawString($$0, $$5, x + 19 - 2 - $$0.width($$5), y + 6 + 3, new Color(value, value, value).getRGB(), true);
+                        gui.drawString($$0, $$5, x + 9 - $$0.width($$5), y + 1, 0xFFDDDDDD, true);
                   }
                   else if ($$1.isBarVisible()) {
-                        int $$6 = $$1.getBarWidth();
-                        int $$7 = $$1.getBarColor();
-                        int barX = x + 2;
-                        int barY = y + 13;
-                        Color barColor = new Color($$7);
-                        gui.fill(barX, barY, barX + 13, barY + 2, new Color(0, 0, 0, (int)((z / 300f) * value * 255)).getRGB());
-                        gui.fill(barX, barY, barX + $$6, barY + 1, new Color((int)(barColor.getRed() * value), (int)(barColor.getGreen() * value), (int)(barColor.getBlue() * value), 255).getRGB() | -16777216);
+                        int barColor = $$1.getBarColor();
+                        int barX = x - 6;
+                        int barY = y + 5;
+                        gui.fill(barX, barY, barX + 13, barY + 2, 0xFF000000);
+                        gui.fill(barX, barY, barX + $$1.getBarWidth(), barY + 1, barColor | -16777216);
                   }
                   pose.popPose();
             }
