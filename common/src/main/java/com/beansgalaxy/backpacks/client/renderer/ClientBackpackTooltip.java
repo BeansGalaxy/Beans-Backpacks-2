@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.client.renderer;
 
 import com.beansgalaxy.backpacks.inventory.BackpackTooltip;
 import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
@@ -16,15 +17,14 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import org.joml.Math;
 import org.joml.Matrix4f;
 
 import java.awt.*;
 import java.util.Iterator;
 
 public class ClientBackpackTooltip implements ClientTooltipComponent {
-      private static final int MAX_DISPLAY = 48;
-      private static final int SPACING = 17;
+      private static final int MAX_DISPLAY = 60;
+      private static final int SPACING = 18;
       private final NonNullList<ItemStack> itemStacks;
       private final Minecraft minecraft;
       private final int size;
@@ -34,36 +34,75 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
       public ClientBackpackTooltip(BackpackTooltip tooltip) {
             this.itemStacks = tooltip.itemStacks;
             this.minecraft = Minecraft.getInstance();
-            this.size = Math.min(45, itemStacks.size());
-            double sqrt = Math.sqrt(this.size);
+            this.size = Math.min(itemStacks.size(), MAX_DISPLAY);
+            double size = this.size;
 
-            int columns = Math.min(Mth.ceil(sqrt + 6) / 2, Mth.ceil(sqrt));
-            this.columns = columns > 5
-                        ? columns
-                        : size < 5
-                        ? size
-                        : (columns + 5) / 2;
-            int rows = Mth.ceil(((float) size) / this.columns);
-            this.rows = rows > 2
-                        ? (rows + 2) / 2
-                        : rows;
+            double pow = Math.log(size / 2) + 1;
+            if (this.size < 4) {
+                  columns = Mth.ceil(Math.sqrt(this.size));
+                  rows = Mth.ceil(size / columns);
+            }
+            else if (this.size < 9) {
+                  rows = Mth.floor(Math.sqrt(this.size));
+                  columns = Mth.ceil(size / rows);
+            }
+            else {
+                  rows = pow > 3
+                              ? 3
+                              : Mth.floor(pow);
 
+                  int floor = Mth.floor((size / rows + 6) / 2);
+                  columns = floor > 9
+                              ? 9
+                              : floor - (floor + 1) % 2;
+            }
       }
 
       @Override
       public int getHeight() {
-            return rows * SPACING;
+            return -2;
       }
 
       @Override
       public int getWidth(Font font) {
-            return columns * SPACING - 1;
+            return 0;
       }
 
       @Override
       public void renderImage(Font font, int mouseX, int mouseY, GuiGraphics gui) {
+            int width = gui.guiWidth();
+            int height = gui.guiHeight() / 2 - 1;
+            int w = columns * SPACING;
+            int x1;
+            int x2;
+
+            if (columns > 4) {
+                  x1 = Mth.floor((width - w) / 2.0) - 1;
+                  x2 = Mth.ceil((width + w) / 2.0);
+            }
+            else {
+                  double offset = size > 4 ? 2.5 : 1.5;
+                  x1 = Mth.ceil((width / 2.0) - (SPACING * offset)) - 1;
+                  x2 = x1 + w + 1;
+            }
+
+            int y1 = height + 1;
+            int y2 = height + SPACING * rows + 1;
+
+            int bgColor = 0xF8110211;
+            gui.fill(x1 - 1, y1 - 1, x2 + 2, y2 + 1, bgColor);
+            gui.hLine(x1, x2, y1 - 2, bgColor);
+            gui.hLine(x1, x2, y2 + 1, bgColor);
+
+            int topColor = 0xFF25015c;
+            int botColor = 0xFF190133;
+            gui.hLine(x1, x2, y1 - 1, topColor);
+            gui.fillGradient(x1, y1, x1 + 1, y2, topColor, botColor);
+            gui.fillGradient(x2, y1, x2 + 1, y2, topColor, botColor);
+            gui.hLine(x1, x2, y2, botColor);
+
             Iterator<ItemStack> iterator = itemStacks.iterator();
-            int rows = this.rows;
+
             int overflow = size - (rows * columns);
             int remaining = size;
             for (int i = 0; remaining > 0; i++) {
@@ -71,15 +110,22 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
                   if (rows == i + 1) {
                         count = remaining;
                   }
+                  else if (i == 0) {
+                        count = rows == 3
+                                    ? columns + Mth.floor((size - columns * rows) / 9.0 - 1)
+                                    : columns;
+                  }
                   else {
                         double progress = (i) / (rows - 1.0);
                         double lerp = Mth.lerp(overflow, 0, progress * 0.5);
                         int add = Mth.floor(lerp);
                         count = columns + add;
                   }
-                  renderRow(gui, font, iterator, Math.max(count, this.columns), mouseX, mouseY + (SPACING * i), 15728880);
+                  renderRow(gui, font, iterator, Math.max(count, this.columns), x1 + 2, height + (SPACING * i) + 2, 15728880);
                   remaining -= count;
             }
+
+            gui.fill(x1 + 2, y1 + 1, x1 + 18, y1 + 17, 500, 0x66FFFFFF);
 
       }
 
@@ -101,7 +147,7 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
 
                   x += leftPos + 8;
                   int y = topPos + 8;
-                  int z = -i * 12 + 200;
+                  int z = -i * 12 + 400;
                   renderItem(minecraft, gui, stack, x, y, z, light);
                   renderItemDecorations(gui, font, stack, x, y, z);
                   i++;
@@ -115,7 +161,7 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
                   pose.translate(0.0F, 0.0F, z + 10);
                   if ($$1.getCount() != 1) {
                         String $$5 = String.valueOf($$1.getCount());
-                        gui.drawString($$0, $$5, x + 9 - $$0.width($$5), y + 1, 0xFFDDDDDD, true);
+                        gui.drawString($$0, $$5, x + 9 - $$0.width($$5), y + 1, 0xFFFFFFFF, true);
                   }
                   else if ($$1.isBarVisible()) {
                         int barColor = $$1.getBarColor();

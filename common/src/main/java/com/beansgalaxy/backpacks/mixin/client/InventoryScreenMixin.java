@@ -2,8 +2,12 @@ package com.beansgalaxy.backpacks.mixin.client;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.access.ClickAccessor;
+import com.beansgalaxy.backpacks.client.renderer.ClientBackpackTooltip;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.inventory.BackpackTooltip;
 import com.beansgalaxy.backpacks.items.Tooltip;
+import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import com.beansgalaxy.backpacks.screen.InfoWidget;
 import net.minecraft.client.Minecraft;
@@ -20,6 +24,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -59,6 +64,18 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
       @Inject(method = "containerTick", at = @At("HEAD"))
       public void containerTick(CallbackInfo ci) {
             this.backSlotIcon.tick(Tooltip.getTextures());
+      }
+
+      @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;renderTooltip(Lnet/minecraft/client/gui/GuiGraphics;II)V"))
+      public void showBackSlotTooltip(GuiGraphics gui, int mouseX, int mouseY, float $$3, CallbackInfo ci) {
+            if (!this.menu.getCarried().isEmpty() && this.hoveredSlot != null && Services.COMPAT.isBackSlot(this.hoveredSlot)) {
+                  ItemStack itemstack = this.hoveredSlot.getItem();
+                  BackData backData = BackData.get(minecraft.player);
+                  if (!itemstack.isEmpty() && !backData.backpackInventory.isEmpty() && Kind.isBackpack(itemstack)) {
+                        BackpackTooltip tooltip = new BackpackTooltip(backData.backpackInventory.getItemStacks());
+                        gui.renderTooltip(minecraft.font, List.of(Component.empty()), Optional.of(tooltip), -1000, -1000);
+                  }
+            }
       }
 
       @Inject(method = "renderBg", at = @At("TAIL"))

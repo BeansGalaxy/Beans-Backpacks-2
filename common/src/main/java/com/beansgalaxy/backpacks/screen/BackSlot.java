@@ -37,6 +37,11 @@ public class BackSlot extends Slot {
       }
 
       @Override
+      public boolean isHighlightable() {
+            return backData.backpackInventory.isEmpty();
+      }
+
+      @Override
       public int getMaxStackSize() {
             return 1;
       }

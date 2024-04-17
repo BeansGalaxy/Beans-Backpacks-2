@@ -3,9 +3,11 @@ package com.beansgalaxy.backpacks.mixin.common;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.platform.Services;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.SlotAccess;
@@ -80,9 +82,16 @@ public abstract class ItemStackMixin {
                   return;
             }
 
-
-            boolean notEmpty = (instance.hasTag() && instance.getTag().contains("back_slot")) || !backData.backpackInventory.isEmpty();
-            if (instance == backStack && notEmpty)
+            BackpackInventory backpackInventory = backData.backpackInventory;
+            if (!backpackInventory.isEmpty()) {
+                  components.clear();
+                  ItemStack item = backpackInventory.getItem(0);
+                  MutableComponent mutableComponent = Component.empty().append(item.getHoverName()).withStyle(item.getRarity().color);
+                  if (item.hasCustomHoverName()) mutableComponent.withStyle(ChatFormatting.ITALIC);
+                  components.add(mutableComponent);
+                  cir.setReturnValue(components);
+            }
+            else if (instance == backStack && instance.hasTag() && instance.getTag().contains("back_slot"))
                   cir.setReturnValue(components);
             else if (instanceKind != null)
                   Tooltip.appendTooltip(player, flag, components, traits, instance);
