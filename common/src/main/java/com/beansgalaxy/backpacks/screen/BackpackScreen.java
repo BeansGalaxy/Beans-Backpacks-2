@@ -26,6 +26,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
@@ -121,6 +122,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
             context.pose().pushPose();
             context.enableScissor(x - 80, y - 220, x + 80, y + 36);
             context.pose().translate(x, y + 37, 70);
+            float windowWidth = ((float) context.guiWidth()) / imageWidth * 2;
             int center = leftPos + imageWidth / 2;
             int abs = (mouseX - center) * (mouseX - center);
 
@@ -133,12 +135,13 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
                         : pro < 0.5 ? Math.pow(2, 20 * pro - 10) / 2
                         : (2 - Math.pow(2, -20 * pro + 10)) / 2;
 
-            double sign = mouseX - center < 0 ? -1 : 1;
+            boolean isNegative = mouseX - center < 0;
+            double sign = isNegative ? -1 : 1;
             rot *= sign;
 
-            int i = (mouseY - topPos);
-            context.pose().mulPose(Axis.XP.rotationDegrees((i == 0 ? 1 : -i) / 25f));
-            context.pose().mulPose(Axis.YP.rotationDegrees((float) ((rot * 140) + (pro * sign * 20))));
+            context.pose().mulPose(Axis.XP.rotationDegrees((topPos - mouseY) / 25f));
+            float j = (mouseX - center) / windowWidth;
+            context.pose().mulPose(Axis.YP.rotationDegrees((float) rot * (isNegative ? 150 : 140) + (j)));
             context.pose().scale(scale, -scale, scale);
             EntityRenderDispatcher entRD = Minecraft.getInstance().getEntityRenderDispatcher();
             Lighting.setupFor3DItems();
