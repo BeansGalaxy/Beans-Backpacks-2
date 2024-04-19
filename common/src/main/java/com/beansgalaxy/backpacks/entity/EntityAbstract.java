@@ -15,6 +15,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -31,14 +32,15 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.*;
 import net.minecraft.world.scores.PlayerTeam;
 import org.apache.commons.lang3.function.TriFunction;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +50,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public abstract class EntityAbstract extends Backpack {
       public Direction direction;
@@ -638,7 +641,9 @@ public abstract class EntityAbstract extends Backpack {
       // PREFORMS THIS ACTION WHEN IT IS RIGHT-CLICKED
       @Override @NotNull
       public InteractionResult interact(Player player, InteractionHand hand) {
-            if (player instanceof ServerPlayer serverPlayer) {
+            if (player.isDiscrete())
+                  return shiftClickOnBackpack(player, hand);
+            else if (player instanceof ServerPlayer serverPlayer) {
                   InteractionResult interact = interact(serverPlayer);
                   if (interact.consumesAction())
                         return interact;
@@ -647,22 +652,70 @@ public abstract class EntityAbstract extends Backpack {
                         PlaySound.OPEN.at(this, getTraits().kind);
                   Services.NETWORK.openBackpackMenu(player, this);
             }
+
             return InteractionResult.SUCCESS;
+      }
+
+      private InteractionResult shiftClickOnBackpack(Player player, InteractionHand hand) {
+            BackData backData = BackData.get(player);
+            ItemStack backStack = backData.getStack();
+            ItemStack inHand = player.getItemInHand(hand);
+
+            ItemStack backpackStack = backData.actionKeyPressed && !backStack.isEmpty() ? backStack : inHand;
+            if (Kind.isBackpack(backpackStack))
+                  return BackpackItem.useOnBackpack(player, this, backpackStack, backData.actionKeyPressed);
+
+            Vec3 vec3 = player.getEyePosition();
+            Vec3 view = player.getViewVector(1).scale(10);
+            AABB aabb = new AABB(player.blockPosition(), this.blockPosition()).inflate(1);
+            Predicate<Entity> entityPredicate = (p_234237_) -> !p_234237_.isSpectator() && p_234237_.isPickable();
+            EntityHitResult hitResult = ProjectileUtil.getEntityHitResult(player, vec3, vec3.add(view), aabb, entityPredicate, 10);
+            if (hitResult == null) return InteractionResult.PASS;
+
+            Vec3 hit = hitResult.getLocation();
+            Vec3 target = new Vec3(this.getBlockX() + 0.5, this.actualY, this.getBlockZ() + 0.5);
+            Direction entityDirection = this.getDirection();
+            Direction.Axis axis = entityDirection.getAxis();
+            boolean isHorizontal = axis.isHorizontal();
+            if (isHorizontal)
+                  target = target.relative(entityDirection, -0.5);
+
+            double x = target.x - hit.x;
+            double y = hit.y - target.y;
+            double z = target.z - hit.z;
+
+            Direction direction;
+            if ((axis == Direction.Axis.X && x == 0) || (axis == Direction.Axis.Z && z == 0))
+                  direction = entityDirection.getOpposite();
+            else if (y == 9.0/16)
+                  direction = Direction.UP;
+            else if (y == 0)
+                  direction = Direction.DOWN;
+            else if (Math.abs(x) > Math.abs(z))
+                  direction = x < 0 ? Direction.EAST: Direction.WEST;
+            else
+                  direction = z < 0 ? Direction.SOUTH: Direction.NORTH;
+            //this.level().addParticle(ParticleTypes.BUBBLE_POP, target.x - x, y + target.y, target.z - z, 0, 0, 0);
+
+            Vec3 placeVec = this.position().add(0, y, 0).relative(direction, 1);
+            BlockPos placePos = BlockPos.containing(placeVec.x, placeVec.y, placeVec.z);
+            if (!player.level().getBlockState(placePos).canBeReplaced())
+                  return InteractionResult.PASS;
+
+            BlockHitResult blockHitResult = new BlockHitResult(placeVec, direction, placePos, true);
+            return inHand.useOn(new UseOnContext(player, hand, blockHitResult));
+      }
+
+      @NotNull
+      private static Direction getDirection(EntityHitResult hitResult) {
+            return Direction.UP;
       }
 
       public InteractionResult interact(ServerPlayer player) {
             Kind kind = getTraits().kind;
             BackData backData = BackData.get(player);
             boolean actionKeyPressed = backData.actionKeyPressed;
-
             if (isLocked(backData, player.serverLevel(), kind))
-                  return InteractionResult.SUCCESS;
-
-            ItemStack backStack = backData.getStack();
-            ItemStack handStack = player.getMainHandItem();
-            ItemStack backpackStack = actionKeyPressed ? backStack : handStack;
-
-            if (Kind.isBackpack(backpackStack) && BackpackItem.useOnBackpack(player, this, backpackStack, actionKeyPressed).consumesAction())
                   return InteractionResult.SUCCESS;
 
             if (actionKeyPressed) {

@@ -38,7 +38,7 @@ public class BackSlot extends Slot {
 
       @Override
       public boolean isHighlightable() {
-            return backData.backpackInventory.isEmpty();
+            return backData.backpackInventory.isEmpty() || getItem().isEmpty();
       }
 
       @Override

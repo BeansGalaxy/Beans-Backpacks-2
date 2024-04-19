@@ -309,12 +309,11 @@ public class BackpackItem extends Item {
             Vec3 pos = entityAbstract.position();
             Direction direction = entityAbstract.direction;
 
-            int invert = player.isCrouching() ? -1 : 1;
             int x = Mth.floor(pos.x);
-            double y = pos.y + ((direction.getAxis().isHorizontal() ? 11 : 10) / 16d) * invert;
+            double y = pos.y + ((direction.getAxis().isHorizontal() ? 11 : 10) / 16d);
             int z = Mth.floor(pos.z);
 
-            AABB box = entityAbstract.getBoundingBox().move(0, 10d / 16 * invert, 0);
+            AABB box = entityAbstract.getBoundingBox().move(0, 10d / 16, 0);
             boolean spaceEmpty = player.level().noCollision(box);
             if (spaceEmpty && doesPlace(player, x, y, z, direction, backpackStack, fromBackSlot)) {
                   BackData.get(player).setChanged();
