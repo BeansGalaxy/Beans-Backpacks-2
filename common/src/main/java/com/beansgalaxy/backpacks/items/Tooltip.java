@@ -151,13 +151,19 @@ public class Tooltip {
 
             if (spaceLeft < 1) {
                   barColor = FULL_COLOR;
-                  return 13;
+                  return 14;
+            } else if (spaceLeft < 65) {
+                  float progress = 1 - spaceLeft / 64f;
+                  float ease = progress * 1.6f;
+                  float i = Mth.clamp(ease + 0.5f, 0, 1);
+                  float j = Mth.clamp(ease - 0.6f, 0, 1);
+                  barColor = Mth.color(Mth.lerp(i, 0f, 0.9f), Mth.lerp(j, 0.9f, 0.4f), 0.3f);
             } else
                   barColor = BAR_COLOR;
 
-            int barWidth = spaceLeft * 13 / (maxStacks * 64);
+            int barWidth = Mth.ceil(spaceLeft * 13 / (maxStacks * 64.0));
 
-            return 13 - barWidth;
+            return 14 - barWidth;
       }
 
       private static final int BAR_COLOR = Mth.color(0.4F, 0.4F, 1.0F);

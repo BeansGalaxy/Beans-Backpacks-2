@@ -96,9 +96,7 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
                   if (item.hasCustomHoverName()) mutableComponent.withStyle(ChatFormatting.ITALIC);
                   int textWidth = font.width(mutableComponent.getVisualOrderText());
                   int offset = (hasSpace ? -9 : 5) + (columns > 4 ? 0 : 7);
-                  int tooLong = columns > 4
-                              ? Math.max(offset, textWidth - w + (24 + offset)) / 3
-                              : offset;
+                  int tooLong = Math.max(offset, textWidth - w + (12));
 
                   drawTooltipBox(gui, leftPos - tooLong, topPos - 28, textWidth + 5, 12);
                   gui.drawString(font, mutableComponent, leftPos + 3 - tooLong, topPos - 26, 0xFFFFFFFF);
@@ -122,12 +120,15 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
                               gui.drawString(font, text, center, y1 - 3, 0xFFFFFFFF);
                         }
                         else {
-                              gui.blit(bundleTexture, x1 - 9, y1 - 9, 200, 0, 0, spacing, spacing, 128, 128);
                               if (stacks.hasNext()) {
+                                    gui.blit(bundleTexture, x1 - 9, y1 - 9, 200, 0, 0, spacing, spacing, 128, 128);
                                     ItemStack stack = stacks.next();
                                     renderItem(minecraft, gui, stack, x1, y1, 300, false);
                                     renderItemDecorations(gui, font, stack, x1, y1, 300);
                                     itemsLeft--;
+                              }
+                              else {
+                                    gui.blit(bundleTexture, x1 - 9, y1 - 9, 200, 0, hasSpace? 0: 40, spacing, spacing, 128, 128);
                               }
                         }
                         x++;
@@ -291,13 +292,13 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
       }
 
       private static void drawTooltipBox(GuiGraphics gui, int x, int y, int w, int h) {
-            int bgColor = 0xF8110211;
+            int bgColor = 0xF0100010;
             gui.fill(x - 1, y - 1, x + w + 2, y + h + 1, bgColor);
             gui.hLine(x, x + w, y - 2, bgColor);
             gui.hLine(x, x + w, y + h + 1, bgColor);
 
-            int topColor = 0xFF25015c;
-            int botColor = 0xFF190133;
+            int topColor = 0x505000FF;
+            int botColor = 0x5028007F;
             gui.hLine(x, x + w, y - 1, topColor);
             gui.fillGradient(x, y, x + 1, y + h, topColor, botColor);
             gui.fillGradient(x + w, y, x + w + 1, y + h, topColor, botColor);
