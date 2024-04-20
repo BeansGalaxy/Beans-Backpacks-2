@@ -82,16 +82,7 @@ public abstract class ItemStackMixin {
                   return;
             }
 
-            BackpackInventory backpackInventory = backData.backpackInventory;
-            if (!backpackInventory.isEmpty()) {
-                  components.clear();
-                  ItemStack item = backpackInventory.getItem(0);
-                  MutableComponent mutableComponent = Component.empty().append(item.getHoverName()).withStyle(item.getRarity().color);
-                  if (item.hasCustomHoverName()) mutableComponent.withStyle(ChatFormatting.ITALIC);
-                  components.add(mutableComponent);
-                  cir.setReturnValue(components);
-            }
-            else if (instance == backStack && instance.hasTag() && instance.getTag().contains("back_slot"))
+            if (instance == backStack && instance.hasTag() && instance.getTag().contains("back_slot"))
                   cir.setReturnValue(components);
             else if (instanceKind != null)
                   Tooltip.appendTooltip(player, flag, components, traits, instance);

@@ -5,7 +5,7 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 
 public class BackpackTooltip implements TooltipComponent {
-      public NonNullList<ItemStack> itemStacks = NonNullList.create();
+      public final NonNullList<ItemStack> itemStacks = NonNullList.create();
 
       public BackpackTooltip(NonNullList<ItemStack> items) {
             itemStacks.clear();

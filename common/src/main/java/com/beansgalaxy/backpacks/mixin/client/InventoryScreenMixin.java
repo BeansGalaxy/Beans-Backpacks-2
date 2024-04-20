@@ -66,16 +66,23 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
             this.backSlotIcon.tick(Tooltip.getTextures());
       }
 
-      @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;renderTooltip(Lnet/minecraft/client/gui/GuiGraphics;II)V"))
-      public void showBackSlotTooltip(GuiGraphics gui, int mouseX, int mouseY, float $$3, CallbackInfo ci) {
-            if (!this.menu.getCarried().isEmpty() && this.hoveredSlot != null && Services.COMPAT.isBackSlot(this.hoveredSlot)) {
+      @Override
+      public int[] getPos() {
+            return new int[]{leftPos + (imageWidth / 2), topPos + (imageHeight / 2)};
+      }
+
+      @Override
+      protected void renderTooltip(GuiGraphics gui, int mouseX, int mouseY) {
+            if (this.hoveredSlot != null && Services.COMPAT.isBackSlot(this.hoveredSlot)) {
                   ItemStack itemstack = this.hoveredSlot.getItem();
                   BackData backData = BackData.get(minecraft.player);
                   if (!itemstack.isEmpty() && !backData.backpackInventory.isEmpty() && Kind.isBackpack(itemstack)) {
                         BackpackTooltip tooltip = new BackpackTooltip(backData.backpackInventory.getItemStacks());
-                        gui.renderTooltip(minecraft.font, List.of(Component.empty()), Optional.of(tooltip), -1000, -1000);
+                        gui.renderTooltip(minecraft.font, List.of(Component.empty()), Optional.of(tooltip), mouseX - 10000, mouseY - 10000);
+                        return;
                   }
             }
+            super.renderTooltip(gui, mouseX, mouseY);
       }
 
       @Inject(method = "renderBg", at = @At("TAIL"))
