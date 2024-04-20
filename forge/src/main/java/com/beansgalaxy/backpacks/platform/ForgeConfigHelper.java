@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.platform;
 
 import com.beansgalaxy.backpacks.data.config.Config;
 import com.beansgalaxy.backpacks.data.config.MenuVisibility;
+import com.beansgalaxy.backpacks.data.config.TooltipType;
 import com.beansgalaxy.backpacks.platform.services.ConfigHelper;
 import com.beansgalaxy.backpacks.screen.InfoWidget;
 
@@ -71,5 +72,10 @@ public class ForgeConfigHelper implements ConfigHelper {
       @Override
       public void saveHiddenTabs(HashSet<InfoWidget.Tab> hiddenTabs) {
             HIDDEN_TABS.set(hiddenTabs.stream().toList());
+      }
+
+      @Override
+      public TooltipType getTooltipType() {
+            return TOOLTIP_TYPE.get();
       }
 }

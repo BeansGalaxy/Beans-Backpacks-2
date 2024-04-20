@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.platform.services;
 
 import com.beansgalaxy.backpacks.data.config.Config;
 import com.beansgalaxy.backpacks.data.config.MenuVisibility;
+import com.beansgalaxy.backpacks.data.config.TooltipType;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.screen.InfoWidget;
 import net.minecraft.world.level.GameRules;
@@ -23,4 +24,6 @@ public interface ConfigHelper {
       HashSet<InfoWidget.Tab> getHiddenTabs();
 
       void saveHiddenTabs(HashSet<InfoWidget.Tab> hiddenTabs);
+
+      public TooltipType getTooltipType();
 }

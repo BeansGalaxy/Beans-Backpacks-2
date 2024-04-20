@@ -20,7 +20,8 @@ public enum Config {
 
       // Client Config
       MENU_VISIBILITY         (new Entry<>(MenuVisibility.HIDE_ABLE)),
-      INSTANT_PLACE           (new Entry<>(false));
+      INSTANT_PLACE           (new Entry<>(false)),
+      TOOLTIP_TYPE            (new Entry<>(TooltipType.COMPACT));
 
       public static final int MAX_STACKS_RANGE = 32;
       public static final int MAX_SPECIAL_RANGE = 128;

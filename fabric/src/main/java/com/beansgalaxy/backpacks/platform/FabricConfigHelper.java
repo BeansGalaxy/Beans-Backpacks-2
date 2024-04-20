@@ -3,6 +3,7 @@ package com.beansgalaxy.backpacks.platform;
 import com.beansgalaxy.backpacks.compat.FabricConfig;
 import com.beansgalaxy.backpacks.data.config.Config;
 import com.beansgalaxy.backpacks.data.config.MenuVisibility;
+import com.beansgalaxy.backpacks.data.config.TooltipType;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.beansgalaxy.backpacks.platform.services.ConfigHelper;
 import com.beansgalaxy.backpacks.screen.InfoWidget;
@@ -42,5 +43,11 @@ public class FabricConfigHelper implements ConfigHelper {
       public void saveHiddenTabs(HashSet<InfoWidget.Tab> hiddenTabs) {
             if (Services.COMPAT.isModLoaded(CompatHelper.CLOTH_CONFIG))
                   FabricConfig.saveHiddenTabs(hiddenTabs);
+      }
+
+      public TooltipType getTooltipType() {
+            if (!Services.COMPAT.isModLoaded(CompatHelper.CLOTH_CONFIG))
+                  return Config.TOOLTIP_TYPE.get(TooltipType.class);
+            return FabricConfig.getTooltipType();
       }
 }

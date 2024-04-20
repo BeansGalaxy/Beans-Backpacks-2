@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.compat;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.config.MenuVisibility;
+import com.beansgalaxy.backpacks.data.config.TooltipType;
 import com.beansgalaxy.backpacks.screen.InfoWidget;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigData;
@@ -114,6 +115,11 @@ public class FabricConfig implements ConfigData {
             holder.save();
       }
 
+      public static TooltipType getTooltipType() {
+            FabricConfig instance = AutoConfig.getConfigHolder(FabricConfig.class).getConfig();
+            return instance.clientConfig.tooltipType;
+      }
+
       static class Gamerules {
             @Comment("Lock placed Backpacks if a player did not place it")
             boolean lockBackpackNotOwner = LOCK_BACKPACK_NOT_OWNER.get(Boolean.class);
@@ -147,6 +153,8 @@ public class FabricConfig implements ConfigData {
             MenuVisibility menuVisibility = MENU_VISIBILITY.get(MenuVisibility.class);
             String hiddenHelpTabs = "";
             boolean instantPlace = INSTANT_PLACE.get(Boolean.class);
+            @Comment("VANILLA / COMPACT / INTEGRATED")
+            TooltipType tooltipType = TooltipType.COMPACT;
       }
 
 }

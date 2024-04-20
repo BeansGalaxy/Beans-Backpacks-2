@@ -2,7 +2,9 @@ package com.beansgalaxy.backpacks.client.renderer;
 
 import com.beansgalaxy.backpacks.access.ClickAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.data.config.TooltipType;
 import com.beansgalaxy.backpacks.inventory.BackpackTooltip;
+import com.beansgalaxy.backpacks.platform.Services;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -59,9 +61,12 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
             int mouseX = cursorX + 10000;
             int mouseY = cursorY + 10000;
 
-            renderVanilla(font, gui, mouseX, mouseY);
-            //renderCompact(font, gui, mouseX, mouseY);
-            //renderLarge(font, gui, mouseX + 2, mouseY - 6);
+            TooltipType tooltipType = Services.CONFIG.getTooltipType();
+            switch (tooltipType) {
+                  case VANILLA -> renderVanilla(font, gui, mouseX, mouseY);
+                  case INTEGRATED -> renderLarge(font, gui, mouseX + 2, mouseY - 6);
+                  default -> renderCompact(font, gui, mouseX, mouseY);
+            }
       }
 
       private void renderVanilla(Font font, GuiGraphics gui, int mouseX, int mouseY) {

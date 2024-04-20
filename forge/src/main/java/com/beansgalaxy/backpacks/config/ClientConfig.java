@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.config;
 
 import com.beansgalaxy.backpacks.data.config.Config;
 import com.beansgalaxy.backpacks.data.config.MenuVisibility;
+import com.beansgalaxy.backpacks.data.config.TooltipType;
 import com.beansgalaxy.backpacks.screen.InfoWidget;
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -14,6 +15,7 @@ public class ClientConfig {
       public static final ForgeConfigSpec.EnumValue<MenuVisibility> MENU_VISIBILITY;
       public static final ForgeConfigSpec.ConfigValue<List<? extends InfoWidget.Tab>> HIDDEN_TABS;
       public static final ForgeConfigSpec.BooleanValue INSTANT_PLACE;
+      public static final ForgeConfigSpec.EnumValue<TooltipType> TOOLTIP_TYPE;
 
       static {
             BUILDER.push("Beans Backpacks Config");
@@ -26,6 +28,9 @@ public class ClientConfig {
 
             INSTANT_PLACE = BUILDER.define("Instantly place backpack on hotkey press",
                         Config.INSTANT_PLACE.get(Boolean.class).booleanValue());
+
+            TOOLTIP_TYPE = BUILDER.defineEnum("Equipped Backpack Inventory Type",
+                        Config.TOOLTIP_TYPE.get(TooltipType.class));
 
 
             BUILDER.pop();
