@@ -105,9 +105,8 @@ public class BackpackMenu extends AbstractContainerMenu {
             for (MenuSlot backpackSlot : backpackSlots) {
                   int backIndex = backpackSlot.backIndex;
                   int size = backpackInventory.getContainerSize();
-                  int i = backpackInventory.spaceLeft();
-                  boolean hasSpace = i > 0;
-                  int shift = Math.max(0, size - MenuSlot.MAX_SLOTS) - (hasSpace ? 0 : 1);
+                  boolean hasSpace = backpackInventory.spaceLeft() > 0;
+                  int shift = Math.max(0, size - MenuSlot.MAX_SLOTS - (hasSpace? 0: 1));
                   if (backIndex + shift < size) {
                         backpackSlot.index = backIndex + 36;
                         backpackSlot.state = MenuSlot.State.ACTIVE;
@@ -153,7 +152,8 @@ public class BackpackMenu extends AbstractContainerMenu {
             boolean clientSide = owner.level().isClientSide();
             if (clientSide && Kind.ENDER.is(kind)) return;
 
-            boolean carriedEmpty = getCarried().isEmpty();
+            ItemStack carried = getCarried();
+            boolean carriedEmpty = carried.isEmpty();
             if (slotIndex >= slots.size()) {
                   if (carriedEmpty)
                         return;
@@ -185,8 +185,11 @@ public class BackpackMenu extends AbstractContainerMenu {
             if (backIndex != -1) {
                   if (actionType == ClickType.QUICK_MOVE)
                         BackpackItem.handleQuickMove(player.getInventory(), backpackInventory, backIndex);
-                  else
-                        setCarried(menuInsert(button, getCarried(), backIndex, backpackInventory));
+                  else {
+                        if (backIndex >= backpackInventory.getItemStacks().size()) backIndex = 0;
+                        else if (!carriedEmpty) backIndex += 1;
+                        setCarried(menuInsert(button, carried, backIndex, backpackInventory));
+                  }
 
                   return;
             }
@@ -215,7 +218,7 @@ public class BackpackMenu extends AbstractContainerMenu {
             if (slotId < FIRST_SLOT_INDEX) { // HANDLES INSERT TO BACKPACK
                   if (backpackInventory.spaceLeft() < 1)
                         return ItemStack.EMPTY;
-                  backpackInventory.insertItem(clickedStack, clickedStack.getCount());
+                  backpackInventory.insertItem(clickedStack, clickedStack.getCount(), 0);
                   clickedSlot.set(clickedStack);
             } else { // HANDLES INSERT TO INVENTORY
                   clickedStack = backpackInventory.getItemStacks().get(slotId - FIRST_SLOT_INDEX);

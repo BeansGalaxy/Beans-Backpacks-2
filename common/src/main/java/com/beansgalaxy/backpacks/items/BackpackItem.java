@@ -253,7 +253,7 @@ public class BackpackItem extends Item {
                   backpackInventory.playSound(PlaySound.TAKE);
 
             if (!backpackStack.isEmpty())
-                  backpackInventory.insertItemSilent(backpackStack, backpackStack.getCount());
+                  backpackInventory.insertItemSilent(backpackStack, backpackStack.getCount(), 0);
 
             if (backpackInventory.getContainerSize() > index && backpackInventory.getItem(index).isEmpty())
                   backpackInventory.removeItemNoUpdate(index);

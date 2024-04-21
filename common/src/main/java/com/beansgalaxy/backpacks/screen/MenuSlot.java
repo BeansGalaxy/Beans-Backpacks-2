@@ -93,7 +93,8 @@ public class MenuSlot extends Slot {
             int slots;
             int index;
 
-            if (inventory.spaceLeft() > 0) {
+            boolean hasSpace = inventory.spaceLeft() > 0;
+            if (hasSpace) {
                   index = slot + 1;
                   slots = size + 1;
             }

@@ -31,6 +31,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Iterator;
+
 @Mixin(value = InventoryMenu.class, priority = 899)
 public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftingContainer>{
 
@@ -94,7 +96,8 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
             boolean selectedBackpackInventory = (stack == backStack && !stack.isEmpty()) || slot instanceof InSlot;
             boolean selectedEquipment = !selectedPlayerInventory && slotIndex > 4 && !selectedBackpackInventory;
 
-            ItemStack cursorStack = getCarried();
+            ItemStack carried = getCarried();
+            ItemStack cursorStack = carried;
             if (selectedEquipment && !selectedBackSlot && Constants.CHESTPLATE_DISABLED.contains(cursorStack.getItem())) {
                   return;
             }
@@ -128,8 +131,23 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
             }
 
             if (actionType == ClickType.PICKUP_ALL) {
-                  if (!selectedBackpackInventory)
+                  if (!selectedBackpackInventory) {
                         super.clicked(slotIndex, button, actionType, player);
+                        int sizeLeft = carried.getMaxStackSize() - carried.getCount();
+                        if (sizeLeft > 0) {
+                              Iterator<ItemStack> stacks = backpackInventory.getItemStacks().iterator();
+                              while (stacks.hasNext() && sizeLeft > 0) {
+                                    ItemStack backpackItem = stacks.next();
+                                    if (ItemStack.isSameItemSameTags(backpackItem, carried)) {
+                                          int count = Math.max(0, backpackItem.getCount() - sizeLeft);
+                                          backpackItem.shrink(count);
+                                          carried.grow(count);
+                                          sizeLeft -= count;
+                                    }
+                              }
+                              backpackInventory.mergeItems();
+                        }
+                  }
                   return;
             }
 
@@ -173,7 +191,7 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                   }
                   else if (traits.isStorage()) {
                         if (!level.isClientSide() || !Kind.ENDER.is(kind))
-                              slot.set(backpackInventory.insertItem(stack, stack.getCount()));
+                              slot.set(backpackInventory.insertItem(stack, stack.getCount(), 0));
                         return;
                   }
             }

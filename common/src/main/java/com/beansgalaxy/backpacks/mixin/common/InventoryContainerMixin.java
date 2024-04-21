@@ -167,7 +167,7 @@ public abstract class InventoryContainerMixin implements BackAccessor {
                         AtomicBoolean didTake = new AtomicBoolean(false);
                         backpackInventory.getItemStacks().forEach(stacks -> {
                               if (ItemStack.isSameItemSameTags(stacks, stack)) {
-                                    backpackInventory.insertItemSilent(stack, stack.getCount());
+                                    backpackInventory.insertItemSilent(stack, stack.getCount(), 0);
                                     backpackInventory.setChanged();
                                     didTake.set(true);
                               }
@@ -203,7 +203,7 @@ public abstract class InventoryContainerMixin implements BackAccessor {
                   if (!traits.isStorage())
                         return;
 
-                  if (backpackInventory.insertItemSilent(stack, stack.getCount()).isEmpty()) {
+                  if (backpackInventory.insertItemSilent(stack, stack.getCount(), 0).isEmpty()) {
                         cir.setReturnValue(true);
                         if (player instanceof ServerPlayer serverPlayer) {
                               Services.NETWORK.backpackInventory2C(serverPlayer);

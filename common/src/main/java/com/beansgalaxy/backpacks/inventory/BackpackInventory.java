@@ -24,7 +24,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-import java.util.Iterator;
 import java.util.UUID;
 
 public interface BackpackInventory extends Container {
@@ -187,19 +186,19 @@ public interface BackpackInventory extends Container {
 
       default ItemStack returnItem(int slot, ItemStack stack, int amount) {
             if (!stack.isEmpty())
-                  return insertItem(stack, amount);
+                  return insertItem(stack, amount, slot);
             else
                   return removeItemNoUpdate(slot);
       }
 
-      default ItemStack insertItem(ItemStack stack, int amount) {
+      default ItemStack insertItem(ItemStack stack, int amount, int slot) {
             int insertedCount = stack.getCount();
-            if (insertItemSilent(stack, amount).getCount() != insertedCount)
+            if (insertItemSilent(stack, amount, slot).getCount() != insertedCount)
                   playSound(stack.isEmpty() ? PlaySound.INSERT : PlaySound.TAKE);
             return stack.isEmpty() ? ItemStack.EMPTY : stack;
       }
 
-      default ItemStack insertItemSilent(ItemStack stack, int amount) {
+      default ItemStack insertItemSilent(ItemStack stack, int amount, int slot) {
             if (stack.isEmpty() || !canPlaceItem(stack))
                   return stack;
 
@@ -215,7 +214,8 @@ public interface BackpackInventory extends Container {
             {
                   if (isServerSide && stack.getItem() instanceof BackpackItem)
                         triggerAdvancements(SpecialCriterion.Special.LAYERED);
-                  this.getItemStacks().add(0, mergeItem(stack.copyWithCount(count)));
+                  this.getItemStacks().add(slot, stack.copyWithCount(count));
+                  mergeItems();
                   stack.setCount(stack.getCount() - count);
                   setChanged();
             }
@@ -264,20 +264,20 @@ public interface BackpackInventory extends Container {
       };
 
 
-      private ItemStack mergeItem(ItemStack stack) {
-            for (int i = 0; i <= getItemStacks().size(); i++) {
-                  ItemStack lookSlot = getItem(i);
-                  if (!stack.isEmpty() && ItemStack.isSameItemSameTags(stack, lookSlot)) {
-                        int count = stack.getCount() + lookSlot.getCount();
-                        int maxCount = stack.getMaxStackSize();
-                        if (count > maxCount) {
-                              lookSlot.setCount(maxCount);
-                              count -= maxCount;
-                        } else getItemStacks().remove(i);
-                        stack.setCount(count);
+      default void mergeItems() {
+            for (int j = getItemStacks().size() - 2; j > -1; j--) {
+                  ItemStack lookSlot = getItem(j);
+                  for (int i = 0; i < getItemStacks().size(); i++) {
+                        if (i == j) continue;
+                        ItemStack compare = getItem(i);
+                        if (ItemStack.isSameItemSameTags(lookSlot, compare)) {
+                              lookSlot.grow(compare.getCount());
+                              compare.setCount(0);
+                        }
                   }
             }
-            return stack;
+
+            getItemStacks().removeIf(ItemStack::isEmpty);
       }
 
       default void readStackNbt(CompoundTag nbt) {
@@ -403,7 +403,7 @@ public interface BackpackInventory extends Container {
             for (int i = 0; i < hopper.getContainerSize(); i++) {
                   ItemStack hopperItem = hopper.getItem(i);
                   if (!hopperItem.isEmpty()) {
-                        insertItem(hopperItem, 1);
+                        insertItem(hopperItem, 1, 0);
                         triggerHopper();
                         return true;
                   }
