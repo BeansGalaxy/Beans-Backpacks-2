@@ -624,13 +624,13 @@ public abstract class EntityAbstract extends Backpack {
             if (iterator.hasNext()) {
                   PlaySound.HIT.at(this, kind);
                   this.hop(.1);
-                  MutableComponent message = iterator.next().getDisplayName().copy();
+                  MutableComponent items = iterator.next().getDisplayName().copy();
                   while (iterator.hasNext()) {
                         ItemStack stack = iterator.next();
-                        message.append(iterator.hasNext() ? ", " : " and ");
-                        message.append(stack.getDisplayName());
+                        items.append(iterator.hasNext() ? Component.literal(", ") : Component.translatable("entity.beansbackpacks.locked.back_slot_blocked.and"));
+                        items.append(stack.getDisplayName());
                   }
-                  message.append(Component.translatable("entity.beansbackpacks.locked.back_slot_blocked").withStyle(ChatFormatting.WHITE));
+                  MutableComponent message = Component.translatable("entity.beansbackpacks.locked.back_slot_blocked", items).withStyle(ChatFormatting.WHITE);
                   backData.owner.displayClientMessage(message, true);
                   return false;
             }

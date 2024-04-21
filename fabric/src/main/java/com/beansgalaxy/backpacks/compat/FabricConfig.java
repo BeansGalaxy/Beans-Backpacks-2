@@ -65,6 +65,9 @@ public class FabricConfig implements ConfigData {
                   case LOCK_BACKPACK_NOT_OWNER -> {
                         return instance.gamerules.lockBackpackNotOwner;
                   }
+                  case LOCK_BACKPACK_NO_KEY -> {
+                        return instance.gamerules.lockBackpackNoKey;
+                  }
                   case KEEP_BACK_SLOT -> {
                         return instance.gamerules.keepBackSlot;
                   }
@@ -121,6 +124,8 @@ public class FabricConfig implements ConfigData {
       }
 
       static class Gamerules {
+            @Comment("Equipped backpacks are locked to other players if hotkey isn't pressed")
+            public boolean lockBackpackNoKey = LOCK_BACKPACK_NO_KEY.get(Boolean.class);
             @Comment("Lock placed Backpacks if a player did not place it")
             boolean lockBackpackNotOwner = LOCK_BACKPACK_NOT_OWNER.get(Boolean.class);
             @Comment("Lock placed Backpacks while their owner is offline")

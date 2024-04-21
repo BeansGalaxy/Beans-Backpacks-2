@@ -52,6 +52,9 @@ public class ForgeConfigHelper implements ConfigHelper {
                   case LOCK_BACKPACK_NOT_OWNER -> {
                         return LOCK_BACKPACK_NOT_OWNER.get();
                   }
+                  case LOCK_BACKPACK_NO_KEY -> {
+                        return LOCK_BACKPACK_NO_KEY.get();
+                  }
                   case KEEP_BACK_SLOT -> {
                         return KEEP_BACK_SLOT.get();
                   }

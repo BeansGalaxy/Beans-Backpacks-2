@@ -1,6 +1,8 @@
 package com.beansgalaxy.backpacks.platform.services;
 
+import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.data.config.Config;
+import com.beansgalaxy.backpacks.data.config.Gamerules;
 import com.beansgalaxy.backpacks.data.config.MenuVisibility;
 import com.beansgalaxy.backpacks.data.config.TooltipType;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -12,7 +14,7 @@ import java.util.HashSet;
 
 public interface ConfigHelper {
       static boolean keepBackSlot(Level level) {
-            return level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) || Services.CONFIG.getBoolConfig(Config.KEEP_BACK_SLOT);
+            return level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) || ServerSave.CONFIG.get(Gamerules.KEEP_BACK_SLOT);
       }
 
       int getIntConfig(Config config);

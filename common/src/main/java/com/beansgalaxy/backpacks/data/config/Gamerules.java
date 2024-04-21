@@ -10,6 +10,7 @@ public enum Gamerules {
       LOCK_ENDER_OFFLINE(Services.CONFIG.getBoolConfig(Config.LOCK_ENDER_OFFLINE), "lockEnderOffline"),
       LOCK_BACKPACK_OFFLINE(Services.CONFIG.getBoolConfig(Config.LOCK_BACKPACK_OFFLINE), "lockBackpackOffline"),
       LOCK_BACKPACK_NOT_OWNER(Services.CONFIG.getBoolConfig(Config.LOCK_BACKPACK_NOT_OWNER), "lockBackpackNotOwner"),
+      LOCK_BACKPACK_NO_KEY(Services.CONFIG.getBoolConfig(Config.LOCK_BACKPACK_NO_KEY), "lockBackpackNoKey"),
       KEEP_BACK_SLOT(Services.CONFIG.getBoolConfig(Config.KEEP_BACK_SLOT), "keepBackSlot");
 
       final boolean defaultValue;

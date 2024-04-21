@@ -17,6 +17,7 @@ public class CommonConfig {
       public static final ForgeConfigSpec.BooleanValue LOCK_ENDER_OFFLINE;
       public static final ForgeConfigSpec.BooleanValue LOCK_BACKPACK_OFFLINE;
       public static final ForgeConfigSpec.BooleanValue LOCK_BACKPACK_NOT_OWNER;
+      public static final ForgeConfigSpec.BooleanValue LOCK_BACKPACK_NO_KEY;
       public static final ForgeConfigSpec.BooleanValue KEEP_BACK_SLOT;
 
 
@@ -46,6 +47,8 @@ public class CommonConfig {
                         .define("lockBackpackOffline", Config.LOCK_BACKPACK_OFFLINE.get(Boolean.class).booleanValue());
             LOCK_ENDER_OFFLINE =    BUILDER.comment("Lock Ender Backpacks while their owner is offline")
                         .define("lockEnderWhenLoggedOff", Config.LOCK_ENDER_OFFLINE.get(Boolean.class).booleanValue());
+            LOCK_BACKPACK_NO_KEY =    BUILDER.comment("Equipped backpacks are locked to other players if hotkey isn't pressed")
+                        .define("lockBackpackNoKey", Config.LOCK_BACKPACK_NO_KEY.get(Boolean.class).booleanValue());
 
             UNBIND_ENDER_ON_DEATH = BUILDER.comment("Unbind an equipped Ender Backpack when a player dies")
                         .define("unbindEnderOnDeath", Config.UNBIND_ENDER_ON_DEATH.get(Boolean.class).booleanValue());

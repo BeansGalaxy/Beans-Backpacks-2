@@ -16,6 +16,7 @@ public enum Config {
       LOCK_ENDER_OFFLINE(      new Entry<>(false)),
       LOCK_BACKPACK_OFFLINE(   new Entry<>(false)),
       LOCK_BACKPACK_NOT_OWNER( new Entry<>(false)),
+      LOCK_BACKPACK_NO_KEY(    new Entry<>(false)),
       KEEP_BACK_SLOT(          new Entry<>(false)),
 
       // Client Config

@@ -2,10 +2,14 @@ package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.data.ServerSave;
+import com.beansgalaxy.backpacks.data.config.Gamerules;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.platform.Services;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
@@ -59,7 +63,8 @@ public class BackSlot extends Slot {
       }
 
       public static InteractionResult openPlayerBackpackMenu(Player viewer, Player owner) {
-            ItemStack backpackStack = BackData.get(owner).getStack();
+            BackData backData = BackData.get(owner);
+            ItemStack backpackStack = backData.getStack();
             if (!Kind.isBackpack(backpackStack))
                   return InteractionResult.PASS;
 
@@ -87,10 +92,14 @@ public class BackSlot extends Slot {
             boolean looking = e > 1.0 - radius * maxRadius && viewer.hasLineOfSight(owner);
 
             if (yawMatches && looking) { // INTERACT WITH BACKPACK CODE GOES HERE
-                  Services.NETWORK.openBackpackMenu(viewer, owner);
-
-                  PlaySound.OPEN.at(owner, Kind.fromStack(backpackStack));
-                  return InteractionResult.sidedSuccess(!viewer.level().isClientSide);
+                  if (ServerSave.CONFIG.get(Gamerules.LOCK_BACKPACK_NO_KEY) && !backData.actionKeyPressed) {
+                        owner.displayClientMessage(Component.translatable("entity.beansbackpacks.locked.request_access", viewer.getDisplayName()), true);
+                        PlaySound.HIT.at(owner, backData.getTraits().kind);
+                  } else {
+                        Services.NETWORK.openBackpackMenu(viewer, owner);
+                        PlaySound.OPEN.at(owner, backData.getTraits().kind, 0.6f);
+                  }
+                  return InteractionResult.SUCCESS;
             }
 
             return InteractionResult.PASS;
