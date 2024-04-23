@@ -23,6 +23,19 @@ the issues tab. </p>
 
 <h1 align="center"> Changelog </h1>
 
+<h3> 20.1-0.21-v2 & 20.2-0.17-v2 <img align="right" src="assets/images/updates/broke_cauldrons.png" alt="Back Slot" style="width:150px"> </h3>
+
+- Finalized Backpack Tooltip
+- Added config to switch between 3 tooltip styles
+  - Compact (Default) | Vanilla (Old) | Integrated
+- Shift clicking a Backpack while holding a block item places that block
+- Fullness Bar on equipped Backpack items will turn Green to Orange on their last stack of space
+- Inserting items in a placed Backpack Menu will place that item where you clicked instead of the top of the menu
+- Added `/beansmod gamerule lockBackpackNoKey`. Requires holding Action Key to allow other player to access your equipped backpack
+- Changing Pots & Cauldrons `max_stacks` in the config to `0` disables all backpack functionality
+- All network packages are defined in `:common`
+- Fixed Instant Place with a cauldron was placing a Backpack with the equipped cauldron's texture
+
 ### 20.1-0.24-v3
 
 - Equipped Backpacks have a new tooltip
