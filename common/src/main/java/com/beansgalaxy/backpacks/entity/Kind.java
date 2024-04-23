@@ -2,6 +2,8 @@ package com.beansgalaxy.backpacks.entity;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.Traits;
+import com.beansgalaxy.backpacks.inventory.CauldronInventory;
+import com.beansgalaxy.backpacks.inventory.PotInventory;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.beansgalaxy.backpacks.items.WingedBackpack;
@@ -76,8 +78,11 @@ public enum Kind {
 
       public static boolean isWearable(Item item) {
             for(Kind kind: Kind.values())
-                  if(item.equals(kind.getItem()))
-                        return true;
+                  if(item.equals(kind.getItem())) {
+                        boolean cauldronDisabled = !(Kind.CAULDRON.is(kind) && CauldronInventory.getMaxSize() == 0);
+                        boolean potDisabled = !(Kind.POT.is(kind) && PotInventory.getMaxSize() == 0);
+                        return cauldronDisabled && potDisabled;
+                  }
             return Constants.CHESTPLATE_DISABLED.contains(item) || isWearableElytra(item);
       }
 

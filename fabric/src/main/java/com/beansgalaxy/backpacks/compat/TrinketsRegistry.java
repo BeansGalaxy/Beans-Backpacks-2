@@ -4,6 +4,8 @@ import com.beansgalaxy.backpacks.CommonClass;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.inventory.CauldronInventory;
+import com.beansgalaxy.backpacks.inventory.PotInventory;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import dev.emi.trinkets.TrinketSlot;
@@ -37,7 +39,8 @@ public class TrinketsRegistry {
                         boolean b = Trinket.super.canEquip(stack, slot, entity) && slot.index() == 0;
                         boolean b1 = entity instanceof Player player && BackData.get(player).backSlotDisabled();
                         boolean b2 = stack.getCount() == 1;
-                        return b && !b1 && b2;
+                        boolean b3 = Kind.isWearable(stack);
+                        return b && !b1 && b2 && b3;
 
                   }
 

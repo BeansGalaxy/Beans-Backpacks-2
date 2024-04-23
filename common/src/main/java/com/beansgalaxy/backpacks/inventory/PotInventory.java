@@ -32,6 +32,10 @@ public class PotInventory {
 
             int amount = inserted.getCount();
             int max_amount = inserted.getMaxStackSize() * getMaxSize();
+
+            if (max_amount == 0)
+                  return null;
+            
             CompoundTag itemTag = pot.getOrCreateTagElement("back_slot");
             if (itemTag.contains("id") && itemTag.contains("amount")) {
                   int storedAmount = itemTag.getInt("amount");

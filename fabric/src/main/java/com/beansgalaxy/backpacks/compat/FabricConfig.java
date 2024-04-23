@@ -42,9 +42,9 @@ public class FabricConfig implements ConfigData {
                   case METAL_MAX_STACKS -> value =
                               Mth.clamp(instance.maximumStacks.metal, 1, MAX_STACKS_RANGE);
                   case POT_MAX_STACKS -> value =
-                              Mth.clamp(instance.maximumStacks.pot, 1, MAX_SPECIAL_RANGE);
+                              Mth.clamp(instance.maximumStacks.pot, 0, MAX_SPECIAL_RANGE);
                   case CAULDRON_MAX_BUCKETS -> value =
-                              Mth.clamp(instance.maximumStacks.cauldron, 1, MAX_SPECIAL_RANGE);
+                              Mth.clamp(instance.maximumStacks.cauldron, 0, MAX_SPECIAL_RANGE);
             }
             return value;
       }
@@ -147,9 +147,9 @@ public class FabricConfig implements ConfigData {
             int metal = METAL_MAX_STACKS.get(Integer.class);
             @Comment("Range: 1 - " + MAX_ENDER_RANGE)
             int ender = ENDER_MAX_STACKS.get(Integer.class);
-            @Comment("Range: 1 - " + MAX_SPECIAL_RANGE)
+            @Comment("Range: 1 - " + MAX_SPECIAL_RANGE + " | 0 to disable")
             int pot = POT_MAX_STACKS.get(Integer.class);
-            @Comment("Range: 1 - " + MAX_SPECIAL_RANGE)
+            @Comment("Range: 1 - " + MAX_SPECIAL_RANGE + " | 0 to disable")
             int cauldron = CAULDRON_MAX_BUCKETS.get(Integer.class);
       }
 

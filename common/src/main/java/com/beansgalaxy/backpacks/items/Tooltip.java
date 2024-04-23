@@ -186,9 +186,10 @@ public class Tooltip {
 
       public static void appendTooltip(Player player, TooltipFlag flag, List<Component> components, Traits.LocalData traits, ItemStack instance) {
             Kind kind = traits.kind;
-            components.add(empty);
             switch (kind) {
                   case POT -> {
+                        if (PotInventory.getMaxSize() == 0) return;
+                        components.add(empty);
                         if (!instance.hasTag() || !instance.getTag().contains("back_slot")) {
                               components.add(Component.translatable("tooltip.beansbackpacks.special_title"));
                               components.add(Component.translatable("tooltip.beansbackpacks.storage.stacks",
@@ -197,6 +198,8 @@ public class Tooltip {
                         }
                   }
                   case CAULDRON -> {
+                        if (CauldronInventory.getMaxSize() == 0) return;
+                        components.add(empty);
                         if (!instance.hasTag() || !instance.getTag().contains("back_slot")) {
                               components.add(Component.translatable("tooltip.beansbackpacks.special_title"));
                               components.add(Component.translatable("tooltip.beansbackpacks.cauldron",
@@ -204,6 +207,7 @@ public class Tooltip {
                         }
                   }
                   default -> {
+                        components.add(empty);
                         components.add(Component.translatable("tooltip.beansbackpacks.storage_title"));
                         int maxStacks = traits.maxStacks();
                         components.add(Component.translatable("tooltip.beansbackpacks.storage.stacks", "§9" + maxStacks));

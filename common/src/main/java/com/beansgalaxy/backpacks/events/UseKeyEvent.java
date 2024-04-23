@@ -5,6 +5,7 @@ import com.beansgalaxy.backpacks.access.BucketLikeAccess;
 import com.beansgalaxy.backpacks.access.BucketsAccess;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.inventory.PotInventory;
 import com.beansgalaxy.backpacks.network.serverbound.UseCauldron;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.inventory.CauldronInventory;
@@ -127,6 +128,8 @@ public class UseKeyEvent {
             Player player = backData.owner;
             BlockEntity blockEntity = level.getChunkAt(blockPos).getBlockEntity(blockPos, LevelChunk.EntityCreationType.IMMEDIATE);
             if (blockEntity instanceof DecoratedPotBlockEntity potBlock) {
+                  if (PotInventory.getMaxSize() == 0)
+                        return false;
                   DecoratedPotBlockEntity.Decorations decorations = potBlock.getDecorations();
                   ItemStack itemstack = Items.DECORATED_POT.getDefaultInstance();
                   CompoundTag compoundtag = decorations.save(new CompoundTag());
@@ -142,6 +145,9 @@ public class UseKeyEvent {
             }
             else if (block instanceof AbstractCauldronBlock cauldronBlock)
             {
+                  if (CauldronInventory.getMaxSize() == 0)
+                        return false;
+
                   ItemStack cauldron = Items.CAULDRON.getDefaultInstance();
                   backData.set(cauldron);
                   int analogOutputSignal = cauldronBlock.getAnalogOutputSignal(blockState, level, blockPos);

@@ -34,9 +34,9 @@ public class CommonConfig {
                         Config.METAL_MAX_STACKS.get(Integer.class), 1, Config.MAX_STACKS_RANGE);
 
             POT_MAX_STACKS =        BUILDER.defineInRange("Equipped Decorated Pots Maximum Stacks",
-                        Config.POT_MAX_STACKS.get(Integer.class), 1, Config.MAX_SPECIAL_RANGE);
+                        Config.POT_MAX_STACKS.get(Integer.class), 0, Config.MAX_SPECIAL_RANGE);
             CAULDRON_MAX_STACKS =   BUILDER.defineInRange("Equipped Cauldrons Maximum Buckets",
-                        Config.CAULDRON_MAX_BUCKETS.get(Integer.class), 1, Config.MAX_SPECIAL_RANGE);
+                        Config.CAULDRON_MAX_BUCKETS.get(Integer.class), 0, Config.MAX_SPECIAL_RANGE);
 
             BUILDER.pop();
             BUILDER.push("Configure Gamerule Defaults").comment("Players may still change these values on a per-world basis", "");
