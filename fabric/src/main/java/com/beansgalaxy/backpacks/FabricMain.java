@@ -27,7 +27,6 @@ import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents;
-import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
@@ -67,7 +66,7 @@ public class FabricMain implements ModInitializer {
 
         CommonClass.init();
 
-        NetworkPackages.registerC2SPackets();
+        NetworkPackages.register2S();
 
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register(new SyncDataEvent());
         ServerLifecycleEvents.SERVER_STARTED.register(new ServerLifecycleEvent());

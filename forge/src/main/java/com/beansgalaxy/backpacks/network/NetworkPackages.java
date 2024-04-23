@@ -1,10 +1,11 @@
 package com.beansgalaxy.backpacks.network;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.network.client.*;
-import com.beansgalaxy.backpacks.network.packages.*;
+import com.beansgalaxy.backpacks.network.clientbound.Packet2C;
+import com.beansgalaxy.backpacks.network.serverbound.Packet2S;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
@@ -18,21 +19,31 @@ public class NetworkPackages {
                   PROTOCOL::equals);
 
       public static void register() {
-            int index = 0;
-            SprintKeyPacket2S.register(index++);
-            InstantPlace2S.register(index++);
-            SyncViewersPacket2C.register(index++);
-            SyncBackSlot2C.register(index++);
-            SendEnderData2C.register(index++);
-            CallBackSlot2S.register(index++);
-            SyncBackInventory2C.register(index++);
-            CallBackInventory2S.register(index++);
-            ConfigureTraits2C.register(index++);
-            ConfigureLists2C.register(index++);
-            ReceiveEnderPos.register(index++);
-            UseCauldron2S.register(index++);
-            ClearBackSlot2S.register(index++);
-            PickBackpack2S.register(index);
+            int i = 0;
+            for (Network2S value : Network2S.values())
+                  register2S(value.packet, i++);
+
+            for (Network2C value : Network2C.values())
+                  register2C(value.packet, i++);
+      }
+
+      public static <T extends Packet2S> void register2S(Network2S.Packet<T> packet, int i) {
+            NetworkPackages.INSTANCE.messageBuilder(packet.type(), i, NetworkDirection.PLAY_TO_SERVER)
+                        .encoder(packet.encoder())
+                        .decoder(packet.decoder())
+                        .consumerMainThread((msg, ctx) -> {
+                              ServerPlayer sender = ctx.get().getSender();
+                              msg.handle(sender);
+                        }).add();
+      }
+
+      public static <T extends Packet2C> void register2C(Network2C.Packet<T> packet, int i) {
+            NetworkPackages.INSTANCE.messageBuilder(packet.type(), i, NetworkDirection.PLAY_TO_CLIENT)
+                        .encoder(packet.encoder())
+                        .decoder(packet.decoder())
+                        .consumerMainThread((msg, ctx) -> {
+                              msg.handle();
+                        }).add();
       }
 
       public static void C2S(Object mgs) {

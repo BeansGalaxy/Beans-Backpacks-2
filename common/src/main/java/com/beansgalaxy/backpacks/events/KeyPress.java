@@ -1,12 +1,15 @@
 package com.beansgalaxy.backpacks.events;
 
+import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
+import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -29,20 +32,27 @@ public final class KeyPress {
       public static void instantPlace(LocalPlayer localPlayer) {
             HitResult hitResult = Minecraft.getInstance().hitResult;
 
+            ItemStack stack = BackData.get(localPlayer).getStack();
+            if (!Kind.isBackpack(stack)) {
+                  UseKeyEvent.tryUseCauldron(localPlayer, hitResult);
+                  return;
+            }
+
             if (hitResult == null || hitResult.getType() == HitResult.Type.MISS)
                   return;
 
             if (hitResult instanceof EntityHitResult entityHitResult && entityHitResult.getEntity() instanceof EntityAbstract entityAbstract) {
-                  Services.NETWORK.instantPlace(entityAbstract.getId(), null);
+                  Services.NETWORK.instantPlace2S(entityAbstract.getId(), null);
             }
 
             if (hitResult instanceof BlockHitResult blockHitResult)
             {
+
                   InteractionResult interactionResult =
                               BackpackItem.hotkeyOnBlock(localPlayer, blockHitResult.getDirection(), blockHitResult.getBlockPos());
 
                   if (interactionResult.consumesAction())
-                        Services.NETWORK.instantPlace(-1, blockHitResult);
+                        Services.NETWORK.instantPlace2S(-1, blockHitResult);
 
             }
       }

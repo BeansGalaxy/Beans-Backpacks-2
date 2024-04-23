@@ -1,31 +1,22 @@
-package com.beansgalaxy.backpacks.network.client;
+package com.beansgalaxy.backpacks.network.clientbound;
 
-import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.data.EnderStorage;
-import com.beansgalaxy.backpacks.network.NetworkPackages;
+import com.beansgalaxy.backpacks.inventory.BackpackInventory;
+import com.beansgalaxy.backpacks.network.Network2C;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.UUID;
-import java.util.function.Supplier;
 
-public class SendEnderData2C {
-
-      public static void register(int i) {
-            NetworkPackages.INSTANCE.messageBuilder(SendEnderData2C.class, i, NetworkDirection.PLAY_TO_CLIENT)
-                        .encoder(SendEnderData2C::encode).decoder(SendEnderData2C::new).consumerMainThread(SendEnderData2C::handle).add();
-      }
-
+public class SendEnderData implements Packet2C {
       final UUID uuid;
       final EnderStorage.Data enderData;
 
-      public SendEnderData2C(FriendlyByteBuf buf) {
+      public SendEnderData(FriendlyByteBuf buf) {
             this.uuid = buf.readUUID();
             NonNullList<ItemStack> stacks = NonNullList.create();
             BackpackInventory.readStackNbt(buf.readNbt(), stacks);
@@ -34,12 +25,13 @@ public class SendEnderData2C {
             this.enderData = new EnderStorage.Data(stacks, trim, playerName);
       }
 
-      public SendEnderData2C(UUID uuid, EnderStorage.Data enderData) {
+      public SendEnderData(UUID uuid, EnderStorage.Data enderData) {
             this.uuid = uuid;
             this.enderData = enderData;
       }
 
       public void encode(FriendlyByteBuf buf) {
+            Network2C.SEND_ENDER_DATA_2C.debugMsgEncode();
             buf.writeUUID(uuid);
 
             CompoundTag tag = new CompoundTag();
@@ -51,7 +43,9 @@ public class SendEnderData2C {
             buf.writeUtf(Component.Serializer.toJson(playerName));
       }
 
-      public void handle(Supplier<NetworkEvent.Context> context) {
+      @Override
+      public void handle() {
+            Network2C.SEND_ENDER_DATA_2C.debugMsgDecode();
             EnderStorage.Data computed = EnderStorage.get().MAPPED_DATA.computeIfAbsent(uuid, in -> new EnderStorage.Data());
             computed.setPlayerName(enderData.getPlayerName()).setTrim(enderData.getTrim()).setItemStacks(enderData.getItemStacks());
       }

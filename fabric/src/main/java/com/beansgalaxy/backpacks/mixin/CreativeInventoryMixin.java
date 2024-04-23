@@ -42,6 +42,6 @@ public abstract class CreativeInventoryMixin extends EffectRenderingInventoryScr
 
       @Inject(method = "slotClicked", at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/core/NonNullList;size()I"))
       private void clearBackSlot(Slot slot, int i, int j, ClickType clickType, CallbackInfo ci) {
-            Services.NETWORK.clearBackSlot2S();
+            Services.NETWORK.clearBackSlot2S(BackData.get(minecraft.player));
       }
 }

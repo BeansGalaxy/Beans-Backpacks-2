@@ -144,7 +144,7 @@ public class BackData {
 
       public void setChanged() {
             if (owner instanceof ServerPlayer serverPlayer) {
-                  Services.NETWORK.syncBackSlot2All(serverPlayer);
+                  Services.NETWORK.syncBackSlot2C(serverPlayer, null);
             }
       }
 

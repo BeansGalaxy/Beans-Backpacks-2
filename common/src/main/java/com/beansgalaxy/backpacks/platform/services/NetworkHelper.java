@@ -9,14 +9,15 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
 public interface NetworkHelper {
 
-      void SprintKey(boolean sprintKeyPressed);
+      void SprintKey2S(boolean sprintKeyPressed);
 
-      void SyncViewers(Entity owner, byte viewers);
+      void SyncViewers2All(Entity owner, byte viewers);
 
       void openBackpackMenu(Player viewer, EntityAbstract owner);
 
@@ -24,11 +25,11 @@ public interface NetworkHelper {
 
       MenuProvider getMenuProvider(Entity backpack);
 
-      void syncBackSlot2All(ServerPlayer owner);
+      void syncBackSlot2C(Player owner, @Nullable ServerPlayer sender);
 
       void backpackInventory2C(ServerPlayer owner);
 
-      void instantPlace(int i, BlockHitResult blockHitResult);
+      void instantPlace2S(int i, BlockHitResult blockHitResult);
 
       void pickFromBackpack2S(int slot);
 
@@ -38,5 +39,5 @@ public interface NetworkHelper {
 
       void useCauldron2S(BlockPos pos, UseKeyEvent.Type type);
 
-      void clearBackSlot2S();
+      void clearBackSlot2S(BackData backData);
 }

@@ -1,25 +1,18 @@
-package com.beansgalaxy.backpacks.network.client;
+package com.beansgalaxy.backpacks.network.clientbound;
 
 import com.beansgalaxy.backpacks.client.network.CommonAtClient;
+import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.EnderStorage;
-import com.beansgalaxy.backpacks.network.NetworkPackages;
+import com.beansgalaxy.backpacks.network.Network2C;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.HashSet;
-import java.util.function.Supplier;
 
-public class ReceiveEnderPos {
-      public static void register(int i) {
-            NetworkPackages.INSTANCE.messageBuilder(ReceiveEnderPos.class, i, NetworkDirection.PLAY_TO_CLIENT)
-                        .encoder(ReceiveEnderPos::encode).decoder(ReceiveEnderPos::new).consumerMainThread(ReceiveEnderPos::handle).add();
-      }
-
+public class ReceiveEnderPos implements Packet2C {
       final HashSet<EnderStorage.PackagedLocation> enderLocations;
 
-      public ReceiveEnderPos(HashSet<EnderStorage.PackagedLocation> enderLocations) {
-            this.enderLocations = enderLocations;
+      public ReceiveEnderPos(BackData backData) {
+            this.enderLocations = backData.getEnderLocations();
       }
 
       public ReceiveEnderPos(FriendlyByteBuf buf) {
@@ -29,12 +22,15 @@ public class ReceiveEnderPos {
       }
 
       public void encode(FriendlyByteBuf buf) {
+            Network2C.ENDER_POS_2C.debugMsgEncode();
             buf.writeInt(enderLocations.size());
             for (EnderStorage.PackagedLocation location : enderLocations)
                   location.writeBuf(buf);
       }
 
-      public void handle(Supplier<NetworkEvent.Context> context) {
+      @Override
+      public void handle() {
+            Network2C.ENDER_POS_2C.debugMsgDecode();
             CommonAtClient.receiveEnderPos(enderLocations);
       }
 }

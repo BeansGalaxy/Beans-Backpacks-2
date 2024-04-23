@@ -20,17 +20,7 @@ public class ClientForgeEvents {
                   Minecraft minecraft = Minecraft.getInstance();
                   LocalPlayer player = minecraft.player;
                   HitResult hitResult = minecraft.hitResult;
-                  if (!player.isShiftKeyDown() && UseKeyEvent.cauldronPickup(player)
-                  || (hitResult instanceof BlockHitResult blockHitResult && UseKeyEvent.cauldronPickup(blockHitResult, player))) {
-                        event.setSwingHand(true);
-                        event.setCanceled(true);
-                  }
-                  else if (hitResult instanceof BlockHitResult blockHitResult && UseKeyEvent.cauldronPlace(player, blockHitResult)) {
-                        event.setSwingHand(true);
-                        event.setCanceled(true);
-                  }
-                  else if (player.isShiftKeyDown() && UseKeyEvent.cauldronPickup(player)
-                  || (hitResult instanceof BlockHitResult blockHitResult && UseKeyEvent.cauldronPickup(blockHitResult, player))) {
+                  if(UseKeyEvent.tryUseCauldron(player, hitResult)) {
                         event.setSwingHand(true);
                         event.setCanceled(true);
                   }

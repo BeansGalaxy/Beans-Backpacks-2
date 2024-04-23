@@ -84,7 +84,7 @@ public interface BackpackInventory extends Container {
       default void updateViewers() {
             NonNullList<ServerPlayer> playersViewing = getPlayersViewing();
             getViewable().viewers = (byte) Math.min(playersViewing.size(), Byte.MAX_VALUE);
-            Services.NETWORK.SyncViewers(getOwner(), getViewable().viewers);
+            Services.NETWORK.SyncViewers2All(getOwner(), getViewable().viewers);
       }
 
       static boolean yawMatches(float viewerYaw, float ownerYaw, double acceptableYaw) {
@@ -108,7 +108,9 @@ public interface BackpackInventory extends Container {
 
       @Override
       default boolean isEmpty() {
-            return getItemStacks().isEmpty() || getItemStacks().stream().allMatch(ItemStack::isEmpty);
+            return getItemStacks().isEmpty()
+            || Kind.is(getTraits().kind, Kind.POT, Kind.CAULDRON)
+            || getItemStacks().stream().allMatch(ItemStack::isEmpty);
       }
 
       @Override

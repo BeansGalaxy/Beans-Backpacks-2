@@ -7,6 +7,7 @@ import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.inventory.CauldronInventory;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -15,6 +16,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -42,6 +44,24 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 
 public class UseKeyEvent {
+      public static boolean tryUseCauldron(LocalPlayer player, HitResult hitResult) {
+            if (!player.isShiftKeyDown() && (cauldronPickup(player)
+            || (hitResult instanceof BlockHitResult blockHitResult && cauldronPickup(blockHitResult, player)))) {
+                  player.swing(InteractionHand.MAIN_HAND);
+                  return true;
+            }
+            else if (hitResult instanceof BlockHitResult blockHitResult && cauldronPlace(player, blockHitResult)) {
+                  player.swing(InteractionHand.MAIN_HAND);
+                  return true;
+            }
+            else if (player.isShiftKeyDown() && cauldronPickup(player)
+            || (hitResult instanceof BlockHitResult blockHitResult && cauldronPickup(blockHitResult, player))) {
+                  player.swing(InteractionHand.MAIN_HAND);
+                  return true;
+            }
+            return false;
+      }
+
       public enum Type {
             PICKUP((byte) 0),
             PLACE((byte) 1),
@@ -150,7 +170,8 @@ public class UseKeyEvent {
       public static boolean cauldronPickup(Player player, BlockPos blockPos, Level level, BackData backData) {
             BlockState blockState = level.getBlockState(blockPos);
             ItemStack cauldron = backData.getStack();
-            if (CauldronInventory.sizeLeft(cauldron) <= 0) return false;
+            if (CauldronInventory.sizeLeft(cauldron) <= 0)
+                  return false;
 
             Block block = blockState.getBlock();
             if (block instanceof LiquidBlock liquidBlock) {

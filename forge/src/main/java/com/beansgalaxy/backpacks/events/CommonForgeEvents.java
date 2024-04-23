@@ -4,16 +4,14 @@ import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.data.ServerSave;
-import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
-import com.beansgalaxy.backpacks.network.client.ConfigureLists2C;
-import com.beansgalaxy.backpacks.network.client.ConfigureTraits2C;
-import com.beansgalaxy.backpacks.network.client.SendEnderData2C;
-import com.beansgalaxy.backpacks.network.client.SyncBackSlot2C;
+import com.beansgalaxy.backpacks.network.clientbound.ConfigureLists;
+import com.beansgalaxy.backpacks.network.clientbound.ConfigureTraits;
+import com.beansgalaxy.backpacks.network.clientbound.SendEnderData;
+import com.beansgalaxy.backpacks.network.clientbound.SyncBackSlot;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -22,7 +20,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
@@ -32,7 +29,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.HashMap;
-import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class CommonForgeEvents {
@@ -66,7 +62,7 @@ public class CommonForgeEvents {
 
                   BackData.get(oldPlayer).copyTo(BackData.get(newPlayer));
                   if (oldPlayer instanceof ServerPlayer serverPlayer)
-                        Services.NETWORK.syncBackSlot2All(serverPlayer);
+                        Services.NETWORK.syncBackSlot2C(serverPlayer, null);
             }
       }
 
@@ -90,10 +86,10 @@ public class CommonForgeEvents {
                   Services.NETWORK.backpackInventory2C(player);
 
                   ItemStack stack = BackData.get(player).getStack();
-                  NetworkPackages.S2C(new SyncBackSlot2C(player.getUUID(), stack), player);
+                  NetworkPackages.S2C(new SyncBackSlot(player.getUUID(), stack), player);
 
                   EnderStorage.get().MAPPED_DATA.forEach(((uuid, enderData) -> {
-                        NetworkPackages.S2C(new SendEnderData2C(uuid, enderData), player);
+                        NetworkPackages.S2C(new SendEnderData(uuid, enderData), player);
                   }));
 
                   EnderStorage.Location.update(player.getUUID(), player.serverLevel());
@@ -104,13 +100,6 @@ public class CommonForgeEvents {
       public static void syncDataPackEvent(OnDatapackSyncEvent event)
       {
             ServerPlayer player = event.getPlayer();
-            Map<String, CompoundTag> traitMap = new HashMap<>();
-
-            for (String key : Constants.TRAITS_MAP.keySet()) {
-                  Traits traits = Traits.get(key);
-                  traitMap.put(key, traits.toTag());
-            }
-
             HashMap<String, String> listMap = new HashMap<>();
             listMap.put("disables_back_slot", Constants.writeList(Constants.DISABLES_BACK_SLOT));
             listMap.put("chestplate_disabled", Constants.writeList(Constants.CHESTPLATE_DISABLED));
@@ -119,12 +108,12 @@ public class CommonForgeEvents {
 
             // Null Player means data pack is being sent to all players
             if (player == null) {
-                  NetworkPackages.S2All(new ConfigureTraits2C(traitMap));
-                  NetworkPackages.S2All(new ConfigureLists2C(listMap));
+                  NetworkPackages.S2All(new ConfigureTraits(Constants.TRAITS_MAP));
+                  NetworkPackages.S2All(new ConfigureLists(listMap));
             }
             else {
-                  NetworkPackages.S2C(new ConfigureTraits2C(traitMap), player);
-                  NetworkPackages.S2C(new ConfigureLists2C(listMap), player);
+                  NetworkPackages.S2C(new ConfigureTraits(Constants.TRAITS_MAP), player);
+                  NetworkPackages.S2C(new ConfigureLists(listMap), player);
             }
 
             String syncedPlayers = player == null ? "all players" : "\"" + player.getDisplayName().getString() + "\"";
@@ -134,7 +123,7 @@ public class CommonForgeEvents {
       @SubscribeEvent
       public static void loadPlayer(PlayerEvent.StartTracking event) {
             if (event.getEntity() instanceof ServerPlayer thisPlayer && event.getTarget() instanceof Player owner)
-                  NetworkPackages.S2C(new SyncBackSlot2C(owner.getUUID(), BackData.get(owner).getStack()), thisPlayer);
+                  NetworkPackages.S2C(new SyncBackSlot(owner.getUUID(), BackData.get(owner).getStack()), thisPlayer);
       }
 
       @SubscribeEvent

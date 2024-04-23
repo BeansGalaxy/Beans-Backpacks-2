@@ -1,25 +1,28 @@
 package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.network.NetworkPackages;
+import com.beansgalaxy.backpacks.network.Network2S;
+import com.beansgalaxy.backpacks.network.serverbound.CallBackInventory;
+import com.beansgalaxy.backpacks.network.serverbound.CallBackSlot;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.player.RemotePlayer;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
+
+import java.util.UUID;
 
 public class LoadEntityEvent implements ClientEntityEvents.Load {
 
       @Override
       public void onLoad(Entity entity, ClientLevel world) {
             if (entity instanceof RemotePlayer otherClientPlayer) {
-                  FriendlyByteBuf buf = PacketByteBufs.create();
-                  buf.writeUUID(otherClientPlayer.getUUID());
-                  ClientPlayNetworking.send(NetworkPackages.CALL_BACK_SLOT_2S, buf);
+                  UUID uuid = otherClientPlayer.getUUID();
+                  NetworkPackages.send(Network2S.CALL_BACK_SLOT_2S, new CallBackSlot(uuid));
             }
-            if (entity instanceof LocalPlayer localPlayer)
-                  ClientPlayNetworking.send(NetworkPackages.CALL_BACK_INV_2S, PacketByteBufs.create());
+            if (entity instanceof LocalPlayer localPlayer) {
+                  UUID uuid = localPlayer.getUUID();
+                  NetworkPackages.send(Network2S.CALL_BACK_INV_2S, new CallBackInventory(uuid));
+            }
       }
 }

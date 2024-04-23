@@ -44,7 +44,7 @@ public class UpdateSprintKey {
                   return;
 
             backData.actionKeyPressed = actionKeyPressed;
-            Services.NETWORK.SprintKey(actionKeyPressed);
+            Services.NETWORK.SprintKey2S(actionKeyPressed);
 
             boolean instantPlace = isMouseKey || Services.CONFIG.getBoolConfig(Config.INSTANT_PLACE);
             if (instantPlace && actionKeyPressed) {

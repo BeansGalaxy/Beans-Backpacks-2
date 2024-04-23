@@ -1,42 +1,36 @@
-package com.beansgalaxy.backpacks.network.packages;
+package com.beansgalaxy.backpacks.network.serverbound;
 
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.events.UseKeyEvent;
-import com.beansgalaxy.backpacks.network.NetworkPackages;
+import com.beansgalaxy.backpacks.network.Network2S;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
 
-import java.util.function.Supplier;
-
-public class UseCauldron2S {
-      public static void register(int i) {
-            NetworkPackages.INSTANCE.messageBuilder(UseCauldron2S.class, i, NetworkDirection.PLAY_TO_SERVER)
-                        .encoder(UseCauldron2S::encode).decoder(UseCauldron2S::new).consumerMainThread(UseCauldron2S::handle).add();
-      }
+public class UseCauldron implements Packet2S{
 
       final BlockPos blockPos;
       final UseKeyEvent.Type type;
 
-      public UseCauldron2S(BlockPos pos, UseKeyEvent.Type type) {
+      public UseCauldron(BlockPos pos, UseKeyEvent.Type type) {
             blockPos = pos;
             this.type = type;
       }
 
-      public UseCauldron2S(FriendlyByteBuf byteBuf) {
+      public UseCauldron(FriendlyByteBuf byteBuf) {
             this(byteBuf.readBlockPos(), UseKeyEvent.Type.byID(byteBuf.readByte()));
       }
 
       public void encode(FriendlyByteBuf buf) {
+            Network2S.USE_CAULDRON_2S.debugMsgEncode();
             buf.writeBlockPos(blockPos);
             buf.writeByte(type.id);
       }
 
-      public void handle(Supplier<NetworkEvent.Context> context) {
-            ServerPlayer sender = context.get().getSender();
+      @Override
+      public void handle(ServerPlayer sender) {
+            Network2S.USE_CAULDRON_2S.debugMsgDecode();
             Level level = sender.level();
             BackData backData = BackData.get(sender);
 
