@@ -10,7 +10,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public enum Network2S {
-      SPRINT_KEY_2S("sprint_key_s", new Packet<>(SprintKey.class, SprintKey::encode, SprintKey::new, SprintKey::handle)),
+      ACTION_KEY_2S("action_key_s", new Packet<>(ActionKey.class, ActionKey::encode, ActionKey::new, ActionKey::handle)),
       CALL_BACK_SLOT_2S("call_back_slot_s", new Packet<>(CallBackSlot.class, CallBackSlot::encode, CallBackSlot::new, CallBackSlot::handle)),
       CALL_BACK_INV_2S("call_back_inv_s", new Packet<>(CallBackInventory.class, CallBackInventory::encode, CallBackInventory::new, CallBackInventory::handle)),
       INSTANT_PLACE_2S("instant_place_s", new Packet<>(InstantPlace.class, InstantPlace::encode, InstantPlace::new, InstantPlace::handle)),
@@ -26,14 +26,10 @@ public enum Network2S {
             this.packet = packet;
       }
 
-      private boolean debugCheck = true;
       public void debugMsgEncode() {
-            Constants.LOG.info("encoding: \"" + id.getPath() + "\"");
       }
 
       public void debugMsgDecode() {
-            Constants.LOG.info("decoding: \"" + id.getPath() + "\"");
-            debugCheck = false;
       }
 
       public record Packet<T extends Packet2S>(Class<T> type, BiConsumer<T, FriendlyByteBuf> encoder, Function<FriendlyByteBuf, T> decoder, BiConsumer<T, ServerPlayer> handle)

@@ -3,6 +3,7 @@ package com.beansgalaxy.backpacks.mixin.client;
 import com.beansgalaxy.backpacks.access.ClickAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.config.Config;
+import com.beansgalaxy.backpacks.network.serverbound.ActionKey;
 import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.items.Tooltip;
@@ -18,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LocalPlayer.class)
-public class UpdateSprintKey {
+public class UpdateActionKey {
       @Inject(method = "tick", at = @At("TAIL"))
       public void tick(CallbackInfo ci) {
             LocalPlayer localPlayer = (LocalPlayer) (Object) this;
@@ -44,7 +45,7 @@ public class UpdateSprintKey {
                   return;
 
             backData.actionKeyPressed = actionKeyPressed;
-            Services.NETWORK.SprintKey2S(actionKeyPressed);
+            ActionKey.send(actionKeyPressed);
 
             boolean instantPlace = isMouseKey || Services.CONFIG.getBoolConfig(Config.INSTANT_PLACE);
             if (instantPlace && actionKeyPressed) {

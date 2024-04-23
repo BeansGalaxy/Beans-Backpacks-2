@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.network.serverbound;
 
 import com.beansgalaxy.backpacks.network.Network2S;
+import com.beansgalaxy.backpacks.network.clientbound.SyncBackInventory;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,6 +19,10 @@ public class CallBackInventory implements Packet2S {
             this.uuid = uuid;
       }
 
+      public static void send(UUID uuid) {
+            Services.NETWORK.send(Network2S.CALL_BACK_INV_2S, new CallBackInventory(uuid));
+      }
+
       @Override
       public void encode(FriendlyByteBuf buf) {
             Network2S.CALL_BACK_INV_2S.debugMsgEncode();
@@ -27,6 +32,6 @@ public class CallBackInventory implements Packet2S {
       @Override
       public void handle(ServerPlayer sender) {
             Network2S.CALL_BACK_INV_2S.debugMsgDecode();
-            Services.NETWORK.backpackInventory2C(sender);
+            SyncBackInventory.send(sender);
       }
 }

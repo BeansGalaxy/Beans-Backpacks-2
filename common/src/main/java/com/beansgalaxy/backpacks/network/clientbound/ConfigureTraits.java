@@ -1,9 +1,12 @@
 package com.beansgalaxy.backpacks.network.clientbound;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.network.Network2C;
+import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +26,10 @@ public class ConfigureTraits implements Packet2C{
                   map.put(key, traits.toTag());
             }
             this.map = map;
+      }
+
+      public static void send(ServerPlayer player) {
+            Services.NETWORK.send(Network2C.CONFIG_TRAITS_2C, new ConfigureTraits(Constants.TRAITS_MAP), player);
       }
 
       public void encode(FriendlyByteBuf buf) {

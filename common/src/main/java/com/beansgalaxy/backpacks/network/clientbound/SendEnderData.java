@@ -3,11 +3,13 @@ package com.beansgalaxy.backpacks.network.clientbound;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.network.Network2C;
+import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.UUID;
@@ -28,6 +30,10 @@ public class SendEnderData implements Packet2C {
       public SendEnderData(UUID uuid, EnderStorage.Data enderData) {
             this.uuid = uuid;
             this.enderData = enderData;
+      }
+
+      public static void send(ServerPlayer player, UUID uuid) {
+            Services.NETWORK.send(Network2C.SEND_ENDER_DATA_2C, new SendEnderData(uuid, EnderStorage.getEnderData(uuid, player.level())), player);
       }
 
       public void encode(FriendlyByteBuf buf) {

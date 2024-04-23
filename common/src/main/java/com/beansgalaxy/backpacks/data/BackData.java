@@ -7,6 +7,7 @@ import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.items.Tooltip;
+import com.beansgalaxy.backpacks.network.clientbound.SyncBackSlot;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.ConfigHelper;
 import com.beansgalaxy.backpacks.screen.BackSlot;
@@ -144,7 +145,7 @@ public class BackData {
 
       public void setChanged() {
             if (owner instanceof ServerPlayer serverPlayer) {
-                  Services.NETWORK.syncBackSlot2C(serverPlayer, null);
+                  SyncBackSlot.send(serverPlayer);
             }
       }
 

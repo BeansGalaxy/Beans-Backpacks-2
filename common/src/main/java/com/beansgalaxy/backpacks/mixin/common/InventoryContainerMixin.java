@@ -5,6 +5,7 @@ import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.network.clientbound.SyncBackInventory;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.inventory.PotInventory;
 import net.minecraft.core.NonNullList;
@@ -176,7 +177,7 @@ public abstract class InventoryContainerMixin implements BackAccessor {
                         if (didTake.get()) {
                               cir.setReturnValue(true);
                               if (player instanceof ServerPlayer serverPlayer) {
-                                    Services.NETWORK.backpackInventory2C(serverPlayer);
+                                    SyncBackInventory.send(serverPlayer);
                               }
                         }
                   }
@@ -206,7 +207,7 @@ public abstract class InventoryContainerMixin implements BackAccessor {
                   if (backpackInventory.insertItemSilent(stack, stack.getCount(), 0).isEmpty()) {
                         cir.setReturnValue(true);
                         if (player instanceof ServerPlayer serverPlayer) {
-                              Services.NETWORK.backpackInventory2C(serverPlayer);
+                              SyncBackInventory.send(serverPlayer);
                         }
                   }
             }

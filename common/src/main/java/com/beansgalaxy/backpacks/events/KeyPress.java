@@ -4,6 +4,7 @@ import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.items.BackpackItem;
+import com.beansgalaxy.backpacks.network.serverbound.InstantPlace;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -33,7 +34,7 @@ public final class KeyPress {
             HitResult hitResult = Minecraft.getInstance().hitResult;
 
             ItemStack stack = BackData.get(localPlayer).getStack();
-            if (!Kind.isBackpack(stack)) {
+            if (!stack.isEmpty() && !Kind.isBackpack(stack)) {
                   UseKeyEvent.tryUseCauldron(localPlayer, hitResult);
                   return;
             }
@@ -42,7 +43,7 @@ public final class KeyPress {
                   return;
 
             if (hitResult instanceof EntityHitResult entityHitResult && entityHitResult.getEntity() instanceof EntityAbstract entityAbstract) {
-                  Services.NETWORK.instantPlace2S(entityAbstract.getId(), null);
+                  InstantPlace.send(entityAbstract.getId(), null);
             }
 
             if (hitResult instanceof BlockHitResult blockHitResult)
@@ -52,7 +53,7 @@ public final class KeyPress {
                               BackpackItem.hotkeyOnBlock(localPlayer, blockHitResult.getDirection(), blockHitResult.getBlockPos());
 
                   if (interactionResult.consumesAction())
-                        Services.NETWORK.instantPlace2S(-1, blockHitResult);
+                        InstantPlace.send(-1, blockHitResult);
 
             }
       }

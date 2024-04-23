@@ -3,6 +3,7 @@ package com.beansgalaxy.backpacks.mixin;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.WrapCreativeSlot;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.network.serverbound.ClearBackSlot;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import com.beansgalaxy.backpacks.screen.InSlot;
@@ -42,6 +43,6 @@ public abstract class CreativeInventoryMixin extends EffectRenderingInventoryScr
 
       @Inject(method = "slotClicked", at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/core/NonNullList;size()I"))
       private void clearBackSlot(Slot slot, int i, int j, ClickType clickType, CallbackInfo ci) {
-            Services.NETWORK.clearBackSlot2S(BackData.get(minecraft.player));
+            ClearBackSlot.send(BackData.get(minecraft.player));
       }
 }

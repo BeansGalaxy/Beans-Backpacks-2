@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.items;
 
 import com.beansgalaxy.backpacks.data.EnderStorage;
+import com.beansgalaxy.backpacks.network.clientbound.SendEnderData;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -72,7 +73,7 @@ public class EnderBackpack extends BackpackItem {
                   }
 
                   for (ServerPlayer players : serverPlayer.server.getPlayerList().getPlayers()) {
-                        Services.NETWORK.sendEnderData2C(players, uuid);
+                        SendEnderData.send(players, uuid);
                   }
             }
             super.onCraftedBy(stack, level, player);

@@ -22,16 +22,4 @@ public class NetworkPackages {
                         value.packet.decoder().apply(buf).handle();
                   });
       }
-
-      public static void send(Network2S network, Packet2S message) {
-            FriendlyByteBuf buf = PacketByteBufs.create();
-            message.encode(buf);
-            ClientPlayNetworking.send(network.id, buf);
-      }
-
-      public static void send(Network2C network, Packet2C message, ServerPlayer sender) {
-            FriendlyByteBuf buf = PacketByteBufs.create();
-            message.encode(buf);
-            ServerPlayNetworking.send(sender, network.id, buf);
-      }
 }

@@ -3,6 +3,7 @@ package com.beansgalaxy.backpacks.network.serverbound;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.events.UseKeyEvent;
 import com.beansgalaxy.backpacks.network.Network2S;
+import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,6 +21,10 @@ public class UseCauldron implements Packet2S{
 
       public UseCauldron(FriendlyByteBuf byteBuf) {
             this(byteBuf.readBlockPos(), UseKeyEvent.Type.byID(byteBuf.readByte()));
+      }
+
+      public static void send(BlockPos blockPos, UseKeyEvent.Type type) {
+            Services.NETWORK.send(Network2S.USE_CAULDRON_2S, new UseCauldron(blockPos, type));
       }
 
       public void encode(FriendlyByteBuf buf) {

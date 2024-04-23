@@ -3,6 +3,7 @@ package com.beansgalaxy.backpacks.network.serverbound;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.network.Network2S;
+import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.BlockHitResult;
@@ -19,6 +20,10 @@ public class InstantPlace implements Packet2S{
       public InstantPlace(FriendlyByteBuf byteBuf) {
             this.entityId = byteBuf.readInt();
             this.blockHitResult = entityId == -1 ? byteBuf.readBlockHitResult(): null;
+      }
+
+      public static void send(int i, BlockHitResult blockHitResult) {
+            Services.NETWORK.send(Network2S.INSTANT_PLACE_2S, new InstantPlace(i, blockHitResult));
       }
 
       public void encode(FriendlyByteBuf buf) {

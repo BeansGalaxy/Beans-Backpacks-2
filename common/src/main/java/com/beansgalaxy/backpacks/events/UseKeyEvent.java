@@ -5,6 +5,7 @@ import com.beansgalaxy.backpacks.access.BucketLikeAccess;
 import com.beansgalaxy.backpacks.access.BucketsAccess;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.network.serverbound.UseCauldron;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.inventory.CauldronInventory;
 import net.minecraft.client.player.LocalPlayer;
@@ -90,7 +91,7 @@ public class UseKeyEvent {
                   BlockHitResult blockHitResult = getPlayerPOVHitResult(level, owner, ClipContext.Fluid.SOURCE_ONLY);
                   BlockPos blockPos = blockHitResult.getBlockPos();
                   if (blockHitResult.getType() == HitResult.Type.BLOCK && cauldronPickup(player, blockPos, level, backData)) {
-                        if (level.isClientSide()) Services.NETWORK.useCauldron2S(blockPos, Type.PICKUP);
+                        if (level.isClientSide()) UseCauldron.send(blockPos, Type.PICKUP);
                         return true;
                   }
             }
@@ -104,12 +105,12 @@ public class UseKeyEvent {
                   Level level = owner.level();
                   BlockPos blockPos = blockHitResult.getBlockPos();
                   if (potCauldronEquip(blockPos, level, backData)) {
-                        if (level.isClientSide()) Services.NETWORK.useCauldron2S(blockPos, Type.EQUIP);
+                        if (level.isClientSide()) UseCauldron.send(blockPos, Type.EQUIP);
                         return true;
                   }
                   else if (Kind.CAULDRON.is(backData.getTraits().kind) && cauldronPickup(player, blockPos, level, backData))
                   {
-                        if (level.isClientSide()) Services.NETWORK.useCauldron2S(blockPos, Type.PICKUP);
+                        if (level.isClientSide()) UseCauldron.send(blockPos, Type.PICKUP);
                         return true;
                   }
             }
@@ -290,7 +291,7 @@ public class UseKeyEvent {
                   }
 
                   if (cauldronPlace(level, blockPos, blockState, backData)) {
-                        if (level.isClientSide()) Services.NETWORK.useCauldron2S(blockPos, Type.PLACE);
+                        if (level.isClientSide()) UseCauldron.send(blockPos, Type.PLACE);
                         return true;
                   }
             }

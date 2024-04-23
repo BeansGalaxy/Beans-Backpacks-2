@@ -18,11 +18,11 @@ public class LoadEntityEvent implements ClientEntityEvents.Load {
       public void onLoad(Entity entity, ClientLevel world) {
             if (entity instanceof RemotePlayer otherClientPlayer) {
                   UUID uuid = otherClientPlayer.getUUID();
-                  NetworkPackages.send(Network2S.CALL_BACK_SLOT_2S, new CallBackSlot(uuid));
+                  CallBackSlot.send(uuid);
             }
             if (entity instanceof LocalPlayer localPlayer) {
                   UUID uuid = localPlayer.getUUID();
-                  NetworkPackages.send(Network2S.CALL_BACK_INV_2S, new CallBackInventory(uuid));
+                  CallBackInventory.send(uuid);
             }
       }
 }

@@ -5,6 +5,8 @@ import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.beansgalaxy.backpacks.items.EnderBackpack;
+import com.beansgalaxy.backpacks.network.clientbound.ReceiveEnderPos;
+import com.beansgalaxy.backpacks.network.clientbound.SendEnderData;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -76,8 +78,8 @@ public class EnderStorage {
                               UUID uuid = item.getOrCreateUUID(viewed, backStack);
                               if (uuid.equals(viewed)) {
                                     for (ServerPlayer viewer : backData.backpackInventory.getPlayersViewing())
-                                          Services.NETWORK.sendEnderData2C(viewer, viewed);
-                                    Services.NETWORK.sendEnderData2C(player, viewed);
+                                          SendEnderData.send(viewer, viewed);
+                                    SendEnderData.send(player, viewed);
                               }
                         }
                   }
@@ -87,7 +89,7 @@ public class EnderStorage {
                               NonNullList<ServerPlayer> playersViewing = ender.getInventory().getPlayersViewing();
                               EnderStorage.flagForUpdate(viewed, serverLevel.getServer());
                               for (ServerPlayer player : playersViewing)
-                                    Services.NETWORK.sendEnderData2C(player, viewed);
+                                    SendEnderData.send(player, viewed);
                         }
                   }
                   else {
@@ -252,7 +254,7 @@ public class EnderStorage {
                   if (owner instanceof ServerPlayer serverPlayer && serverPlayer.getServer() != null) {
                         BackData backData = BackData.get(owner);
                         backData.setEnderLocations(asPackaged(serverPlayer.getUUID(), serverPlayer.getServer()));
-                        Services.NETWORK.sendEnderLocations2C(serverPlayer, backData);
+                        ReceiveEnderPos.send(serverPlayer, backData);
                   }
             }
 

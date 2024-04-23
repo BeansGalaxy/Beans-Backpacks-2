@@ -10,6 +10,7 @@ import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.items.WingedBackpack;
+import com.beansgalaxy.backpacks.network.clientbound.SyncBackInventory;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -734,7 +735,7 @@ public abstract class EntityAbstract extends Backpack {
                         }
                         backData.set(toStack(this));
                         PlaySound.EQUIP.at(player, kind);
-                        Services.NETWORK.backpackInventory2C(player);
+                        SyncBackInventory.send(player);
 
                         if (!this.isRemoved())
                         {

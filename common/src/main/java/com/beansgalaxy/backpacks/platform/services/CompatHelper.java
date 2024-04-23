@@ -5,6 +5,7 @@ import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.inventory.CauldronInventory;
+import com.beansgalaxy.backpacks.network.clientbound.SyncBackInventory;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -156,7 +157,7 @@ public interface CompatHelper {
        * Syncs the ServerPlayer's back inventory to that player's client.
        **/
       static void updateBackpackInventory2C(ServerPlayer player) {
-            Services.NETWORK.backpackInventory2C(player);
+            SyncBackInventory.send(player);
       }
 
       /**

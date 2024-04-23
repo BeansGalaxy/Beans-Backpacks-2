@@ -9,6 +9,7 @@ import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.items.BackpackItem;
+import com.beansgalaxy.backpacks.network.clientbound.SyncBackInventory;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -71,7 +72,7 @@ public class BackpackMenu extends AbstractContainerMenu {
       @Override
       public void broadcastChanges() {
             if (owner instanceof ServerPlayer serverPlayer)
-                  Services.NETWORK.backpackInventory2C(serverPlayer);
+                  SyncBackInventory.send(serverPlayer);
             super.broadcastChanges();
       }
 

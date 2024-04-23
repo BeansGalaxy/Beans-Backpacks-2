@@ -5,10 +5,7 @@ import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
-import com.beansgalaxy.backpacks.network.clientbound.ConfigureLists;
-import com.beansgalaxy.backpacks.network.clientbound.ConfigureTraits;
-import com.beansgalaxy.backpacks.network.clientbound.SendEnderData;
-import com.beansgalaxy.backpacks.network.clientbound.SyncBackSlot;
+import com.beansgalaxy.backpacks.network.clientbound.*;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -62,28 +59,28 @@ public class CommonForgeEvents {
 
                   BackData.get(oldPlayer).copyTo(BackData.get(newPlayer));
                   if (oldPlayer instanceof ServerPlayer serverPlayer)
-                        Services.NETWORK.syncBackSlot2C(serverPlayer, null);
+                        SyncBackSlot.send(serverPlayer);
             }
       }
 
       @SubscribeEvent // INVENTORY CANNOT SYNC DURING PLAYER CLONE EVENT, I THINK DUE TO CLIENT PLAYER IN THE OLD BODY
       public static void PlayerRespawnEvent(PlayerEvent.PlayerRespawnEvent event) {
             if (event.getEntity() instanceof ServerPlayer serverPlayer)
-                  Services.NETWORK.backpackInventory2C(serverPlayer);
+                  SyncBackInventory.send(serverPlayer);
 
       }
 
       @SubscribeEvent
       public static void PlayerChangeDimensions(PlayerEvent.PlayerChangedDimensionEvent event) {
             if (event.getEntity() instanceof ServerPlayer player)
-                  Services.NETWORK.backpackInventory2C(player);
+                  SyncBackInventory.send(player);
       }
 
       @SubscribeEvent
       public static void PlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
             if (event.getEntity() instanceof ServerPlayer player)
             {
-                  Services.NETWORK.backpackInventory2C(player);
+                  SyncBackInventory.send(player);
 
                   ItemStack stack = BackData.get(player).getStack();
                   NetworkPackages.S2C(new SyncBackSlot(player.getUUID(), stack), player);

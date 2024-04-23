@@ -5,6 +5,7 @@ import com.beansgalaxy.backpacks.network.clientbound.*;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.HashSet;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -26,17 +27,10 @@ public enum Network2C {
             this.packet = packet;
       }
 
-      private boolean debugCheck = true;
       public void debugMsgEncode() {
-            if (debugCheck)
-                  Constants.LOG.info("encoding: \"" + id.getPath() + "\"");
       }
 
       public void debugMsgDecode() {
-            if (debugCheck) {
-                  Constants.LOG.info("decoding: \"" + id.getPath() + "\"");
-                  debugCheck = false;
-            }
       }
 
       public record Packet<T extends Packet2C>(Class<T> type, BiConsumer<T, FriendlyByteBuf> encoder, Function<FriendlyByteBuf, T> decoder, Consumer<T> handle)

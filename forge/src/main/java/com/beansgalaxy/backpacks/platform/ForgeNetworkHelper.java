@@ -6,17 +6,16 @@ import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
-import com.beansgalaxy.backpacks.network.clientbound.ReceiveEnderPos;
-import com.beansgalaxy.backpacks.network.clientbound.SendEnderData;
-import com.beansgalaxy.backpacks.network.clientbound.SyncBackInventory;
-import com.beansgalaxy.backpacks.network.clientbound.SyncBackSlot;
-import com.beansgalaxy.backpacks.network.clientbound.SyncViewers;
+import com.beansgalaxy.backpacks.network.Network2C;
+import com.beansgalaxy.backpacks.network.Network2S;
+import com.beansgalaxy.backpacks.network.clientbound.*;
 import com.beansgalaxy.backpacks.network.serverbound.*;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.platform.services.NetworkHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
@@ -32,64 +31,18 @@ import java.util.UUID;
 
 public class ForgeNetworkHelper implements NetworkHelper {
       @Override
-      public void SprintKey2S(boolean sprintKeyPressed) {
-            NetworkPackages.C2S(new SprintKey(sprintKeyPressed));
+      public void send(Network2S network, Packet2S msg) {
+            NetworkPackages.C2S(msg);
       }
 
       @Override
-      public void SyncViewers2All(Entity owner, byte viewers) {
-            int id = owner.getId();
-            NetworkPackages.S2All(new SyncViewers(id, viewers));
+      public void send(Network2C network, Packet2C msg, ServerPlayer sender) {
+            NetworkPackages.S2C(msg, sender);
       }
 
       @Override
-      public void syncBackSlot2C(Player owner, @Nullable ServerPlayer sender) {
-            if (sender == null)
-                  NetworkPackages.S2All(new SyncBackSlot(owner.getUUID(), BackData.get(owner).getStack()));
-            else
-                  NetworkPackages.S2C(new SyncBackSlot(owner.getUUID(), BackData.get(owner).getStack()), sender);
-      }
-
-      @Override
-      public void backpackInventory2C(ServerPlayer owner) {
-            BackData backData = BackData.get(owner);
-            ItemStack backStack = backData.getStack();
-            if (backStack.getItem() instanceof EnderBackpack backpack) {
-                  if (!backStack.isEmpty())
-                        Services.NETWORK.sendEnderData2C(owner, backpack.getOrCreateUUID(owner.getUUID(), backStack));
-                  return;
-            }
-            NetworkPackages.S2C(new SyncBackInventory(backData.backpackInventory), owner);
-      }
-
-      @Override
-      public void instantPlace2S(int i, BlockHitResult blockHitResult) {
-            NetworkPackages.C2S(new InstantPlace(i, blockHitResult));
-      }
-
-      @Override
-      public void pickFromBackpack2S(int slot) {
-            NetworkPackages.C2S(new PickBackpack(slot));
-      }
-
-      @Override
-      public void sendEnderData2C(ServerPlayer player, UUID uuid) {
-            NetworkPackages.S2C(new SendEnderData(uuid, EnderStorage.getEnderData(uuid, player.level())), player);
-      }
-
-      @Override
-      public void sendEnderLocations2C(ServerPlayer serverPlayer, BackData backData) {
-            NetworkPackages.S2C(new ReceiveEnderPos(backData), serverPlayer);
-      }
-
-      @Override
-      public void useCauldron2S(BlockPos pos, UseKeyEvent.Type type) {
-            NetworkPackages.C2S(new UseCauldron(pos, type));
-      }
-
-      @Override
-      public void clearBackSlot2S(BackData backData) {
-            NetworkPackages.C2S(new ClearBackSlot(backData));
+      public void send(Network2C network2C, Packet2C msg, MinecraftServer server) {
+            NetworkPackages.S2All(msg);
       }
 
       @Override

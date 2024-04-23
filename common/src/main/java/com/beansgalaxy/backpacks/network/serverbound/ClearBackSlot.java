@@ -17,6 +17,10 @@ public class ClearBackSlot implements Packet2S{
             byteBuf.readBoolean();
       }
 
+      public static void send(BackData backData) {
+
+      }
+
       public void encode(FriendlyByteBuf buf) {
             Network2S.CLEAR_BACK_SLOT_2S.debugMsgEncode();
             buf.writeBoolean(true);

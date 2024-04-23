@@ -33,7 +33,7 @@
     "client.KeyBindTooltip",
     "client.SmithingScreenMixin",
     "client.TrimsAtlasMixin",
-    "client.UpdateSprintKey"
+    "client.UpdateActionKey"
   ],
   "server": [
   ],
