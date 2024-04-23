@@ -14,7 +14,6 @@ import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.beansgalaxy.backpacks.screen.*;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Inventory;
@@ -98,11 +97,12 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
 
             ItemStack carried = getCarried();
             ItemStack cursorStack = carried;
-            if (selectedEquipment && !selectedBackSlot && Constants.CHESTPLATE_DISABLED.contains(cursorStack.getItem())) {
+            boolean cursorEmpty = cursorStack.isEmpty();
+            if (selectedEquipment && !selectedBackSlot && !cursorEmpty && Constants.CHESTPLATE_DISABLED.contains(cursorStack.getItem())) {
                   return;
             }
 
-            if (!backData.isEmpty() && actionType == ClickType.QUICK_MOVE && Constants.canEquipWithBackpack(stack.getItem())) {
+            if (!backData.isEmpty() && actionType == ClickType.QUICK_MOVE && Constants.cantEquipWithBackpack(stack.getItem())) {
                   cancelQuickMoveArmor = true;
                   super.clicked(slotIndex, button, actionType, player);
                   cancelQuickMoveArmor = false;
@@ -112,7 +112,7 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
             Level level = player.level();
             if (!backData.isEmpty() && Constants.elytraOrDisables(cursorStack.getItem()))
             {
-                  if (selectedEquipment && !slot.hasItem() && !cursorStack.isEmpty())
+                  if (selectedEquipment && !slot.hasItem() && !cursorEmpty)
                   {
                         if (level.isClientSide)
                               Tooltip.playSound(kind, PlaySound.HIT);

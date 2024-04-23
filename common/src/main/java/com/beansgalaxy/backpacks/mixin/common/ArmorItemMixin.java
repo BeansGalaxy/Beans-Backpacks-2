@@ -43,7 +43,7 @@ public abstract class ArmorItemMixin implements Equipable {
                                           PlaySound.EQUIP.at(player, kind);
                         }
                   } else {
-                        if (Constants.elytraOrDisables(item) || Constants.CHESTPLATE_DISABLED.contains(item)) {
+                        if (Constants.cantEquipWithBackpack(item)) {
                               cir.setReturnValue(false);
                               if (player.level().isClientSide()) {
                                     Tooltip.playSound(kind, PlaySound.HIT);

@@ -10,13 +10,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.world.Container;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import org.apache.commons.lang3.function.TriFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,8 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class Constants {
 	public static final String MOD_ID = "beansbackpacks";
@@ -75,11 +70,11 @@ public class Constants {
 	}
 
 	public static boolean elytraOrDisables(Item item) {
-		return DISABLES_BACK_SLOT.contains(item) || ELYTRA_ITEMS.contains(item);
+		return !item.equals(Items.AIR) && (DISABLES_BACK_SLOT.contains(item) || ELYTRA_ITEMS.contains(item));
 	}
 
-	public static boolean canEquipWithBackpack(Item item) {
-		return DISABLES_BACK_SLOT.contains(item) || ELYTRA_ITEMS.contains(item) || CHESTPLATE_DISABLED.contains(item);
+	public static boolean cantEquipWithBackpack(Item item) {
+		return !item.equals(Items.AIR) && (DISABLES_BACK_SLOT.contains(item) || ELYTRA_ITEMS.contains(item) || CHESTPLATE_DISABLED.contains(item));
 	}
 
 	protected static void register() {

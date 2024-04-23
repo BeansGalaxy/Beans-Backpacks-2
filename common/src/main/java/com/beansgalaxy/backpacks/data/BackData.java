@@ -164,6 +164,7 @@ public class BackData {
 
       public List<ItemStack> getDisabling() {
             List<ItemStack> items = Services.COMPAT.backSlotDisabled(owner);
+            items.removeIf(ItemStack::isEmpty);
             NonNullList<ItemStack> disabling = NonNullList.create();
             for (ItemStack stack : owner.getInventory().armor) {
                   if (!stack.isEmpty() && Constants.elytraOrDisables(stack.getItem()))
