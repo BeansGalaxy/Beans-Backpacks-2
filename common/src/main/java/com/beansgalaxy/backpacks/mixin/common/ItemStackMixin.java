@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
+import com.beansgalaxy.backpacks.data.config.TooltipType;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.items.BackpackItem;
@@ -82,7 +83,14 @@ public abstract class ItemStackMixin {
                   return;
             }
 
-            if (instance == backStack && instance.hasTag() && instance.getTag().contains("back_slot"))
+            if (Services.CONFIG.getTooltipType() != TooltipType.INTEGRATED
+            && instance == backStack
+            && Tooltip.isCuriosMenu()
+            && !backData.backpackInventory.isEmpty()) {
+                  components.clear();
+                  components.add(Component.empty());
+                  cir.setReturnValue(components);
+            } else if (instance == backStack && instance.hasTag() && instance.getTag().contains("back_slot"))
                   cir.setReturnValue(components);
             else if (instanceKind != null)
                   Tooltip.appendTooltip(player, flag, components, traits, instance);

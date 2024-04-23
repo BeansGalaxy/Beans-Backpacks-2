@@ -28,6 +28,7 @@
   "client": [
     "client.ArmorTrimMixin",
     "client.DisableCape",
+    "client.EffectRenderingScreenMixin",
     "client.InventoryScreenMixin",
     "client.ItemRendererMixin",
     "client.KeyBindTooltip",

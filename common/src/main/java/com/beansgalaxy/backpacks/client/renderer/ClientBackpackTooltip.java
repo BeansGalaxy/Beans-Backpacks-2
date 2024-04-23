@@ -4,6 +4,7 @@ import com.beansgalaxy.backpacks.access.ClickAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.config.TooltipType;
 import com.beansgalaxy.backpacks.inventory.BackpackTooltip;
+import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Lighting;
@@ -16,6 +17,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.player.LocalPlayer;
@@ -31,6 +33,7 @@ import net.minecraft.world.item.ItemStack;
 import java.lang.Math;
 import org.joml.Matrix4f;
 
+import javax.tools.Tool;
 import java.util.Iterator;
 
 public class ClientBackpackTooltip implements ClientTooltipComponent {
@@ -39,16 +42,22 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
       private final NonNullList<ItemStack> itemStacks;
       private final Minecraft minecraft;
       private final int size;
+      private final boolean isCuriosMenu;
+      private final TooltipType tooltipType;
 
       public ClientBackpackTooltip(BackpackTooltip tooltip) {
             this.itemStacks = tooltip.itemStacks;
             this.minecraft = Minecraft.getInstance();
             this.size = Math.min(itemStacks.size(), MAX_DISPLAY);
+            this.tooltipType = Services.CONFIG.getTooltipType();
+            this.isCuriosMenu = Tooltip.isCuriosMenu();
       }
 
       @Override
       public int getHeight() {
-            return -2;
+            return isCuriosMenu && TooltipType.INTEGRATED != tooltipType
+                        ? -17
+                        : -2;
       }
 
       @Override
@@ -58,14 +67,15 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
 
       @Override
       public void renderImage(Font font, int cursorX, int cursorY, GuiGraphics gui) {
-            int mouseX = cursorX + 10000;
-            int mouseY = cursorY + 10000;
+            if (!isCuriosMenu) {
+                  cursorX += 10000;
+                  cursorY += 10000;
+            }
 
-            TooltipType tooltipType = Services.CONFIG.getTooltipType();
             switch (tooltipType) {
-                  case VANILLA -> renderVanilla(font, gui, mouseX, mouseY);
-                  case INTEGRATED -> renderLarge(font, gui, mouseX + 2, mouseY - 6);
-                  default -> renderCompact(font, gui, mouseX, mouseY);
+                  case VANILLA -> renderVanilla(font, gui, cursorX, cursorY);
+                  case INTEGRATED -> renderLarge(font, gui, cursorX + 2, cursorY - 6);
+                  default -> renderCompact(font, gui, cursorX, cursorY);
             }
       }
 
@@ -86,7 +96,8 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
 
             int rows = Mth.ceil(sqrt);
             int leftPos = mouseX + 10;
-            int topPos = mouseY - Mth.ceil(sudoSize / columns) * 4;
+            int offset = isCuriosMenu ? 5 : Mth.ceil(sudoSize / columns) * 4;
+            int topPos = mouseY - offset;
             int spacing = 18;
 
             int w = columns * spacing;
@@ -95,10 +106,11 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
                   MutableComponent mutableComponent = Component.empty().append(item.getHoverName()).withStyle(item.getRarity().color);
                   if (item.hasCustomHoverName()) mutableComponent.withStyle(ChatFormatting.ITALIC);
                   int textWidth = font.width(mutableComponent.getVisualOrderText());
-                  int offset = (hasSpace ? -9 : 5) + (columns > 4 ? 0 : 7);
-                  int tooLong = Math.max(offset, textWidth - w + (12));
+                  int textOffset = (hasSpace ? -9 : 5) + (columns > 4 ? 0 : 7);
+                  int textLengthOverflow = isCuriosMenu ? 0 : textWidth - w + (12);
+                  int tooLong = Math.max(textOffset, textLengthOverflow);
 
-                  drawTooltipBox(gui, leftPos - tooLong, topPos - 28, textWidth + 5, 12);
+                  drawTooltipBox(gui, leftPos - tooLong, topPos - 28, textWidth + 5, 12, 0);
                   gui.drawString(font, mutableComponent, leftPos + 3 - tooLong, topPos - 26, 0xFFFFFFFF);
             }
 
@@ -142,7 +154,7 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
             int fillX = firstX + ((empty || isQuickMove) && hasSpace ? spacing : 0);
             gui.fill(fillX + 1, firstY + 1, fillX + 17, firstY + 17, 500, 0x78FFFFFF);
 
-            drawTooltipBox(gui, leftPos - 12, topPos - 11, w + 5, y * spacing + 4);
+            drawTooltipBox(gui, leftPos - 12, topPos - 11, w + 5, y * spacing + 4, 0);
       }
 
       private void renderCompact(Font font, GuiGraphics gui, int mouseX, int mouseY) {
@@ -164,7 +176,7 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
                   rows = r;
             }
 
-            int offsetY = rows * 7;
+            int offsetY = isCuriosMenu ? 15 : rows * 7;
             int maxRows = 5;
             int maxColumns = 7;
             int itemsWidth = Math.min(maxColumns, columns) * SPACING + 3;
@@ -174,28 +186,20 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
                   MutableComponent mutableComponent = Component.empty().append(item.getHoverName()).withStyle(item.getRarity().color);
                   if (item.hasCustomHoverName()) mutableComponent.withStyle(ChatFormatting.ITALIC);
                   int textWidth = font.width(mutableComponent.getVisualOrderText());
-                  int tooltipOffset = Math.max(0, (textWidth - itemsWidth + 7));
+                  int textLengthOverflow = isCuriosMenu ? 0 : textWidth - itemsWidth + 7;
+                  int tooltipOffset = Math.max(0, textLengthOverflow);
 
-                  drawTooltipBox(gui, mouseX - tooltipOffset, mouseY - 18 - offsetY, textWidth + 5, 12);
+                  drawTooltipBox(gui, mouseX - tooltipOffset, mouseY - 18 - offsetY, textWidth + 5, 12, 0);
                   gui.drawString(font, mutableComponent, mouseX + 3 - tooltipOffset, mouseY - offsetY - 16, 0xFFFFFFFF);
             }
 
-            drawTooltipBox(gui, mouseX - 2, mouseY - 1 - offsetY, itemsWidth, Math.min(maxRows, rows) * SPACING + 2);
+            drawTooltipBox(gui, mouseX - 2, mouseY - 1 - offsetY, itemsWidth, Math.min(maxRows, rows) * SPACING + 2, 0);
             drawItems(font, gui, mouseX - 1, mouseY - offsetY, rows, columns, 5, 7);
       }
 
       private void renderLarge(Font font, GuiGraphics gui, int mouseX, int mouseY) {
             Screen screen = minecraft.screen;
-            if (!(screen instanceof InventoryScreen)) return;
-
-            if (minecraft.player.inventoryMenu.getCarried().isEmpty()) {
-                  ItemStack item = itemStacks.get(0);
-                  MutableComponent mutableComponent = Component.empty().append(item.getHoverName()).withStyle(item.getRarity().color);
-                  if (item.hasCustomHoverName()) mutableComponent.withStyle(ChatFormatting.ITALIC);
-                  int width1 = font.width(mutableComponent.getVisualOrderText());
-                  drawTooltipBox(gui, mouseX - 3, mouseY - 2, width1 + 5, 12);
-                  gui.drawString(font, mutableComponent, mouseX, mouseY, 0xFFFFFFFF);
-            }
+            if (!(screen instanceof EffectRenderingInventoryScreen<?>)) return;
 
             double size = this.size;
             int maxColumns = 9;
@@ -239,7 +243,23 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
                   x = Mth.ceil(pos[0] - (SPACING * offset)) - 1;
             }
 
-            drawTooltipBox(gui, x, y, w + 1, h);
+            if (minecraft.player.inventoryMenu.getCarried().isEmpty()) {
+                  if (!(screen instanceof InventoryScreen)) {
+                        mouseX = x + 10;
+                        mouseY = pos[1] - 15;
+                  }
+                  ItemStack item = itemStacks.get(0);
+                  MutableComponent mutableComponent = Component.empty().append(item.getHoverName()).withStyle(item.getRarity().color);
+                  if (item.hasCustomHoverName()) mutableComponent.withStyle(ChatFormatting.ITALIC);
+                  int width1 = font.width(mutableComponent.getVisualOrderText());
+                  drawTooltipBox(gui, mouseX - 3, mouseY - 2, width1 + 5, 12, 150);
+                  gui.pose().pushPose();
+                  gui.pose().translate(0, 0, 200);
+                  gui.drawString(font, mutableComponent, mouseX, mouseY, 0xFFFFFFFF);
+                  gui.pose().popPose();
+            }
+
+            drawTooltipBox(gui, x, y, w + 1, h, 0);
             drawItems(font, gui, x, y, rows, columns, 3, maxColumns);
       }
 
@@ -291,18 +311,18 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
             gui.fill(x + 2, y + 1, x + 18, y + 17, 500, 0x66FFFFFF);
       }
 
-      private static void drawTooltipBox(GuiGraphics gui, int x, int y, int w, int h) {
+      private static void drawTooltipBox(GuiGraphics gui, int x, int y, int w, int h, int z) {
             int bgColor = 0xF0100010;
-            gui.fill(x - 1, y - 1, x + w + 2, y + h + 1, bgColor);
-            gui.hLine(x, x + w, y - 2, bgColor);
-            gui.hLine(x, x + w, y + h + 1, bgColor);
+            gui.fill(x - 1, y - 1, x + w + 2, y + h + 1, z, bgColor);
+            gui.fill(x, y - 1, x + w, y - 2, z, bgColor);
+            gui.fill(x, y + h + 2, x + w, y + h + 1, z, bgColor);
 
             int topColor = 0x505000FF;
             int botColor = 0x5028007F;
-            gui.hLine(x, x + w, y - 1, topColor);
-            gui.fillGradient(x, y, x + 1, y + h, topColor, botColor);
-            gui.fillGradient(x + w, y, x + w + 1, y + h, topColor, botColor);
-            gui.hLine(x, x + w, y + h, botColor);
+            gui.fill(x, y, x + w, y - 1, z, topColor);
+            gui.fillGradient(x, y, x + 1, y + h, z, topColor, botColor);
+            gui.fillGradient(x + w, y, x + w + 1, y + h, z, topColor, botColor);
+            gui.fill(x, y + h + 1, x + w, y + h, z, botColor);
       }
 
       public void renderItemDecorations(GuiGraphics gui, Font $$0, ItemStack $$1, int x, int y, int z) {

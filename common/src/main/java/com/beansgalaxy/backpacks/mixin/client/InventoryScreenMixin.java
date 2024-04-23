@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Mixin(InventoryScreen.class)
-public abstract class InventoryScreenMixin extends EffectRenderingInventoryScreen<InventoryMenu> implements ClickAccessor {
+public abstract class InventoryScreenMixin extends EffectRenderingInventoryScreen<InventoryMenu>{
       @Shadow @Final private RecipeBookComponent recipeBookComponent;
       @Shadow private boolean buttonClicked;
       @Unique private final CyclingSlotBackground backSlotIcon = new CyclingSlotBackground(BackData.get(Minecraft.getInstance().player).backSlot.slotIndex) {
@@ -67,11 +67,6 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
       }
 
       @Override
-      public int[] getPos() {
-            return new int[]{leftPos + (imageWidth / 2), topPos + (imageHeight / 2)};
-      }
-
-      @Override
       protected void renderTooltip(GuiGraphics gui, int mouseX, int mouseY) {
             if (this.hoveredSlot != null && Services.COMPAT.isBackSlot(this.hoveredSlot)) {
                   ItemStack itemstack = this.hoveredSlot.getItem();
@@ -92,19 +87,6 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
                   this.backSlotIcon.render(this.menu, context, delta, this.leftPos, this.topPos);
             if (!recipeBookComponent.isVisible() && infoWidget.isFocused())
                   infoWidget.render(context, mouseX, mouseY, delta);
-      }
-
-      @Override
-      public void beans_Backpacks_2$instantPlace() {
-            Slot hoveredSlot = this.hoveredSlot;
-            if (hoveredSlot == null)
-                  return;
-
-            BackData backData = BackData.get(this.minecraft.player);
-            if (hoveredSlot.getItem() == backData.getStack() && backData.backpackInventory.isEmpty())
-                  return;
-
-            this.slotClicked(hoveredSlot, hoveredSlot.index, 0, ClickType.PICKUP);
       }
 
       @Unique private final InfoWidget infoWidget = new InfoWidget();

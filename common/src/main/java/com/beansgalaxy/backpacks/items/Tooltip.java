@@ -9,10 +9,12 @@ import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.platform.Services;
+import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.AdvancementList;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -256,5 +258,13 @@ public class Tooltip {
 
 
             return list;
+      }
+
+      public static boolean isCuriosMenu() {
+            Minecraft minecraft = Minecraft.getInstance();
+            boolean b = minecraft.player.containerMenu instanceof InventoryMenu;
+            boolean b1 = minecraft.screen instanceof InventoryScreen;
+            boolean b2 = Services.COMPAT.isModLoaded(CompatHelper.CURIOS);
+            return b2 && b && !b1;
       }
 }
