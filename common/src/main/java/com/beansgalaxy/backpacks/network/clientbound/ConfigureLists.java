@@ -21,6 +21,11 @@ public class ConfigureLists implements Packet2C {
             this(byteBuf.readMap(FriendlyByteBuf::readUtf, FriendlyByteBuf::readUtf));
       }
 
+      @Override
+      public Network2C getNetwork() {
+            return Network2C.CONFIG_LISTS_2C;
+      }
+
       public static void send(ServerPlayer sender) {
             HashMap<String, String> map = new HashMap<>();
 
@@ -29,16 +34,15 @@ public class ConfigureLists implements Packet2C {
             map.put("elytra_items", Constants.writeList(Constants.ELYTRA_ITEMS));
             map.put("blacklist_items", Constants.writeList(Constants.BLACKLIST_ITEMS));
 
-            Services.NETWORK.send(Network2C.CONFIG_LISTS_2C, new ConfigureLists(map), sender);
+            new ConfigureLists(map).send2C(sender);
       }
 
       public void encode(FriendlyByteBuf buf) {
-            Network2C.CONFIG_LISTS_2C.debugMsgDecode();
             buf.writeMap(map, FriendlyByteBuf::writeUtf, FriendlyByteBuf::writeUtf);
       }
 
       public void handle() {
-            Network2C.CONFIG_LISTS_2C.debugMsgEncode();
+            getNetwork().debugMsgEncode();
             Constants.receiveItemLists(map);
       }
 }

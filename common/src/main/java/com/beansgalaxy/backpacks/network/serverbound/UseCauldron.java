@@ -10,7 +10,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 
 public class UseCauldron implements Packet2S{
-
       final BlockPos blockPos;
       final UseKeyEvent.Type type;
 
@@ -24,18 +23,22 @@ public class UseCauldron implements Packet2S{
       }
 
       public static void send(BlockPos blockPos, UseKeyEvent.Type type) {
-            Services.NETWORK.send(Network2S.USE_CAULDRON_2S, new UseCauldron(blockPos, type));
+            new UseCauldron(blockPos, type).send2S();
+      }
+
+      @Override
+      public Network2S getNetwork() {
+            return Network2S.USE_CAULDRON_2S;
       }
 
       public void encode(FriendlyByteBuf buf) {
-            Network2S.USE_CAULDRON_2S.debugMsgEncode();
             buf.writeBlockPos(blockPos);
             buf.writeByte(type.id);
       }
 
       @Override
       public void handle(ServerPlayer sender) {
-            Network2S.USE_CAULDRON_2S.debugMsgDecode();
+            getNetwork().debugMsgDecode();
             Level level = sender.level();
             BackData backData = BackData.get(sender);
 

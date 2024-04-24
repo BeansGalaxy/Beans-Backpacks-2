@@ -114,7 +114,7 @@ public class Tooltip {
       }
 
       private static final MutableComponent empty = Component.literal("");
-      private static String keyBind = "§6" + getKeyBinding().getTranslatedKeyMessage().getString()
+      public static String keyBind = "§6" + getKeyBinding().getTranslatedKeyMessage().getString()
                   .replace("Left ", "L")
                   .replace("Right ", "R")
                   .replace("Control", "Ctrl");
@@ -211,6 +211,7 @@ public class Tooltip {
                   default -> {
                         components.add(empty);
                         components.add(Component.translatable("tooltip.beansbackpacks.storage_title"));
+
                         int maxStacks = traits.maxStacks();
                         components.add(Component.translatable("tooltip.beansbackpacks.storage.stacks", "§9" + maxStacks));
 
@@ -225,6 +226,9 @@ public class Tooltip {
                               MutableComponent playerName = enderData.getPlayerNameColored(level.registryAccess());
                               components.add(Component.translatable("tooltip.beansbackpacks.ender", playerName));
                         }
+
+                        if (instance.hasTag() && instance.getTag().getBoolean("Locked"))
+                              components.add(Component.literal("Locked").withStyle(ChatFormatting.BLUE));
 
                         String key = traits.backpack_id;
                         if (flag.isAdvanced() && !Constants.isEmpty(key))

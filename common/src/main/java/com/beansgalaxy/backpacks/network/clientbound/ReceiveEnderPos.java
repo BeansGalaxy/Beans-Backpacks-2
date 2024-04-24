@@ -13,7 +13,7 @@ import java.util.HashSet;
 public class ReceiveEnderPos implements Packet2C {
       final HashSet<EnderStorage.PackagedLocation> enderLocations;
 
-      public ReceiveEnderPos(BackData backData) {
+      private ReceiveEnderPos(BackData backData) {
             this.enderLocations = backData.getEnderLocations();
       }
 
@@ -24,11 +24,15 @@ public class ReceiveEnderPos implements Packet2C {
       }
 
       public static void send(ServerPlayer serverPlayer, BackData backData) {
-            Services.NETWORK.send(Network2C.ENDER_POS_2C, new ReceiveEnderPos(backData), serverPlayer);
+            new ReceiveEnderPos(backData).send2C(serverPlayer);
+      }
+
+      @Override
+      public Network2C getNetwork() {
+            return Network2C.ENDER_POS_2C;
       }
 
       public void encode(FriendlyByteBuf buf) {
-            Network2C.ENDER_POS_2C.debugMsgEncode();
             buf.writeInt(enderLocations.size());
             for (EnderStorage.PackagedLocation location : enderLocations)
                   location.writeBuf(buf);
@@ -36,7 +40,7 @@ public class ReceiveEnderPos implements Packet2C {
 
       @Override
       public void handle() {
-            Network2C.ENDER_POS_2C.debugMsgDecode();
+            getNetwork().debugMsgDecode();
             CommonAtClient.receiveEnderPos(enderLocations);
       }
 }

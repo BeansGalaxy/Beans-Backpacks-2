@@ -20,18 +20,22 @@ public class ActionKey implements Packet2S {
       }
 
       public static void send(boolean actionKeyPressed) {
-            Services.NETWORK.send(Network2S.ACTION_KEY_2S, new ActionKey(actionKeyPressed));
+            new ActionKey(actionKeyPressed).send2S();
+      }
+
+      @Override
+      public Network2S getNetwork() {
+            return Network2S.ACTION_KEY_2S;
       }
 
       @Override
       public void encode(FriendlyByteBuf buf) {
-            Network2S.ACTION_KEY_2S.debugMsgEncode();
             buf.writeBoolean(actionKeyPressed);
       }
 
       @Override
       public void handle(ServerPlayer sender) {
-            Network2S.ACTION_KEY_2S.debugMsgDecode();
+            getNetwork().debugMsgDecode();
             BackData.get(sender).actionKeyPressed = actionKeyPressed;
       }
 }

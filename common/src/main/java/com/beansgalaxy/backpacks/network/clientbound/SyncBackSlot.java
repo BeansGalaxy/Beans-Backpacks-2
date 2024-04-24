@@ -27,24 +27,26 @@ public class SyncBackSlot implements Packet2C {
 
 
       public static void send(Player owner, ServerPlayer sender) {
-            SyncBackSlot msg = new SyncBackSlot(owner.getUUID(), BackData.get(owner).getStack());
-            Services.NETWORK.send(Network2C.SYNC_BACK_SLOT_2C, msg, sender);
+            new SyncBackSlot(owner.getUUID(), BackData.get(owner).getStack()).send2C(sender);
       }
 
       public static void send(Player owner) {
-            SyncBackSlot msg = new SyncBackSlot(owner.getUUID(), BackData.get(owner).getStack());
-            Services.NETWORK.send(Network2C.SYNC_BACK_SLOT_2C, msg, owner.level().getServer());
+            new SyncBackSlot(owner.getUUID(), BackData.get(owner).getStack()).send2A(owner.level().getServer());
+      }
+
+      @Override
+      public Network2C getNetwork() {
+            return Network2C.SYNC_BACK_SLOT_2C;
       }
 
       public void encode(FriendlyByteBuf buf) {
-            Network2C.SYNC_BACK_SLOT_2C.debugMsgEncode();
             buf.writeUUID(uuid);
             buf.writeItem(stack);
       }
 
       @Override
       public void handle() {
-            Network2C.SYNC_BACK_SLOT_2C.debugMsgDecode();
+            getNetwork().debugMsgDecode();
             CommonAtClient.syncBackSlot(uuid, stack);
       }
 }

@@ -25,19 +25,23 @@ public class SyncViewers implements Packet2C {
       public static void send(Entity owner, byte viewers) {
             int id = owner.getId();
             MinecraftServer server = owner.level().getServer();
-            Services.NETWORK.send(Network2C.SYNC_VIEWERS_2C, new SyncViewers(id, viewers), server);
+            new SyncViewers(id, viewers).send2A(server);
+      }
+
+      @Override
+      public Network2C getNetwork() {
+            return Network2C.SYNC_VIEWERS_2C;
       }
 
       @Override
       public void encode(FriendlyByteBuf byteBuf) {
-            Network2C.SYNC_VIEWERS_2C.debugMsgEncode();
             byteBuf.writeInt(entityId);
             byteBuf.writeByte(viewers);
       }
 
       @Override
       public void handle() {
-            Network2C.SYNC_VIEWERS_2C.debugMsgDecode();
+            getNetwork().debugMsgDecode();
             CommonAtClient.syncViewersPacket(entityId, viewers);
       }
 }

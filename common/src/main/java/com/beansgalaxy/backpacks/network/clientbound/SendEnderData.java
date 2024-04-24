@@ -33,11 +33,15 @@ public class SendEnderData implements Packet2C {
       }
 
       public static void send(ServerPlayer player, UUID uuid) {
-            Services.NETWORK.send(Network2C.SEND_ENDER_DATA_2C, new SendEnderData(uuid, EnderStorage.getEnderData(uuid, player.level())), player);
+            new SendEnderData(uuid, EnderStorage.getEnderData(uuid, player.level())).send2C(player);
+      }
+
+      @Override
+      public Network2C getNetwork() {
+            return Network2C.SEND_ENDER_DATA_2C;
       }
 
       public void encode(FriendlyByteBuf buf) {
-            Network2C.SEND_ENDER_DATA_2C.debugMsgEncode();
             buf.writeUUID(uuid);
 
             CompoundTag tag = new CompoundTag();
@@ -51,7 +55,7 @@ public class SendEnderData implements Packet2C {
 
       @Override
       public void handle() {
-            Network2C.SEND_ENDER_DATA_2C.debugMsgDecode();
+            getNetwork().debugMsgDecode();
             EnderStorage.Data computed = EnderStorage.get().MAPPED_DATA.computeIfAbsent(uuid, in -> new EnderStorage.Data());
             computed.setPlayerName(enderData.getPlayerName()).setTrim(enderData.getTrim()).setItemStacks(enderData.getItemStacks());
       }

@@ -20,8 +20,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -55,6 +58,24 @@ public class BackpackItem extends Item {
             }
 
             return InteractionResult.PASS;
+      }
+
+      @Override
+      public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+            if (player.isShiftKeyDown()) {
+                  ItemStack backpackStack = player.getItemInHand(hand);
+                  CompoundTag tag = backpackStack.getTag();
+
+                  if (tag != null && tag.contains("Locked"))
+                        tag.remove("Locked");
+                  else backpackStack.getOrCreateTag().putBoolean("Locked", true);
+
+                  if (level.isClientSide)
+                        Tooltip.playSound(SoundEvents.CHEST_LOCKED, 1f, 1f);
+
+                  return InteractionResultHolder.success(backpackStack);
+            }
+            else return super.use(level, player, hand);
       }
 
       public static boolean interact(ItemStack backStack, ClickAction clickAction, Player player, SlotAccess access, boolean shiftIsDown) {

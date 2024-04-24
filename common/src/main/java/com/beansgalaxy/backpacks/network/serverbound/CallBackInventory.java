@@ -20,18 +20,22 @@ public class CallBackInventory implements Packet2S {
       }
 
       public static void send(UUID uuid) {
-            Services.NETWORK.send(Network2S.CALL_BACK_INV_2S, new CallBackInventory(uuid));
+            new CallBackInventory(uuid).send2S();
+      }
+
+      @Override
+      public Network2S getNetwork() {
+            return Network2S.CALL_BACK_INV_2S;
       }
 
       @Override
       public void encode(FriendlyByteBuf buf) {
-            Network2S.CALL_BACK_INV_2S.debugMsgEncode();
             buf.writeUUID(uuid);
       }
 
       @Override
       public void handle(ServerPlayer sender) {
-            Network2S.CALL_BACK_INV_2S.debugMsgDecode();
+            getNetwork().debugMsgDecode();
             SyncBackInventory.send(sender);
       }
 }

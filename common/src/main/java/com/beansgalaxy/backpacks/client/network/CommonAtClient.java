@@ -5,12 +5,16 @@ import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
+import com.beansgalaxy.backpacks.items.Tooltip;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -65,11 +69,17 @@ public class CommonAtClient {
 
       public static void receiveEnderPos(HashSet<EnderStorage.PackagedLocation> enderLocations) {
             LocalPlayer player = Minecraft.getInstance().player;
-
-            if (player == null)
-                  return;
+            if (player == null) return;
 
             BackData backSlot = BackData.get(player);
             backSlot.setEnderLocations(enderLocations);
+      }
+
+      public static void receiveEquipLockMsg(Component requester) {
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (player == null) return;
+
+            MutableComponent keybind = Component.literal(Tooltip.keyBind).withStyle(ChatFormatting.GOLD);
+            player.displayClientMessage(Component.translatable("entity.beansbackpacks.equip_locked_msg", keybind, requester), true);
       }
 }

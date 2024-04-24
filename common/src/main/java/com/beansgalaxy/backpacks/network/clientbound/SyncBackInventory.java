@@ -33,17 +33,21 @@ public class SyncBackInventory implements Packet2C {
                   return;
             }
 
-            Services.NETWORK.send(Network2C.SYNC_BACK_INV_2C, new SyncBackInventory(backData.backpackInventory), owner);
+            new SyncBackInventory(backData.backpackInventory).send2C(owner);
+      }
+
+      @Override
+      public Network2C getNetwork() {
+            return Network2C.SYNC_BACK_INV_2C;
       }
 
       public void encode(FriendlyByteBuf buf) {
-            Network2C.SYNC_BACK_INV_2C.debugMsgEncode();
             buf.writeUtf(stacks);
       }
 
       @Override
       public void handle() {
-            Network2C.SYNC_BACK_INV_2C.debugMsgDecode();
+            getNetwork().debugMsgDecode();
             CommonAtClient.syncBackInventory(stacks);
       }
 

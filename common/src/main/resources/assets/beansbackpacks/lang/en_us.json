@@ -122,6 +122,7 @@
   "entity.beansbackpacks.locked.back_slot_blocked": "%d is already equipped.",
   "entity.beansbackpacks.locked.back_slot_blocked.and": " and ",
   "entity.beansbackpacks.locked.request_access": "%d wants to access your backpack.",
+  "entity.beansbackpacks.equip_locked_msg": "Hold %d to let %d access your backpack.",
 
   "text.autoconfig.beansbackpacks.title": "Beans' Backpacks",
 

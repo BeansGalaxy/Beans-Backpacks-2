@@ -18,17 +18,21 @@ public class ClearBackSlot implements Packet2S{
       }
 
       public static void send(BackData backData) {
+            new ClearBackSlot(backData).send2S();
+      }
 
+      @Override
+      public Network2S getNetwork() {
+            return Network2S.CLEAR_BACK_SLOT_2S;
       }
 
       public void encode(FriendlyByteBuf buf) {
-            Network2S.CLEAR_BACK_SLOT_2S.debugMsgEncode();
             buf.writeBoolean(true);
       }
 
       @Override
       public void handle(ServerPlayer sender) {
-            Network2S.CLEAR_BACK_SLOT_2S.debugMsgDecode();
+            getNetwork().debugMsgDecode();
             if (sender != null) {
                   BackData backData = BackData.get(sender);
                   backData.backpackInventory.clearContent();

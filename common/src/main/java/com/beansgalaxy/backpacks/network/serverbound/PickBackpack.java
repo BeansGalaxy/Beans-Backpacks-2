@@ -7,7 +7,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 
 public class PickBackpack implements Packet2S {
-
       int slot;
 
       public PickBackpack(int slot) {
@@ -20,17 +19,21 @@ public class PickBackpack implements Packet2S {
       }
 
       public static void send(int slot) {
-            Services.NETWORK.send(Network2S.PICK_BACKPACK_2S, new PickBackpack(slot));
+            new PickBackpack(slot).send2S();
+      }
+
+      @Override
+      public Network2S getNetwork() {
+            return Network2S.PICK_BACKPACK_2S;
       }
 
       public void encode(FriendlyByteBuf buf) {
-            Network2S.PICK_BACKPACK_2S.debugMsgEncode();
             buf.writeInt(slot);
       }
 
       @Override
       public void handle(ServerPlayer sender) {
-            Network2S.PICK_BACKPACK_2S.debugMsgDecode();
+            getNetwork().debugMsgDecode();
             PickBlockEvent.pickBackpack(slot, sender);
       }
 }

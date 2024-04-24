@@ -8,7 +8,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class InstantPlace implements Packet2S{
+public class InstantPlace implements Packet2S {
       int entityId;
       BlockHitResult blockHitResult;
 
@@ -23,11 +23,15 @@ public class InstantPlace implements Packet2S{
       }
 
       public static void send(int i, BlockHitResult blockHitResult) {
-            Services.NETWORK.send(Network2S.INSTANT_PLACE_2S, new InstantPlace(i, blockHitResult));
+            new InstantPlace(i, blockHitResult).send2S();
+      }
+
+      @Override
+      public Network2S getNetwork() {
+            return Network2S.INSTANT_PLACE_2S;
       }
 
       public void encode(FriendlyByteBuf buf) {
-            Network2S.INSTANT_PLACE_2S.debugMsgEncode();
             buf.writeInt(entityId);
             if (entityId == -1)
                   buf.writeBlockHitResult(blockHitResult);
@@ -35,7 +39,7 @@ public class InstantPlace implements Packet2S{
 
       @Override
       public void handle(ServerPlayer sender) {
-            Network2S.INSTANT_PLACE_2S.debugMsgDecode();
+            getNetwork().debugMsgDecode();
             if (entityId == -1)
             {
                   BackpackItem.hotkeyOnBlock(sender, blockHitResult.getDirection(), blockHitResult.getBlockPos());

@@ -24,7 +24,7 @@ public abstract class InteractWithPlayer extends LivingEntity implements ITokenP
       @Override @NotNull
       public InteractionResult interact(Player player, InteractionHand hand) {
             if (InteractionHand.MAIN_HAND.equals(hand))
-                  return BackSlot.openPlayerBackpackMenu(player, (Player) (Object) this);
+                  return BackSlot.openPlayerBackpackMenu(player, (ServerPlayer) (Object) this);
             return super.interact(player, hand);
       }
 }

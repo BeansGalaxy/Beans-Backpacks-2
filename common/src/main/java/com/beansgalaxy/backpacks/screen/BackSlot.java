@@ -7,6 +7,7 @@ import com.beansgalaxy.backpacks.data.config.Gamerules;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
+import com.beansgalaxy.backpacks.network.clientbound.EquipLockedMsg;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -62,7 +63,7 @@ public class BackSlot extends Slot {
             super.set($$0);
       }
 
-      public static InteractionResult openPlayerBackpackMenu(Player viewer, Player owner) {
+      public static InteractionResult openPlayerBackpackMenu(Player viewer, ServerPlayer owner) {
             BackData backData = BackData.get(owner);
             ItemStack backpackStack = backData.getStack();
             if (!Kind.isBackpack(backpackStack))
@@ -92,12 +93,12 @@ public class BackSlot extends Slot {
             boolean looking = e > 1.0 - radius * maxRadius && viewer.hasLineOfSight(owner);
 
             if (yawMatches && looking) { // INTERACT WITH BACKPACK CODE GOES HERE
-                  if (ServerSave.CONFIG.get(Gamerules.LOCK_BACKPACK_NO_KEY) && !backData.actionKeyPressed) {
-                        owner.displayClientMessage(Component.translatable("entity.beansbackpacks.locked.request_access", viewer.getDisplayName()), true);
+                  if (!backData.actionKeyPressed && backpackStack.hasTag() && backpackStack.getTag().getBoolean("Locked")) {
+                        EquipLockedMsg.send(viewer, owner);
                         PlaySound.HIT.at(owner, backData.getTraits().kind);
                   } else {
                         Services.NETWORK.openBackpackMenu(viewer, owner);
-                        PlaySound.OPEN.at(owner, backData.getTraits().kind, 0.6f);
+                        PlaySound.OPEN.at(owner, backData.getTraits().kind, 0.4f);
                   }
                   return InteractionResult.SUCCESS;
             }

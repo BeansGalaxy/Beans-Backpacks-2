@@ -21,18 +21,24 @@ public class CallBackSlot implements Packet2S {
       }
 
       public static void send(UUID uuid) {
-            Services.NETWORK.send(Network2S.CALL_BACK_SLOT_2S, new CallBackSlot(uuid));
+            new CallBackSlot(uuid).send2S();
+      }
+
+      @Override
+      public Network2S getNetwork() {
+            return Network2S.CALL_BACK_SLOT_2S;
       }
 
       public void encode(FriendlyByteBuf buf) {
-            Network2S.CALL_BACK_SLOT_2S.debugMsgEncode();
             buf.writeUUID(uuid);
       }
 
       @Override
       public void handle(ServerPlayer sender) {
-            Network2S.CALL_BACK_SLOT_2S.debugMsgDecode();
             Player owner = sender.level().getPlayerByUUID(uuid);
+            if (owner == null) return;
+
+            getNetwork().debugMsgDecode();
             SyncBackSlot.send(owner, sender);
       }
 }
