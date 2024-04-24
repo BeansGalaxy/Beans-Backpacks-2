@@ -179,7 +179,8 @@ public class Tooltip {
       public static void playSound(Kind kind, PlaySound playSound, float volume) {
             Random rnd = new Random();
             float pitch = playSound.isRandom() ? (rnd.nextFloat() / 4f) + 0.8f : 1f;
-            playSound(Services.REGISTRY.getSound(kind, playSound), pitch, volume);
+            PlaySound.Playable sound = PlaySound.getSound(kind, playSound);
+            playSound(sound.event(), pitch * sound.pitch(), volume * sound.volume());
       }
 
       public static void playSound(SoundEvent soundEvent, float pitch, float volume) {

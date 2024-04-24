@@ -39,5 +39,5 @@ public interface RegistryHelper {
 
       void triggerSpecial(ServerPlayer player, SpecialCriterion.Special special);
 
-      SoundEvent getSound(Kind kind, PlaySound sound);
+      SoundEvent soundEvent(String name);
 }

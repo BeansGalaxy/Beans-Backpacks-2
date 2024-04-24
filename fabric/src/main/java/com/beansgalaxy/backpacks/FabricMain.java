@@ -43,6 +43,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -53,11 +54,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
+import java.util.HashMap;
+
 public class FabricMain implements ModInitializer {
     public static EquipAnyCriterion EQUIP_ANY = CriteriaTriggers.register(new EquipAnyCriterion());
     public static PlaceCriterion PLACE = CriteriaTriggers.register(new PlaceCriterion());
     public static SpecialCriterion SPECIAL = CriteriaTriggers.register(new SpecialCriterion());
     public static final ResourceLocation INITIAL_SYNC = new ResourceLocation(Constants.MOD_ID, "initial_sync");
+    public static final HashMap<String, SoundEvent> SOUNDS = new HashMap<>();
     
     @Override
     public void onInitialize() {
@@ -74,7 +78,7 @@ public class FabricMain implements ModInitializer {
         ServerPlayerEvents.COPY_FROM.register(new CopyPlayerEvent());
         EntityElytraEvents.CUSTOM.register(new ElytraFlightEvent());
         UseBlockCallback.EVENT.register(new PlayerInteractEvent());
-        Sounds.register();
+        registerSounds();
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
                     RegisterCommands.register(dispatcher));
@@ -101,6 +105,7 @@ public class FabricMain implements ModInitializer {
         Constants.LOG.info("Initializing Beans' Backpacks Fabric");
     }
 
+    /* ========================================= ITEM REGISTRY ========================================= */
     public static final Item LEATHER_BACKPACK = registerItem("backpack", new DyableBackpack(new Item.Properties().stacksTo(1)));
     public static final Item METAL_BACKPACK = registerItem("metal_backpack", new BackpackItem(new Item.Properties().stacksTo(1)));
     public static final Item UPGRADED_BACKPACK = registerItem("upgraded_backpack", new BackpackItem(new Item.Properties().fireResistant().stacksTo(1)));
@@ -113,6 +118,7 @@ public class FabricMain implements ModInitializer {
         return Registry.register(BuiltInRegistries.ITEM, resourceLocation, item);
     }
 
+    /* ========================================= REGISTER RECIPES ========================================= */
     public static final RecipeSerializer<Crafting> RECIPE_CRAFTING = Registry.register(
                             BuiltInRegistries.RECIPE_SERIALIZER, Crafting.LOCATION, Crafting.INSTANCE);
 
@@ -122,7 +128,7 @@ public class FabricMain implements ModInitializer {
     public static final RecipeSerializer<Conversion> RECIPE_CONVERSION = Registry.register(
                 BuiltInRegistries.RECIPE_SERIALIZER, Conversion.LOCATION, Conversion.INSTANCE);
 
-    // REGISTER CREATIVE TAB
+    /* ========================================= REGISTER CREATIVE TAB ========================================= */
     public static final CreativeModeTab BACKPACK_TAB = FabricItemGroup.builder()
                 .title(Component.translatable("itemGroup." + Constants.MOD_ID))
                 .icon(() -> new ItemStack(LEATHER_BACKPACK))
@@ -132,6 +138,7 @@ public class FabricMain implements ModInitializer {
                 Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,
                 new ResourceLocation(Constants.MOD_ID, "backpacks"), BACKPACK_TAB);
 
+    /* ========================================= REGISTER ENTITY ========================================= */
     public static final EntityType<Entity> BACKPACK_ENTITY =
                 Registry.register(BuiltInRegistries.ENTITY_TYPE,
                 new ResourceLocation(Constants.MOD_ID, "backpack"),
@@ -147,9 +154,19 @@ public class FabricMain implements ModInitializer {
                             new ResourceLocation(Constants.MOD_ID, "winged_backpack"),
                             FabricEntityTypeBuilder.create(MobCategory.MISC, EntityFlight::new).build());
 
+    /* ========================================= REGISTER MISC ========================================= */
     public static final MenuType<BackpackMenu> BACKPACK_MENU =
                 Registry.register(BuiltInRegistries.MENU,
                 new ResourceLocation(Constants.MOD_ID, "backpack_menu"),
                 new ExtendedScreenHandlerType<>(BackpackMenu::new));
 
+    public static void registerSounds() {
+        for (PlaySound.Events value : PlaySound.Events.values()) {
+            String id = value.id;
+            ResourceLocation location = new ResourceLocation(Constants.MOD_ID, id);
+            SoundEvent event = SoundEvent.createVariableRangeEvent(location);
+            SoundEvent register = Registry.register(BuiltInRegistries.SOUND_EVENT, location, event);
+            SOUNDS.put(id, register);
+        }
+    }
 }

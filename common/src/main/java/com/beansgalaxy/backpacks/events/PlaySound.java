@@ -45,24 +45,130 @@ public enum PlaySound {
         if (!world.isClientSide) {
             Random rnd = new Random();
             float pitch = random ? (rnd.nextFloat() / 4f) + 0.8f : 1f;
+            Playable sound = getSound(kind, this);
+            world.playSound(null, entity.blockPosition(), sound.event, SoundSource.BLOCKS, volume * sound.volume(), pitch * sound.pitch());
+        }
+    }
 
-            if (Kind.LEATHER.is(kind) && this.equals(PlaySound.TAKE))
-                pitch += 0.2f;
+    public record Playable(SoundEvent event, float volume, float pitch) {}
 
-            if (Kind.ENDER.is(kind))
-                switch (this) {
+    public static Playable getSound(Kind kind, PlaySound type) {
+        switch (kind) {
+            case LEATHER, WINGED -> {
+                switch (type) {
+                    case PLACE -> {
+                        return Events.LEATHER_PLACE.playable(1f, 1f);
+                    }
+                    case EQUIP -> {
+                        return Events.LEATHER_EQUIP.playable(1f, 1f);
+                    }
+                    case HIT -> {
+                        return Events.LEATHER_HIT.playable(1f, 1f);
+                    }
+                    case BREAK -> {
+                        return Events.LEATHER_BREAK.playable(1f, 1f);
+                    }
                     case INSERT -> {
-                        volume *= 0.1f;
-                        pitch += 0.1f;
-                }
+                        return Events.LEATHER_INSERT.playable(1f, 1f);
+                    }
                     case TAKE -> {
-                        volume *= 0.1f;
-                        pitch -= 0.2f;
+                        return Events.LEATHER_INSERT.playable(1f, 1.2f);
+                    }
+                    case OPEN -> {
+                        return Events.LEATHER_OPEN.playable(1f, 1f);
+                    }
+                    case CLOSE -> {
+                        return Events.LEATHER_CLOSE.playable(1f, 1f);
                     }
                 }
+            }
+            case METAL, UPGRADED -> {
+                switch (type) {
+                    case PLACE -> {
+                        return Events.METAL_PLACE.playable(1f, 1f);
+                    }
+                    case EQUIP -> {
+                        return Events.METAL_EQUIP.playable(1f, 1f);
+                    }
+                    case HIT -> {
+                        return Events.METAL_HIT.playable(1f, 1f);
+                    }
+                    case BREAK -> {
+                        return Events.METAL_BREAK.playable(1f, 1f);
+                    }
+                    case INSERT -> {
+                        return Events.METAL_INSERT.playable(1f, 1f);
+                    }
+                    case TAKE -> {
+                        return Events.METAL_TAKE.playable(1f, 1f);
+                    }
+                    case OPEN -> {
+                        return Events.METAL_OPEN.playable(1f, 1f);
+                    }
+                    case CLOSE -> {
+                        return Events.METAL_CLOSE.playable(1f, 1f);
+                    }
+                }
+            }
+            case POT -> {
+                switch (type) {
+                    case INSERT -> {
+                        return new Playable(SoundEvents.DECORATED_POT_HIT, 1f, 1f);
+                    }
+                    case TAKE -> {
+                        return new Playable(SoundEvents.DECORATED_POT_FALL, 1f, 1f);
+                    }
+                }
+            }
+            case ENDER -> {
+                switch (type) {
+                    case OPEN -> {
+                        return new Playable(SoundEvents.ENDER_CHEST_OPEN, 1f, 1f);
+                    }
+                    case CLOSE -> {
+                        return new Playable(SoundEvents.ENDER_CHEST_CLOSE, 1f, 1f);
+                    }
+                    case TAKE-> {
+                        return new Playable(SoundEvents.ENDERMAN_TELEPORT, 0.1f, 0.8f);
+                    }
+                    case INSERT -> {
+                        return new Playable(SoundEvents.ENDERMAN_TELEPORT, 0.1f, 1.1f);
+                    }
+                }
+            }
+        }
+        return new Playable(type.getDefaultSoundEvent(), 1f, 1f);
+    }
 
-            SoundEvent soundEvent = Services.REGISTRY.getSound(kind, this);
-            world.playSound(null, entity.blockPosition(), soundEvent, SoundSource.BLOCKS, volume, pitch);
+    public enum Events {
+        LEATHER_PLACE  ("leather_place"),
+        LEATHER_EQUIP  ("leather_equip"),
+        LEATHER_HIT    ("leather_hit"),
+        LEATHER_BREAK  ("leather_break"),
+        LEATHER_INSERT ("leather_insert"),
+        LEATHER_OPEN   ("leather_open"),
+        LEATHER_CLOSE  ("leather_close"),
+        METAL_PLACE    ("metal_place"),
+        METAL_EQUIP    ("metal_equip"),
+        METAL_HIT      ("metal_hit"),
+        METAL_BREAK    ("metal_break"),
+        METAL_INSERT   ("metal_insert"),
+        METAL_TAKE     ("metal_take"),
+        METAL_OPEN     ("metal_open"),
+        METAL_CLOSE    ("metal_close");
+
+        public final String id;
+
+        Events(String id) {
+            this.id = id;
+        }
+
+        private SoundEvent get() {
+            return Services.REGISTRY.soundEvent(id);
+        }
+
+        private Playable playable(float volume, float pitch) {
+            return new Playable(get(), volume, pitch);
         }
     }
 }

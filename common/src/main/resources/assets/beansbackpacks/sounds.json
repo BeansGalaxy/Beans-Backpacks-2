@@ -1,107 +1,77 @@
 {
-  "place_leather": {
+  "leather_place": {
     "sounds": [
       "beansbackpacks:leather/place"
     ]
   },
-  "equip_leather": {
+  "leather_equip": {
     "sounds": [
       "beansbackpacks:leather/equip"
     ]
   },
-  "hit_leather": {
+  "leather_hit": {
     "sounds": [
       "beansbackpacks:leather/hit"
     ]
   },
-  "break_leather": {
+  "leather_break": {
     "sounds": [
       "beansbackpacks:leather/break"
     ]
   },
-  "insert_leather": {
+  "leather_insert": {
     "sounds": [
       "beansbackpacks:leather/insert"
     ]
   },
-  "open_leather": {
+  "leather_open": {
     "sounds": [
       "beansbackpacks:leather/open"
     ]
   },
-  "close_leather": {
+  "leather_close": {
     "sounds": [
       "beansbackpacks:leather/close"
     ]
   },
-  "place_metal": {
+  "metal_place": {
     "sounds": [
       "beansbackpacks:metal/place"
     ]
   },
-  "equip_metal": {
+  "metal_equip": {
     "sounds": [
       "beansbackpacks:metal/equip"
     ]
   },
-  "hit_metal": {
+  "metal_hit": {
     "sounds": [
       "beansbackpacks:metal/hit"
     ]
   },
-  "break_metal": {
+  "metal_break": {
     "sounds": [
       "beansbackpacks:metal/break"
     ]
   },
-  "insert_metal": {
+  "metal_insert": {
     "sounds": [
       "beansbackpacks:metal/insert"
     ]
   },
-  "take_metal": {
+  "metal_take": {
     "sounds": [
       "beansbackpacks:metal/take"
     ]
   },
-  "open_metal": {
+  "metal_open": {
     "sounds": [
       "beansbackpacks:metal/open"
     ]
   },
-  "close_metal": {
+  "metal_close": {
     "sounds": [
       "beansbackpacks:metal/close"
-    ]
-  },
-  "place_upgraded": {
-    "sounds": [
-      "beansbackpacks:upgraded/place"
-    ]
-  },
-  "equip_upgraded": {
-    "sounds": [
-      "beansbackpacks:upgraded/equip"
-    ]
-  },
-  "hit_upgraded": {
-    "sounds": [
-      "beansbackpacks:upgraded/hit"
-    ]
-  },
-  "break_upgraded": {
-    "sounds": [
-      "beansbackpacks:upgraded/break"
-    ]
-  },
-  "open_upgraded": {
-    "sounds": [
-      "beansbackpacks:upgraded/open"
-    ]
-  },
-  "close_upgraded": {
-    "sounds": [
-      "beansbackpacks:upgraded/close"
     ]
   }
 }

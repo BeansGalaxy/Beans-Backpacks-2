@@ -1,22 +1,18 @@
 package com.beansgalaxy.backpacks.platform;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.FabricMain;
-import com.beansgalaxy.backpacks.Sounds;
-import com.beansgalaxy.backpacks.data.BackData;
-import com.beansgalaxy.backpacks.entity.Kind;
-import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.platform.services.RegistryHelper;
-import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleVariantStorage;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 
 public class FabricRegistryHelper implements RegistryHelper {
 
@@ -81,117 +77,8 @@ public class FabricRegistryHelper implements RegistryHelper {
       }
 
       @Override
-      public SoundEvent getSound(Kind kind, PlaySound type) {
-            SoundEvent sound = type.getDefaultSoundEvent();
-            if (kind == null)
-                  return sound;
-
-            switch (kind) {
-                  case LEATHER, WINGED -> {
-                        switch (type) {
-                              case PLACE -> {
-                                    return Sounds.PLACE_LEATHER;
-                              }
-                              case EQUIP -> {
-                                    return Sounds.EQUIP_LEATHER;
-                              }
-                              case HIT -> {
-                                    return Sounds.HIT_LEATHER;
-                              }
-                              case BREAK -> {
-                                    return Sounds.BREAK_LEATHER;
-                              }
-                              case INSERT, TAKE -> {
-                                    return Sounds.INSERT_LEATHER;
-                              }
-                              case OPEN -> {
-                                    return Sounds.OPEN_LEATHER;
-                              }
-                              case CLOSE -> {
-                                    return Sounds.CLOSE_LEATHER;
-                              }
-                        }
-                  }
-//                  case METAL -> {
-//                        switch (type) {
-//                              case PLACE -> {
-//                                    return Sounds.PLACE_METAL;
-//                              }
-//                              case EQUIP -> {
-//                                    return Sounds.EQUIP_METAL;
-//                              }
-//                              case HIT -> {
-//                                    return Sounds.HIT_METAL;
-//                              }
-//                              case BREAK -> {
-//                                    return Sounds.BREAK_METAL;
-//                              }
-//                              case INSERT -> {
-//                                    return Sounds.INSERT_METAL;
-//                              }
-//                              case TAKE -> {
-//                                    return Sounds.TAKE_METAL;
-//                              }
-//                              case OPEN -> {
-//                                    return Sounds.OPEN_METAL;
-//                              }
-//                              case CLOSE -> {
-//                                    return Sounds.CLOSE_METAL;
-//                              }
-//                        }
-//                  }
-                  case METAL -> {
-                        switch (type) {
-                              case PLACE -> {
-                                    return Sounds.PLACE_UPGRADED;
-                              }
-                              case EQUIP -> {
-                                    return Sounds.EQUIP_UPGRADED;
-                              }
-                              case HIT -> {
-                                    return Sounds.HIT_UPGRADED;
-                              }
-                              case BREAK -> {
-                                    return Sounds.BREAK_UPGRADED;
-                              }
-                              case INSERT -> {
-                                    return Sounds.INSERT_METAL;
-                              }
-                              case TAKE -> {
-                                    return Sounds.TAKE_METAL;
-                              }
-                              case OPEN -> {
-                                    return Sounds.OPEN_UPGRADED;
-                              }
-                              case CLOSE -> {
-                                    return Sounds.CLOSE_UPGRADED;
-                              }
-                        }
-                  }
-                  case POT -> {
-                        switch (type) {
-                              case INSERT -> {
-                                    return SoundEvents.DECORATED_POT_HIT;
-                              }
-                              case TAKE -> {
-                                    return SoundEvents.DECORATED_POT_FALL;
-                              }
-                        }
-                  }
-                  case ENDER -> {
-                        switch (type) {
-                              case OPEN -> {
-                                    return SoundEvents.ENDER_CHEST_OPEN;
-                              }
-                              case CLOSE -> {
-                                    return SoundEvents.ENDER_CHEST_CLOSE;
-                              }
-                              case TAKE, INSERT -> {
-                                    return SoundEvents.ENDERMAN_TELEPORT;
-                              }
-                        }
-                  }
-            }
-            return sound;
+      public SoundEvent soundEvent(String id) {
+            return FabricMain.SOUNDS.get(id);
       }
+
 }

@@ -3,6 +3,7 @@ package com.beansgalaxy.backpacks;
 import com.beansgalaxy.backpacks.compat.CurioRegistry;
 import com.beansgalaxy.backpacks.config.ClientConfig;
 import com.beansgalaxy.backpacks.config.CommonConfig;
+import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.items.recipes.Conversion;
 import com.beansgalaxy.backpacks.items.recipes.Crafting;
 import com.beansgalaxy.backpacks.items.recipes.Smithing;
@@ -21,6 +22,7 @@ import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
@@ -39,11 +41,14 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.HashMap;
+
 @Mod(Constants.MOD_ID)
 public class ForgeMain {
     public static EquipAnyCriterion EQUIP_ANY = CriteriaTriggers.register(new EquipAnyCriterion());
     public static PlaceCriterion PLACE = CriteriaTriggers.register(new PlaceCriterion());
     public static SpecialCriterion SPECIAL = CriteriaTriggers.register(new SpecialCriterion());
+    public static final HashMap<String, RegistryObject<SoundEvent>> SOUNDS = new HashMap<>();
 
     public ForgeMain() {
         CommonClass.init();
@@ -54,7 +59,8 @@ public class ForgeMain {
         ENTITIES.register(bus);
         MENU_TYPES.register(bus);
         CREATIVE_TABS.register(bus);
-        Sounds.register(bus);
+        SOUND_EVENTS.register(bus);
+        registerSounds();
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC, Constants.MOD_ID + "-client.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.SPEC, Constants.MOD_ID + "-common.toml");
@@ -63,6 +69,20 @@ public class ForgeMain {
 
         if (Services.COMPAT.isModLoaded(CompatHelper.CURIOS))
             bus.addListener(CurioRegistry::register);
+    }
+
+    // SOUNDS REGISTRY
+    public static final DeferredRegister<SoundEvent> SOUND_EVENTS =
+                DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, Constants.MOD_ID);
+
+    private static void registerSounds() {
+        for (PlaySound.Events value : PlaySound.Events.values()) {
+            String id = value.id;
+            RegistryObject<SoundEvent> register = ForgeMain.SOUND_EVENTS.register(id, () ->
+                        SoundEvent.createVariableRangeEvent(new ResourceLocation(Constants.MOD_ID, id)));
+
+            ForgeMain.SOUNDS.put(id, register);
+        }
     }
 
     // REGISTER MENUS
