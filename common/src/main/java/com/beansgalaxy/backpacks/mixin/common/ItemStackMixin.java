@@ -1,14 +1,13 @@
 package com.beansgalaxy.backpacks.mixin.common;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.data.config.TooltipType;
 import com.beansgalaxy.backpacks.entity.Kind;
-import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.platform.Services;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.SlotAccess;
@@ -83,7 +82,7 @@ public abstract class ItemStackMixin {
                   return;
             }
 
-            if (Services.CONFIG.getTooltipType() != TooltipType.INTEGRATED
+            if (Constants.CLIENT_CONFIG.tooltip_style.get() != TooltipType.INTEGRATED
             && instance == backStack
             && Tooltip.isCuriosMenu()
             && !backData.backpackInventory.isEmpty()) {

@@ -1,13 +1,12 @@
 package com.beansgalaxy.backpacks.mixin.client;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.access.ClickAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
-import com.beansgalaxy.backpacks.data.config.Config;
 import com.beansgalaxy.backpacks.network.serverbound.ActionKey;
 import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.items.Tooltip;
-import com.beansgalaxy.backpacks.platform.Services;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -47,8 +46,8 @@ public class UpdateActionKey {
             backData.actionKeyPressed = actionKeyPressed;
             ActionKey.send(actionKeyPressed);
 
-            boolean instantPlace = isMouseKey || Services.CONFIG.getBoolConfig(Config.INSTANT_PLACE);
-            if (instantPlace && actionKeyPressed) {
+            boolean instantPlace = Constants.CLIENT_CONFIG.instant_place.get();
+            if ((instantPlace || isMouseKey) && actionKeyPressed) {
                   if (instance.screen instanceof ClickAccessor clickAccessor)
                         clickAccessor.beans_Backpacks_2$instantPlace();
                   else if (!(instance.screen instanceof BackpackScreen))

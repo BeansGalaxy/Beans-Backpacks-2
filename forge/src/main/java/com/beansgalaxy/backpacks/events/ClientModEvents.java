@@ -34,6 +34,7 @@ public class ClientModEvents {
       public static void clientSetup(FMLClientSetupEvent event) {
             event.enqueueWork(() -> {
                   MenuScreens.register(ForgeMain.MENU.get(), BackpackScreen::new);
+                  Constants.CLIENT_CONFIG.read();
             });
       }
 

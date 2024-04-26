@@ -1,9 +1,7 @@
 package com.beansgalaxy.backpacks.data;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.data.config.Config;
 import com.beansgalaxy.backpacks.entity.Kind;
-import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ArmorMaterial;
@@ -14,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import java.awt.*;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class Traits {
       public static final Traits EMPTY = new Traits("Err", true, "none", null, 0);
@@ -27,12 +26,16 @@ public class Traits {
       public static final Function<Integer, Color> IGNORE_COLOR = i -> new Color(0xFFFFFF);
 
       public final String name;
-      public final int maxStacks;
+      private final Supplier<Integer> maxStacks;
       public final boolean fireResistant;
       public final String button;
       public final ArmorMaterial material;
 
       public Traits(String name, boolean fireResistant, String button, String material, int maxStacks) {
+            this(name, fireResistant, button, material, () -> maxStacks);
+      }
+
+      public Traits(String name, boolean fireResistant, String button, String material, Supplier<Integer> maxStacks) {
             this.name = name;
             this.maxStacks = maxStacks;
             this.fireResistant = fireResistant;
@@ -41,11 +44,15 @@ public class Traits {
       }
 
       public Traits(CompoundTag tag) {
-            this.maxStacks = tag.getInt("max_stacks");
+            this.maxStacks = () -> tag.getInt("max_stacks");
             this.name = tag.getString("name");
             this.fireResistant = tag.getBoolean("fire_resistant");
             this.button = tag.getString("button");
             this.material = getMaterial(tag.getString("material"));
+      }
+
+      public int getMaxStacks() {
+            return maxStacks.get();
       }
 
       static ArmorMaterials getMaterial(String key) {
@@ -68,7 +75,7 @@ public class Traits {
       public CompoundTag toTag() {
             CompoundTag data = new CompoundTag();
             data.putString("name", name);
-            data.putInt("max_stacks", maxStacks);
+            data.putInt("max_stacks", maxStacks.get());
             data.putBoolean("fire_resistant", fireResistant);
             data.putString("button", button);
             data.putString("material", material.getName());
@@ -241,7 +248,7 @@ public class Traits {
             }
 
             public int maxStacks() {
-                  return traits().maxStacks;
+                  return traits().getMaxStacks();
             }
 
             public boolean fireResistant() {
@@ -268,26 +275,26 @@ public class Traits {
       static {
             LEATHER = new Traits("Backpack",
                         false, "minecraft:gold", "leather",
-                        Services.CONFIG.getIntConfig(Config.LEATHER_MAX_STACKS));
+                        ServerSave.CONFIG.leather_max_stacks::get);
 
             METAL = new Traits("Iron Backpack",
                         false, "minecraft:diamond", "iron",
-                        Services.CONFIG.getIntConfig(Config.METAL_MAX_STACKS));
+                        ServerSave.CONFIG.metal_max_stacks::get);
 
             ENDER = new Traits("Ender Backpack",
                         false, "none", "turtle",
-                        Services.CONFIG.getIntConfig(Config.ENDER_MAX_STACKS));
+                        ServerSave.CONFIG.ender_max_stacks::get);
 
             WINGED = new Traits("Winged Backpack",
                         false, "minecraft:gold", "leather",
-                        Services.CONFIG.getIntConfig(Config.WINGED_MAX_STACKS));
+                        ServerSave.CONFIG.winged_max_stacks::get);
 
             POT = new Traits("Decorated Pot",
                         false, "none", null,
-                        Services.CONFIG.getIntConfig(Config.POT_MAX_STACKS));
+                        ServerSave.CONFIG.pot_max_stacks::get);
 
             CAULDRON= new Traits("Cauldron",
                         false, "none", null,
-                        Services.CONFIG.getIntConfig(Config.CAULDRON_MAX_BUCKETS));
+                        ServerSave.CONFIG.cauldron_max_buckets::get);
       }
 }

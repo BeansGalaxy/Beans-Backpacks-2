@@ -1,11 +1,8 @@
 package com.beansgalaxy.backpacks.mixin.common;
 
-import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.data.Traits;
-import com.beansgalaxy.backpacks.data.config.Config;
 import com.beansgalaxy.backpacks.entity.Kind;
-import com.beansgalaxy.backpacks.platform.Services;
-import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.minecraft.commands.Commands;
@@ -21,7 +18,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -76,7 +72,7 @@ public class DataResourcesMixin {
                               Traits ironTraits = Traits.METAL;
                               JsonObject settings = GsonHelper.getAsJsonObject(jsonObject, "traits");
                               String fallbackName = GsonHelper.getAsString(settings, "fallback_name", ironTraits.name);
-                              int maxStacks = GsonHelper.getAsInt(settings, "max_stacks", Services.CONFIG.getIntConfig(Config.METAL_MAX_STACKS));
+                              int maxStacks = GsonHelper.getAsInt(settings, "max_stacks", ServerSave.CONFIG.metal_max_stacks.get());
                               boolean fireResistant = GsonHelper.getAsBoolean(settings, "fire_resistant", ironTraits.fireResistant);
                               String button = GsonHelper.getAsString(settings, "button", ironTraits.button);
                               String material = GsonHelper.getAsString(settings, "material", null);

@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks;
 
+import com.beansgalaxy.backpacks.config.ClientConfig;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -27,6 +28,7 @@ public class Constants {
 	public static final String MOD_ID = "beansbackpacks";
 	public static final String MOD_NAME = "Beans' Backpacks";
 	public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
+	public static final ClientConfig CLIENT_CONFIG = new ClientConfig();
 
 	public static final HashMap<String, Traits> TRAITS_MAP = new HashMap<>();
 	public static final boolean SLOTS_MOD_ACTIVE = Services.COMPAT.anyModsLoaded(CompatHelper.CURIOS, CompatHelper.TRINKETS);
@@ -47,7 +49,7 @@ public class Constants {
 		}
 	};
 
-	public static ItemStack createLabeledBackpack(String backpack_id) {
+      public static ItemStack createLabeledBackpack(String backpack_id) {
 		ItemStack backpackStack = Services.REGISTRY.getMetal().getDefaultInstance();
 		backpackStack.getOrCreateTag().putString("backpack_id", backpack_id);
 		return backpackStack;

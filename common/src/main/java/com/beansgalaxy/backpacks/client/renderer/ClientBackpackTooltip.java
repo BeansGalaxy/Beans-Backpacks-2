@@ -1,11 +1,11 @@
 package com.beansgalaxy.backpacks.client.renderer;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.access.ClickAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.config.TooltipType;
 import com.beansgalaxy.backpacks.inventory.BackpackTooltip;
 import com.beansgalaxy.backpacks.items.Tooltip;
-import com.beansgalaxy.backpacks.platform.Services;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -33,7 +33,6 @@ import net.minecraft.world.item.ItemStack;
 import java.lang.Math;
 import org.joml.Matrix4f;
 
-import javax.tools.Tool;
 import java.util.Iterator;
 
 public class ClientBackpackTooltip implements ClientTooltipComponent {
@@ -49,7 +48,7 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
             this.itemStacks = tooltip.itemStacks;
             this.minecraft = Minecraft.getInstance();
             this.size = Math.min(itemStacks.size(), MAX_DISPLAY);
-            this.tooltipType = Services.CONFIG.getTooltipType();
+            this.tooltipType = Constants.CLIENT_CONFIG.tooltip_style.get();
             this.isCuriosMenu = Tooltip.isCuriosMenu();
       }
 

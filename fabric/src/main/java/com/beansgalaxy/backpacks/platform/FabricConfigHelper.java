@@ -1,53 +1,15 @@
 package com.beansgalaxy.backpacks.platform;
 
-import com.beansgalaxy.backpacks.compat.FabricConfig;
-import com.beansgalaxy.backpacks.data.config.Config;
-import com.beansgalaxy.backpacks.data.config.MenuVisibility;
-import com.beansgalaxy.backpacks.data.config.TooltipType;
-import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.beansgalaxy.backpacks.platform.services.ConfigHelper;
-import com.beansgalaxy.backpacks.screen.InfoWidget;
+import net.fabricmc.loader.api.FabricLoader;
 
-import java.util.HashSet;
+import java.nio.file.Path;
 
 public class FabricConfigHelper implements ConfigHelper {
-      @Override
-      public int getIntConfig(Config config) {
-            if (!Services.COMPAT.isModLoaded(CompatHelper.CLOTH_CONFIG))
-                  return config.get(Integer.class);
-            return FabricConfig.getIntConfig(config);
-      }
 
       @Override
-      public boolean getBoolConfig(Config config) {
-            if (!Services.COMPAT.isModLoaded(CompatHelper.CLOTH_CONFIG))
-                  return config.get(Boolean.class);
-            return FabricConfig.getBoolConfig(config);
+      public Path getPath() {
+            return FabricLoader.getInstance().getConfigDir();
       }
 
-      @Override
-      public MenuVisibility getMenuVisibility() {
-            if (!Services.COMPAT.isModLoaded(CompatHelper.CLOTH_CONFIG))
-                  return Config.MENU_VISIBILITY.get(MenuVisibility.class);
-            return FabricConfig.getMenuVisibility();
-      }
-
-      @Override
-      public HashSet<InfoWidget.Tab> getHiddenTabs() {
-            if (!Services.COMPAT.isModLoaded(CompatHelper.CLOTH_CONFIG))
-                  return new HashSet<>();
-            return FabricConfig.getHiddenTabs();
-      }
-
-      @Override
-      public void saveHiddenTabs(HashSet<InfoWidget.Tab> hiddenTabs) {
-            if (Services.COMPAT.isModLoaded(CompatHelper.CLOTH_CONFIG))
-                  FabricConfig.saveHiddenTabs(hiddenTabs);
-      }
-
-      public TooltipType getTooltipType() {
-            if (!Services.COMPAT.isModLoaded(CompatHelper.CLOTH_CONFIG))
-                  return Config.TOOLTIP_TYPE.get(TooltipType.class);
-            return FabricConfig.getTooltipType();
-      }
 }

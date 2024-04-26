@@ -16,7 +16,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -103,7 +102,7 @@ public abstract class EntityAbstract extends Backpack {
             EntityAbstract backpack;
             Optional<UUID> placedBy = Optional.of(uuid);
             if (backpackStack.getItem() instanceof EnderBackpack ender) {
-                  if (onDeath && !ender.isPersistent(backpackStack) && ServerSave.CONFIG.get(Gamerules.UNBIND_ENDER_ON_DEATH))
+                  if (onDeath && !ender.isPersistent(backpackStack) && ServerSave.GAMERULES.get(Gamerules.UNBIND_ENDER_ON_DEATH))
                         placedBy = Optional.empty();
                   else
                         placedBy = Optional.of(ender.getOrCreateUUID(uuid, backpackStack));
@@ -570,21 +569,21 @@ public abstract class EntityAbstract extends Backpack {
             ENDER_NO_OWNER((backData, level, entityAbstract) ->
                         entityAbstract instanceof EntityEnder ender && ender.getPlacedBy() == null),
             NOT_OWNER((backData, level, entityAbstract) -> {
-                  if (ServerSave.CONFIG.get(Gamerules.LOCK_BACKPACK_NOT_OWNER)) {
+                  if (ServerSave.GAMERULES.get(Gamerules.LOCK_BACKPACK_NOT_OWNER)) {
                         UUID placedBy = entityAbstract.getPlacedBy();
                         return backData.owner.getUUID() != placedBy || placedBy == entityAbstract.uuid;
                   }
                   return false;
             }),
             OWNER_OFFLINE((backData, level, entityAbstract) -> {
-                  if (ServerSave.CONFIG.get(Gamerules.LOCK_BACKPACK_OFFLINE)) {
+                  if (ServerSave.GAMERULES.get(Gamerules.LOCK_BACKPACK_OFFLINE)) {
                         UUID placedBy = entityAbstract.getPlacedBy();
                         return placedBy != null && placedBy != entityAbstract.uuid && level.getPlayerByUUID(placedBy) == null;
                   }
                   return false;
             }),
             ENDER_OFFLINE((backData, level, entityAbstract) -> {
-                  if (ServerSave.CONFIG.get(Gamerules.LOCK_ENDER_OFFLINE)) {
+                  if (ServerSave.GAMERULES.get(Gamerules.LOCK_ENDER_OFFLINE)) {
                         return entityAbstract instanceof EntityEnder && OWNER_OFFLINE.apply(backData, level, entityAbstract);
                   }
                   return false;

@@ -73,13 +73,13 @@ public class RegisterCommands {
                                     String readable = value.readable();
                                     boolean newValue = BoolArgumentType.getBool(ctx, readable);
 
-                                    if (ServerSave.CONFIG.get(value).equals(newValue)) {
+                                    if (ServerSave.GAMERULES.get(value).equals(newValue)) {
                                           ctx.getSource().sendFailure(Component.translatable("command.beansbackpacks.config.fail", readable, newValue));
                                           return -1;
                                     }
 
                                     ctx.getSource().sendSuccess(() -> Component.translatable("command.beansbackpacks.config.success", readable, newValue), true);
-                                    ServerSave.CONFIG.put(value, newValue);
+                                    ServerSave.GAMERULES.put(value, newValue);
                                     return 1;
                               })
                   ));

@@ -1,6 +1,5 @@
 package com.beansgalaxy.backpacks;
 
-import com.beansgalaxy.backpacks.compat.FabricConfig;
 import com.beansgalaxy.backpacks.compat.TrinketsRegistry;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.entity.EntityEnder;
@@ -22,8 +21,6 @@ import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
-import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents;
@@ -65,11 +62,7 @@ public class FabricMain implements ModInitializer {
     
     @Override
     public void onInitialize() {
-        if (Services.COMPAT.isModLoaded(CompatHelper.CLOTH_CONFIG))
-            AutoConfig.register(FabricConfig.class, JanksonConfigSerializer::new);
-
         CommonClass.init();
-
         NetworkPackages.register2S();
 
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register(new SyncDataEvent());

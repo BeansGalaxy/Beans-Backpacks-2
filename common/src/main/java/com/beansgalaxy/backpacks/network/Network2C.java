@@ -16,6 +16,7 @@ public enum Network2C {
       SYNC_BACK_INV_2C("sync_back_inv_c", new Packet<>(SyncBackInventory.class, SyncBackInventory::encode, SyncBackInventory::new, SyncBackInventory::handle)),
       CONFIG_TRAITS_2C("config_traits_c", new Packet<>(ConfigureTraits.class, ConfigureTraits::encode, ConfigureTraits::new, ConfigureTraits::handle)),
       CONFIG_LISTS_2C("config_lists_c", new Packet<>(ConfigureLists.class, ConfigureLists::encode, ConfigureLists::new, ConfigureLists::handle)),
+      CONFIG_2C("config_c", new Packet<>(ConfigureConfig.class, ConfigureConfig::encode, ConfigureConfig::new, ConfigureConfig::handle)),
       ENDER_POS_2C("ender_pos_c", new Packet<>(ReceiveEnderPos.class, ReceiveEnderPos::encode, ReceiveEnderPos::new, ReceiveEnderPos::handle)),
       SEND_ENDER_DATA_2C("ender_data_c", new Packet<>(SendEnderData.class, SendEnderData::encode, SendEnderData::new, SendEnderData::handle)),
       EQUIP_LOCKED_MSG("equip_locked_msg_c", new Packet<>(EquipLockedMsg.class, EquipLockedMsg::encode, EquipLockedMsg::new, EquipLockedMsg::handle));

@@ -1,23 +1,23 @@
 package com.beansgalaxy.backpacks;
 
 import com.beansgalaxy.backpacks.compat.CurioRegistry;
-import com.beansgalaxy.backpacks.config.ClientConfig;
-import com.beansgalaxy.backpacks.config.CommonConfig;
-import com.beansgalaxy.backpacks.events.PlaySound;
-import com.beansgalaxy.backpacks.items.recipes.Conversion;
-import com.beansgalaxy.backpacks.items.recipes.Crafting;
-import com.beansgalaxy.backpacks.items.recipes.Smithing;
-import com.beansgalaxy.backpacks.platform.ForgeCompatHelper;
-import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import com.beansgalaxy.backpacks.entity.EntityEnder;
-import com.beansgalaxy.backpacks.entity.EntityGeneral;
 import com.beansgalaxy.backpacks.entity.EntityFlight;
+import com.beansgalaxy.backpacks.entity.EntityGeneral;
+import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.EquipAnyCriterion;
 import com.beansgalaxy.backpacks.events.advancements.PlaceCriterion;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
-import com.beansgalaxy.backpacks.items.*;
+import com.beansgalaxy.backpacks.items.BackpackItem;
+import com.beansgalaxy.backpacks.items.DyableBackpack;
+import com.beansgalaxy.backpacks.items.EnderBackpack;
+import com.beansgalaxy.backpacks.items.WingedBackpack;
+import com.beansgalaxy.backpacks.items.recipes.Conversion;
+import com.beansgalaxy.backpacks.items.recipes.Crafting;
+import com.beansgalaxy.backpacks.items.recipes.Smithing;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
+import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -26,16 +26,14 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -62,13 +60,12 @@ public class ForgeMain {
         SOUND_EVENTS.register(bus);
         registerSounds();
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC, Constants.MOD_ID + "-client.toml");
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.SPEC, Constants.MOD_ID + "-common.toml");
-
         Constants.LOG.info("Initializing Beans' Backpacks Forge");
 
         if (Services.COMPAT.isModLoaded(CompatHelper.CURIOS))
             bus.addListener(CurioRegistry::register);
+
+
     }
 
     // SOUNDS REGISTRY

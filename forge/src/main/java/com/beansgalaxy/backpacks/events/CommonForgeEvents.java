@@ -4,6 +4,7 @@ import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.data.ServerSave;
+import com.beansgalaxy.backpacks.data.config.Gamerules;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.network.clientbound.*;
 import net.minecraft.core.BlockPos;
@@ -53,10 +54,12 @@ public class CommonForgeEvents {
       @SubscribeEvent
       public static void PlayerCloneEvent(PlayerEvent.Clone event) {
             Player oldPlayer = event.getOriginal();
-            if (!event.isWasDeath()) {
+            if (!event.isWasDeath() || ServerSave.GAMERULES.get(Gamerules.KEEP_BACK_SLOT)) {
                   Player newPlayer = event.getEntity();
 
-                  BackData.get(oldPlayer).copyTo(BackData.get(newPlayer));
+                  BackData oldBackData = BackData.get(oldPlayer);
+                  BackData newBackData = BackData.get(newPlayer);
+                  oldBackData.copyTo(newBackData);
                   if (oldPlayer instanceof ServerPlayer serverPlayer)
                         SyncBackSlot.send(serverPlayer);
             }

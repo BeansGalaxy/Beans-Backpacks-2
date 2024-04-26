@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.config.ClientConfig;
 import com.beansgalaxy.backpacks.data.config.MenuVisibility;
 import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -162,8 +163,8 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
             this.recipeBook = recipeBookComponent;
             focused = false;
 
-            if (Services.CONFIG.getMenuVisibility().equals(MenuVisibility.HIDE_ABLE))
-                  hiddenTabs = Services.CONFIG.getHiddenTabs();
+            if (Constants.CLIENT_CONFIG.menu_visibility.get().equals(MenuVisibility.HIDE_ABLE))
+                  hiddenTabs = Constants.CLIENT_CONFIG.hidden_tabs.get();
             this.homeButton = new HomeButton(this, (button) -> onButtonClick(Tab.BACKPACK));
             this.hideButton = new HideButton(this, (button) -> {
                   toggleHidden();
@@ -238,9 +239,8 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
             return focused;
       }
       private boolean isHidden() {
-            MenuVisibility menuVisibility = Services.CONFIG.getMenuVisibility();
             boolean menuEnabled;
-            switch (menuVisibility) {
+            switch (Constants.CLIENT_CONFIG.menu_visibility.get()) {
                   case HIDE_ABLE -> menuEnabled = anyUnlockedNonHidden(hiddenTabs);
                   case DISABLE -> menuEnabled = false;
                   default -> menuEnabled = true;
@@ -260,7 +260,7 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
       }
 
       private void toggleHidden() {
-            boolean hidden = anyUnlockedNonHidden(Services.CONFIG.getHiddenTabs());
+            boolean hidden = anyUnlockedNonHidden(Constants.CLIENT_CONFIG.hidden_tabs.get());
             HashSet<Tab> hiddenTabs = new HashSet<>();
             if (hidden) {
                   for (Tab tab : Tab.values())
@@ -268,7 +268,9 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
                               hiddenTabs.add(tab);
             }
 
-            Services.CONFIG.saveHiddenTabs(hiddenTabs);
+            ClientConfig config = Constants.CLIENT_CONFIG;
+            config.hidden_tabs.set(hiddenTabs);
+            config.write();
       }
 
       public static String keyBind = "§0" + Tooltip.getKeyBinding().getTranslatedKeyMessage().getString()
@@ -415,13 +417,13 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
             }
 
             public void setVisible(boolean visible) {
-                  boolean equals = Services.CONFIG.getMenuVisibility().equals(MenuVisibility.HIDE_ABLE);
+                  boolean equals = Constants.CLIENT_CONFIG.menu_visibility.get().equals(MenuVisibility.HIDE_ABLE);
                   this.visible = visible && equals;
             }
 
             @Override
             protected void renderWidget(GuiGraphics $$0, int $$1, int $$2, float $$3) {
-                  if (!parent.anyUnlockedNonHidden(Services.CONFIG.getHiddenTabs()))
+                  if (!parent.anyUnlockedNonHidden(Constants.CLIENT_CONFIG.hidden_tabs.get()))
                         this.renderTexture($$0, TEXTURE, this.getX(), this.getY(), 16, 198, getHeight(), getWidth(), getHeight(), 256, 256);
                   else
                         this.renderTexture($$0, TEXTURE, this.getX(), this.getY(), 0, 198, getHeight(), getWidth(), getHeight(), 256, 256);

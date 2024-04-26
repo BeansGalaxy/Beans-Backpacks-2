@@ -19,7 +19,7 @@ import net.minecraft.world.level.Level;
 
 public class PotInventory {
       public static int getMaxSize() {
-            return Traits.get("POT").maxStacks;
+            return Traits.get("POT").getMaxStacks();
       }
 
       public static ItemStack add(ItemStack pot, ItemStack inserted, Player player) {

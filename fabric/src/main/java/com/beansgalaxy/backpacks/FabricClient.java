@@ -20,6 +20,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.*;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.NonNullList;
@@ -29,6 +30,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
+import java.nio.file.Path;
 import java.util.UUID;
 
 public class FabricClient implements ClientModInitializer {
@@ -78,5 +80,7 @@ public class FabricClient implements ClientModInitializer {
                   computed.setPlayerName(playerName).setTrim(trim).setItemStacks(itemStacks);
 
             });
+
+            Constants.CLIENT_CONFIG.read();
       }
 }

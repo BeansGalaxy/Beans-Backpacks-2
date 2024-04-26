@@ -17,7 +17,7 @@ import java.awt.*;
 
 public class CauldronInventory {
       public static int getMaxSize() {
-            return Traits.get("CAULDRON").maxStacks * 4;
+            return Traits.get("CAULDRON").getMaxStacks() * 4;
       }
 
       public static int sizeLeft(ItemStack cauldron) {

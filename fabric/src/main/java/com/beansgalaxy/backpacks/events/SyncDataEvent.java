@@ -23,6 +23,7 @@ public class SyncDataEvent implements ServerLifecycleEvents.SyncDataPackContents
             if (joined) {
                   BackData backData = BackData.get(player);
                   ReceiveEnderPos.send(player, backData);
+
             }
       }
 }
