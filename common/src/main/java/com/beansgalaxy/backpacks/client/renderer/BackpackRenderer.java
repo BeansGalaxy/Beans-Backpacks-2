@@ -31,6 +31,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
@@ -73,9 +74,11 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
                   }
             }
 
+            EntityAbstract abstractBackpack = null;
             if (backpack instanceof EntityAbstract entityAbstract) {
+                  abstractBackpack = entityAbstract;
                   double breakTime = entityAbstract.wobble;
-                  yaw += (float) (breakTime * Math.sin(breakTime / Math.PI * 4));
+                  yaw += (float) ((breakTime * 0.80f) * Math.sin(breakTime / Math.PI * 3));
                   renderNameAndHitbox(pose, source, entity, yaw, light);
             }
 
@@ -88,12 +91,26 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
             float[] colors = {tint.getRed() / 255F, tint.getGreen() / 255F, tint.getBlue() / 255F};
             ResourceLocation texture = kind.getAppendedResource(traits.backpack_id, "");
             VertexConsumer outer = source.getBuffer(RenderType.entityCutout(texture));
-            this.model.renderToBuffer(pose, outer, light, OverlayTexture.NO_OVERLAY, colors[0], colors[1], colors[2], 1F);
+            this.model.renderToBuffer(pose, outer, light, OverlayTexture.NO_OVERLAY, colors[0], colors[1], colors[2], 1);
             pose.popPose();
 
             RegistryAccess registryAccess = backpack.getCommandSenderWorld().registryAccess();
             double distance = Math.sqrt(this.entityRenderDispatcher.distanceToSqr(entity));
             renderOverlays(pose, light, source, colors, yaw, registryAccess, traits, this.model, this.trimAtlas, distance);
+
+
+            if (abstractBackpack != null) {
+                  int breakAmount = abstractBackpack.breakAmount;
+                  if (breakAmount > 0) {
+                        pose.pushPose();
+                        pose.mulPose(Axis.YN.rotationDegrees(yaw));
+                        int breakStage = Math.min(Mth.ceil(breakAmount / 3f), 7);
+                        ResourceLocation location = new ResourceLocation(Constants.MOD_ID, "textures/entity/destroy_stage/" + breakStage + ".png");
+                        VertexConsumer crumble = source.getBuffer(RenderType.crumbling(location));
+                        this.model.renderToBuffer(pose, crumble, light, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+                        pose.popPose();
+                  }
+            }
 
       }
 
@@ -223,23 +240,25 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
                   }
 
                   pose.pushPose();
-                  AABB box = entity.getBoundingBox().move(-entity.getX(), -entity.getY(), -entity.getZ());
                   VertexConsumer vertices = mbs.getBuffer(RenderType.lines());
                   float brightness = Math.min(light, 300) / 300f / 2;
-                  float value = 0.2f * brightness;
-                  float alpha = 0.9f;
+                  float value = 0.3f * brightness;
+                  float alpha = 1f;
+                  AABB box;
                   if (!entity.getDirection().getAxis().isHorizontal()) {
                         double h = 9D / 16;
                         double w = 8D / 32;
                         double d = 4D / 32;
                         box = new AABB(w, 0, d, -w, h, -d);
                         box.move(-entity.getX(), -entity.getY(), -entity.getZ());
-                        pose.mulPose(Axis.YN.rotationDegrees(yaw));
-                        LevelRenderer.renderLineBox(pose, vertices, box, value, value, value, alpha);
                   } else {
-                        LevelRenderer.renderLineBox(pose, vertices, box, value, value, value, alpha);
-                        pose.mulPose(Axis.YN.rotationDegrees(yaw));
+                        box = entity.getBoundingBox().move(-entity.getX(), -entity.getY(), -entity.getZ());
+                        float yRot = entity.getDirection().toYRot();
+                        yaw += yRot;
                   }
+
+                  pose.mulPose(Axis.YN.rotationDegrees(yaw));
+                  LevelRenderer.renderLineBox(pose, vertices, box, value, value, value, alpha);
                   pose.popPose();
             }
       }

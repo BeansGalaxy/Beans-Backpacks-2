@@ -57,7 +57,8 @@ public abstract class EntityAbstract extends Backpack {
       protected BlockPos pos;
       private double actualY;
       private static final int BREAK_TIMER = 25;
-      public int wobble = 9;
+      public int wobble = 12;
+      public int breakAmount = 0;
       private CompoundTag itemTags;
 
       // REGISTER BACKPACK CONSTRUCTOR
@@ -303,17 +304,9 @@ public abstract class EntityAbstract extends Backpack {
       }
 
       private void wobble() {
-            boolean inLava = isInLava();
-            boolean isOnFire = isOnFire();
-            boolean fireResistant = getTraits().fireResistant();
-            if (!fireResistant && inLava || isOnFire)
-            {
-                  if (wobble % 12 == 0)
-                        playSound(SoundEvents.GENERIC_BURN);
-                  damage(1, true);
-            }
-            else if (wobble > 0)
-                  wobble -= 1;
+            if (wobble > 0)
+                  wobble--;
+            else breakAmount = 0;
       }
 
       @Override
@@ -494,10 +487,20 @@ public abstract class EntityAbstract extends Backpack {
       @Override
       public boolean hurt(DamageSource damageSource, float amount) {
             double height = 0.1D;
-            if ((damageSource.is(DamageTypes.IN_FIRE) || damageSource.is(DamageTypes.ON_FIRE) || damageSource.is(DamageTypes.LAVA))) {
+
+            if ((damageSource.is(DamageTypes.IN_FIRE) || damageSource.is(DamageTypes.LAVA))) {
                   if (fireImmune())
                         return false;
-                  height = 0;
+                  damage(1, true);
+                  if ((breakAmount + 10) % 11 == 0)
+                        playSound(SoundEvents.GENERIC_BURN, 0.8f, 1f);
+                  return true;
+            }
+            if (damageSource.is(DamageTypes.ON_FIRE))
+                  return false;
+            if (damageSource.is(DamageTypes.CACTUS)) {
+                  breakAndDropContents();
+                  return true;
             }
             if (damageSource.is(DamageTypes.EXPLOSION) || damageSource.is(DamageTypes.PLAYER_EXPLOSION)) {
                   height += Math.sqrt(amount) / 20;
@@ -513,8 +516,10 @@ public abstract class EntityAbstract extends Backpack {
                         this.markHurt();
                   }
                   else {
-                        float damage = player.getUUID() == getPlacedBy() ? .8f : .5f;
-                        return damage((int) (BREAK_TIMER * damage), false);
+                        float damage = player.getUUID().equals(getPlacedBy()) || !isLocked()
+                                    ? 10
+                                    : 3;
+                        return damage((int) (damage), false);
                   }
             }
 
@@ -523,8 +528,11 @@ public abstract class EntityAbstract extends Backpack {
       }
 
       private boolean damage(int damage, boolean silent) {
-            wobble += damage;
-            if (wobble > BREAK_TIMER)
+            int health = 24;
+            wobble = Math.min(wobble + 10, health);
+
+            breakAmount += damage;
+            if (breakAmount >= health)
                   breakAndDropContents();
             else if (!silent)
             {
@@ -566,6 +574,11 @@ public abstract class EntityAbstract extends Backpack {
       public enum LockedReason {
             IS_REMOVED((backData, level, entityAbstract) ->
                         entityAbstract.isRemoved()),
+            IS_LOCKED(((backData, serverLevel, entityAbstract) -> {
+                  if (backData.owner.getUUID().equals(entityAbstract.getPlacedBy()))
+                        return false;
+                  return entityAbstract.isLocked();
+            })),
             ENDER_NO_OWNER((backData, level, entityAbstract) ->
                         entityAbstract instanceof EntityEnder ender && ender.getPlacedBy() == null),
             NOT_OWNER((backData, level, entityAbstract) -> {
@@ -597,6 +610,11 @@ public abstract class EntityAbstract extends Backpack {
             public boolean apply(BackData backData, ServerLevel player, EntityAbstract backpack) {
                   return isLocked.apply(backData, player, backpack);
             }
+      }
+
+      private Boolean isLocked() {
+            CompoundTag itemTags = this.itemTags;
+            return itemTags != null && itemTags.contains("Locked") && itemTags.getBoolean("Locked");
       }
 
       public boolean isLocked(BackData backData, ServerLevel level, Kind kind) {

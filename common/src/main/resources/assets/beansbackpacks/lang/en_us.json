@@ -115,6 +115,7 @@
   "command.beansbackpacks.give.fail.no_id": "No backpack exists with the id: %d",
   "command.beansbackpacks.give.fail.no_players": "No players found",
 
+  "entity.beansbackpacks.locked.is_locked": "This backpack is locked.",
   "entity.beansbackpacks.locked.owner_offline": "This backpack's owner is not online.",
   "entity.beansbackpacks.locked.not_owner": "You do not own this backpack.",
   "entity.beansbackpacks.locked.ender_offline": "This backpack's owner is not online.",
