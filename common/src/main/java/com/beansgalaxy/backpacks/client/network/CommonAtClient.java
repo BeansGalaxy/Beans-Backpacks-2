@@ -6,6 +6,7 @@ import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.items.Tooltip;
+import com.beansgalaxy.backpacks.network.clientbound.SyncBackSlot;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -19,23 +20,18 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.UUID;
 
 public class CommonAtClient {
-      public static void syncBackSlot(UUID playerId, ItemStack stack) {
+      public static boolean syncBackSlot(int entity, ItemStack stack) {
             LocalPlayer player = Minecraft.getInstance().player;
-
-            if (player == null)
-                  return;
-
-            Player otherPlayer = player.level().getPlayerByUUID(playerId);
-
-            if (otherPlayer == null)
-                  return;
-
-            BackData backSlot = BackData.get(otherPlayer);
-            backSlot.set(stack);
+            if (player != null && player.level().getEntity(entity) instanceof Player otherPlayer) {
+                  BackData backSlot = BackData.get(otherPlayer);
+                  backSlot.set(stack);
+                  return true;
+            }
+            return false;
       }
 
       public static void syncBackInventory(String stacks) {

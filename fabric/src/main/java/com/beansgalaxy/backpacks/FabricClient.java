@@ -14,6 +14,7 @@ import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.beansgalaxy.backpacks.items.WingedBackpack;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.platform.Services;
+import dev.onyxstudios.cca.api.v3.entity.PlayerSyncCallback;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -52,7 +53,6 @@ public class FabricClient implements ClientModInitializer {
             TooltipComponentCallback.EVENT.register(new TooltipImageEvent());
 
             KeyBindingHelper.registerKeyBinding(KeyPress.INSTANCE.ACTION_KEY);
-            ClientEntityEvents.ENTITY_LOAD.register(new LoadEntityEvent());
             ColorProviderRegistry.ITEM.register((stack, layer) -> layer == 1 ? 16777215 :
                         DyableBackpack.shiftColor(((DyableBackpack) stack.getItem()).getColor(stack)).getRGB(), FabricMain.LEATHER_BACKPACK);
             ColorProviderRegistry.ITEM.register((stack, layer) -> switch (layer) {

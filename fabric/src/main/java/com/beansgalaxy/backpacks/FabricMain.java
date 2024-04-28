@@ -21,6 +21,7 @@ import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
+import dev.onyxstudios.cca.api.v3.entity.PlayerSyncCallback;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents;

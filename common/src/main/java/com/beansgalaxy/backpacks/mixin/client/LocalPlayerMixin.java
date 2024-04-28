@@ -3,6 +3,7 @@ package com.beansgalaxy.backpacks.mixin.client;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.access.ClickAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.network.clientbound.SyncBackSlot;
 import com.beansgalaxy.backpacks.network.serverbound.ActionKey;
 import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.beansgalaxy.backpacks.events.KeyPress;
@@ -18,9 +19,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LocalPlayer.class)
-public class UpdateActionKey {
+public class LocalPlayerMixin {
       @Inject(method = "tick", at = @At("TAIL"))
       public void tick(CallbackInfo ci) {
+            SyncBackSlot.indexHeldSlots();
+
             LocalPlayer localPlayer = (LocalPlayer) (Object) this;
             Minecraft instance = Minecraft.getInstance();
             KeyMapping keyBinding = Tooltip.getKeyBinding();
@@ -54,4 +57,10 @@ public class UpdateActionKey {
                         KeyPress.instantPlace(localPlayer);
             }
       }
+
+      @Inject(method = "handleEntityEvent", at = @At("HEAD"))
+      private void catchBackSlotEvent(byte id, CallbackInfo ci) {
+
+      }
+
 }

@@ -23,7 +23,8 @@
     "common.buckets.BucketItemMixin",
     "common.buckets.BucketSolidsMixin",
     "common.buckets.HoneyBlockMixin",
-    "common.buckets.HoneyBottleMixin"
+    "common.buckets.HoneyBottleMixin",
+    "common.buckets.ServerEntityMixin"
   ],
   "client": [
     "client.ArmorTrimMixin",
@@ -32,9 +33,9 @@
     "client.InventoryScreenMixin",
     "client.ItemRendererMixin",
     "client.KeyBindTooltip",
+    "client.LocalPlayerMixin",
     "client.SmithingScreenMixin",
-    "client.TrimsAtlasMixin",
-    "client.UpdateActionKey"
+    "client.TrimsAtlasMixin"
   ],
   "server": [
   ],

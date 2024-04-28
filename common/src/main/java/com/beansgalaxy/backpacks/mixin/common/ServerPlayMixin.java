@@ -53,7 +53,7 @@ public class ServerPlayMixin {
             int slotIndex = ctx.getSlotNum();
             ItemStack stack = ctx.getItem();
 
-            boolean outOfRange = player.inventoryMenu.slots.size() < slotIndex;
+            boolean outOfRange = player.inventoryMenu.slots.size() < slotIndex || slotIndex < 0;
             boolean flag2 = stack.isEmpty() || stack.getDamageValue() >= 0 && stack.getCount() <= 64 && !stack.isEmpty();
             if (!outOfRange && flag2) {
                   Slot slot = this.player.inventoryMenu.getSlot(slotIndex);

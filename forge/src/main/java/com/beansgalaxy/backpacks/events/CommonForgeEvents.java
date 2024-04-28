@@ -83,10 +83,6 @@ public class CommonForgeEvents {
             if (event.getEntity() instanceof ServerPlayer player)
             {
                   SyncBackInventory.send(player);
-
-                  ItemStack stack = BackData.get(player).getStack();
-                  NetworkPackages.S2C(new SyncBackSlot(player.getUUID(), stack), player);
-
                   EnderStorage.get().MAPPED_DATA.forEach(((uuid, enderData) -> {
                         NetworkPackages.S2C(new SendEnderData(uuid, enderData), player);
                   }));
@@ -117,12 +113,6 @@ public class CommonForgeEvents {
 
             String syncedPlayers = player == null ? "all players" : "\"" + player.getDisplayName().getString() + "\"";
             Constants.LOG.info("Syncing {} data to {}", Constants.MOD_ID, syncedPlayers);
-      }
-
-      @SubscribeEvent
-      public static void loadPlayer(PlayerEvent.StartTracking event) {
-            if (event.getEntity() instanceof ServerPlayer thisPlayer && event.getTarget() instanceof Player owner)
-                  NetworkPackages.S2C(new SyncBackSlot(owner.getUUID(), BackData.get(owner).getStack()), thisPlayer);
       }
 
       @SubscribeEvent
