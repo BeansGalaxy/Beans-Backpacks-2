@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 @Mixin(HopperBlockEntity.class)
-public class HopperEntityMixin {
-
+public class CommonHopperMixin {
+    @SuppressWarnings("InvalidInjectorMethodSignature")
     @Inject(method = "getContainerAt(Lnet/minecraft/world/level/Level;DDD)Lnet/minecraft/world/Container;",
             at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
     private static void getContainerAt(Level level, double x, double y, double z, CallbackInfoReturnable<Container> cir, Container container) {

@@ -17,10 +17,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(HopperBlockEntity.class)
-public class HopperEntityMixin {
+public class FabricHopperMixin {
     @Inject(method = "ejectItems", locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true,
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/HopperBlockEntity;getContainerSize()I"))
-    private static void tryEjectToBackpack(Level p_155563_, BlockPos p_155564_, BlockState p_155565_, HopperBlockEntity hopper, CallbackInfoReturnable<Boolean> cir, Container container, Direction direction, int i) {
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/Container;getContainerSize()I"))
+    private static void tryEjectToBackpack(Level $$0, BlockPos $$1, BlockState $$2, Container hopper, CallbackInfoReturnable<Boolean> cir, Container container, Direction $$5, int $$6) {
         if (container instanceof BackpackInventory backpackInventory) {
             boolean r = backpackInventory.hopperInsertOne(hopper);
             cir.setReturnValue(r);
@@ -34,11 +34,12 @@ public class HopperEntityMixin {
 
     @Inject(method = "suckInItems", locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true,
             at = @At(value = "FIELD", target = "Lnet/minecraft/core/Direction;DOWN:Lnet/minecraft/core/Direction;"))
-    private static void tryTakeFromBackpack(Level p_155553_, Hopper hopper, CallbackInfoReturnable<Boolean> cir, Boolean ret, Container container) {
+    private static void tryTakeFromBackpack(Level $$0, Hopper hopper, CallbackInfoReturnable<Boolean> cir, Container container) {
         if (container instanceof BackpackInventory backpackInventory) {
             Direction direction = Direction.DOWN;
             boolean r = !isEmptyContainer(container, direction) && backpackInventory.hopperTakeOne(hopper);
-            if (r) backpackInventory.playSound(PlaySound.TAKE);
+            if (r)
+                backpackInventory.playSound(PlaySound.TAKE);
             cir.setReturnValue(r);
         }
     }

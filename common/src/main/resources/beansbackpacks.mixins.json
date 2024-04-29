@@ -10,7 +10,7 @@
     "common.DataResourcesMixin",
     "common.ElytraItemMixin",
     "common.ExperienceOrbMixin",
-    "common.HopperEntityMixin",
+    "common.CommonHopperMixin",
     "common.InteractWithPlayer",
     "common.InventoryContainerMixin",
     "common.InventoryMenuMixin",
