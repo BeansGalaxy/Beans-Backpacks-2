@@ -2,21 +2,21 @@ package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
+import com.beansgalaxy.backpacks.data.Viewable;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
+import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.network.clientbound.SyncBackInventory;
 import com.beansgalaxy.backpacks.platform.Services;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -25,6 +25,7 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.entity.EntityAccess;
 
 import java.util.UUID;
 
@@ -33,9 +34,7 @@ public class BackpackMenu extends AbstractContainerMenu {
       public final BackpackInventory backpackInventory;
       protected final Backpack mirror;
       protected final Player viewer;
-      protected final Entity owner;
-      protected final BlockPos ownerPos;
-      protected final float ownerYaw;
+      protected final EntityAccess owner;
       protected final NonNullList<MenuSlot> backpackSlots = NonNullList.create();
       public int invOffset = 108;
 
@@ -44,19 +43,21 @@ public class BackpackMenu extends AbstractContainerMenu {
             super(Services.REGISTRY.getMenu(), id);
             this.backpackInventory = backpackInventory;
             this.owner = backpackInventory.getOwner();
-            this.ownerPos = owner.blockPosition();
-            this.ownerYaw = owner.getVisualRotationYInDegrees();
             this.viewer = playerInventory.player;
-            this.mirror = new Backpack(owner.level()) {
+            this.mirror = new Backpack(viewer.level()) {
+
                   @Override
                   public UUID getPlacedBy() {
                         return backpackInventory.getPlacedBy();
                   }
-                  @Override public BackpackInventory.Viewable getViewable() {
-                        return backpackInventory.getViewable();
-                  }
+
                   @Override public Traits.LocalData getTraits() {
                         return backpackInventory.getTraits();
+                  }
+
+                  @Override
+                  public Viewable getViewable() {
+                        return backpackInventory.getViewable();
                   }
             };
 
@@ -83,17 +84,23 @@ public class BackpackMenu extends AbstractContainerMenu {
 
       // CLIENT CONSTRUCTOR
       public BackpackMenu(int id, Inventory playerInv, FriendlyByteBuf buf) {
-            this(id, playerInv, getBackpackInventory(buf.readInt(), playerInv.player.level()));
+            this(id, playerInv, getBackpackInventory(buf, playerInv.player.level()));
       }
 
-      public static BackpackInventory getBackpackInventory(int entityId, Level level) {
-            Entity entity = level.getEntity(entityId);
+      public static BackpackInventory getBackpackInventory(FriendlyByteBuf buf, Level level) {
+            int id = buf.readInt();
+            if (id == -1) {
+                  UUID uuid = buf.readUUID();
+                  return EnderStorage.getEnderData(uuid, level);
+            }
+
+            Entity entity = level.getEntity(id);
             return BackpackInventory.get(entity);
       }
 
       private void createBackpackSlots(BackpackInventory inventory) {
             for (int i = 0; i < MenuSlot.MAX_SLOTS + 1; i++)
-                  backpackSlots.add(new MenuSlot(inventory, i, this::updateSlots));
+                  backpackSlots.add(new MenuSlot(this, i, this::updateSlots));
 
             for (Slot backpackSlot : backpackSlots) {
                   addSlot(backpackSlot);
@@ -150,7 +157,7 @@ public class BackpackMenu extends AbstractContainerMenu {
 
       private void handleClick(int slotIndex, int button, ClickType actionType, Player player) {
             Kind kind = backpackInventory.getTraits().kind;
-            boolean clientSide = owner.level().isClientSide();
+            boolean clientSide = viewer.level().isClientSide();
             if (clientSide && Kind.ENDER.is(kind)) return;
 
             ItemStack carried = getCarried();

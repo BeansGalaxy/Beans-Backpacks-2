@@ -34,7 +34,7 @@ public class PickBlockEvent {
                   inventory.selected = freeSlot;
 
             ItemStack selectedStack = inventory.getItem(inventory.selected);
-            inventory.setItem(inventory.selected, backData.backpackInventory.removeItemSilent(backpackSlot));
+            inventory.setItem(inventory.selected, backData.getBackpackInventory().removeItemSilent(backpackSlot));
             PlaySound.TAKE.at(player, kind);
 
             int overflowSlot = -1;
@@ -73,7 +73,7 @@ public class PickBlockEvent {
                   return false;
 
             BackData backData = BackData.get(player);
-            slot = PickBlockEvent.slotMatchingItem(itemStack, backData.backpackInventory);
+            slot = PickBlockEvent.slotMatchingItem(itemStack, backData.getBackpackInventory());
 
             if (slot < 0)
                   return false;

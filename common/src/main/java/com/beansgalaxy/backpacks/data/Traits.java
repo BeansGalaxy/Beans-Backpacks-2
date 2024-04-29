@@ -4,10 +4,12 @@ import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.entity.Kind;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 import java.awt.*;
 import java.util.UUID;
@@ -182,7 +184,11 @@ public class Traits {
                   return trim;
             }
 
-            public static LocalData fromStack(ItemStack stack) {
+            public static LocalData fromStack(ItemStack stack, Player player) {
+                  return fromStack(stack, player.level(), player.getUUID());
+            }
+
+            public static LocalData fromStack(ItemStack stack, Level level, UUID fallback) {
                   Kind kind = Kind.fromStack(stack);
                   if (kind == null)
                         return EMPTY;
@@ -213,15 +219,14 @@ public class Traits {
                         case ENDER -> {
                               CompoundTag tag = stack.getTag();
 
-                              UUID uuid;
-                              if (tag != null && tag.contains("owner")) {
-                                    uuid = tag.getUUID("owner");
-                              } else uuid = null;
+                              UUID uuid = tag != null && tag.contains("owner")
+                                          ? tag.getUUID("owner")
+                                          : fallback;
 
                               return new LocalData("", Kind.ENDER, 0xFFFFFF, null, hoverName) {
                                     @Override
                                     public CompoundTag getTrim() {
-                                          return EnderStorage.getTrim(uuid);
+                                          return EnderStorage.getEnderData(uuid, level).getTrim();
                                     }
                               };
                         }

@@ -38,8 +38,7 @@ public class HopperEntityMixin {
         if (container instanceof BackpackInventory backpackInventory) {
             Direction direction = Direction.DOWN;
             boolean r = !isEmptyContainer(container, direction) && backpackInventory.hopperTakeOne(hopper);
-            if (r)
-                PlaySound.TAKE.at(backpackInventory.getOwner(), backpackInventory.getTraits().kind, 0.8f);
+            if (r) backpackInventory.playSound(PlaySound.TAKE);
             cir.setReturnValue(r);
         }
     }

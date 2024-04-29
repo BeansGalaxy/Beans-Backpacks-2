@@ -5,6 +5,7 @@ import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.inventory.CauldronInventory;
+import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.network.clientbound.SyncBackInventory;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -18,7 +19,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
@@ -77,8 +77,8 @@ public interface CompatHelper {
        * @param trim Taken directly from a trimmed ItemStack. The tag must contain a "pattern" and "material" string tag.
        *             If you are able to view a trimmed ItemStack, the tag is the contents of "Trim" and not "Trim" itself.
        **/
-      default void updateEnderEntry(@NotNull UUID uuid, Optional<Component> name, Optional<CompoundTag> trim) {
-            EnderStorage.Data data = EnderStorage.get().MAPPED_DATA.computeIfAbsent(uuid, uuid1 -> new EnderStorage.Data());
+      default void updateEnderEntry(@NotNull UUID uuid, Optional<Component> name, Optional<CompoundTag> trim, Level level) {
+            EnderInventory data = EnderStorage.get(level).MAP.computeIfAbsent(uuid, uuid1 -> new EnderInventory(uuid, level));
             name.ifPresent(data::setPlayerName);
             trim.ifPresent(data::setTrim);
       }
@@ -90,7 +90,7 @@ public interface CompatHelper {
        * @param translatable If true, the name field will be treated as a translation.
        * @param trim Written as a snbt tag. ( {pattern:"", material:""} )
        **/
-      default void updateEnderEntry(@NotNull UUID uuid, @Nullable String name, boolean translatable, @Nullable String trim) {
+      default void updateEnderEntry(@NotNull UUID uuid, @Nullable String name, boolean translatable, @Nullable String trim, Level level) {
             Optional<Component> component;
             if (name == null)
                   component = Optional.empty();
@@ -108,7 +108,7 @@ public interface CompatHelper {
                   }
             }
 
-            updateEnderEntry(uuid, component, tag);
+            updateEnderEntry(uuid, component, tag, level);
       }
 
       /**
@@ -150,7 +150,7 @@ public interface CompatHelper {
        * Use `updateBackpackInventory2C` below to sync the inventory.
        **/
       static NonNullList<ItemStack> getBackpackInventory(Player player) {
-            return BackData.get(player).backpackInventory.getItemStacks();
+            return BackData.get(player).getBackpackInventory().getItemStacks();
       }
 
       /**

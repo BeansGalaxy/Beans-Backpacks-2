@@ -27,9 +27,9 @@ public class MenuSlot extends Slot {
       public State state = State.HIDDEN;
       private final Runnable onClick;
 
-      public MenuSlot(Container container, int index, Runnable onClick) {
-            super(container, index, 0, 0);
-            backIndex = index;
+      public MenuSlot(BackpackMenu menu, int index, Runnable onClick) {
+            super(menu.backpackInventory, index, 0, 0);
+            this.backIndex = index;
             this.onClick = onClick;
       }
 

@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.mixin.client;
 
-import com.beansgalaxy.backpacks.client.renderer.RenderHelper;
 import com.beansgalaxy.backpacks.data.Traits;
+import com.beansgalaxy.backpacks.data.Viewable;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.ItemCombinerScreen;
 import net.minecraft.client.gui.screens.inventory.SmithingScreen;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -43,16 +44,24 @@ public abstract class SmithingScreenMixin extends ItemCombinerScreen<SmithingMen
 
       @Inject(method = "subInit", at = @At("TAIL"))
       protected void subInit(CallbackInfo ci) {
-            this.backpackPreview = new Backpack(this.minecraft.level) {
+            Minecraft minecraft = this.minecraft;
+            this.backpackPreview = new Backpack(minecraft.level) {
                   @Override
                   public UUID getPlacedBy() {
-                        return SmithingScreenMixin.this.minecraft.player.getUUID();
+                        return minecraft.player.getUUID();
                   }
 
                   @Override
                   public Traits.LocalData getTraits() {
                         ItemStack stack = smithingMenu.getSlot(3).getItem();
-                        return Traits.LocalData.fromStack(stack);
+                        return Traits.LocalData.fromStack(stack, minecraft.player);
+                  }
+
+                  final Viewable viewable = new Viewable();
+
+                  @Override
+                  public Viewable getViewable() {
+                        return viewable;
                   }
             };
       }

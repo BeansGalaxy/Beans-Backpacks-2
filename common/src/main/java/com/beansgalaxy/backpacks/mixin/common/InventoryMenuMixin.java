@@ -93,9 +93,6 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
 
             BackData backData = BackData.get(player);
             ItemStack backStack = backData.getStack();
-            Traits.LocalData traits = backData.getTraits();
-            Kind kind = traits.kind;
-            BackpackInventory backpackInventory = backData.backpackInventory;
 
             boolean selectedBackSlot = slot instanceof BackSlot;
             boolean selectedPlayerInventory = slotIndex < InventoryMenu.SHIELD_SLOT + 1 && slotIndex > 8;
@@ -116,6 +113,8 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                   return;
             }
 
+            Traits.LocalData traits = backData.getTraits();
+            Kind kind = traits.kind;
             Level level = player.level();
             if (!backData.isEmpty() && Constants.elytraOrDisables(cursorStack.getItem()))
             {
@@ -137,6 +136,7 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                   return;
             }
 
+            BackpackInventory backpackInventory = backData.getBackpackInventory();
             if (actionType == ClickType.PICKUP_ALL) {
                   if (!selectedBackpackInventory) {
                         super.clicked(slotIndex, button, actionType, player);

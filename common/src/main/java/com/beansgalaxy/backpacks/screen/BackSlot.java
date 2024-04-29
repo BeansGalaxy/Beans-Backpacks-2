@@ -2,14 +2,11 @@ package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.BackData;
-import com.beansgalaxy.backpacks.data.ServerSave;
-import com.beansgalaxy.backpacks.data.config.Gamerules;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.network.clientbound.EquipLockedMsg;
 import com.beansgalaxy.backpacks.platform.Services;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleContainer;
@@ -36,14 +33,14 @@ public class BackSlot extends Slot {
       @Override
       public boolean mayPickup(Player player) {
             ItemStack itemStack = backData.getStack();
-            boolean backpackIsEmpty = backData.backpackInventory.isEmpty();
+            boolean backpackIsEmpty = backData.getBackpackInventory().isEmpty();
             boolean standardCheck = itemStack.isEmpty() || !EnchantmentHelper.hasBindingCurse(itemStack);
             return standardCheck && backpackIsEmpty;
       }
 
       @Override
       public boolean isHighlightable() {
-            return backData.backpackInventory.isEmpty() || getItem().isEmpty();
+            return backData.getBackpackInventory().isEmpty() || getItem().isEmpty();
       }
 
       @Override
@@ -97,7 +94,7 @@ public class BackSlot extends Slot {
                         EquipLockedMsg.send(viewer, owner);
                         PlaySound.HIT.at(owner, backData.getTraits().kind);
                   } else {
-                        Services.NETWORK.openBackpackMenu(viewer, owner);
+                        Services.NETWORK.openBackpackMenu(viewer, backData);
                         PlaySound.OPEN.at(owner, backData.getTraits().kind, 0.4f);
                   }
                   return InteractionResult.SUCCESS;

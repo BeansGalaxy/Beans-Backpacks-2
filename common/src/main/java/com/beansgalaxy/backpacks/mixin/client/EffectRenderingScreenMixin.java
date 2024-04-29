@@ -2,7 +2,6 @@ package com.beansgalaxy.backpacks.mixin.client;
 
 import com.beansgalaxy.backpacks.access.ClickAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.network.chat.Component;
@@ -23,7 +22,7 @@ public abstract class EffectRenderingScreenMixin extends AbstractContainerScreen
                   return;
 
             BackData backData = BackData.get(this.minecraft.player);
-            if (hoveredSlot.getItem() == backData.getStack() && backData.backpackInventory.isEmpty())
+            if (hoveredSlot.getItem() == backData.getStack() && backData.getBackpackInventory().isEmpty())
                   return;
 
             this.slotClicked(hoveredSlot, hoveredSlot.index, 0, ClickType.PICKUP);

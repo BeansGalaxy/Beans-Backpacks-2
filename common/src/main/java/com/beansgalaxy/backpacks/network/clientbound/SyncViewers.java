@@ -1,13 +1,11 @@
 package com.beansgalaxy.backpacks.network.clientbound;
 
 import com.beansgalaxy.backpacks.client.network.CommonAtClient;
+import com.beansgalaxy.backpacks.inventory.BackpackInventory;
+import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.network.Network2C;
-import com.beansgalaxy.backpacks.network.Network2S;
-import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Level;
 
 public class SyncViewers implements Packet2C {
       int entityId;
@@ -22,10 +20,13 @@ public class SyncViewers implements Packet2C {
             this(byteBuf.readInt(), byteBuf.readByte());
       }
 
-      public static void send(Entity owner, byte viewers) {
-            int id = owner.getId();
-            MinecraftServer server = owner.level().getServer();
-            new SyncViewers(id, viewers).send2A(server);
+      public static void send(BackpackInventory backpackInventory) {
+            int id = backpackInventory.getOwner().getId();
+            MinecraftServer server = backpackInventory.level().getServer();
+            if (backpackInventory instanceof EnderInventory ender)
+                  new SendEnderViewing(ender.getPlacedBy(), ender.getViewable()).send2A(server);
+            else
+                  new SyncViewers(id, backpackInventory.getViewable().getViewers()).send2A(server);
       }
 
       @Override

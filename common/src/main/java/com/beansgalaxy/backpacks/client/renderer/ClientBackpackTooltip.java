@@ -83,7 +83,7 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
             ResourceLocation bundleTexture = new ResourceLocation("textures/gui/container/bundle.png");
             LocalPlayer player = minecraft.player;
             BackData backData = BackData.get(player);
-            boolean hasSpace = backData.backpackInventory.spaceLeft() > 0;
+            boolean hasSpace = backData.getBackpackInventory().spaceLeft() > 0;
 
             int limitC = 5;
             double sudoSize = size + (hasSpace ? 1.0 : 0);

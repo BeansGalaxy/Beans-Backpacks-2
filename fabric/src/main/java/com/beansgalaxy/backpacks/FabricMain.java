@@ -81,7 +81,7 @@ public class FabricMain implements ModInitializer {
             TrinketsRegistry.register();
 
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            EnderStorage.get().MAPPED_DATA.forEach(((uuid, enderData) -> {
+            EnderStorage.get(handler.player.level()).MAP.forEach(((uuid, enderData) -> {
                 FriendlyByteBuf buf = PacketByteBufs.create();
                 buf.writeUUID(uuid);
                 buf.writeNbt(enderData.getTrim());

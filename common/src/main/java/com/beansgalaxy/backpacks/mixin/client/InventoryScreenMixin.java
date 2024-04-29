@@ -1,8 +1,5 @@
 package com.beansgalaxy.backpacks.mixin.client;
 
-import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.access.ClickAccessor;
-import com.beansgalaxy.backpacks.client.renderer.ClientBackpackTooltip;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.inventory.BackpackTooltip;
@@ -21,9 +18,7 @@ import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -71,8 +66,8 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
             if (this.hoveredSlot != null && Services.COMPAT.isBackSlot(this.hoveredSlot)) {
                   ItemStack itemstack = this.hoveredSlot.getItem();
                   BackData backData = BackData.get(minecraft.player);
-                  if (!itemstack.isEmpty() && !backData.backpackInventory.isEmpty() && Kind.isBackpack(itemstack)) {
-                        BackpackTooltip tooltip = new BackpackTooltip(backData.backpackInventory.getItemStacks());
+                  if (!itemstack.isEmpty() && !backData.getBackpackInventory().isEmpty() && Kind.isBackpack(itemstack)) {
+                        BackpackTooltip tooltip = new BackpackTooltip(backData.getBackpackInventory().getItemStacks());
                         gui.renderTooltip(minecraft.font, List.of(Component.empty()), Optional.of(tooltip), mouseX - 10000, mouseY - 10000);
                         return;
                   }

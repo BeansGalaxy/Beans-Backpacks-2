@@ -60,7 +60,7 @@ public class Tooltip {
             if (stack.equals(equippedOnBack)) {
                   if (equippedOnBack.getTagElement("back_slot") != null)
                         return specialTooltip(equippedOnBack, backData);
-                  if (!backData.backpackInventory.isEmpty())
+                  if (!backData.getBackpackInventory().isEmpty())
                         return backpackTooltip(backData);
             }
             return Optional.empty();
@@ -87,7 +87,7 @@ public class Tooltip {
 
       @NotNull
       private static Optional<TooltipComponent> backpackTooltip(BackData backData) {
-            NonNullList<ItemStack> backpackList = backData.backpackInventory.getItemStacks();
+            NonNullList<ItemStack> backpackList = backData.getBackpackInventory().getItemStacks();
             if (backpackList.isEmpty())
                   return Optional.empty();
 
@@ -137,7 +137,7 @@ public class Tooltip {
             LocalPlayer player = Minecraft.getInstance().player;
             BackData backSlot = BackData.get(player);
 
-            return backSlot.getStack() == stack && !backSlot.backpackInventory.isEmpty();
+            return backSlot.getStack() == stack && !backSlot.getBackpackInventory().isEmpty();
       }
 
       public static int getBarWidth(ItemStack stack) {
@@ -147,7 +147,7 @@ public class Tooltip {
             if (backData.getStack() != stack)
                   return 13;
 
-            BackpackInventory backpackInventory = backData.backpackInventory;
+            BackpackInventory backpackInventory = backData.getBackpackInventory();
             int spaceLeft = backpackInventory.spaceLeft();
             int maxStacks = backpackInventory.getTraits().maxStacks();
 
@@ -221,9 +221,9 @@ public class Tooltip {
 
                         if (Kind.ENDER.is(kind)) {
                               EnderBackpack enderBackpack = (EnderBackpack) instance.getItem();
-                              UUID uuid = enderBackpack.getOrCreateUUID(player.getUUID(), instance);
+                              UUID uuid = enderBackpack.getOrCreateUUID(player, instance);
                               Level level = player.level();
-                              EnderStorage.Data enderData = EnderStorage.getEnderData(uuid, level);
+                              EnderInventory enderData = EnderStorage.getEnderData(uuid, level);
                               MutableComponent playerName = enderData.getPlayerNameColored(level.registryAccess());
                               components.add(Component.translatable("tooltip.beansbackpacks.ender", playerName));
                         }

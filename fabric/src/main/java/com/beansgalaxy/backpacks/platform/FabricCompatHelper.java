@@ -16,9 +16,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluid;
 
 import java.awt.*;
@@ -96,7 +94,7 @@ public class FabricCompatHelper implements CompatHelper {
             }
 
             public Container getBackInventory() {
-                  return backData.backpackInventory;
+                  return backData.getBackpackInventory();
             }
 
             public ItemStack getBackStack() {

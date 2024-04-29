@@ -3,9 +3,10 @@ package com.beansgalaxy.backpacks.items;
 import com.beansgalaxy.backpacks.access.BucketLikeAccess;
 import com.beansgalaxy.backpacks.access.BucketsAccess;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.data.Traits;
+import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.network.clientbound.SyncBackInventory;
-import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
@@ -39,6 +40,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 public class BackpackItem extends Item {
 
@@ -49,6 +51,9 @@ public class BackpackItem extends Item {
       @Override
       public InteractionResult useOn(UseOnContext ctx) {
             Player player = ctx.getPlayer();
+            if (player.isShiftKeyDown())
+                  return InteractionResult.PASS;
+
             Direction direction = ctx.getClickedFace();
             BlockPos clickedPos = ctx.getClickedPos();
             ItemStack backpackStack = ctx.getItemInHand();
@@ -66,16 +71,25 @@ public class BackpackItem extends Item {
                   ItemStack backpackStack = player.getItemInHand(hand);
                   CompoundTag tag = backpackStack.getTag();
 
-                  if (tag != null && tag.contains("Locked"))
-                        tag.remove("Locked");
-                  else backpackStack.getOrCreateTag().putBoolean("Locked", true);
+                  if (backpackStack.getItem() instanceof EnderBackpack ender) {
+                        UUID playerUUID = player.getUUID();
+                        UUID ownerUUID = ender.getOrCreateUUID(player, backpackStack);
+                        if (playerUUID.equals(ownerUUID)) {
+                              EnderInventory enderData = EnderStorage.getEnderData(player);
+                              enderData.setLocked(!enderData.isLocked());
+                              return InteractionResultHolder.success(backpackStack);
+                        }
+                  } else {
+                        if (tag != null && tag.contains("Locked"))
+                              tag.remove("Locked");
+                        else backpackStack.getOrCreateTag().putBoolean("Locked", true);
 
-                  if (level.isClientSide)
-                        Tooltip.playSound(SoundEvents.CHEST_LOCKED, 1f, 1f);
-
-                  return InteractionResultHolder.success(backpackStack);
+                        if (level.isClientSide)
+                              Tooltip.playSound(SoundEvents.CHEST_LOCKED, 1f, 1f);
+                        return InteractionResultHolder.success(backpackStack);
+                  }
             }
-            else return super.use(level, player, hand);
+            return super.use(level, player, hand);
       }
 
       public static boolean interact(ItemStack backStack, ClickAction clickAction, Player player, SlotAccess access, boolean shiftIsDown) {
@@ -85,7 +99,7 @@ public class BackpackItem extends Item {
                   return false;
 
             BackData backData = BackData.get(player);
-            BackpackInventory backpackInventory = backData.backpackInventory;
+            BackpackInventory backpackInventory = backData.getBackpackInventory();
             if (backStack != backData.getStack())
                   return false;
 
@@ -347,7 +361,7 @@ public class BackpackItem extends Item {
 
       public static boolean doesPlace(Player player, int x, double y, int z, Direction direction, ItemStack backpackStack, boolean fromBackSlot) {
             NonNullList<ItemStack> stacks = fromBackSlot ?
-                        BackData.get(player).backpackInventory.getItemStacks() : NonNullList.create();
+                        BackData.get(player).getBackpackInventory().getItemStacks() : NonNullList.create();
 
             BlockPos blockPos = BlockPos.containing(x, y, z);
             float yaw = rotFromBlock(blockPos, player) + 90;

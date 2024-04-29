@@ -5,11 +5,11 @@ import com.beansgalaxy.backpacks.client.renderer.features.ElytraFeature;
 import com.beansgalaxy.backpacks.client.renderer.models.BackpackModel;
 import com.beansgalaxy.backpacks.client.renderer.models.BackpackWingsModel;
 import com.beansgalaxy.backpacks.data.Traits;
+import com.beansgalaxy.backpacks.data.Viewable;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
-import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -56,6 +56,8 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
       @Override
       public void render(@NotNull T entity, float yaw, float tick, @NotNull PoseStack pose, @NotNull MultiBufferSource source, int light) {
             Backpack backpack = (Backpack) entity;
+            if (backpack.isRemoved())
+                  return;
 
             Traits.LocalData traits = backpack.getTraits();
             if (traits.isEmpty() || traits.kind == null)
@@ -74,20 +76,28 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
                   }
             }
 
+            Viewable viewable = backpack.getViewable();
             EntityAbstract abstractBackpack = null;
             if (backpack instanceof EntityAbstract entityAbstract) {
                   abstractBackpack = entityAbstract;
                   double breakTime = entityAbstract.wobble;
                   yaw += (float) ((breakTime * 0.80f) * Math.sin(breakTime / Math.PI * 3));
                   renderNameAndHitbox(pose, source, entity, yaw, light);
+
+                  if (viewable.lastDelta > tick)
+                        viewable.updateOpen();
+
+                  float headPitch = Mth.lerp(tick, viewable.lastPitch, viewable.headPitch) * 0.37f;
+                  this.model.setupPlaced(headPitch);
+                  viewable.lastDelta = tick;
+            }
+            else {
+                  float headPitch = Mth.lerp(viewable.lastDelta, viewable.lastPitch, viewable.headPitch) * 0.25f;
+                  this.model.setupPlaced(headPitch);
             }
 
-            BackpackInventory.Viewable viewable = backpack.getViewable();
             pose.pushPose();
-            viewable.updateOpen();
-            this.model.setupPlaced(viewable.headPitch);
             pose.mulPose(Axis.YN.rotationDegrees(yaw));
-
             float[] colors = {tint.getRed() / 255F, tint.getGreen() / 255F, tint.getBlue() / 255F};
             ResourceLocation texture = kind.getAppendedResource(traits.backpack_id, "");
             VertexConsumer outer = source.getBuffer(RenderType.entityCutout(texture));
@@ -173,8 +183,8 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
 
                         pose.pushPose();
                         pose.mulPose(Axis.YN.rotationDegrees(yaw));
-                        pose.scale(inflate[0], inflate[1], inflate[2]);
-                        pose.translate(0, inflate[3], 0);
+                        pose.scale(inflate[0], (inflate[1] - 1) * 2 + 1, inflate[2]);
+                        pose.translate(0, inflate[3] * 3, 0);
                         ResourceLocation overlay = new ResourceLocation(Constants.MOD_ID, "textures/entity/leather/leather_overlay.png");
                         VertexConsumer overlayTexture = source.getBuffer(RenderType.entityTranslucentCull(overlay));
                         Color weighted = DyableBackpack.weightedShift(new Color(0xffd7bf), new Color(color), 2.5f, 2.5f, 2.5f, 0);

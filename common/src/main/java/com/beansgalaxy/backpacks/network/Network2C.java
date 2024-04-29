@@ -5,7 +5,6 @@ import com.beansgalaxy.backpacks.network.clientbound.*;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.HashSet;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -17,8 +16,10 @@ public enum Network2C {
       CONFIG_TRAITS_2C("config_traits_c", new Packet<>(ConfigureTraits.class, ConfigureTraits::encode, ConfigureTraits::new, ConfigureTraits::handle)),
       CONFIG_LISTS_2C("config_lists_c", new Packet<>(ConfigureLists.class, ConfigureLists::encode, ConfigureLists::new, ConfigureLists::handle)),
       CONFIG_2C("config_c", new Packet<>(ConfigureConfig.class, ConfigureConfig::encode, ConfigureConfig::new, ConfigureConfig::handle)),
-      ENDER_POS_2C("ender_pos_c", new Packet<>(ReceiveEnderPos.class, ReceiveEnderPos::encode, ReceiveEnderPos::new, ReceiveEnderPos::handle)),
-      SEND_ENDER_DATA_2C("ender_data_c", new Packet<>(SendEnderData.class, SendEnderData::encode, SendEnderData::new, SendEnderData::handle)),
+      ENDER_POS_2C("ender_pos_c", new Packet<>(SendEnderPos.class, SendEnderPos::encode, SendEnderPos::new, SendEnderPos::handle)),
+      ENDER_INV_2C("ender_inv_c", new Packet<>(SendEnderStacks.class, SendEnderStacks::encode, SendEnderStacks::new, SendEnderStacks::handle)),
+      ENDER_DISPLAY_2C("ender_display_c", new Packet<>(SendEnderDisplay.class, SendEnderDisplay::encode, SendEnderDisplay::new, SendEnderDisplay::handle)),
+      ENDER_VIEWING_2C("ender_viewing_c", new Packet<>(SendEnderViewing.class, SendEnderViewing::encode, SendEnderViewing::new, SendEnderViewing::handle)),
       EQUIP_LOCKED_MSG("equip_locked_msg_c", new Packet<>(EquipLockedMsg.class, EquipLockedMsg::encode, EquipLockedMsg::new, EquipLockedMsg::handle));
 
       public final Packet<? extends Packet2C> packet;

@@ -6,10 +6,12 @@ import com.beansgalaxy.backpacks.data.config.Gamerules;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
+import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.items.WingedBackpack;
+import com.beansgalaxy.backpacks.network.clientbound.SendEnderStacks;
 import com.beansgalaxy.backpacks.network.clientbound.SyncBackInventory;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.ChatFormatting;
@@ -78,7 +80,7 @@ public abstract class EntityAbstract extends Backpack {
       public static EntityAbstract create(ItemStack backpackStack, int x, double y, int z, float yaw, boolean onDeath,
                                           Direction direction, Player player, NonNullList<ItemStack> stacks)
       {
-            Traits.LocalData traits = Traits.LocalData.fromStack(backpackStack);
+            Traits.LocalData traits = Traits.LocalData.fromStack(backpackStack, player);
             EntityAbstract entityAbstract = create(backpackStack, x, y, z, yaw, onDeath, direction, player.level(), player.getUUID(), stacks);
             if (entityAbstract != null && player instanceof ServerPlayer serverPlayer) {
                   Services.REGISTRY.triggerPlace(serverPlayer, traits.backpack_id);
@@ -92,7 +94,7 @@ public abstract class EntityAbstract extends Backpack {
       public static EntityAbstract create(ItemStack backpackStack, int x, double y, int z, float yaw, boolean onDeath,
                                           Direction direction, Level level, UUID uuid, NonNullList<ItemStack> stacks)
       {
-            Traits.LocalData traits = Traits.LocalData.fromStack(backpackStack);
+            Traits.LocalData traits = Traits.LocalData.fromStack(backpackStack, level, uuid);
             if (traits == null)
                   return null;
 
@@ -106,7 +108,7 @@ public abstract class EntityAbstract extends Backpack {
                   if (onDeath && !ender.isPersistent(backpackStack) && ServerSave.GAMERULES.get(Gamerules.UNBIND_ENDER_ON_DEATH))
                         placedBy = Optional.empty();
                   else
-                        placedBy = Optional.of(ender.getOrCreateUUID(uuid, backpackStack));
+                        placedBy = Optional.of(ender.getOrCreateUUID(uuid, level, backpackStack));
 
                   backpack = new EntityEnder(level);
             }
@@ -116,7 +118,7 @@ public abstract class EntityAbstract extends Backpack {
             }
             else backpack = new EntityGeneral(level, stacks);
 
-            backpack.entityData.set(OWNER, placedBy);
+            backpack.setPlacedBy(placedBy);
 
             backpack.actualY = y;
             backpack.pos = BlockPos.containing(x, y, z);
@@ -140,6 +142,17 @@ public abstract class EntityAbstract extends Backpack {
 
             backpackStack.shrink(1);
             return backpack;
+      }
+
+      public void setPlacedBy(Optional<UUID> placedBy) {
+            placedBy.ifPresent(in -> {
+                  entityData.set(OWNER, placedBy);
+            });
+      }
+
+      @Override
+      public Viewable getViewable() {
+            return getInventory().getViewable();
       }
 
       private void saveToItemTag(@Nullable CompoundTag tag) {
@@ -174,8 +187,11 @@ public abstract class EntityAbstract extends Backpack {
             if (itemTags != null)
                   stack.setTag(itemTags);
 
-            if (item instanceof EnderBackpack enderBackpack && backpack.getPlacedBy() != null) {
-                  enderBackpack.setUUID(backpack.getPlacedBy(), stack);
+            UUID placedBy = backpack.getPlacedBy();
+            if (item instanceof EnderBackpack enderBackpack && placedBy != null) {
+                  EnderInventory enderData = EnderStorage.getEnderData(placedBy, backpack.level());
+                  boolean locked = enderData.isLocked();
+                  if (!locked) enderBackpack.setUUID(placedBy, stack);
             } else {
                   CompoundTag trim = traits.getTrim();
                   if (!trim.isEmpty())
@@ -211,7 +227,9 @@ public abstract class EntityAbstract extends Backpack {
 
       public abstract BackpackInventory getInventory();
 
-      abstract NonNullList<ItemStack> getItemStacks();
+      public NonNullList<ItemStack> getItemStacks() {
+            return getInventory().getItemStacks();
+      }
 
       @Override
       public Component getName() {
@@ -547,8 +565,9 @@ public abstract class EntityAbstract extends Backpack {
             PlaySound.BREAK.at(this, kind);
             boolean dropItems = level().getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS);
             if (dropItems && !Kind.ENDER.is(kind)) {
-                  while (!this.getItemStacks().isEmpty()) {
-                        ItemStack stack = this.getItemStacks().remove(0);
+                  NonNullList<ItemStack> stacks = getInventory().getItemStacks();
+                  while (!stacks.isEmpty()) {
+                        ItemStack stack = stacks.remove(0);
                         this.spawnAtLocation(stack);
                   }
             }
@@ -574,13 +593,18 @@ public abstract class EntityAbstract extends Backpack {
       public enum LockedReason {
             IS_REMOVED((backData, level, entityAbstract) ->
                         entityAbstract.isRemoved()),
+            INVALID_DATA((backData, level, entityAbstract) -> {
+                  if (entityAbstract.getPlacedBy() == null || entityAbstract.getInventory() == null) {
+                        UUID uuid = backData.owner.getUUID();
+                        entityAbstract.setPlacedBy(Optional.of(uuid));
+                  }
+                  return false;
+            }),
             IS_LOCKED(((backData, serverLevel, entityAbstract) -> {
                   if (backData.owner.getUUID().equals(entityAbstract.getPlacedBy()))
                         return false;
                   return entityAbstract.isLocked();
             })),
-            ENDER_NO_OWNER((backData, level, entityAbstract) ->
-                        entityAbstract instanceof EntityEnder ender && ender.getPlacedBy() == null),
             NOT_OWNER((backData, level, entityAbstract) -> {
                   if (ServerSave.GAMERULES.get(Gamerules.LOCK_BACKPACK_NOT_OWNER)) {
                         UUID placedBy = entityAbstract.getPlacedBy();
@@ -612,7 +636,7 @@ public abstract class EntityAbstract extends Backpack {
             }
       }
 
-      private Boolean isLocked() {
+      protected boolean isLocked() {
             CompoundTag itemTags = this.itemTags;
             return itemTags != null && itemTags.contains("Locked") && itemTags.getBoolean("Locked");
       }
@@ -666,8 +690,11 @@ public abstract class EntityAbstract extends Backpack {
                   if (interact.consumesAction())
                         return interact;
 
-                  if (viewable.viewers < 1)
+                  if (getViewable().getViewers() < 1)
                         PlaySound.OPEN.at(this, getTraits().kind);
+                  if (Kind.ENDER.is(traits.kind))
+                        SendEnderStacks.send(serverPlayer, getPlacedBy());
+
                   Services.NETWORK.openBackpackMenu(player, this);
             }
 
@@ -724,11 +751,6 @@ public abstract class EntityAbstract extends Backpack {
             return inHand.useOn(new UseOnContext(player, hand, blockHitResult));
       }
 
-      @NotNull
-      private static Direction getDirection(EntityHitResult hitResult) {
-            return Direction.UP;
-      }
-
       public InteractionResult interact(ServerPlayer player) {
             Kind kind = getTraits().kind;
             BackData backData = BackData.get(player);
@@ -745,7 +767,7 @@ public abstract class EntityAbstract extends Backpack {
                                     EnderStorage.getEnderData(player);
                               }
                         } else {
-                              NonNullList<ItemStack> playerInventoryStacks = BackData.get(player).backpackInventory.getItemStacks();
+                              NonNullList<ItemStack> playerInventoryStacks = BackData.get(player).getBackpackInventory().getItemStacks();
                               NonNullList<ItemStack> backpackEntityStacks = this.getItemStacks();
                               playerInventoryStacks.clear();
                               playerInventoryStacks.addAll(backpackEntityStacks);
@@ -769,7 +791,7 @@ public abstract class EntityAbstract extends Backpack {
       public ItemStack getPickResult() {
             return toStack(this);
       }
-      /** REQUIRED FEILDS **/
+
       @Override
       protected boolean repositionEntityAfterLoad() {
             return false;

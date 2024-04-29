@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 public class ClearBackSlot implements Packet2S{
 
       public ClearBackSlot(BackData backData) {
-            backData.backpackInventory.clearContent();
+            backData.getBackpackInventory().clearContent();
             backData.set(ItemStack.EMPTY);
       }
 
@@ -35,7 +35,7 @@ public class ClearBackSlot implements Packet2S{
             getNetwork().debugMsgDecode();
             if (sender != null) {
                   BackData backData = BackData.get(sender);
-                  backData.backpackInventory.clearContent();
+                  backData.getBackpackInventory().clearContent();
                   backData.set(ItemStack.EMPTY);
             }
       }
