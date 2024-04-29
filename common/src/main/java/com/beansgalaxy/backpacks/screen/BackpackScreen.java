@@ -22,11 +22,13 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.TextureAtlasHolder;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
@@ -41,24 +43,23 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
       private static final Component TITLE = Component.literal("");
       private static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/backpack.png");
       private final BackpackMenu handler;
+      private final LocalPlayer viewer;
+      private final Entity owner;
+      private final float yaw;
+      private final BlockPos pos;
 
       public BackpackScreen(BackpackMenu menu, Inventory inv, Component title) {
             super(menu, inv, TITLE);
             this.handler = menu;
             this.imageHeight = 256;
-      }
-
-      protected void containerTick() {
-            super.containerTick();
-            if (handler.viewer instanceof LocalPlayer viewer) {
-                  boolean hasMoved = !handler.owner.position().closerThan(handler.ownerPos.getCenter(), 2d);
-                  boolean notInRange = !handler.owner.position().closerThan(viewer.position(), 5.0d);
-                  boolean yawChanged = false;
-                  if (handler.owner instanceof RemotePlayer owner) {
-                        yawChanged = !BackpackInventory.yawMatches(handler.ownerYaw, owner.yBodyRotO, 35);
-                  }
-                  if (hasMoved || notInRange || yawChanged)
-                        viewer.clientSideCloseContainer();
+            this.pos = menu.owner.blockPosition();
+            this.viewer = (LocalPlayer) menu.viewer;
+            if (menu.owner instanceof Entity entity) {
+                  this.owner = entity;
+                  this.yaw = entity.getVisualRotationYInDegrees();
+            } else {
+                  this.owner = null;
+                  this.yaw = 0;
             }
       }
 
@@ -70,14 +71,31 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
       }
 
       @Override
-      public void render(GuiGraphics ctx, int mouseX, int mouseY, float delta) {
+      protected void containerTick() {
+            super.containerTick();
+            if (doesClose())
+                  viewer.clientSideCloseContainer();
+      }
+
+      private boolean doesClose() {
             Traits.LocalData traits = handler.backpackInventory.getTraits();
-            int maxStacks = traits.maxStacks();
-            boolean empty = traits.isEmpty();
-            if (empty || maxStacks == 0 || handler.owner.isRemoved()) {
-                  onClose();
-                  return;
+            if (traits.isEmpty() || traits.maxStacks() == 0)
+                  return true;
+
+            if (owner != null) {
+                  if (owner.isRemoved()
+                  || !owner.position().closerThan(pos.getCenter(), 2d)
+                  || !owner.position().closerThan(viewer.position(), 5.0d))
+                        return true;
+
+                  return handler.owner instanceof RemotePlayer owner
+                  && !BackpackInventory.yawMatches(yaw, owner.yBodyRotO, 35);
             }
+            return false;
+      }
+
+      @Override
+      public void render(GuiGraphics ctx, int mouseX, int mouseY, float delta) {
             renderBackground(ctx);
             super.render(ctx, mouseX, mouseY, delta);
             renderTooltip(ctx, mouseX, mouseY);

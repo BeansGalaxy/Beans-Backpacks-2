@@ -1,27 +1,26 @@
 package com.beansgalaxy.backpacks.client.network;
 
-import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.access.MinecraftAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
-import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
+import com.beansgalaxy.backpacks.inventory.BackpackInventory;
+import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.items.Tooltip;
-import com.beansgalaxy.backpacks.network.clientbound.SyncBackSlot;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.UUID;
+import java.util.function.Consumer;
 
 public class CommonAtClient {
       public static boolean syncBackSlot(int entity, ItemStack stack) {
@@ -34,21 +33,10 @@ public class CommonAtClient {
             return false;
       }
 
-      public static void syncBackInventory(String stacks) {
-            CompoundTag tag = stringToNbt(stacks);
-
+      public static void syncBackInventory(CompoundTag tag) {
             LocalPlayer player = Minecraft.getInstance().player;
-            BackpackInventory backpackInventory = BackData.get(player).backpackInventory;
+            BackpackInventory backpackInventory = BackData.get(player).getBackpackInventory();
             backpackInventory.readStackNbt(tag);
-      }
-
-      public static CompoundTag stringToNbt(String string) {
-            try {
-                  CompoundTag nbt = NbtUtils.snbtToStructure(string);
-                  return nbt;
-            } catch (CommandSyntaxException e) {
-                  throw new RuntimeException(Constants.MOD_ID + ": Failed to sync BackpackInventory with networking");
-            }
       }
 
       public static void syncViewersPacket(int id, byte viewers) {
@@ -57,9 +45,9 @@ public class CommonAtClient {
 
             Entity entity = level.getEntity(id);
             if (entity instanceof EntityAbstract entityAbstract)
-                  entityAbstract.viewable.viewers = viewers;
+                  entityAbstract.getViewable().setViewers(viewers);
             else if (entity instanceof Player player) {
-                  BackData.get(player).backpackInventory.getViewable().viewers = viewers;
+                  BackData.get(player).getBackpackInventory().getViewable().setViewers(viewers);
             }
       }
 
@@ -77,5 +65,17 @@ public class CommonAtClient {
 
             MutableComponent keybind = Component.literal(Tooltip.keyBind).withStyle(ChatFormatting.GOLD);
             player.displayClientMessage(Component.translatable("entity.beansbackpacks.equip_locked_msg", keybind, requester), true);
+      }
+
+      public static EnderStorage getEnderStorage() {
+            MinecraftAccessor accessor = (MinecraftAccessor) Minecraft.getInstance();
+            return accessor.beans_Backpacks_2$getEnder();
+
+      }
+
+      public static void sendEnderData(UUID uuid, Consumer<EnderInventory> consumer) {
+            ClientLevel level = Minecraft.getInstance().level;
+            EnderInventory computed = EnderStorage.get(level).MAP.computeIfAbsent(uuid, in -> new EnderInventory(uuid, level));
+            consumer.accept(computed);
       }
 }

@@ -6,7 +6,6 @@ import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.network.clientbound.SyncBackInventory;
-import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.inventory.PotInventory;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -54,7 +53,7 @@ public abstract class InventoryContainerMixin implements BackAccessor {
                   backStack.save(backItem);
                   compoundTag.put("BackSlot", backItem);
                   Traits.LocalData traits = backData.getTraits();
-                  BackpackInventory backpackInventory = backData.backpackInventory;
+                  BackpackInventory backpackInventory = backData.getBackpackInventory();
                   if (!backpackInventory.isEmpty() && !Kind.ENDER.is(traits.kind)) {
                         CompoundTag backTag1 = new CompoundTag();
                         backpackInventory.writeNbt(backTag1);
@@ -75,7 +74,7 @@ public abstract class InventoryContainerMixin implements BackAccessor {
                         backData.set(itemStack);
                         Traits.LocalData traits = backData.getTraits();
                         if (traits.isStorage() && !Kind.ENDER.is(traits.kind))
-                              backData.backpackInventory.readStackNbt(compoundTag.getCompound("Contents"));
+                              backData.getBackpackInventory().readStackNbt(compoundTag.getCompound("Contents"));
                   }
             }
       }
@@ -92,7 +91,7 @@ public abstract class InventoryContainerMixin implements BackAccessor {
                         if (slot == 110) {
                               backData.set(itemStack);
                               if (backData.getTraits().isStorage())
-                                    backData.backpackInventory.readStackNbt(compoundTag.getCompound("Contents"));
+                                    backData.getBackpackInventory().readStackNbt(compoundTag.getCompound("Contents"));
                         }
                   }
             }
@@ -120,7 +119,7 @@ public abstract class InventoryContainerMixin implements BackAccessor {
             if (slot == -1 && !stack.isEmpty())
             {
                   BackData backData = getBackData();
-                  BackpackInventory backpackInventory = backData.backpackInventory;
+                  BackpackInventory backpackInventory = backData.getBackpackInventory();
                   ItemStack backStack = backData.getStack();
                   Traits.LocalData traits = backData.getTraits();
 
@@ -196,7 +195,7 @@ public abstract class InventoryContainerMixin implements BackAccessor {
       public void insertBackpack(int $$0, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
             if (!cir.getReturnValue()) {
                   BackData backData = getBackData();
-                  BackpackInventory backpackInventory = backData.backpackInventory;
+                  BackpackInventory backpackInventory = backData.getBackpackInventory();
                   Traits.LocalData traits = backData.getTraits();
                   if (Kind.is(traits.kind, Kind.POT, Kind.CAULDRON))
                         return;

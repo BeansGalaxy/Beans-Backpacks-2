@@ -2,21 +2,15 @@ package com.beansgalaxy.backpacks.platform.services;
 
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
-import com.beansgalaxy.backpacks.events.UseKeyEvent;
 import com.beansgalaxy.backpacks.network.Network2C;
 import com.beansgalaxy.backpacks.network.Network2S;
 import com.beansgalaxy.backpacks.network.clientbound.Packet2C;
 import com.beansgalaxy.backpacks.network.serverbound.Packet2S;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.BlockHitResult;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.UUID;
+import net.minecraft.world.level.entity.EntityAccess;
 
 public interface NetworkHelper {
 
@@ -28,7 +22,7 @@ public interface NetworkHelper {
 
       void openBackpackMenu(Player viewer, EntityAbstract owner);
 
-      void openBackpackMenu(Player viewer, Player owner);
+      void openBackpackMenu(Player viewer, BackData owner);
 
-      MenuProvider getMenuProvider(Entity backpack);
+      MenuProvider getMenuProvider(EntityAccess backpack);
 }

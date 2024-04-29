@@ -57,7 +57,7 @@ public abstract class ItemStackMixin {
 
             BackData backData = BackData.get(player);
             ItemStack backStack = backData.getStack();
-            Traits.LocalData traits = Traits.LocalData.fromStack(instance);
+            Traits.LocalData traits = Traits.LocalData.fromStack(instance, player);
             Kind instanceKind = traits.kind;
             boolean actionKeyPressed = backData.actionKeyPressed;
 
@@ -85,7 +85,7 @@ public abstract class ItemStackMixin {
             if (Constants.CLIENT_CONFIG.tooltip_style.get() != TooltipType.INTEGRATED
             && instance == backStack
             && Tooltip.isCuriosMenu()
-            && !backData.backpackInventory.isEmpty()) {
+            && !backData.getBackpackInventory().isEmpty()) {
                   components.clear();
                   components.add(Component.empty());
                   cir.setReturnValue(components);

@@ -5,8 +5,8 @@ import com.beansgalaxy.backpacks.client.renderer.models.BackpackModel;
 import com.beansgalaxy.backpacks.client.renderer.BackpackRenderer;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
+import com.beansgalaxy.backpacks.data.Viewable;
 import com.beansgalaxy.backpacks.items.WingedBackpack;
-import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
@@ -20,11 +20,11 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
 import java.awt.*;
 
@@ -42,7 +42,7 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
         this.backFeature = backFeature;
     }
 
-    public void render(PoseStack pose, MultiBufferSource mbs, int light, AbstractClientPlayer player, ModelPart torso, BackData backData) {
+    public void render(PoseStack pose, MultiBufferSource mbs, int light, AbstractClientPlayer player, ModelPart torso, BackData backData, float tick) {
         ModelPart backpackBody = backpackModel.body;
         ModelPart backpackMask = backpackModel.mask;
         Traits.LocalData traits = backData.getTraits();
@@ -58,23 +58,29 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
         }
         else {
             if (player.isCrouching()) {
-                backpackBody.z += 19/16f;
-                backpackMask.z += 39/32f;
-                backpackMask.y -= 1/32f;
+                backpackBody.z += 17/16f;
+                backpackMask.z += 35/32f;
+                backpackBody.y -= 10/32f;
+                backpackMask.y -= 11/32f;
             } else {
                 backpackBody.z += 17/16f;
                 backpackMask.z += 35/32f;
-                backpackBody.y += 4 / 8f;
-                backpackMask.y += 4 / 8f;
+                backpackBody.y += 3 / 16f;
+                backpackMask.y += 3 / 16f;
             }
 
         }
 
+        Viewable viewable = backData.getBackpackInventory().getViewable();
+        if (viewable.lastDelta > tick) {
+            viewable.updateOpen();
+        }
 
-        BackpackInventory.Viewable viewable = backData.backpackInventory.getViewable();
-        viewable.updateOpen();
-        backpackModel.body.getChild("head").xRot = viewable.headPitch;
-        backpackModel.mask.getChild("head").xRot = viewable.headPitch;
+        float fallDistance = player.fallDistance;
+        float fallPitch = (float) (Math.log(fallDistance * 3 + 1)) * -0.05f;
+        float headPitch = Mth.lerp(tick, viewable.lastPitch, viewable.headPitch) * 0.3f;
+        backpackModel.body.getChild("head").xRot = headPitch + fallPitch;
+        backpackModel.mask.getChild("head").xRot = headPitch + fallPitch;
         int color = traits.color;
         Color tint = new Color(color);
         float scale = backFeature.sneakInter / 3f;
@@ -88,8 +94,6 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
             pose.translate(0, ((2 - scale) - (player.isFallFlying() ? 1 : 0)) / 16, (scale / 32));
         } else
             pose.translate(0, (1 / 16f) * scale, (1 / 32f) * scale);
-        float noClippingPlease = 1.001f;
-        pose.scale(noClippingPlease, noClippingPlease, noClippingPlease);
 
         float[] colors = {tint.getRed() / 255F, tint.getGreen() / 255F, tint.getBlue() / 255F};
         ResourceLocation texture = traits.kind.getAppendedResource(traits.backpack_id, "");

@@ -2,7 +2,6 @@ package com.beansgalaxy.backpacks.platform;
 
 import com.beansgalaxy.backpacks.compat.CurioRegistry;
 import com.beansgalaxy.backpacks.data.BackData;
-import com.beansgalaxy.backpacks.data.config.Gamerules;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.beansgalaxy.backpacks.inventory.CauldronInventory;
 import com.beansgalaxy.backpacks.platform.services.ConfigHelper;
@@ -12,7 +11,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
@@ -86,7 +84,7 @@ public class ForgeCompatHelper implements CompatHelper {
             }
 
             public Container getBackInventory() {
-                  return backData.backpackInventory;
+                  return backData.getBackpackInventory();
             }
 
             public ItemStack getBackStack() {

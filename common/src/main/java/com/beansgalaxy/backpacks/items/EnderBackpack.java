@@ -1,8 +1,8 @@
 package com.beansgalaxy.backpacks.items;
 
 import com.beansgalaxy.backpacks.data.EnderStorage;
-import com.beansgalaxy.backpacks.network.clientbound.SendEnderData;
-import com.beansgalaxy.backpacks.platform.Services;
+import com.beansgalaxy.backpacks.inventory.EnderInventory;
+import com.beansgalaxy.backpacks.network.clientbound.SendEnderDisplay;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -33,12 +33,18 @@ public class EnderBackpack extends BackpackItem {
             super.verifyTagAfterLoad(tag);
       }
 
-      public UUID getOrCreateUUID(UUID uuid, ItemStack stack) {
+      public UUID getOrCreateUUID(Player viewer, ItemStack stack) {
+            UUID uuid = viewer.getUUID();
+            Level level = viewer.level();
+            return getOrCreateUUID(uuid, level, stack);
+      }
+
+      public UUID getOrCreateUUID(UUID uuid, Level level, ItemStack stack) {
             CompoundTag tag = stack.getTag();
             if (tag == null || !tag.contains("owner"))
                   return uuid;
 
-            if (EnderStorage.get().MAPPED_DATA.containsKey(uuid))
+            if (EnderStorage.get(level).MAP.containsKey(uuid))
                   uuid = tag.getUUID("owner");
 
             tag.putUUID("owner", uuid);
@@ -63,7 +69,7 @@ public class EnderBackpack extends BackpackItem {
             if (!isPersistent(stack) && player instanceof ServerPlayer serverPlayer) {
                   UUID uuid = player.getUUID();
                   setUUID(uuid, stack);
-                  EnderStorage.Data enderData = EnderStorage.getEnderData(uuid, level);
+                  EnderInventory enderData = EnderStorage.getEnderData(uuid, level);
                   enderData.setPlayerName(player.getName().copy());
                   CompoundTag tag = stack.getTag();
                   if (player.containerMenu instanceof ItemCombinerMenu && tag != null) {
@@ -73,7 +79,7 @@ public class EnderBackpack extends BackpackItem {
                   }
 
                   for (ServerPlayer players : serverPlayer.server.getPlayerList().getPlayers()) {
-                        SendEnderData.send(players, uuid);
+                        SendEnderDisplay.send(players, uuid);
                   }
             }
             super.onCraftedBy(stack, level, player);

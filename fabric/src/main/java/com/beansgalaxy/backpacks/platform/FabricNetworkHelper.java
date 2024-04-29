@@ -1,39 +1,30 @@
 package com.beansgalaxy.backpacks.platform;
 
 import com.beansgalaxy.backpacks.data.BackData;
-import com.beansgalaxy.backpacks.events.UseKeyEvent;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
-import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
-import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.network.Network2C;
 import com.beansgalaxy.backpacks.network.Network2S;
 import com.beansgalaxy.backpacks.network.clientbound.*;
 import com.beansgalaxy.backpacks.network.serverbound.*;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
-import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.platform.services.NetworkHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.level.entity.EntityAccess;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.UUID;
 
 public class FabricNetworkHelper implements NetworkHelper {
 
@@ -64,18 +55,19 @@ public class FabricNetworkHelper implements NetworkHelper {
       }
 
       @Override
-      public void openBackpackMenu(Player viewer, Player owner) {
-            viewer.openMenu(BackData.get(owner).backpackInventory.getMenuProvider());
+      public void openBackpackMenu(Player viewer, BackData owner) {
+            viewer.openMenu(owner.getBackpackInventory().getMenuProvider());
 
       }
 
       @Override
-      public MenuProvider getMenuProvider(Entity entity) {
+      public MenuProvider getMenuProvider(EntityAccess entity) {
             return new ExtendedScreenHandlerFactory() {
 
                   @Override
                   public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
                         buf.writeInt(entity.getId());
+                        buf.writeUUID(entity.getUUID());
                   }
 
                   @Override
@@ -94,6 +86,11 @@ public class FabricNetworkHelper implements NetworkHelper {
                                     backpackInventory.addViewer(serverPlayer);
                               return new BackpackMenu(containerId, player.getInventory(), backpackInventory);
                         }
+                  }
+
+                  @Override
+                  public boolean shouldCloseCurrentScreen() {
+                        return false;
                   }
             };
       }

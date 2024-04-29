@@ -83,8 +83,8 @@ public class CommonForgeEvents {
             if (event.getEntity() instanceof ServerPlayer player)
             {
                   SyncBackInventory.send(player);
-                  EnderStorage.get().MAPPED_DATA.forEach(((uuid, enderData) -> {
-                        NetworkPackages.S2C(new SendEnderData(uuid, enderData), player);
+                  EnderStorage.get(player.level()).MAP.forEach(((uuid, enderData) -> {
+                        SendEnderDisplay.send(player, uuid);
                   }));
 
                   EnderStorage.Location.update(player.getUUID(), player.serverLevel());

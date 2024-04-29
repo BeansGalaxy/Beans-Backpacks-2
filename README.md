@@ -23,7 +23,30 @@ the issues tab. </p>
 
 <h1 align="center"> Changelog </h1>
 
-<h3> 20.1-0.21-v2 & 20.2-0.17-v2 <img align="right" src="assets/images/updates/broke_cauldrons.png" alt="Back Slot" style="width:150px"> </h3>
+### 20.1-0.26-v3
+
+- Backpacks can now be locked by holding them & right-clicking
+  - Other players cannot access or equip a locked backpack
+  - Holding your hotkey with a locked backpack equipped temporarily unlocks it
+  - Ender Backpacks cannot be equipped while locked
+- Animation Changes
+  - Backpacks do not open slowly if you did not open them
+  - *Perfected* Backpack opening animations
+  - Added breaking decal to punched backpacks
+  - Backpacks now take 3 punches to break
+  - Locked Backpacks take 8 punches
+- Reworked Ender Backpacks
+  - Opening a placed ender backpack visually opens all linked packs
+  - Ender Backpacks send less data more frequently to the client and are more reliable
+  - Ender Inventories are now one single inventory instead of many synced inventories
+- Fire burns backpacks slower
+- Cactus instantly breaks backpacks
+- Sounds are now registered in `:common`
+- Fixed many leather backpack sounds
+- Fixed crash caused by players failing to load other back slots
+- Fixed dupe with the crafting result slot & shift key
+
+<h3> 20.1-0.25-v2 <img align="right" src="assets/images/updates/broke_cauldrons.png" alt="Back Slot" style="width:150px"> </h3>
 
 - Finalized Backpack Tooltip
 - Added config to switch between 3 tooltip styles

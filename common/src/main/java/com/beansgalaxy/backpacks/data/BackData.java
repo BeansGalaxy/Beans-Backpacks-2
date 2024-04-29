@@ -31,33 +31,15 @@ import java.util.UUID;
 
 public class BackData {
       public final Player owner;
-      public final BackpackInventory backpackInventory = new BackpackInventory() {
+      private final BackpackInventory backpackInventory = new BackpackInventory() {
 
             @Override public Entity getOwner() {
                   return owner;
             }
 
-            public final BackpackInventory.Viewable viewable = new BackpackInventory.Viewable();
-
-            @Override public Viewable getViewable() {
-                  return viewable;
-            }
-
-            NonNullList<ServerPlayer> playersViewing = NonNullList.create();
-
-            @Override public NonNullList<ServerPlayer> getPlayersViewing() {
-                  return playersViewing;
-            }
-
-            private final NonNullList<ItemStack> itemStacks = NonNullList.create();
-
-            @Override public NonNullList<ItemStack> getItemStacks() {
-                  ItemStack backStack = BackData.this.getStack();
-                  if (!backStack.isEmpty() && backStack.getItem() instanceof EnderBackpack enderBackpack) {
-                        UUID uuid = enderBackpack.getOrCreateUUID(owner.getUUID(), backStack);
-                        return EnderStorage.getEnderData(uuid, owner.level()).getItemStacks();
-                  }
-                  return this.itemStacks;
+            @Override
+            public Level level() {
+                  return owner.level();
             }
 
             @Override
@@ -67,19 +49,7 @@ public class BackData {
 
             @Override
             public UUID getPlacedBy() {
-                  if (backStack.getItem() instanceof EnderBackpack enderBackpack)
-                        return enderBackpack.getOrCreateUUID(owner.getUUID(), backStack);
                   return owner.getUUID();
-            }
-
-            @Override
-            public void setChanged() {
-                  ItemStack backStack = BackData.this.getStack();
-                  if (!owner.level().isClientSide && backStack.getItem() instanceof EnderBackpack enderBackpack) {
-                        UUID uuid = enderBackpack.getOrCreateUUID(owner.getUUID(), backStack);
-                        EnderStorage.get().syncViewers(uuid);
-                  }
-                  BackpackInventory.super.setChanged();
             }
       };
 
@@ -95,6 +65,10 @@ public class BackData {
       public void setEnderLocations(HashSet<EnderStorage.PackagedLocation> newLocations) {
             this.enderLocations.clear();
             this.enderLocations.addAll(newLocations);
+      }
+
+      public EnderStorage getEnderStorage() {
+            return EnderStorage.get(owner.level());
       }
 
       public HashSet<EnderStorage.PackagedLocation> getEnderLocations() {
@@ -125,20 +99,22 @@ public class BackData {
       }
 
       public void set(ItemStack stack) {
+            if (stack == null) return;
             Services.COMPAT.setBackSlotItem(this, stack);
             backSlot.set(stack);
       }
 
       public void update(ItemStack stack) {
+            if (stack == null) return;
             if (stack.isEmpty())
-                  backpackInventory.clearViewers();
+                  getBackpackInventory().clearViewers();
             else if (stack.getItem() instanceof EnderBackpack enderBackpack) {
-                  UUID uuid = enderBackpack.getOrCreateUUID(owner.getUUID(), stack);
-                  EnderStorage.get().addViewer(uuid, backpackInventory);
+                  UUID uuid = enderBackpack.getOrCreateUUID(owner, stack);
+                  getEnderStorage().addViewer(uuid, owner);
             }
 
             this.backStack = stack;
-            this.traits = Traits.LocalData.fromStack(stack);
+            this.traits = Traits.LocalData.fromStack(stack, owner);
       }
 
       public void setChanged() {
@@ -208,7 +184,7 @@ public class BackData {
 
             if (!level.isClientSide()) {
                   NonNullList<ItemStack> itemStacks = NonNullList.create();
-                  itemStacks.addAll(backpackInventory.getItemStacks());
+                  itemStacks.addAll(getBackpackInventory().getItemStacks());
                   EntityAbstract.create(backStack, x, y, z, yaw, true, direction, owner, itemStacks);
             }
 
@@ -231,7 +207,15 @@ public class BackData {
             if (getStack().getItem() instanceof EnderBackpack)
                   return;
 
-            NonNullList<ItemStack> stacks = this.backpackInventory.getItemStacks();
-            newBackData.backpackInventory.getItemStacks().addAll(stacks);
+            NonNullList<ItemStack> stacks = this.getBackpackInventory().getItemStacks();
+            newBackData.getBackpackInventory().getItemStacks().addAll(stacks);
+      }
+
+      public BackpackInventory getBackpackInventory() {
+            if (backStack != null && backStack.getItem() instanceof EnderBackpack enderBackpack) {
+                  UUID uuid = enderBackpack.getOrCreateUUID(owner, backStack);
+                  return EnderStorage.getEnderData(uuid, owner.level());
+            }
+            return backpackInventory;
       }
 }

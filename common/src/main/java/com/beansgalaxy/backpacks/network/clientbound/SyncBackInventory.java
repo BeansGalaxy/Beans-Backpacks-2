@@ -5,23 +5,22 @@ import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.network.Network2C;
-import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
 public class SyncBackInventory implements Packet2C {
-      final String stacks;
+      final CompoundTag stacks;
 
       public SyncBackInventory(BackpackInventory backpackInventory) {
             CompoundTag compound = new CompoundTag();
             backpackInventory.writeNbt(compound);
-            this.stacks = compound.getAsString();
+            stacks = compound;
       }
 
       public SyncBackInventory(FriendlyByteBuf buf) {
-            stacks = buf.readUtf();
+            stacks = buf.readNbt();
       }
 
       public static void send(ServerPlayer owner) {
@@ -29,11 +28,11 @@ public class SyncBackInventory implements Packet2C {
             ItemStack backStack = backData.getStack();
             if (backStack.getItem() instanceof EnderBackpack backpack) {
                   if (!backStack.isEmpty())
-                        SendEnderData.send(owner, backpack.getOrCreateUUID(owner.getUUID(), backStack));
+                        SendEnderStacks.send(owner, backpack.getOrCreateUUID(owner, backStack));
                   return;
             }
 
-            new SyncBackInventory(backData.backpackInventory).send2C(owner);
+            new SyncBackInventory(backData.getBackpackInventory()).send2C(owner);
       }
 
       @Override
@@ -42,7 +41,7 @@ public class SyncBackInventory implements Packet2C {
       }
 
       public void encode(FriendlyByteBuf buf) {
-            buf.writeUtf(stacks);
+            buf.writeNbt(stacks);
       }
 
       @Override

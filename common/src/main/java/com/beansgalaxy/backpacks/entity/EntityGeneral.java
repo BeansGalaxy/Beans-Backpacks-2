@@ -23,23 +23,6 @@ public class EntityGeneral extends EntityAbstract {
                   return EntityGeneral.this;
             }
 
-            NonNullList<ServerPlayer> playersViewing = NonNullList.create();
-
-            @Override
-            public Viewable getViewable() {
-                  return viewable;
-            }
-
-            @Override
-            public NonNullList<ServerPlayer> getPlayersViewing() {
-                  return playersViewing;
-            }
-
-            @Override
-            public NonNullList<ItemStack> getItemStacks() {
-                  return EntityGeneral.this.getItemStacks();
-            }
-
             @Override
             public Traits.LocalData getTraits() {
                   return EntityGeneral.this.getTraits();
@@ -51,9 +34,14 @@ public class EntityGeneral extends EntityAbstract {
             }
 
             @Override
+            public Level level() {
+                  return EntityGeneral.this.level();
+            }
+
+            @Override
             public void setChanged() {
                   EntityGeneral.this.level().updateNeighbourForOutputSignal(EntityGeneral.this.pos, Blocks.AIR);
-                  BackpackInventory.super.setChanged();
+                  super.setChanged();
             }
       };
 
@@ -65,7 +53,7 @@ public class EntityGeneral extends EntityAbstract {
             super(Services.REGISTRY.getGeneralEntity(), level);
 
             if (stacks != null && !stacks.isEmpty()) {
-                  getItemStacks().addAll(stacks);
+                  getInventory().getItemStacks().addAll(stacks);
                   stacks.clear();
             }
       }
@@ -73,13 +61,6 @@ public class EntityGeneral extends EntityAbstract {
       @Override
       public BackpackInventory getInventory() {
             return inventory;
-      }
-
-      protected NonNullList<ItemStack> itemStacks = NonNullList.create();
-
-      @Override
-      NonNullList<ItemStack> getItemStacks() {
-            return itemStacks;
       }
 
       @Override

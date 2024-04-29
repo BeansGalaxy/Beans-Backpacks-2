@@ -1,6 +1,5 @@
 package com.beansgalaxy.backpacks.screen;
 
-import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.access.BucketsAccess;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
@@ -20,7 +19,7 @@ public class InSlot extends Slot {
       public final BackData backData;
 
       public InSlot(BackData backData) {
-            super(backData.backpackInventory, 0, BackData.UV_SURVIVAL[0], BackData.UV_SURVIVAL[1]);
+            super(backData.getBackpackInventory(), 0, BackData.UV_SURVIVAL[0], BackData.UV_SURVIVAL[1]);
             this.backData = backData;
       }
 
@@ -33,7 +32,7 @@ public class InSlot extends Slot {
       public boolean isActive() {
             Traits.LocalData traits = backData.getTraits();
             boolean storage = traits.isStorage();
-            boolean empty = backData.backpackInventory.isEmpty();
+            boolean empty = backData.getBackpackInventory().isEmpty();
             return storage || !empty || Kind.is(traits.kind, Kind.POT, Kind.CAULDRON);
       }
 
@@ -53,6 +52,6 @@ public class InSlot extends Slot {
       }
 
       public boolean mayPlace(ItemStack stack) {
-            return backData.backpackInventory.canPlaceItem(stack);
+            return backData.getBackpackInventory().canPlaceItem(stack);
       }
 }

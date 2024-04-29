@@ -53,7 +53,7 @@ public class BackFeature<T extends LivingEntity, M extends EntityModel<T>>
             sneakInter = sneakInter(player, sneakInter);
 
             if (Kind.isBackpack(backStack))
-                backpackFeature.render(pose, mbs, light, player, torso, backData);
+                backpackFeature.render(pose, mbs, light, player, torso, backData, tickDelta);
             else if (Kind.POT.is(kind))
                 potFeature.render(pose, mbs, light, player, torso, backStack);
             else if (Kind.CAULDRON.is(kind))

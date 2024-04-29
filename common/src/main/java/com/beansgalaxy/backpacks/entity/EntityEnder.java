@@ -1,20 +1,16 @@
 package com.beansgalaxy.backpacks.entity;
 
 import com.beansgalaxy.backpacks.data.*;
-import com.beansgalaxy.backpacks.data.config.Gamerules;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
-import com.beansgalaxy.backpacks.events.PlaySound;
+import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -24,62 +20,31 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class EntityEnder extends EntityAbstract {
-      private final BackpackInventory inventory = new BackpackInventory() {
-
-            public Entity getOwner() {
-                  return EntityEnder.this;
-            }
-
-            NonNullList<ServerPlayer> playersViewing = NonNullList.create();
-
-            @Override
-            public Viewable getViewable() {
-                  return viewable;
-            }
-
-            @Override
-            public NonNullList<ServerPlayer> getPlayersViewing() {
-                  return playersViewing;
-            }
-
-            @Override
-            public NonNullList<ItemStack> getItemStacks() {
-                  return EntityEnder.this.getItemStacks();
-            }
-
-            @Override
-            public Traits.LocalData getTraits() {
-                  return EntityEnder.this.getTraits();
-            }
-
-            @Override
-            public UUID getPlacedBy() {
-                  return EntityEnder.this.getPlacedBy();
-            }
-
-            @Override
-            public void setChanged() {
-                  if (EntityEnder.this.level() instanceof ServerLevel)
-                        EnderStorage.get().syncViewers(EntityEnder.this.getPlacedBy());
-
-                  BackpackInventory.super.setChanged();
-            }
-      };
-
       public EntityEnder(EntityType<? extends Entity> type, Level level) {
             super(type, level);
       }
 
       public EntityEnder(Level level) {
             super(Services.REGISTRY.getEnderEntity(), level);
+      }
 
-            if (level() instanceof ServerLevel serverLevel)
-                  EnderStorage.setLocation(getPlacedBy(), this.uuid, blockPosition(), serverLevel);
+      private EnderStorage getEnderStorage() {
+            return EnderStorage.get(level());
+      }
+
+      public Optional<EnderInventory> getEnderData() {
+            return entityData.get(OWNER).map(in ->
+                        EnderStorage.getEnderData(in, level()));
+      }
+
+      @Override
+      protected boolean isLocked() {
+            return getEnderData().map(EnderInventory::isLocked).orElse(true);
       }
 
       @Override
       public BackpackInventory getInventory() {
-            return inventory;
+            return getEnderData().orElse(null);
       }
 
       @Override
@@ -89,22 +54,16 @@ public class EntityEnder extends EntityAbstract {
 
                         @Override
                         public CompoundTag getTrim() {
-                              return EnderStorage.getTrim(getPlacedBy());
+                              return getEnderData().map(EnderInventory::getTrim).orElse(new CompoundTag());
                         }
 
                   };
             return traits;
       }
 
-      @Override
-      protected NonNullList<ItemStack> getItemStacks() {
-            return EnderStorage.getEnderData(getPlacedBy(), level()).getItemStacks();
-      }
-
       @Override @NotNull
       public Component getDisplayName() {
-            EnderStorage.Data enderData = EnderStorage.getEnderData(getPlacedBy(), level());
-            return enderData.getPlayerName();
+            return getEnderData().map(EnderInventory::getPlayerName).orElse(Component.empty());
       }
 
       @Override
@@ -115,7 +74,7 @@ public class EntityEnder extends EntityAbstract {
 
       @Override
       public void kill() {
-            EnderStorage.removeLocation(getPlacedBy(), getUUID());
+            getEnderData().ifPresent(in -> in.locations.remove(getUUID()));
             super.kill();
             level().updateNeighbourForOutputSignal(pos, Blocks.AIR);
       }
@@ -124,7 +83,7 @@ public class EntityEnder extends EntityAbstract {
       public void remove(RemovalReason $$0) {
             UUID placedBy = getPlacedBy();
             if (placedBy != null)
-                  EnderStorage.get().removeViewer(placedBy, getInventory());
+                  getEnderStorage().removeViewer(placedBy, this);
 
             super.remove($$0);
       }
@@ -139,8 +98,17 @@ public class EntityEnder extends EntityAbstract {
             return getPlacedBy() != null;
       }
 
-      public void setPlacedBy(Optional<UUID> uuid) {
-            entityData.set(OWNER, uuid);
+      @Override
+      public void setPlacedBy(Optional<UUID> placedBy) {
+            placedBy.ifPresent(in -> {
+                  entityData.set(OWNER, placedBy);
+                  if (!level().isClientSide) {
+                        EnderStorage.getEnderData(in, level()).locations.put(in,
+                                    new EnderStorage.Location(blockPosition(), this.level().dimension()));
+
+                        getEnderStorage().addViewer(in, this);
+                  }
+            });
       }
 
       @Override
@@ -148,13 +116,13 @@ public class EntityEnder extends EntityAbstract {
             super.reapplyPosition();
             level().updateNeighbourForOutputSignal(pos, Blocks.AIR);
 
-            EnderStorage.get().addViewer(getPlacedBy(), getInventory());
+            getEnderStorage().addViewer(getPlacedBy(), this);
       }
 
       @Override
       protected void readAdditionalSaveData(CompoundTag tag) {
             fromNBT(tag);
-            EnderStorage.get().addViewer(getPlacedBy(), getInventory());
+            getEnderStorage().addViewer(getPlacedBy(), this);
       }
 
       @Override

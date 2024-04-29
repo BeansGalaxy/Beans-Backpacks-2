@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.entity;
 
 import com.beansgalaxy.backpacks.data.Traits;
-import com.beansgalaxy.backpacks.inventory.BackpackInventory;
+import com.beansgalaxy.backpacks.data.Viewable;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -15,14 +15,12 @@ import net.minecraft.world.level.Level;
 import java.util.Optional;
 import java.util.UUID;
 
-public class Backpack extends Entity {
+public abstract class Backpack extends Entity {
       public static final EntityDataAccessor<Optional<UUID>> OWNER = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.OPTIONAL_UUID);
       public static final EntityDataAccessor<CompoundTag> LOCAL_DATA = SynchedEntityData.defineId(Backpack.class, EntityDataSerializers.COMPOUND_TAG);
       public static final int DEFAULT_COLOR = 9062433;
 
-      public final BackpackInventory.Viewable viewable = new BackpackInventory.Viewable();
       protected Traits.LocalData traits = Traits.LocalData.EMPTY;
-
       public Backpack(Level $$1) {
             super(Services.REGISTRY.getGeneralEntity(), $$1);
       }
@@ -37,10 +35,7 @@ public class Backpack extends Entity {
             return traits;
       }
 
-      public BackpackInventory.Viewable getViewable() {
-            return viewable;
-      }
-
+      abstract public Viewable getViewable();
 
       public UUID getPlacedBy() {
             Optional<UUID> uuid = entityData.get(OWNER);

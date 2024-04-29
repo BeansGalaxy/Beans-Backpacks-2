@@ -100,7 +100,7 @@ public enum PlaySound {
                         return Events.METAL_INSERT.playable(1f, 1f);
                     }
                     case TAKE -> {
-                        return Events.METAL_TAKE.playable(1f, 1f);
+                        return Events.METAL_TAKE.playable(0.7f, 1f);
                     }
                     case OPEN -> {
                         return Events.METAL_OPEN.playable(1f, 1f);
@@ -123,7 +123,7 @@ public enum PlaySound {
             case ENDER -> {
                 switch (type) {
                     case OPEN -> {
-                        return new Playable(SoundEvents.ENDER_CHEST_OPEN, 1f, 1f);
+                        return new Playable(SoundEvents.ENDER_CHEST_OPEN, 0.4f, 1f);
                     }
                     case CLOSE -> {
                         return new Playable(SoundEvents.ENDER_CHEST_CLOSE, 1f, 1f);

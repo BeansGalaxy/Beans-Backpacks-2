@@ -9,6 +9,7 @@ import com.beansgalaxy.backpacks.client.renderer.models.PotModel;
 import com.beansgalaxy.backpacks.events.*;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.data.EnderStorage;
+import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.beansgalaxy.backpacks.items.WingedBackpack;
@@ -76,7 +77,7 @@ public class FabricClient implements ClientModInitializer {
                   String string = buf.readUtf();
                   MutableComponent playerName = Component.Serializer.fromJson(string);
 
-                  EnderStorage.Data computed = EnderStorage.get().MAPPED_DATA.computeIfAbsent(uuid, in -> new EnderStorage.Data());
+                  EnderInventory computed = EnderStorage.get(client.level).MAP.computeIfAbsent(uuid, in -> new EnderInventory(uuid, client.level));
                   computed.setPlayerName(playerName).setTrim(trim).setItemStacks(itemStacks);
 
             });
