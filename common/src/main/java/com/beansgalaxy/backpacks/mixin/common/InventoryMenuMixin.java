@@ -14,11 +14,14 @@ import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.beansgalaxy.backpacks.screen.*;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
@@ -50,7 +53,6 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                   this.addSlot(backData.backSlot);
             } else
                   this.addSlot(backData.inSlot);
-
       }
 
       @Inject(method = "quickMoveStack", cancellable = true, at = @At("HEAD"))
@@ -59,7 +61,7 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
             Slot slot = this.slots.get(slotInt);
             ItemStack stack = slot.getItem();
             boolean canQuickEquip = !Constants.SLOTS_MOD_ACTIVE || !player.isCreative();
-            if (canQuickEquip && (Kind.isWearable(stack)) && backData.isEmpty() && !backData.backSlotDisabled()) {
+            if (!(slot instanceof ResultSlot) && canQuickEquip && (Kind.isWearable(stack)) && backData.isEmpty() && !backData.backSlotDisabled()) {
                   backData.set(stack);
                   slot.set(ItemStack.EMPTY);
                   cir.setReturnValue(ItemStack.EMPTY);
@@ -100,9 +102,9 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
             boolean selectedEquipment = !selectedPlayerInventory && !selectedBackpackInventory;
 
             ItemStack carried = getCarried();
-            ItemStack cursorStack = carried;
-            boolean cursorEmpty = cursorStack.isEmpty();
-            if (selectedEquipment && !selectedBackSlot && !cursorEmpty && Constants.CHESTPLATE_DISABLED.contains(cursorStack.getItem())) {
+            boolean cursorEmpty = carried.isEmpty();
+            Item carriedItem = carried.getItem();
+            if (selectedEquipment && !selectedBackSlot && !cursorEmpty && Constants.CHESTPLATE_DISABLED.contains(carriedItem)) {
                   return;
             }
 
@@ -116,17 +118,22 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
             Traits.LocalData traits = backData.getTraits();
             Kind kind = traits.kind;
             Level level = player.level();
-            if (!backData.isEmpty() && Constants.elytraOrDisables(cursorStack.getItem()))
+            if (!backData.isEmpty() && Constants.elytraOrDisables(carriedItem))
             {
+                  MutableComponent msg = Component.translatable("entity.beansbackpacks.blocked.inventory", Constants.getName(carried), Constants.getName(backStack));
                   if (selectedEquipment && !slot.hasItem() && !cursorEmpty)
                   {
-                        if (level.isClientSide)
+                        if (level.isClientSide) {
+                              Tooltip.pushInventoryMessage(msg);
                               Tooltip.playSound(kind, PlaySound.HIT);
+                        }
                         return;
                   }
                   if (actionType == ClickType.QUICK_MOVE && !selectedBackpackInventory) {
-                        if (level.isClientSide())
+                        if (level.isClientSide()) {
+                              Tooltip.pushInventoryMessage(msg);
                               Tooltip.playSound(kind, PlaySound.HIT);
+                        }
                         return;
                   }
             }

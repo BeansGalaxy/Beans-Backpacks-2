@@ -102,15 +102,14 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
             int w = columns * spacing;
             if (player.inventoryMenu.getCarried().isEmpty()) {
                   ItemStack item = itemStacks.get(0);
-                  MutableComponent mutableComponent = Component.empty().append(item.getHoverName()).withStyle(item.getRarity().color);
-                  if (item.hasCustomHoverName()) mutableComponent.withStyle(ChatFormatting.ITALIC);
-                  int textWidth = font.width(mutableComponent.getVisualOrderText());
+                  Component name = Constants.getName(item);
+                  int textWidth = font.width(name.getVisualOrderText());
                   int textOffset = (hasSpace ? -9 : 5) + (columns > 4 ? 0 : 7);
                   int textLengthOverflow = isCuriosMenu ? 0 : textWidth - w + (12);
                   int tooLong = Math.max(textOffset, textLengthOverflow);
 
                   drawTooltipBox(gui, leftPos - tooLong, topPos - 28, textWidth + 5, 12, 0);
-                  gui.drawString(font, mutableComponent, leftPos + 3 - tooLong, topPos - 26, 0xFFFFFFFF);
+                  gui.drawString(font, name, leftPos + 3 - tooLong, topPos - 26, 0xFFFFFFFF);
             }
 
             int firstX = leftPos - 9;
@@ -182,14 +181,13 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
 
             if (minecraft.player.inventoryMenu.getCarried().isEmpty()) {
                   ItemStack item = itemStacks.get(0);
-                  MutableComponent mutableComponent = Component.empty().append(item.getHoverName()).withStyle(item.getRarity().color);
-                  if (item.hasCustomHoverName()) mutableComponent.withStyle(ChatFormatting.ITALIC);
-                  int textWidth = font.width(mutableComponent.getVisualOrderText());
+                  Component name = Constants.getName(item);
+                  int textWidth = font.width(name.getVisualOrderText());
                   int textLengthOverflow = isCuriosMenu ? 0 : textWidth - itemsWidth + 7;
                   int tooltipOffset = Math.max(0, textLengthOverflow);
 
                   drawTooltipBox(gui, mouseX - tooltipOffset, mouseY - 18 - offsetY, textWidth + 5, 12, 0);
-                  gui.drawString(font, mutableComponent, mouseX + 3 - tooltipOffset, mouseY - offsetY - 16, 0xFFFFFFFF);
+                  gui.drawString(font, name, mouseX + 3 - tooltipOffset, mouseY - offsetY - 16, 0xFFFFFFFF);
             }
 
             drawTooltipBox(gui, mouseX - 2, mouseY - 1 - offsetY, itemsWidth, Math.min(maxRows, rows) * SPACING + 2, 0);
@@ -248,13 +246,12 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
                         mouseY = pos[1] - 15;
                   }
                   ItemStack item = itemStacks.get(0);
-                  MutableComponent mutableComponent = Component.empty().append(item.getHoverName()).withStyle(item.getRarity().color);
-                  if (item.hasCustomHoverName()) mutableComponent.withStyle(ChatFormatting.ITALIC);
-                  int width1 = font.width(mutableComponent.getVisualOrderText());
+                  Component name = Constants.getName(item);
+                  int width1 = font.width(name.getVisualOrderText());
                   drawTooltipBox(gui, mouseX - 3, mouseY - 2, width1 + 5, 12, 150);
                   gui.pose().pushPose();
                   gui.pose().translate(0, 0, 200);
-                  gui.drawString(font, mutableComponent, mouseX, mouseY, 0xFFFFFFFF);
+                  gui.drawString(font, name, mouseX, mouseY, 0xFFFFFFFF);
                   gui.pose().popPose();
             }
 

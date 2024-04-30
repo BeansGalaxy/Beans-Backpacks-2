@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.items;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.access.InventoryScreenAccess;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.data.Traits;
@@ -14,6 +15,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.AdvancementList;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
@@ -271,5 +273,11 @@ public class Tooltip {
             boolean b1 = minecraft.screen instanceof InventoryScreen;
             boolean b2 = Services.COMPAT.isModLoaded(CompatHelper.CURIOS);
             return b2 && b && !b1;
+      }
+
+      public static void pushInventoryMessage(Component msg) {
+            Screen screen = Minecraft.getInstance().screen;
+            if (screen instanceof InventoryScreenAccess access)
+                  access.pushInventoryMessage(msg);
       }
 }

@@ -24,6 +24,9 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -55,6 +58,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 public abstract class EntityAbstract extends Backpack {
+      public static final EntityDataAccessor<Boolean> LOCKED = SynchedEntityData.defineId(EntityAbstract.class, EntityDataSerializers.BOOLEAN);
       public Direction direction;
       protected BlockPos pos;
       private double actualY;
@@ -145,9 +149,7 @@ public abstract class EntityAbstract extends Backpack {
       }
 
       public void setPlacedBy(Optional<UUID> placedBy) {
-            placedBy.ifPresent(in -> {
-                  entityData.set(OWNER, placedBy);
-            });
+            placedBy.ifPresent(in -> entityData.set(OWNER, placedBy));
       }
 
       @Override
@@ -160,6 +162,11 @@ public abstract class EntityAbstract extends Backpack {
                   return;
 
             CompoundTag copy = tag.copy();
+            if (copy.contains("Locked")) {
+                  entityData.set(LOCKED, copy.getBoolean("Locked"));
+                  copy.remove("Locked");
+            }
+
             copy.remove("backpack_id");
             copy.remove("Trim");
             if (copy.contains("display")) {
@@ -173,6 +180,7 @@ public abstract class EntityAbstract extends Backpack {
 
       @Override
       protected void defineSynchedData() {
+            this.entityData.define(LOCKED, false);
             super.defineSynchedData();
       }
 
@@ -187,11 +195,16 @@ public abstract class EntityAbstract extends Backpack {
             if (itemTags != null)
                   stack.setTag(itemTags);
 
+            boolean locked = backpack.isLocked();
+            if (locked) {
+                  stack.getOrCreateTag().putBoolean("Locked", true);
+            }
+
             UUID placedBy = backpack.getPlacedBy();
             if (item instanceof EnderBackpack enderBackpack && placedBy != null) {
                   EnderInventory enderData = EnderStorage.getEnderData(placedBy, backpack.level());
-                  boolean locked = enderData.isLocked();
-                  if (!locked) enderBackpack.setUUID(placedBy, stack);
+                  boolean enderLocked = enderData.isLocked();
+                  if (!enderLocked) enderBackpack.setUUID(placedBy, stack);
             } else {
                   CompoundTag trim = traits.getTrim();
                   if (!trim.isEmpty())
@@ -414,8 +427,8 @@ public abstract class EntityAbstract extends Backpack {
             if (tag.contains("display")) // TODO: FOR REMOVAL 20.1-0.18-v2 : DISPLAY TAG IS THE OLD METHOD FOR SAVING
                   this.setDisplay(tag.getCompound("display"));
             else {
-                  if (tag.contains("hanging")) // TODO: FOR REMOVAL 20.1-0.19-v2 : BACKPACK WITHOUT "hanging" TAG WILL FALL
-                        this.setNoGravity(tag.getBoolean("hanging"));
+                  this.setNoGravity(tag.getBoolean("hanging"));
+                  entityData.set(LOCKED, tag.getBoolean("Locked"));
                   CompoundTag localData = tag.getCompound("local_data");
                   this.entityData.set(OWNER, Optional.of(localData.getUUID("owner")));
                   entityData.set(LOCAL_DATA, localData);
@@ -431,6 +444,7 @@ public abstract class EntityAbstract extends Backpack {
       }
 
       protected void toNBT(CompoundTag tag) {
+            tag.putBoolean("Locked", entityData.get(LOCKED));
             tag.putByte("facing", (byte)this.direction.get3DDataValue());
             tag.putBoolean("hanging", this.isNoGravity());
             CompoundTag traits = getTraits().toNBT();
@@ -637,8 +651,8 @@ public abstract class EntityAbstract extends Backpack {
       }
 
       protected boolean isLocked() {
-            CompoundTag itemTags = this.itemTags;
-            return itemTags != null && itemTags.contains("Locked") && itemTags.getBoolean("Locked");
+            return entityData.get(LOCKED);
+
       }
 
       public boolean isLocked(BackData backData, ServerLevel level, Kind kind) {
@@ -666,13 +680,13 @@ public abstract class EntityAbstract extends Backpack {
             if (iterator.hasNext()) {
                   PlaySound.HIT.at(this, kind);
                   this.hop(.1);
-                  MutableComponent items = iterator.next().getDisplayName().copy();
+                  MutableComponent items = Constants.getName(iterator.next());
                   while (iterator.hasNext()) {
                         ItemStack stack = iterator.next();
-                        items.append(iterator.hasNext() ? Component.literal(", ") : Component.translatable("entity.beansbackpacks.locked.back_slot_blocked.and"));
-                        items.append(stack.getDisplayName());
+                        items.append(iterator.hasNext() ? Component.literal(", ") : Component.translatable("entity.beansbackpacks.blocked.and"));
+                        items.append(Constants.getName(stack));
                   }
-                  MutableComponent message = Component.translatable("entity.beansbackpacks.locked.back_slot_blocked", items).withStyle(ChatFormatting.WHITE);
+                  MutableComponent message = Component.translatable("entity.beansbackpacks.blocked.hotkey_equip", items).withStyle(ChatFormatting.WHITE);
                   backData.owner.displayClientMessage(message, true);
                   return false;
             }

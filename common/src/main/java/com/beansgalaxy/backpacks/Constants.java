@@ -5,9 +5,11 @@ import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -48,6 +50,14 @@ public class Constants {
 				});
 		}
 	};
+
+	public static MutableComponent getName(ItemStack stack) {
+		MutableComponent msg = Component.empty().append(stack.getHoverName()).withStyle(stack.getRarity().color);
+		if (stack.hasCustomHoverName())
+			msg.withStyle(ChatFormatting.ITALIC);
+
+		return msg;
+	}
 
       public static ItemStack createLabeledBackpack(String backpack_id) {
 		ItemStack backpackStack = Services.REGISTRY.getMetal().getDefaultInstance();

@@ -120,10 +120,12 @@
   "entity.beansbackpacks.locked.not_owner": "You do not own this backpack.",
   "entity.beansbackpacks.locked.ender_offline": "This backpack's owner is not online.",
   "entity.beansbackpacks.locked.ender_no_owner": "This backpack has no inventory.",
-  "entity.beansbackpacks.locked.back_slot_blocked": "%d is already equipped.",
-  "entity.beansbackpacks.locked.back_slot_blocked.and": " and ",
   "entity.beansbackpacks.locked.request_access": "%d wants to access your backpack.",
   "entity.beansbackpacks.equip_locked_msg": "Hold %d to let %d access your backpack.",
+
+  "entity.beansbackpacks.blocked.and": " and ",
+  "entity.beansbackpacks.blocked.hotkey_equip": "%d is already equipped.",
+  "entity.beansbackpacks.blocked.inventory": "%d cannot be worn with %d",
 
   "text.autoconfig.beansbackpacks.title": "Beans' Backpacks",
 
