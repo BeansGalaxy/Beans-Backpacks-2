@@ -37,11 +37,12 @@ the issues tab. </p>
   - Locked Backpacks take 8 punches
 - Reworked Ender Backpacks
   - Opening a placed ender backpack visually opens all linked packs
-  - Ender Backpacks send less data more frequently to the client and are more reliable
+  - Ender Backpacks sends less data more frequently and are more reliable
   - Ender Inventories are now one single inventory instead of many synced inventories
 - Fire burns backpacks slower
 - Cactus instantly breaks backpacks
 - Sounds are now registered in `:common`
+- Text appears in the inventory while trying to equip something that's blocked by the Back Slot
 - Fixed many leather backpack sounds
 - Fixed crash caused by players failing to load other back slots
 - Fixed dupe with the crafting result slot & shift key
