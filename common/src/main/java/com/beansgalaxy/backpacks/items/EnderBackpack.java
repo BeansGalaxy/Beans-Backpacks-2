@@ -3,10 +3,13 @@ package com.beansgalaxy.backpacks.items;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.network.clientbound.SendEnderDisplay;
+import com.beansgalaxy.backpacks.network.clientbound.SyncBackSlot;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ItemCombinerMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -41,13 +44,12 @@ public class EnderBackpack extends BackpackItem {
 
       public UUID getOrCreateUUID(UUID uuid, Level level, ItemStack stack) {
             CompoundTag tag = stack.getTag();
-            if (tag == null || !tag.contains("owner"))
-                  return uuid;
-
-            if (EnderStorage.get(level).MAP.containsKey(uuid))
+            if (stack.hasTag() && tag.contains("owner")) {
                   uuid = tag.getUUID("owner");
+            }
 
-            tag.putUUID("owner", uuid);
+            EnderStorage.getEnderData(uuid, level);
+            stack.getOrCreateTag().putUUID("owner", uuid);
             return uuid;
       }
 
@@ -83,5 +85,23 @@ public class EnderBackpack extends BackpackItem {
                   }
             }
             super.onCraftedBy(stack, level, player);
+      }
+
+      public boolean lockEnder(Player player, ItemStack backpackStack) {
+            UUID playerUUID = player.getUUID();
+            UUID ownerUUID = this.getOrCreateUUID(player, backpackStack);
+            if (playerUUID.equals(ownerUUID)) {
+                  EnderInventory enderData = EnderStorage.getEnderData(player);
+                  enderData.setLocked(!enderData.isLocked());
+                  SendEnderDisplay.send(player);
+                  EnderStorage.get(player.level()).forEachViewing(ownerUUID, viewer -> {}, equipped -> {
+                        if (equipped.owner.getUUID() != ownerUUID) {
+                              equipped.drop();
+                        }
+                  });
+                  enderData.clearViewers();
+                  return true;
+            }
+            return false;
       }
 }

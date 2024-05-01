@@ -5,17 +5,22 @@ import com.beansgalaxy.backpacks.access.BackAccessor;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.events.PlaySound;
+import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.items.Tooltip;
+import com.beansgalaxy.backpacks.network.clientbound.SyncBackInventory;
 import com.beansgalaxy.backpacks.network.clientbound.SyncBackSlot;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.ConfigHelper;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.screen.InSlot;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -25,7 +30,9 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
+import javax.tools.Tool;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -130,6 +137,49 @@ public class BackData {
             }
             if (stack.getItem() instanceof Equipable equipable)
                   owner.level().playSound(null, owner.getX(), owner.getY(), owner.getZ(), equipable.getEquipSound(), owner.getSoundSource(), 1.0F, 1.0F);
+      }
+
+      public boolean mayEquip(ItemStack stack, boolean inMenu) {
+            if (stack.isEmpty())
+                  return true;
+
+            if (!Kind.isWearable(stack))
+                  return false;
+
+            if (stack.getItem() instanceof EnderBackpack ender){
+                  UUID uuid = ender.getOrCreateUUID(owner, stack);
+                  EnderInventory enderData = EnderStorage.getEnderData(uuid, owner.level());
+                  if (enderData.isLocked() && uuid != owner.getUUID()) {
+                        MutableComponent message = Component.translatable("entity.beansbackpacks.locked.is_locked").withStyle(ChatFormatting.WHITE);
+                        this.owner.displayClientMessage(message, true);
+                        if (this.owner.level().isClientSide)
+                              Tooltip.pushInventoryMessage(message);
+                        return false;
+                  }
+            }
+
+            List<ItemStack> disabling = this.getDisabling();
+            if (!inMenu && !this.isEmpty() && this.getStack() != stack)
+                  disabling.add(this.getStack());
+
+            Iterator<ItemStack> iterator = disabling.iterator();
+            if (iterator.hasNext()) {
+                  MutableComponent items = Constants.getName(iterator.next());
+                  while (iterator.hasNext()) {
+                        ItemStack equipped = iterator.next();
+                        items.append(iterator.hasNext() ? Component.literal(", ") : Component.translatable("entity.beansbackpacks.blocked.and"));
+                        items.append(Constants.getName(equipped));
+                  }
+                  MutableComponent message = Component.translatable("entity.beansbackpacks.blocked.hotkey_equip", items).withStyle(ChatFormatting.WHITE);
+                  this.owner.displayClientMessage(message, true);
+                  if (this.owner.level().isClientSide) {
+                        Tooltip.playSound(this.traits.kind, PlaySound.HIT);
+                        Tooltip.pushInventoryMessage(message);
+                  }
+                  return false;
+            }
+
+            return true;
       }
 
       public boolean backSlotDisabled() {

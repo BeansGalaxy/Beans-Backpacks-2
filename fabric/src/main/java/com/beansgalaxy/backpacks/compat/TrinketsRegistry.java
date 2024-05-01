@@ -37,10 +37,8 @@ public class TrinketsRegistry {
                   @Override
                   public boolean canEquip(ItemStack stack, SlotReference slot, LivingEntity entity) {
                         boolean b = Trinket.super.canEquip(stack, slot, entity) && slot.index() == 0;
-                        boolean b1 = entity instanceof Player player && BackData.get(player).backSlotDisabled();
-                        boolean b2 = stack.getCount() == 1;
-                        boolean b3 = Kind.isWearable(stack);
-                        return b && !b1 && b2 && b3;
+                        boolean b1 = entity instanceof Player player && BackData.get(player).mayEquip(stack, true);
+                        return b && !b1 && stack.getCount() > 1;
 
                   }
 

@@ -38,8 +38,9 @@ public abstract class InventoryContainerMixin implements BackAccessor {
       @Override
       @Unique
       public BackData getBackData() {
-            if (backData == null)
+            if (backData == null) {
                   backData = new BackData(player);
+            }
             return backData;
       }
 

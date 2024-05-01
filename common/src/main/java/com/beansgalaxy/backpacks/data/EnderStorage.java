@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class EnderStorage {
       public final HashMap<UUID, EnderInventory> MAP = new HashMap<>();
@@ -55,7 +56,11 @@ public class EnderStorage {
                   VIEWERS.computeIfAbsent(owner, uuid -> new HashSet<>()).add(viewer);
       }
 
-      public void syncViewers(UUID owner) {
+      public void forEachViewing(UUID owner, Consumer<ServerPlayer> viewers) {
+            forEachViewing(owner, viewers, backData -> viewers.accept((ServerPlayer) backData.owner));
+      }
+
+      public void forEachViewing(UUID owner, Consumer<ServerPlayer> viewers, Consumer<BackData> equipped) {
             if (owner == null) return;
 
             HashSet<Entity> inventories = VIEWERS.get(owner);
@@ -71,8 +76,8 @@ public class EnderStorage {
                               UUID uuid = item.getOrCreateUUID(owner, viewer.level(), backStack);
                               if (uuid.equals(owner)) {
                                     for (ServerPlayer subViewer : backData.getBackpackInventory().getPlayersViewing())
-                                          SendEnderStacks.send(subViewer, owner);
-                                    SendEnderStacks.send(player, owner);
+                                          viewers.accept(subViewer);
+                                    equipped.accept(backData);
                               }
                         }
                   }
@@ -82,7 +87,7 @@ public class EnderStorage {
                               NonNullList<ServerPlayer> playersViewing = ender.getInventory().getPlayersViewing();
                               getEnderData(owner, serverLevel).flagForUpdate(serverLevel);
                               for (ServerPlayer player : playersViewing) {
-                                    SendEnderStacks.send(player, owner);
+                                    viewers.accept(player);
                                     if (player.containerMenu instanceof BackpackMenu menu)
                                           menu.updateSlots();
                               }
@@ -93,6 +98,10 @@ public class EnderStorage {
 
             if (inventories.isEmpty())
                   VIEWERS.remove(owner);
+      }
+
+      public void syncViewers(UUID owner) {
+            forEachViewing(owner, (viewer) -> SendEnderStacks.send(viewer, owner));
       }
 
       public void removeViewer(UUID owner, Entity viewer) {

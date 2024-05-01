@@ -26,10 +26,9 @@ public class CurioItem implements ICurioItem {
 
       @Override
       public boolean canEquip(SlotContext slotContext, ItemStack stack) {
-            boolean wearable = Kind.isWearable(stack);
             boolean defaults = ICurioItem.super.canEquip(slotContext, stack) && slotContext.index() == 0;
-            boolean backSlotDisabled = slotContext.entity() instanceof Player player && BackData.get(player).backSlotDisabled();
-            return wearable && defaults && !backSlotDisabled;
+            boolean backSlotDisabled = slotContext.entity() instanceof Player player && BackData.get(player).mayEquip(stack, true);
+            return defaults && !backSlotDisabled && stack.getCount() > 1;
       }
 
       @Override

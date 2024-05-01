@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.network.clientbound;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.network.CommonAtClient;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.network.Network2C;
@@ -30,13 +31,13 @@ public class SyncBackSlot implements Packet2C {
 
 
       public static void send(Player owner, ServerPlayer sender) {
-            BackData backData = BackData.get(owner);
-            ItemStack stack = backData.getStack();
+            ItemStack stack = BackData.get(owner).getStack();
             new SyncBackSlot(owner.getId(), stack).send2C(sender);
       }
 
-      public static void send(Player owner) {
-            new SyncBackSlot(owner.getId(), BackData.get(owner).getStack()).send2A(owner.level().getServer());
+      public static void send(ServerPlayer owner) {
+            ItemStack stack = BackData.get(owner).getStack();
+            new SyncBackSlot(owner.getId(), stack).send2A(owner.level().getServer());
       }
 
       @Override
@@ -70,7 +71,7 @@ public class SyncBackSlot implements Packet2C {
             for (int i = 0; iterator.hasNext() && i < 32; i++) {
                   Integer entity = iterator.next();
                   HeldSlot ctx = HELD_BACK_SLOT.get(entity);
-                  System.out.println("Indexing Held BackSlot...  E:" + entity + "  A:" + ctx.attempts);
+                  Constants.LOG.info("Indexing Held BackSlot...  E:" + entity + "  A:" + ctx.attempts);
                   if (ctx.attempts > 32 || CommonAtClient.syncBackSlot(entity, ctx.stack)) {
                         iterator.remove();
                   }

@@ -9,7 +9,9 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.UUID;
@@ -37,6 +39,14 @@ public class SendEnderDisplay implements Packet2C {
       public static void send(ServerPlayer sender, UUID owner) {
             EnderInventory enderData = EnderStorage.getEnderData(owner, sender.level());
             new SendEnderDisplay(owner, enderData.getTrim(), enderData.getPlayerName(), enderData.isLocked()).send2C(sender);
+      }
+
+      public static void send(Player player) {
+            MinecraftServer server = player.getServer();
+            if (server != null) {
+                  EnderInventory enderData = EnderStorage.getEnderData(player);
+                  new SendEnderDisplay(player.getUUID(), enderData.getTrim(), enderData.getPlayerName(), enderData.isLocked()).send2A(server);
+            }
       }
 
       @Override

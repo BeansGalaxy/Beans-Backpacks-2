@@ -8,6 +8,7 @@
     "FabricHopperMixin"
   ],
   "client": [
+    "ClientPacketMixin",
     "CreativeInventoryMixin",
     "PickBlockMixin"
   ],

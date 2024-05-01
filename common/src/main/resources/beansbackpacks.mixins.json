@@ -24,7 +24,7 @@
     "common.buckets.BucketSolidsMixin",
     "common.buckets.HoneyBlockMixin",
     "common.buckets.HoneyBottleMixin",
-    "common.buckets.ServerEntityMixin"
+    "common.ServerEntityMixin"
   ],
   "client": [
     "client.ArmorTrimMixin",

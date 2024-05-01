@@ -5,6 +5,7 @@ import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
+import com.beansgalaxy.backpacks.network.clientbound.SendEnderStacks;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -119,8 +120,6 @@ public class EnderInventory extends BackpackInventory implements EntityAccess {
 
       @Override
       public void playSound(PlaySound sound) {
-            if (!level.isClientSide) {
-            }
       }
 
       @Override
@@ -143,7 +142,7 @@ public class EnderInventory extends BackpackInventory implements EntityAccess {
             MinecraftServer server = level.getServer();
             if (server != null) {
                   ServerSave save = ServerSave.getSave(server, true);
-                  save.enderStorage.syncViewers(uuid);
+                  save.enderStorage.forEachViewing(uuid, (viewer) -> SendEnderStacks.send(viewer, uuid));
             }
             super.setChanged();
       }

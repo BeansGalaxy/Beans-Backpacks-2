@@ -228,10 +228,12 @@ public class Tooltip {
                               EnderInventory enderData = EnderStorage.getEnderData(uuid, level);
                               MutableComponent playerName = enderData.getPlayerNameColored(level.registryAccess());
                               components.add(Component.translatable("tooltip.beansbackpacks.ender", playerName));
+                              if (enderData.isLocked())
+                                    components.add(Component.translatable("tooltip.beansbackpacks.storage.locked"));
                         }
+                        else if (instance.hasTag() && instance.getTag().getBoolean("Locked"))
+                              components.add(Component.translatable("tooltip.beansbackpacks.storage.locked"));
 
-                        if (instance.hasTag() && instance.getTag().getBoolean("Locked"))
-                              components.add(Component.literal("Locked").withStyle(ChatFormatting.BLUE));
 
                         String key = traits.backpack_id;
                         if (flag.isAdvanced() && !Constants.isEmpty(key))

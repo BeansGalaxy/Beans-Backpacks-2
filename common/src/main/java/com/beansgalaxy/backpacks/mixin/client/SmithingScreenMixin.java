@@ -13,6 +13,7 @@ import net.minecraft.client.gui.screens.inventory.ItemCombinerScreen;
 import net.minecraft.client.gui.screens.inventory.SmithingScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -54,7 +55,9 @@ public abstract class SmithingScreenMixin extends ItemCombinerScreen<SmithingMen
                   @Override
                   public Traits.LocalData getTraits() {
                         ItemStack stack = smithingMenu.getSlot(3).getItem();
-                        return Traits.LocalData.fromStack(stack, minecraft.player);
+                        Traits.LocalData localData = Traits.LocalData.fromStack(stack, minecraft.player);
+                        CompoundTag trim = stack.getTagElement("Trim");
+                        return new Traits.LocalData(localData.backpack_id, localData.kind, localData.color, trim == null ? new CompoundTag() : trim, localData.hoverName);
                   }
 
                   final Viewable viewable = new Viewable();

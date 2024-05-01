@@ -26,6 +26,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
@@ -70,6 +71,7 @@ public class FabricMain implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTED.register(new ServerLifecycleEvent());
         ServerLifecycleEvents.SERVER_STOPPING.register(new ServerLifecycleEvent());
         ServerPlayerEvents.COPY_FROM.register(new CopyPlayerEvent());
+        ServerEntityEvents.ENTITY_LOAD.register(new LoadEntityEvent());
         EntityElytraEvents.CUSTOM.register(new ElytraFlightEvent());
         UseBlockCallback.EVENT.register(new PlayerInteractEvent());
         registerSounds();

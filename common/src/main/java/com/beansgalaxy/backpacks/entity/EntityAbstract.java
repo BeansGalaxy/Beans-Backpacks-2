@@ -184,25 +184,25 @@ public abstract class EntityAbstract extends Backpack {
             super.defineSynchedData();
       }
 
-      public static ItemStack toStack(EntityAbstract backpack) {
-            Traits.LocalData traits = backpack.getTraits();
+      public ItemStack toStack() {
+            Traits.LocalData traits = this.getTraits();
             Kind kind = traits.kind;
             if (Kind.UPGRADED.is(kind))
                   kind = Kind.METAL;
             Item item = kind.getItem();
             ItemStack stack = item.getDefaultInstance();
-            CompoundTag itemTags = backpack.itemTags;
+            CompoundTag itemTags = this.itemTags;
             if (itemTags != null)
                   stack.setTag(itemTags);
 
-            boolean locked = backpack.isLocked();
+            boolean locked = this.isLocked();
             if (locked) {
                   stack.getOrCreateTag().putBoolean("Locked", true);
             }
 
-            UUID placedBy = backpack.getPlacedBy();
+            UUID placedBy = this.getPlacedBy();
             if (item instanceof EnderBackpack enderBackpack && placedBy != null) {
-                  EnderInventory enderData = EnderStorage.getEnderData(placedBy, backpack.level());
+                  EnderInventory enderData = EnderStorage.getEnderData(placedBy, this.level());
                   boolean enderLocked = enderData.isLocked();
                   if (!enderLocked) enderBackpack.setUUID(placedBy, stack);
             } else {
@@ -228,7 +228,7 @@ public abstract class EntityAbstract extends Backpack {
                   stack.getOrCreateTagElement("display").putInt("color", color);
 
 
-            Component customName = backpack.getCustomName();
+            Component customName = this.getCustomName();
             if (customName != null)
                   stack.setHoverName(customName);
             else {
@@ -585,7 +585,7 @@ public abstract class EntityAbstract extends Backpack {
                         this.spawnAtLocation(stack);
                   }
             }
-            ItemStack backpack = toStack(this);
+            ItemStack backpack = toStack();
             if (!this.isRemoved() && !this.level().isClientSide()) {
                   this.kill();
                   this.markHurt();
@@ -773,7 +773,8 @@ public abstract class EntityAbstract extends Backpack {
                   return InteractionResult.SUCCESS;
 
             if (actionKeyPressed) {
-                  if (mayPickup(backData, kind))
+                  ItemStack backpackStack = toStack();
+                  if (backData.mayEquip(backpackStack, false))
                   {
                         if (this instanceof EntityEnder ender) {
                               if (ender.getPlacedBy() == null) {
@@ -781,12 +782,13 @@ public abstract class EntityAbstract extends Backpack {
                                     EnderStorage.getEnderData(player);
                               }
                         } else {
-                              NonNullList<ItemStack> playerInventoryStacks = BackData.get(player).getBackpackInventory().getItemStacks();
+                              BackpackInventory backpackInventory = BackData.get(player).getBackpackInventory();
+                              NonNullList<ItemStack> playerInventoryStacks = backpackInventory.getItemStacks();
                               NonNullList<ItemStack> backpackEntityStacks = this.getItemStacks();
-                              playerInventoryStacks.clear();
+                              backpackInventory.clearContent();
                               playerInventoryStacks.addAll(backpackEntityStacks);
                         }
-                        backData.set(toStack(this));
+                        backData.set(backpackStack);
                         PlaySound.EQUIP.at(player, kind);
                         SyncBackInventory.send(player);
 
@@ -803,7 +805,7 @@ public abstract class EntityAbstract extends Backpack {
 
       @Override
       public ItemStack getPickResult() {
-            return toStack(this);
+            return toStack();
       }
 
       @Override

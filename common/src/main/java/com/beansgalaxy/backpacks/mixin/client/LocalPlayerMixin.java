@@ -3,8 +3,11 @@ package com.beansgalaxy.backpacks.mixin.client;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.access.ClickAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.inventory.BackpackInventory;
+import com.beansgalaxy.backpacks.network.clientbound.SyncBackInventory;
 import com.beansgalaxy.backpacks.network.clientbound.SyncBackSlot;
 import com.beansgalaxy.backpacks.network.serverbound.ActionKey;
+import com.beansgalaxy.backpacks.screen.BackSlot;
 import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.items.Tooltip;
@@ -12,17 +15,23 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LocalPlayer.class)
 public class LocalPlayerMixin {
+      @Unique private NonNullList<ItemStack> bpi = null;
+
       @Inject(method = "tick", at = @At("TAIL"))
       public void tick(CallbackInfo ci) {
             SyncBackSlot.indexHeldSlots();
+            SyncBackInventory.indexInventories();
 
             LocalPlayer localPlayer = (LocalPlayer) (Object) this;
             Minecraft instance = Minecraft.getInstance();

@@ -44,10 +44,17 @@ public class SyncBackInventory implements Packet2C {
             buf.writeNbt(stacks);
       }
 
+
       @Override
       public void handle() {
             getNetwork().debugMsgDecode();
-            CommonAtClient.syncBackInventory(stacks);
+            if (!CommonAtClient.syncBackInventory(stacks))
+                  heldInv = stacks;
       }
 
+      private static CompoundTag heldInv = null;
+      public static void indexInventories() {
+            if (heldInv != null && CommonAtClient.syncBackInventory(heldInv))
+                  heldInv = null;
+      }
 }

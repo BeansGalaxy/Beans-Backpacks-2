@@ -33,10 +33,14 @@ public class CommonAtClient {
             return false;
       }
 
-      public static void syncBackInventory(CompoundTag tag) {
+      public static boolean syncBackInventory(CompoundTag tag) {
             LocalPlayer player = Minecraft.getInstance().player;
-            BackpackInventory backpackInventory = BackData.get(player).getBackpackInventory();
+            if (player == null) return false;
+
+            BackData backData = BackData.get(player);
+            BackpackInventory backpackInventory = backData.getBackpackInventory();
             backpackInventory.readStackNbt(tag);
+            return true;
       }
 
       public static void syncViewersPacket(int id, byte viewers) {

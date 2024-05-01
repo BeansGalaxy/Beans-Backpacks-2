@@ -40,13 +40,17 @@ public abstract class BackpackInventory implements Container {
 
       public abstract Level level();
 
-      private NonNullList<ServerPlayer> playersViewing = NonNullList.create();
+      private final NonNullList<ServerPlayer> playersViewing = NonNullList.create();
       public NonNullList<ServerPlayer> getPlayersViewing() {
             return playersViewing;
       }
 
-      private NonNullList<ItemStack> itemStacks = NonNullList.create();
+      private final NonNullList<ItemStack> itemStacks = NonNullList.create();
       public NonNullList<ItemStack> getItemStacks() {
+            if (level() != null && level().isClientSide) {
+                  EntityAccess owner = getOwner();
+                  //System.out.println(itemStacks + "  " + owner);
+            }
             return itemStacks;
       }
 

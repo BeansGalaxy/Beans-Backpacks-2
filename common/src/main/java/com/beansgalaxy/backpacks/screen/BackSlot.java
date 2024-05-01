@@ -50,7 +50,7 @@ public class BackSlot extends Slot {
 
       @Override
       public boolean mayPlace(ItemStack stack) {
-            return Kind.isWearable(stack) && !backData.backSlotDisabled();
+            return backData.mayEquip(stack, true);
       }
 
       @Override

@@ -158,7 +158,7 @@ public class BackpackMenu extends AbstractContainerMenu {
       private void handleClick(int slotIndex, int button, ClickType actionType, Player player) {
             Kind kind = backpackInventory.getTraits().kind;
             boolean clientSide = viewer.level().isClientSide();
-            if (clientSide && Kind.ENDER.is(kind)) return;
+            //if (clientSide && Kind.ENDER.is(kind)) return;
 
             ItemStack carried = getCarried();
             boolean carriedEmpty = carried.isEmpty();

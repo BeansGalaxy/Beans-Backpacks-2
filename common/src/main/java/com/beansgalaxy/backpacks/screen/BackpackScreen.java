@@ -7,6 +7,7 @@ import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
+import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -30,6 +31,7 @@ import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import org.joml.Matrix4f;
@@ -82,7 +84,13 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
             if (traits.isEmpty() || traits.maxStacks() == 0)
                   return true;
 
+            if (handler.backpackInventory instanceof EnderInventory ender && ender.isLocked() && ender.getUUID() != viewer.getUUID()) {
+                  ender.clearViewers();
+                  return true;
+            }
+
             if (owner != null) {
+
                   if (owner.isRemoved()
                   || !owner.position().closerThan(pos.getCenter(), 2d)
                   || !owner.position().closerThan(viewer.position(), 5.0d))

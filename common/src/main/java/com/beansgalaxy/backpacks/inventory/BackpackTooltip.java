@@ -8,7 +8,6 @@ public class BackpackTooltip implements TooltipComponent {
       public final NonNullList<ItemStack> itemStacks = NonNullList.create();
 
       public BackpackTooltip(NonNullList<ItemStack> items) {
-            itemStacks.clear();
             items.forEach(item -> itemStacks.add(item.copy()));
 
             if (!itemStacks.isEmpty())

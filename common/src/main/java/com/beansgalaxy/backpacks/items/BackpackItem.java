@@ -3,9 +3,7 @@ package com.beansgalaxy.backpacks.items;
 import com.beansgalaxy.backpacks.access.BucketLikeAccess;
 import com.beansgalaxy.backpacks.access.BucketsAccess;
 import com.beansgalaxy.backpacks.data.BackData;
-import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.data.Traits;
-import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.network.clientbound.SyncBackInventory;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
@@ -40,7 +38,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 public class BackpackItem extends Item {
 
@@ -72,11 +69,9 @@ public class BackpackItem extends Item {
                   CompoundTag tag = backpackStack.getTag();
 
                   if (backpackStack.getItem() instanceof EnderBackpack ender) {
-                        UUID playerUUID = player.getUUID();
-                        UUID ownerUUID = ender.getOrCreateUUID(player, backpackStack);
-                        if (playerUUID.equals(ownerUUID)) {
-                              EnderInventory enderData = EnderStorage.getEnderData(player);
-                              enderData.setLocked(!enderData.isLocked());
+                        if (ender.lockEnder(player, backpackStack)) {
+                              if (level.isClientSide)
+                                    Tooltip.playSound(SoundEvents.CHEST_LOCKED, 1f, 1f);
                               return InteractionResultHolder.success(backpackStack);
                         }
                   } else {
