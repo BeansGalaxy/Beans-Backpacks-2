@@ -46,6 +46,9 @@ public class BackFeature<T extends LivingEntity, M extends EntityModel<T>>
     public void render(PoseStack pose, MultiBufferSource mbs, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float yHeadRot, float headPitch) {
         if (entity instanceof AbstractClientPlayer player) {
             BackData backData = BackData.get(player);
+            if (backData.backSlotDisabled())
+                return;
+
             ItemStack backStack = backData.getStack();
             ModelPart torso = ((PlayerModel<?>) this.getParentModel()).body;
             Kind kind = Kind.fromStack(backStack);

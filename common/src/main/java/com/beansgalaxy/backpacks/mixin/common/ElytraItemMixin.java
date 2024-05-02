@@ -5,9 +5,11 @@ import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.items.Tooltip;
+import net.minecraft.network.chat.Component;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
@@ -24,27 +26,32 @@ public class ElytraItemMixin {
             ElytraItem item = (ElytraItem) (Object) this;
             ItemStack itemStack = player.getItemInHand(hand);
             BackData backData = BackData.get(player);
-            Kind kind = Kind.fromStack(backData.getStack());
+            ItemStack stack = backData.getStack();
 
-            if (!backData.isEmpty() && Constants.elytraOrDisables(item)) {
-                  if (level.isClientSide())
-                        Tooltip.playSound(kind, PlaySound.HIT);
-
-                  cir.setReturnValue(InteractionResultHolder.fail(itemStack));
-            }
-            else if (Kind.isWearableElytra(item)) {
-                  if (backData.isEmpty() && !backData.backSlotDisabled()) {
+            if (Kind.isWearableElytra(item)) {
+                  ItemStack chestSlot = player.getItemBySlot(EquipmentSlot.CHEST);
+                  Component msg = null;
+                  if (Kind.isWings(chestSlot)) {
+                        msg = Component.translatable("entity.beansbackpacks.blocked.already_equipped",
+                                    Constants.getName(chestSlot));
+                  } else if (backData.isEmpty()) {
                         if (!level.isClientSide())
                               player.awardStat(Stats.ITEM_USED.get(item));
 
                         backData.playEquipSound(itemStack);
                         backData.set(itemStack.copyAndClear());
                         cir.setReturnValue(InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide()));
+                  } else if (Kind.isWings(stack)) {
+                        msg = Component.translatable("entity.beansbackpacks.blocked.already_equipped",
+                                    Constants.getName(stack));
                   }
-                  else {
-                        if (level.isClientSide())
-                              Tooltip.playSound(kind, PlaySound.HIT);
 
+                  if (msg != null) {
+                        player.displayClientMessage(msg, true);
+                        if (player.level().isClientSide) {
+                              Tooltip.playSound(Kind.WINGED, PlaySound.HIT);
+                              Tooltip.pushInventoryMessage(msg);
+                        }
                         cir.setReturnValue(InteractionResultHolder.fail(itemStack));
                   }
             }

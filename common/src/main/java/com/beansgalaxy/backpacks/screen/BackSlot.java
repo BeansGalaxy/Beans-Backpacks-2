@@ -27,7 +27,7 @@ public class BackSlot extends Slot {
 
       @Override
       public boolean isActive() {
-            return !Constants.SLOTS_MOD_ACTIVE && !backData.backSlotDisabled();
+            return !Constants.SLOTS_MOD_ACTIVE;
       }
 
       @Override
@@ -50,7 +50,7 @@ public class BackSlot extends Slot {
 
       @Override
       public boolean mayPlace(ItemStack stack) {
-            return backData.mayEquip(stack, true);
+            return backData.mayEquip(stack);
       }
 
       @Override
@@ -63,7 +63,7 @@ public class BackSlot extends Slot {
       public static InteractionResult openPlayerBackpackMenu(Player viewer, ServerPlayer owner) {
             BackData backData = BackData.get(owner);
             ItemStack backpackStack = backData.getStack();
-            if (!Kind.isBackpack(backpackStack))
+            if (!Kind.isBackpack(backpackStack) || backData.backSlotDisabled())
                   return InteractionResult.PASS;
 
             // CHECKS ROTATION OF BOTH PLAYERS

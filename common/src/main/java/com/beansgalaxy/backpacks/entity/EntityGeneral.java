@@ -43,6 +43,11 @@ public class EntityGeneral extends EntityAbstract {
                   EntityGeneral.this.level().updateNeighbourForOutputSignal(EntityGeneral.this.pos, Blocks.AIR);
                   super.setChanged();
             }
+
+            @Override
+            public boolean stopHopper() {
+                  return isLocked();
+            }
       };
 
       public EntityGeneral(EntityType<? extends Entity> type, Level level) {

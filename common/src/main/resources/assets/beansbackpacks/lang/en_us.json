@@ -125,7 +125,7 @@
   "entity.beansbackpacks.equip_locked_msg": "Hold %d to let %d access your backpack.",
 
   "entity.beansbackpacks.blocked.and": " and ",
-  "entity.beansbackpacks.blocked.hotkey_equip": "%d is already equipped.",
+  "entity.beansbackpacks.blocked.already_equipped": "%d is already equipped.",
   "entity.beansbackpacks.blocked.inventory": "%d cannot be worn with %d",
 
   "text.autoconfig.beansbackpacks.title": "Beans' Backpacks",

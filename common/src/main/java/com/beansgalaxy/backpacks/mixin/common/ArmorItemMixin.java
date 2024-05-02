@@ -58,16 +58,9 @@ public abstract class ArmorItemMixin implements Equipable {
             ArmorItem item = (ArmorItem) (Object) this;
             ItemStack itemStack = player.getItemInHand(hand);
             BackData backData = BackData.get(player);
-            Kind kind = Kind.fromStack(backData.getStack());
 
-            if (!backData.isEmpty() && Constants.elytraOrDisables(item)) {
-                  if (level.isClientSide())
-                        Tooltip.playSound(kind, PlaySound.HIT);
-
-                  cir.setReturnValue(InteractionResultHolder.fail(itemStack));
-            }
-            else if (Constants.CHESTPLATE_DISABLED.contains(item)) {
-                  if (backData.isEmpty() && !backData.backSlotDisabled()) {
+            if (Constants.CHESTPLATE_DISABLED.contains(item)) {
+                  if (backData.isEmpty()) {
                         if (!level.isClientSide())
                               player.awardStat(Stats.ITEM_USED.get(item));
 
@@ -76,9 +69,6 @@ public abstract class ArmorItemMixin implements Equipable {
                         cir.setReturnValue(InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide()));
                   }
                   else {
-                        if (level.isClientSide())
-                              Tooltip.playSound(kind, PlaySound.HIT);
-
                         cir.setReturnValue(InteractionResultHolder.fail(itemStack));
                   }
             }

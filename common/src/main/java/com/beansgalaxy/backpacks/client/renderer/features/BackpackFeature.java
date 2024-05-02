@@ -1,11 +1,13 @@
 package com.beansgalaxy.backpacks.client.renderer.features;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.renderer.RenderHelper;
 import com.beansgalaxy.backpacks.client.renderer.models.BackpackModel;
 import com.beansgalaxy.backpacks.client.renderer.BackpackRenderer;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.data.Viewable;
+import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.items.WingedBackpack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -25,6 +27,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 
 import java.awt.*;
 
@@ -51,49 +54,49 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
         weld(backpackBody, torso);
         weld(backpackMask, torso);
 
+        float scale = backFeature.sneakInter / 3f;
         ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
-        if (chestStack.isEmpty()) {
+        if (traits.kind.is(Kind.WINGED) || Kind.isWings(chestStack)) {
+            setUpWings(player, scale, backpackBody, backpackMask);
+        }
+        else if (chestStack.isEmpty()) {
             backpackBody.z += 1/16f;
             backpackMask.z += 3/32f;
         }
         else {
+            float y = (1 / 16f) * scale;
+            backpackBody.y += y;
+            backpackMask.y += y;
+            float z = (1 / 32f) * scale;
+            backpackBody.z += z;
+            backpackMask.z += z;
             if (player.isCrouching()) {
-                backpackBody.z += 17/16f;
-                backpackMask.z += 35/32f;
-                backpackBody.y -= 10/32f;
-                backpackMask.y -= 11/32f;
+                backpackBody.z += 17 / 16f;
+                backpackMask.z += 35 / 32f;
+                backpackBody.y -= 10 / 32f;
+                backpackMask.y -= 11 / 32f;
             } else {
-                backpackBody.z += 17/16f;
-                backpackMask.z += 35/32f;
+                backpackBody.z += 17 / 16f;
+                backpackMask.z += 35 / 32f;
                 backpackBody.y += 3 / 16f;
                 backpackMask.y += 3 / 16f;
             }
-
         }
 
         Viewable viewable = backData.getBackpackInventory().getViewable();
-        if (viewable.lastDelta > tick) {
+        if (viewable.lastDelta > tick)
             viewable.updateOpen();
-        }
 
         float fallDistance = player.fallDistance;
-        float fallPitch = (float) (Math.log(fallDistance * 3 + 1)) * -0.05f;
+        float fallPitch = player.isFallFlying() ? 0 : (float) (Math.log(fallDistance * 3 + 1)) * -0.05f;
         float headPitch = Mth.lerp(tick, viewable.lastPitch, viewable.headPitch) * 0.3f;
         backpackModel.body.getChild("head").xRot = headPitch + fallPitch;
         backpackModel.mask.getChild("head").xRot = headPitch + fallPitch;
         int color = traits.color;
-        Color tint = new Color(color);
-        float scale = backFeature.sneakInter / 3f;
-        ItemStack backStack = backData.getStack();
-        if (backStack.getItem() instanceof WingedBackpack) {
+        Color tint;
+        if (traits.kind.is(Kind.WINGED))
             tint = WingedBackpack.shiftColor(color);
-            if (!player.isFallFlying()) {
-                backpackBody.xRot = 0.5f + ((scale - 1) / 5);
-                backpackMask.xRot = 0.5f + ((scale - 1) / 5);
-                }
-            pose.translate(0, ((2 - scale) - (player.isFallFlying() ? 1 : 0)) / 16, (scale / 32));
-        } else
-            pose.translate(0, (1 / 16f) * scale, (1 / 32f) * scale);
+        else tint = new Color(color);
 
         float[] colors = {tint.getRed() / 255F, tint.getGreen() / 255F, tint.getBlue() / 255F};
         ResourceLocation texture = traits.kind.getAppendedResource(traits.backpack_id, "");
@@ -103,5 +106,25 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
         RegistryAccess registryAccess = player.getCommandSenderWorld().registryAccess();
         BackpackRenderer.renderOverlays(pose, light, mbs, colors, backpackBody.yRot, registryAccess, traits, backpackModel, this.trimAtlas, 32);
         pose.popPose();
+    }
+
+    private void setUpWings(AbstractClientPlayer player, float scale, ModelPart backpackBody, ModelPart backpackMask) {
+        float y = ((2 - scale) - (player.isFallFlying() ? 1 : 0)) / 16;
+        backpackBody.y += y;
+        backpackMask.y += y;
+        float z = scale / 32;
+        backpackBody.z += z;
+        backpackMask.z += z;
+        float wingSpread;
+        if (player.isFallFlying()) {
+            Vec3 deltaMovement = player.getDeltaMovement();
+            Vec3 norm = deltaMovement.normalize();
+            if (norm.y > 0)
+                wingSpread = 0;
+            else wingSpread = (float) Math.pow(-norm.y, 1.5);
+        }
+        else wingSpread = 1;
+        backpackBody.xRot = (0.5f + (scale - 1) / 5) * wingSpread;
+        backpackMask.xRot = (0.5f + (scale - 1) / 5) * wingSpread;
     }
 }

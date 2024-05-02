@@ -114,6 +114,12 @@ public class EnderInventory extends BackpackInventory implements EntityAccess {
             return locked;
       }
 
+      @Override
+      public boolean stopHopper() {
+            return isLocked();
+      }
+
+      @Override
       public EntityAccess getOwner() {
             return this;
       }

@@ -1,7 +1,6 @@
 package com.beansgalaxy.backpacks.compat;
 
 import com.beansgalaxy.backpacks.data.BackData;
-import com.beansgalaxy.backpacks.entity.Kind;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -27,7 +26,7 @@ public class CurioItem implements ICurioItem {
       @Override
       public boolean canEquip(SlotContext slotContext, ItemStack stack) {
             boolean defaults = ICurioItem.super.canEquip(slotContext, stack) && slotContext.index() == 0;
-            boolean backSlotDisabled = slotContext.entity() instanceof Player player && BackData.get(player).mayEquip(stack, true);
+            boolean backSlotDisabled = slotContext.entity() instanceof Player player && BackData.get(player).mayEquip(stack);
             return defaults && !backSlotDisabled && stack.getCount() > 1;
       }
 

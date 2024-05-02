@@ -4,26 +4,19 @@ import com.beansgalaxy.backpacks.CommonClass;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.entity.Kind;
-import com.beansgalaxy.backpacks.inventory.CauldronInventory;
-import com.beansgalaxy.backpacks.inventory.PotInventory;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import dev.emi.trinkets.TrinketSlot;
 import dev.emi.trinkets.api.*;
-import net.fabricmc.fabric.api.util.TriState;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 public class TrinketsRegistry {
       public static void register() {
@@ -37,7 +30,7 @@ public class TrinketsRegistry {
                   @Override
                   public boolean canEquip(ItemStack stack, SlotReference slot, LivingEntity entity) {
                         boolean b = Trinket.super.canEquip(stack, slot, entity) && slot.index() == 0;
-                        boolean b1 = entity instanceof Player player && BackData.get(player).mayEquip(stack, true);
+                        boolean b1 = entity instanceof Player player && BackData.get(player).mayEquip(stack);
                         return b && !b1 && stack.getCount() > 1;
 
                   }

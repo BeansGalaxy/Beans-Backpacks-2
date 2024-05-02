@@ -44,6 +44,11 @@ public class EntityFlight extends EntityAbstract {
                   EntityFlight.this.level().updateNeighbourForOutputSignal(EntityFlight.this.pos, Blocks.AIR);
                   super.setChanged();
             }
+
+            @Override
+            public boolean stopHopper() {
+                  return isLocked();
+            }
       };
 
       private final int damage;

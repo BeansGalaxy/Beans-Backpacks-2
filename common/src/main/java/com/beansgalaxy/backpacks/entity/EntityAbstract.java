@@ -7,10 +7,7 @@ import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.inventory.EnderInventory;
-import com.beansgalaxy.backpacks.items.BackpackItem;
-import com.beansgalaxy.backpacks.items.DyableBackpack;
-import com.beansgalaxy.backpacks.items.EnderBackpack;
-import com.beansgalaxy.backpacks.items.WingedBackpack;
+import com.beansgalaxy.backpacks.items.*;
 import com.beansgalaxy.backpacks.network.clientbound.SendEnderStacks;
 import com.beansgalaxy.backpacks.network.clientbound.SyncBackInventory;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -671,30 +668,6 @@ public abstract class EntityAbstract extends Backpack {
             return false;
       }
 
-      public boolean mayPickup(BackData backData, Kind kind) {
-            List<ItemStack> disabling = backData.getDisabling();
-            if (!backData.isEmpty())
-                  disabling.add(backData.getStack());
-
-            Iterator<ItemStack> iterator = disabling.iterator();
-            if (iterator.hasNext()) {
-                  PlaySound.HIT.at(this, kind);
-                  this.hop(.1);
-                  MutableComponent items = Constants.getName(iterator.next());
-                  while (iterator.hasNext()) {
-                        ItemStack stack = iterator.next();
-                        items.append(iterator.hasNext() ? Component.literal(", ") : Component.translatable("entity.beansbackpacks.blocked.and"));
-                        items.append(Constants.getName(stack));
-                  }
-                  MutableComponent message = Component.translatable("entity.beansbackpacks.blocked.hotkey_equip", items).withStyle(ChatFormatting.WHITE);
-                  backData.owner.displayClientMessage(message, true);
-                  return false;
-            }
-
-            return true;
-      }
-
-      // PREFORMS THIS ACTION WHEN IT IS RIGHT-CLICKED
       @Override @NotNull
       public InteractionResult interact(Player player, InteractionHand hand) {
             if (player.isDiscrete())
@@ -774,7 +747,7 @@ public abstract class EntityAbstract extends Backpack {
 
             if (actionKeyPressed) {
                   ItemStack backpackStack = toStack();
-                  if (backData.mayEquip(backpackStack, false))
+                  if (backData.mayEquip(backpackStack, false, true))
                   {
                         if (this instanceof EntityEnder ender) {
                               if (ender.getPlacedBy() == null) {
@@ -797,7 +770,7 @@ public abstract class EntityAbstract extends Backpack {
                               this.kill();
                               this.markHurt();
                         }
-                  }
+                  } else PlaySound.HIT.at(this, getTraits().kind);
                   return InteractionResult.SUCCESS;
             }
             return InteractionResult.PASS;

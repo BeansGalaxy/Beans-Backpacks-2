@@ -8,7 +8,6 @@ import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.items.Tooltip;
-import com.beansgalaxy.backpacks.network.clientbound.SyncBackInventory;
 import com.beansgalaxy.backpacks.network.clientbound.SyncBackSlot;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.ConfigHelper;
@@ -30,7 +29,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-import javax.tools.Tool;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -139,42 +137,56 @@ public class BackData {
                   owner.level().playSound(null, owner.getX(), owner.getY(), owner.getZ(), equipable.getEquipSound(), owner.getSoundSource(), 1.0F, 1.0F);
       }
 
-      public boolean mayEquip(ItemStack stack, boolean inMenu) {
-            if (stack.isEmpty())
+      public boolean mayEquip(ItemStack toEquip) {
+            return mayEquip(toEquip, true, true);
+      }
+
+      public boolean mayEquip(ItemStack toEquip, boolean inMenu, boolean showMessage) {
+            if (toEquip.isEmpty())
                   return true;
 
-            if (!Kind.isWearable(stack))
+            if (!Kind.isWearable(toEquip))
                   return false;
 
-            if (stack.getItem() instanceof EnderBackpack ender){
-                  UUID uuid = ender.getOrCreateUUID(owner, stack);
+            ItemStack wornStack = this.getStack();
+            boolean notEmpty = !wornStack.isEmpty();
+            Component msg = null;
+            if (toEquip.getItem() instanceof EnderBackpack ender) {
+                  UUID uuid = ender.getOrCreateUUID(owner, toEquip);
                   EnderInventory enderData = EnderStorage.getEnderData(uuid, owner.level());
                   if (enderData.isLocked() && uuid != owner.getUUID()) {
-                        MutableComponent message = Component.translatable("entity.beansbackpacks.locked.is_locked").withStyle(ChatFormatting.WHITE);
-                        this.owner.displayClientMessage(message, true);
-                        if (this.owner.level().isClientSide)
-                              Tooltip.pushInventoryMessage(message);
-                        return false;
+                        msg = Component.translatable("entity.beansbackpacks.locked.is_locked");
+                  }
+            } else if (notEmpty) {
+                  if (!inMenu && wornStack != toEquip)
+                        msg = Component.translatable("entity.beansbackpacks.blocked.already_equipped",
+                                    Constants.getName(wornStack));
+                  else if (wornStack.is(Services.REGISTRY.getWinged()) && Constants.ELYTRA_ITEMS.contains(toEquip.getItem()))
+                        msg = Component.translatable("entity.beansbackpacks.blocked.already_equipped",
+                                    Constants.getName(wornStack));
+            }
+
+            if (msg == null) {
+                  if (Kind.isWings(toEquip)) {
+                        List<ItemStack> disabling = this.getDisabling();
+                        Iterator<ItemStack> iterator = disabling.stream().filter(in -> !in.isEmpty() && Kind.isWings(in)).iterator();
+                        if (iterator.hasNext()) {
+                              MutableComponent items = Constants.getName(iterator.next());
+                              while (iterator.hasNext() && showMessage) {
+                                    ItemStack equipped = iterator.next();
+                                    items.append(iterator.hasNext() ? Component.literal(", ") : Component.translatable("entity.beansbackpacks.blocked.and"));
+                                    items.append(Constants.getName(equipped));
+                              }
+                              msg = Component.translatable("entity.beansbackpacks.blocked.already_equipped", items).withStyle(ChatFormatting.WHITE);
+                        }
                   }
             }
 
-            List<ItemStack> disabling = this.getDisabling();
-            if (!inMenu && !this.isEmpty() && this.getStack() != stack)
-                  disabling.add(this.getStack());
-
-            Iterator<ItemStack> iterator = disabling.iterator();
-            if (iterator.hasNext()) {
-                  MutableComponent items = Constants.getName(iterator.next());
-                  while (iterator.hasNext()) {
-                        ItemStack equipped = iterator.next();
-                        items.append(iterator.hasNext() ? Component.literal(", ") : Component.translatable("entity.beansbackpacks.blocked.and"));
-                        items.append(Constants.getName(equipped));
-                  }
-                  MutableComponent message = Component.translatable("entity.beansbackpacks.blocked.hotkey_equip", items).withStyle(ChatFormatting.WHITE);
-                  this.owner.displayClientMessage(message, true);
-                  if (this.owner.level().isClientSide) {
-                        Tooltip.playSound(this.traits.kind, PlaySound.HIT);
-                        Tooltip.pushInventoryMessage(message);
+            if (msg != null) {
+                  if (showMessage) {
+                        this.owner.displayClientMessage(msg, true);
+                        if (this.owner.level().isClientSide)
+                              Tooltip.pushInventoryMessage(msg);
                   }
                   return false;
             }
@@ -183,7 +195,7 @@ public class BackData {
       }
 
       public boolean backSlotDisabled() {
-            return !getDisabling().isEmpty();
+            return getDisabling().stream().anyMatch(in -> !in.isEmpty() && !Kind.isWings(in));
       }
 
       public List<ItemStack> getDisabling() {

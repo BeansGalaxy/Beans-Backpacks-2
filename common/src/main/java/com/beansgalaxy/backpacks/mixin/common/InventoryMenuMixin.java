@@ -61,7 +61,7 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
             Slot slot = this.slots.get(slotInt);
             ItemStack stack = slot.getItem();
             boolean canQuickEquip = !Constants.SLOTS_MOD_ACTIVE || !player.isCreative();
-            if (!(slot instanceof ResultSlot) && canQuickEquip && (Kind.isWearable(stack)) && backData.isEmpty() && !backData.backSlotDisabled()) {
+            if (!(slot instanceof ResultSlot) && canQuickEquip && backData.mayEquip(stack, true, false) && backData.isEmpty()) {
                   backData.set(stack);
                   slot.set(ItemStack.EMPTY);
                   cir.setReturnValue(ItemStack.EMPTY);
@@ -118,21 +118,18 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
             Traits.LocalData traits = backData.getTraits();
             Kind kind = traits.kind;
             Level level = player.level();
-            if (!backData.isEmpty() && Constants.elytraOrDisables(carriedItem))
+            if (!backData.isEmpty() && Kind.isWings(carried) && Kind.isWings(backStack))
             {
                   MutableComponent msg = Component.translatable("entity.beansbackpacks.blocked.inventory", Constants.getName(carried), Constants.getName(backStack));
                   if (selectedEquipment && !slot.hasItem() && !cursorEmpty)
                   {
-                        if (level.isClientSide) {
+                        if (level.isClientSide)
                               Tooltip.pushInventoryMessage(msg);
-                              Tooltip.playSound(kind, PlaySound.HIT);
-                        }
                         return;
                   }
                   if (actionType == ClickType.QUICK_MOVE && !selectedBackpackInventory) {
                         if (level.isClientSide()) {
                               Tooltip.pushInventoryMessage(msg);
-                              Tooltip.playSound(kind, PlaySound.HIT);
                         }
                         return;
                   }
