@@ -1,0 +1,20 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:tripwire_hook"
+    },
+    "title": "Keep Out!",
+    "description": "Deny a player access to your backpack",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "beansbackpacks:interactions/place",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:beansbackpacks/special",
+      "conditions": {
+        "special": "LOCKED"
+      }
+    }
+  }
+}

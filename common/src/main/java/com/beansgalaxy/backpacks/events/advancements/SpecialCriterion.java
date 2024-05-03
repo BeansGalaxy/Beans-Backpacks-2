@@ -51,6 +51,7 @@ public class SpecialCriterion extends SimpleCriterionTrigger<SpecialCriterion.Co
             COMPARATOR,
             CAULDRON_BEE_HIVE,
             FILLED_POT,
-            PICK_BACKPACK
+            PICK_BACKPACK,
+            LOCKED
       }
 }

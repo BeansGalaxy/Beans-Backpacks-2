@@ -23,6 +23,7 @@ import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -610,9 +611,15 @@ public abstract class EntityAbstract extends Backpack {
                   return false;
             }),
             IS_LOCKED(((backData, serverLevel, entityAbstract) -> {
-                  if (backData.owner.getUUID().equals(entityAbstract.getPlacedBy()))
+                  UUID placedBy = entityAbstract.getPlacedBy();
+                  if (backData.owner.getUUID().equals(placedBy))
                         return false;
-                  return entityAbstract.isLocked();
+                  boolean locked = entityAbstract.isLocked();
+                  if (locked) {
+                        MinecraftServer server = serverLevel.getServer();
+                        ServerSave.getSave(server, false).grantLockedAchievement(server, placedBy);
+                  }
+                  return locked;
             })),
             NOT_OWNER((backData, level, entityAbstract) -> {
                   if (ServerSave.GAMERULES.get(Gamerules.LOCK_BACKPACK_NOT_OWNER)) {
