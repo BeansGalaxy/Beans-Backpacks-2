@@ -3,13 +3,10 @@ package com.beansgalaxy.backpacks.items;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.network.clientbound.SendEnderDisplay;
-import com.beansgalaxy.backpacks.network.clientbound.SyncBackSlot;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ItemCombinerMenu;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 

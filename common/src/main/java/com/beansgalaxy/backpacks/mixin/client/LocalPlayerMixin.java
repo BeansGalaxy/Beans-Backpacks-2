@@ -3,11 +3,9 @@ package com.beansgalaxy.backpacks.mixin.client;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.access.ClickAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
-import com.beansgalaxy.backpacks.inventory.BackpackInventory;
-import com.beansgalaxy.backpacks.network.clientbound.SyncBackInventory;
-import com.beansgalaxy.backpacks.network.clientbound.SyncBackSlot;
-import com.beansgalaxy.backpacks.network.serverbound.ActionKey;
-import com.beansgalaxy.backpacks.screen.BackSlot;
+import com.beansgalaxy.backpacks.network.clientbound.SendBackInventory;
+import com.beansgalaxy.backpacks.network.clientbound.SendBackSlot;
+import com.beansgalaxy.backpacks.network.serverbound.SyncActionKey;
 import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.items.Tooltip;
@@ -30,8 +28,8 @@ public class LocalPlayerMixin {
 
       @Inject(method = "tick", at = @At("TAIL"))
       public void tick(CallbackInfo ci) {
-            SyncBackSlot.indexHeldSlots();
-            SyncBackInventory.indexInventories();
+            SendBackSlot.indexHeldSlots();
+            SendBackInventory.indexInventories();
 
             LocalPlayer localPlayer = (LocalPlayer) (Object) this;
             Minecraft instance = Minecraft.getInstance();
@@ -56,7 +54,7 @@ public class LocalPlayerMixin {
                   return;
 
             backData.actionKeyPressed = actionKeyPressed;
-            ActionKey.send(actionKeyPressed);
+            SyncActionKey.send(actionKeyPressed);
 
             boolean instantPlace = Constants.CLIENT_CONFIG.instant_place.get();
             if ((instantPlace || isMouseKey) && actionKeyPressed) {

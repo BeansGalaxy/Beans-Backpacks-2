@@ -5,7 +5,7 @@ import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.items.Tooltip;
-import com.beansgalaxy.backpacks.network.clientbound.SyncBackInventory;
+import com.beansgalaxy.backpacks.network.clientbound.SendBackInventory;
 import com.beansgalaxy.backpacks.network.serverbound.PickBackpack;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
@@ -47,7 +47,7 @@ public class PickBlockEvent {
             player.connection.send(new ClientboundContainerSetSlotPacket(-2, 0, inventory.selected, selectedStack));
             player.connection.send(new ClientboundSetCarriedItemPacket(inventory.selected));
 
-            SyncBackInventory.send(player);
+            SendBackInventory.send(player);
             Services.REGISTRY.triggerSpecial(player, SpecialCriterion.Special.PICK_BACKPACK);
 
             if (overflowSlot > -1)

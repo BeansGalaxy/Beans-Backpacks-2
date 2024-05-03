@@ -1,26 +1,24 @@
 package com.beansgalaxy.backpacks.network.serverbound;
 
 import com.beansgalaxy.backpacks.data.BackData;
-import com.beansgalaxy.backpacks.network.Network2C;
 import com.beansgalaxy.backpacks.network.Network2S;
-import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 
-public class ActionKey implements Packet2S {
+public class SyncActionKey implements Packet2S {
 
       private final boolean actionKeyPressed;
 
-      public ActionKey(boolean actionKeyPressed) {
+      public SyncActionKey(boolean actionKeyPressed) {
             this.actionKeyPressed = actionKeyPressed;
       }
 
-      public ActionKey(FriendlyByteBuf buf) {
+      public SyncActionKey(FriendlyByteBuf buf) {
             this(buf.readBoolean());
       }
 
       public static void send(boolean actionKeyPressed) {
-            new ActionKey(actionKeyPressed).send2S();
+            new SyncActionKey(actionKeyPressed).send2S();
       }
 
       @Override

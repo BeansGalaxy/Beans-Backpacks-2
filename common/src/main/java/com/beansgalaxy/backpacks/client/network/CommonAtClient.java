@@ -7,6 +7,7 @@ import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.items.Tooltip;
+import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -16,6 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.HashSet;
@@ -33,9 +35,17 @@ public class CommonAtClient {
             return false;
       }
 
-      public static boolean syncBackInventory(CompoundTag tag) {
+      public static boolean syncBackInventory(CompoundTag tag, int container) {
             LocalPlayer player = Minecraft.getInstance().player;
-            if (player == null) return false;
+            if (player == null && container == -1) return false;
+
+            if (container > -1) {
+                  AbstractContainerMenu containerMenu = player.containerMenu;
+                  if (containerMenu.containerId == container && containerMenu instanceof BackpackMenu menu) {
+                        menu.backpackInventory.readStackNbt(tag);
+                  }
+                  return true;
+            }
 
             BackData backData = BackData.get(player);
             BackpackInventory backpackInventory = backData.getBackpackInventory();

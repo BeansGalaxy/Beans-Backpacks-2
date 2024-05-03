@@ -10,9 +10,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public enum Network2C {
-      SYNC_VIEWERS_2C("sync_viewers_c", new Packet<>(SyncViewers.class, SyncViewers::encode, SyncViewers::new, SyncViewers::handle)),
-      SYNC_BACK_SLOT_2C("sync_back_slot_c", new Packet<>(SyncBackSlot.class, SyncBackSlot::encode, SyncBackSlot::new, SyncBackSlot::handle)),
-      SYNC_BACK_INV_2C("sync_back_inv_c", new Packet<>(SyncBackInventory.class, SyncBackInventory::encode, SyncBackInventory::new, SyncBackInventory::handle)),
+      SYNC_VIEWERS_2C("sync_viewers_c", new Packet<>(SendViewers.class, SendViewers::encode, SendViewers::new, SendViewers::handle)),
+      SYNC_BACK_SLOT_2C("sync_back_slot_c", new Packet<>(SendBackSlot.class, SendBackSlot::encode, SendBackSlot::new, SendBackSlot::handle)),
+      SYNC_BACK_INV_2C("sync_back_inv_c", new Packet<>(SendBackInventory.class, SendBackInventory::encode, SendBackInventory::new, SendBackInventory::handle)),
       CONFIG_TRAITS_2C("config_traits_c", new Packet<>(ConfigureTraits.class, ConfigureTraits::encode, ConfigureTraits::new, ConfigureTraits::handle)),
       CONFIG_LISTS_2C("config_lists_c", new Packet<>(ConfigureLists.class, ConfigureLists::encode, ConfigureLists::new, ConfigureLists::handle)),
       CONFIG_2C("config_c", new Packet<>(ConfigureConfig.class, ConfigureConfig::encode, ConfigureConfig::new, ConfigureConfig::handle)),

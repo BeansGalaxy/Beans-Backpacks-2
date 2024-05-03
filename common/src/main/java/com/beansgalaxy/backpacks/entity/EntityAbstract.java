@@ -9,9 +9,8 @@ import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.items.*;
 import com.beansgalaxy.backpacks.network.clientbound.SendEnderStacks;
-import com.beansgalaxy.backpacks.network.clientbound.SyncBackInventory;
+import com.beansgalaxy.backpacks.network.clientbound.SendBackInventory;
 import com.beansgalaxy.backpacks.platform.Services;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -48,7 +47,6 @@ import org.apache.commons.lang3.function.TriFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -763,7 +761,7 @@ public abstract class EntityAbstract extends Backpack {
                         }
                         backData.set(backpackStack);
                         PlaySound.EQUIP.at(player, kind);
-                        SyncBackInventory.send(player);
+                        SendBackInventory.send(player);
 
                         if (!this.isRemoved())
                         {

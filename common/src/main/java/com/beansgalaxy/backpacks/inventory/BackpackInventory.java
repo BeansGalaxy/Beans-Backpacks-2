@@ -10,7 +10,7 @@ import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.items.BackpackItem;
-import com.beansgalaxy.backpacks.network.clientbound.SyncViewers;
+import com.beansgalaxy.backpacks.network.clientbound.SendViewers;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -77,7 +77,7 @@ public abstract class BackpackInventory implements Container {
       public void updateViewers() {
             NonNullList<ServerPlayer> playersViewing = getPlayersViewing();
             getViewable().setViewers((byte) Math.min(playersViewing.size(), Byte.MAX_VALUE));
-            SyncViewers.send(this);
+            SendViewers.send(this);
       }
 
       public static boolean yawMatches(float viewerYaw, float ownerYaw, double acceptableYaw) {

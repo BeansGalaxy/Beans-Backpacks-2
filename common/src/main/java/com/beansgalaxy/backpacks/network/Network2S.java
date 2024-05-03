@@ -10,7 +10,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public enum Network2S {
-      ACTION_KEY_2S("action_key_s", new Packet<>(ActionKey.class, ActionKey::encode, ActionKey::new, ActionKey::handle)),
+      ACTION_KEY_2S("action_key_s", new Packet<>(SyncActionKey.class, SyncActionKey::encode, SyncActionKey::new, SyncActionKey::handle)),
       INSTANT_PLACE_2S("instant_place_s", new Packet<>(InstantPlace.class, InstantPlace::encode, InstantPlace::new, InstantPlace::handle)),
       PICK_BACKPACK_2S("pick_backpack_s", new Packet<>(PickBackpack.class, PickBackpack::encode, PickBackpack::new, PickBackpack::handle)),
       USE_CAULDRON_2S("use_cauldron_s", new Packet<>(UseCauldron.class, UseCauldron::encode, UseCauldron::new, UseCauldron::handle)),

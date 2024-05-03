@@ -5,21 +5,25 @@ import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.network.Network2C;
+import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
-public class SyncBackInventory implements Packet2C {
+public class SendBackInventory implements Packet2C {
       final CompoundTag stacks;
+      final int container;
 
-      public SyncBackInventory(BackpackInventory backpackInventory) {
+      public SendBackInventory(BackpackInventory backpackInventory, int container) {
             CompoundTag compound = new CompoundTag();
             backpackInventory.writeNbt(compound);
             stacks = compound;
+            this.container = container;
       }
 
-      public SyncBackInventory(FriendlyByteBuf buf) {
+      public SendBackInventory(FriendlyByteBuf buf) {
+            container = buf.readInt();
             stacks = buf.readNbt();
       }
 
@@ -32,8 +36,16 @@ public class SyncBackInventory implements Packet2C {
                   return;
             }
 
-            new SyncBackInventory(backData.getBackpackInventory()).send2C(owner);
+            new SendBackInventory(backData.getBackpackInventory(), -1).send2C(owner);
       }
+
+      public static void send(BackpackMenu menu) {
+            BackpackInventory backpackInventory = menu.backpackInventory;
+            SendBackInventory msg = new SendBackInventory(backpackInventory, menu.containerId);
+            for (ServerPlayer player : backpackInventory.getPlayersViewing())
+                  msg.send2C(player);
+      }
+
 
       @Override
       public Network2C getNetwork() {
@@ -41,6 +53,7 @@ public class SyncBackInventory implements Packet2C {
       }
 
       public void encode(FriendlyByteBuf buf) {
+            buf.writeInt(container);
             buf.writeNbt(stacks);
       }
 
@@ -48,13 +61,13 @@ public class SyncBackInventory implements Packet2C {
       @Override
       public void handle() {
             getNetwork().debugMsgDecode();
-            if (!CommonAtClient.syncBackInventory(stacks))
+            if (!CommonAtClient.syncBackInventory(stacks, container))
                   heldInv = stacks;
       }
 
       private static CompoundTag heldInv = null;
       public static void indexInventories() {
-            if (heldInv != null && CommonAtClient.syncBackInventory(heldInv))
+            if (heldInv != null && CommonAtClient.syncBackInventory(heldInv, -1))
                   heldInv = null;
       }
 }

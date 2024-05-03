@@ -14,7 +14,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -61,28 +60,28 @@ public class CommonForgeEvents {
                   BackData newBackData = BackData.get(newPlayer);
                   oldBackData.copyTo(newBackData);
                   if (oldPlayer instanceof ServerPlayer serverPlayer)
-                        SyncBackSlot.send(serverPlayer);
+                        SendBackSlot.send(serverPlayer);
             }
       }
 
       @SubscribeEvent // INVENTORY CANNOT SYNC DURING PLAYER CLONE EVENT, I THINK DUE TO CLIENT PLAYER IN THE OLD BODY
       public static void PlayerRespawnEvent(PlayerEvent.PlayerRespawnEvent event) {
             if (event.getEntity() instanceof ServerPlayer serverPlayer)
-                  SyncBackInventory.send(serverPlayer);
+                  SendBackInventory.send(serverPlayer);
 
       }
 
       @SubscribeEvent
       public static void PlayerChangeDimensions(PlayerEvent.PlayerChangedDimensionEvent event) {
             if (event.getEntity() instanceof ServerPlayer player)
-                  SyncBackInventory.send(player);
+                  SendBackInventory.send(player);
       }
 
       @SubscribeEvent
       public static void PlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
             if (event.getEntity() instanceof ServerPlayer player)
             {
-                  SyncBackInventory.send(player);
+                  SendBackInventory.send(player);
                   EnderStorage.get(player.level()).MAP.forEach(((uuid, enderData) -> {
                         SendEnderDisplay.send(player, uuid);
                   }));

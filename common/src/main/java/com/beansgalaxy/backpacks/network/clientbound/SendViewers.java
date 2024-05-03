@@ -7,16 +7,16 @@ import com.beansgalaxy.backpacks.network.Network2C;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 
-public class SyncViewers implements Packet2C {
+public class SendViewers implements Packet2C {
       int entityId;
       byte viewers;
 
-      public SyncViewers(int entityId, byte viewers) {
+      public SendViewers(int entityId, byte viewers) {
             this.entityId = entityId;
             this.viewers = viewers;
       }
 
-      public SyncViewers(FriendlyByteBuf byteBuf) {
+      public SendViewers(FriendlyByteBuf byteBuf) {
             this(byteBuf.readInt(), byteBuf.readByte());
       }
 
@@ -26,7 +26,7 @@ public class SyncViewers implements Packet2C {
             if (backpackInventory instanceof EnderInventory ender)
                   new SendEnderViewing(ender.getPlacedBy(), ender.getViewable()).send2A(server);
             else
-                  new SyncViewers(id, backpackInventory.getViewable().getViewers()).send2A(server);
+                  new SendViewers(id, backpackInventory.getViewable().getViewers()).send2A(server);
       }
 
       @Override

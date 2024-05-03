@@ -4,7 +4,7 @@ import com.beansgalaxy.backpacks.access.BucketLikeAccess;
 import com.beansgalaxy.backpacks.access.BucketsAccess;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
-import com.beansgalaxy.backpacks.network.clientbound.SyncBackInventory;
+import com.beansgalaxy.backpacks.network.clientbound.SendBackInventory;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
@@ -298,7 +298,7 @@ public class BackpackItem extends Item {
             if (useOnBlock(player, direction, clickedPos, backStack, true)) {
                   backData.setChanged();
                   if (player instanceof ServerPlayer serverPlayer)
-                        SyncBackInventory.send(serverPlayer);
+                        SendBackInventory.send(serverPlayer);
                   return InteractionResult.SUCCESS;
             }
 

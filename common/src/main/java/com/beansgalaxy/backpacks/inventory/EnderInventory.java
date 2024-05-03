@@ -52,11 +52,11 @@ public class EnderInventory extends BackpackInventory implements EntityAccess {
       }
 
       private EnderInventory getEnderData() {
-            return EnderStorage.getEnderData(this.uuid, this.level);
+            return EnderStorage.getEnderData(this.uuid, level());
       }
 
       private EnderStorage getEnderStorage() {
-            return EnderStorage.get(level);
+            return EnderStorage.get(level());
       }
 
       public EnderInventory setTrim(CompoundTag trim) {
@@ -145,7 +145,7 @@ public class EnderInventory extends BackpackInventory implements EntityAccess {
 
       @Override
       public void setChanged() {
-            MinecraftServer server = level.getServer();
+            MinecraftServer server = level().getServer();
             if (server != null) {
                   ServerSave save = ServerSave.getSave(server, true);
                   save.enderStorage.forEachViewing(uuid, (viewer) -> SendEnderStacks.send(viewer, uuid));

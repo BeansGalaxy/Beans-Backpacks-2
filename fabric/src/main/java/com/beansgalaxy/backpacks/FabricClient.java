@@ -23,6 +23,7 @@ import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.*;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.NonNullList;
@@ -31,6 +32,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 import java.nio.file.Path;
 import java.util.UUID;
@@ -77,7 +79,12 @@ public class FabricClient implements ClientModInitializer {
                   String string = buf.readUtf();
                   MutableComponent playerName = Component.Serializer.fromJson(string);
 
-                  EnderInventory computed = EnderStorage.get(client.level).MAP.computeIfAbsent(uuid, in -> new EnderInventory(uuid, client.level));
+                  EnderInventory computed = EnderStorage.get(client.level).MAP.computeIfAbsent(uuid, in -> new EnderInventory(uuid, client.level) {
+                        @Override
+                        public Level level() {
+                              return Minecraft.getInstance().level;
+                        }
+                  });
                   computed.setPlayerName(playerName).setTrim(trim).setItemStacks(itemStacks);
 
             });
