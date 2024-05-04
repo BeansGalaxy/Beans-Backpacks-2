@@ -49,7 +49,6 @@ public class SendEnderSound implements Packet2C {
                               Vec3 pPos = player.position();
                               Vec3 ePos = owner.position();
                               double v = range - ePos.distanceTo(pPos);
-                              System.out.println(range + "   " + v);
                               if (v > 0) {
                                     posList.add(BlockPos.containing(ePos));
                                     vTotal += v;

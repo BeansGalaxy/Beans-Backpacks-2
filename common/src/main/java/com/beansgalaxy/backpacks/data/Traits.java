@@ -242,10 +242,7 @@ public class Traits {
             }
 
             public Traits traits() {
-                  Traits traits = kind.traits(backpack_id);
-                  if (traits == null)
-                        System.out.println("NUULLL");
-                  return traits;
+                  return kind.traits(backpack_id);
             }
 
             public String name() {

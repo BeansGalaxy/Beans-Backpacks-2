@@ -128,7 +128,6 @@ public class EnderInventory extends BackpackInventory implements EntityAccess {
 
       @Override
       public void playSound(PlaySound sound, float volume) {
-            System.out.println(level());
             if (level() instanceof ServerLevel serverLevel) {
                   ArrayList<Entity> holders = new ArrayList<>();
                   getEnderStorage().forEachHolding(getUUID(), ctx -> {
