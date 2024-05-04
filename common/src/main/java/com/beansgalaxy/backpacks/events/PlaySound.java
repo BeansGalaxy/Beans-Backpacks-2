@@ -11,25 +11,19 @@ import net.minecraft.world.level.Level;
 import java.util.Random;
 
 public enum PlaySound {
-    PLACE(SoundEvents.ITEM_FRAME_PLACE, false),
-    EQUIP(SoundEvents.ARMOR_EQUIP_ELYTRA, false),
-    HIT(SoundEvents.PLAYER_ATTACK_WEAK, true),
-    BREAK(SoundEvents.PLAYER_ATTACK_CRIT, false),
-    INSERT(SoundEvents.BUNDLE_INSERT, true),
-    TAKE(SoundEvents.BUNDLE_REMOVE_ONE, true),
-    OPEN(SoundEvents.CHEST_OPEN, false),
-    CLOSE(SoundEvents.CHEST_CLOSE, false);
+    PLACE(SoundEvents.ITEM_FRAME_PLACE),
+    EQUIP(SoundEvents.ARMOR_EQUIP_ELYTRA),
+    HIT(SoundEvents.PLAYER_ATTACK_WEAK),
+    BREAK(SoundEvents.PLAYER_ATTACK_CRIT),
+    INSERT(SoundEvents.BUNDLE_INSERT),
+    TAKE(SoundEvents.BUNDLE_REMOVE_ONE),
+    OPEN(SoundEvents.CHEST_OPEN),
+    CLOSE(SoundEvents.CHEST_CLOSE);
 
     private final SoundEvent soundEvent;
-    private final boolean random;
 
-    PlaySound(SoundEvent soundEvent, boolean random) {
-        this.soundEvent = soundEvent;
-        this.random = random;
-    }
-
-    public boolean isRandom() {
-        return random;
+    PlaySound(SoundEvent soundEvent) {
+      this.soundEvent = soundEvent;
     }
 
     public SoundEvent getDefaultSoundEvent() {
@@ -43,19 +37,17 @@ public enum PlaySound {
     public void at(Entity entity, Kind kind, float volume) {
         Level world = entity.level();
         if (!world.isClientSide) {
-            Random rnd = new Random();
-            float pitch = random ? (rnd.nextFloat() / 4f) + 0.8f : 1f;
-            Playable sound = getSound(kind, this);
-            world.playSound(null, entity.blockPosition(), sound.event, SoundSource.BLOCKS, volume * sound.volume(), pitch * sound.pitch());
+            Playable sound = getSound(kind);
+            world.playSound(null, entity.blockPosition(), sound.event, SoundSource.BLOCKS, volume * sound.volume(), sound.pitch());
         }
     }
 
     public record Playable(SoundEvent event, float volume, float pitch) {}
 
-    public static Playable getSound(Kind kind, PlaySound type) {
+    public Playable getSound(Kind kind) {
         switch (kind) {
             case LEATHER, WINGED -> {
-                switch (type) {
+                switch (this) {
                     case PLACE -> {
                         return Events.LEATHER_PLACE.playable(1f, 1f);
                     }
@@ -63,16 +55,16 @@ public enum PlaySound {
                         return Events.LEATHER_EQUIP.playable(1f, 1f);
                     }
                     case HIT -> {
-                        return Events.LEATHER_HIT.playable(1f, 1f);
+                        return Events.LEATHER_HIT.playable(1f, new Random().nextFloat(0.7f, 1.1f));
                     }
                     case BREAK -> {
                         return Events.LEATHER_BREAK.playable(1f, 1f);
                     }
                     case INSERT -> {
-                        return Events.LEATHER_INSERT.playable(1f, 1f);
+                        return Events.LEATHER_INSERT.playable(1f, new Random().nextFloat(0.7f, 1.1f));
                     }
                     case TAKE -> {
-                        return Events.LEATHER_INSERT.playable(1f, 1.2f);
+                        return Events.LEATHER_INSERT.playable(1f, new Random().nextFloat(1, 1.3f));
                     }
                     case OPEN -> {
                         return Events.LEATHER_OPEN.playable(1f, 1f);
@@ -83,7 +75,7 @@ public enum PlaySound {
                 }
             }
             case METAL, UPGRADED -> {
-                switch (type) {
+                switch (this) {
                     case PLACE -> {
                         return Events.METAL_PLACE.playable(1f, 1f);
                     }
@@ -91,16 +83,16 @@ public enum PlaySound {
                         return Events.METAL_EQUIP.playable(1f, 1f);
                     }
                     case HIT -> {
-                        return Events.METAL_HIT.playable(1f, 1f);
+                        return Events.METAL_HIT.playable(1f, new Random().nextFloat(0.8f, 1.1f));
                     }
                     case BREAK -> {
                         return Events.METAL_BREAK.playable(1f, 1f);
                     }
                     case INSERT -> {
-                        return Events.METAL_INSERT.playable(1f, 1f);
+                        return Events.METAL_INSERT.playable(1f, new Random().nextFloat(0.8f, 1.1f));
                     }
                     case TAKE -> {
-                        return Events.METAL_TAKE.playable(0.7f, 1f);
+                        return Events.METAL_TAKE.playable(0.7f, new Random().nextFloat(0.8f, 1.1f));
                     }
                     case OPEN -> {
                         return Events.METAL_OPEN.playable(1f, 1f);
@@ -111,33 +103,33 @@ public enum PlaySound {
                 }
             }
             case POT -> {
-                switch (type) {
+                switch (this) {
                     case INSERT -> {
-                        return new Playable(SoundEvents.DECORATED_POT_HIT, 1f, 1f);
+                        return new Playable(SoundEvents.DECORATED_POT_HIT, 1f, new Random().nextFloat(0.7f, 1.1f));
                     }
                     case TAKE -> {
-                        return new Playable(SoundEvents.DECORATED_POT_FALL, 1f, 1f);
+                        return new Playable(SoundEvents.DECORATED_POT_FALL, 1f, new Random().nextFloat(0.7f, 1.1f));
                     }
                 }
             }
             case ENDER -> {
-                switch (type) {
+                switch (this) {
                     case OPEN -> {
-                        return new Playable(SoundEvents.ENDER_CHEST_OPEN, 0.4f, 1f);
+                        return new Playable(SoundEvents.ENDER_CHEST_OPEN, 0.3f, 1f);
                     }
                     case CLOSE -> {
-                        return new Playable(SoundEvents.ENDER_CHEST_CLOSE, 1f, 1f);
+                        return new Playable(SoundEvents.ENDER_CHEST_CLOSE, 0.5f, 1f);
                     }
                     case TAKE-> {
-                        return new Playable(SoundEvents.ENDERMAN_TELEPORT, 0.1f, 0.8f);
+                        return new Playable(SoundEvents.ENDERMAN_TELEPORT, 0.1f, new Random().nextFloat(0.8f, 0.9f));
                     }
                     case INSERT -> {
-                        return new Playable(SoundEvents.ENDERMAN_TELEPORT, 0.1f, 1.1f);
+                        return new Playable(SoundEvents.ENDERMAN_TELEPORT, 0.1f, new Random().nextFloat(0.9f, 1.1f));
                     }
                 }
             }
         }
-        return new Playable(type.getDefaultSoundEvent(), 1f, 1f);
+        return new Playable(getDefaultSoundEvent(), 1f, 1f);
     }
 
     public enum Events {

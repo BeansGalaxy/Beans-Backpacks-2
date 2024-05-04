@@ -100,6 +100,58 @@ public class EnderStorage {
                   VIEWERS.remove(owner);
       }
 
+      public void forEachHolding(UUID owner, Consumer<ServerPlayer> viewers, Consumer<BackData> equipped) {
+            forEachHolding(owner, ctx -> {
+                  if (ctx.backData != null) {
+                        for (ServerPlayer subViewer : ctx.backData.getBackpackInventory().getPlayersViewing())
+                              viewers.accept(subViewer);
+                        equipped.accept(ctx.backData);
+                  } else if (ctx.ender != null && ctx.level != null) {
+                        NonNullList<ServerPlayer> playersViewing = ctx.ender.getInventory().getPlayersViewing();
+                        getEnderData(owner, ctx.level).flagForUpdate(ctx.level);
+                        for (ServerPlayer player : playersViewing) {
+                              viewers.accept(player);
+                              if (player.containerMenu instanceof BackpackMenu menu)
+                                    menu.updateSlots();
+                        }
+                  }
+            });
+      }
+
+      public void forEachHolding(UUID owner, Consumer<ViewerRecord> holders) {
+            if (owner == null) return;
+
+            HashSet<Entity> inventories = VIEWERS.get(owner);
+            if (inventories == null) return;
+
+            Iterator<Entity> iterator = inventories.iterator();
+            while (iterator.hasNext()) {
+                  Entity viewer = iterator.next();
+                  if (viewer instanceof ServerPlayer player) {
+                        BackData backData = BackData.get(player);
+                        ItemStack backStack = backData.getStack();
+                        if (backStack.getItem() instanceof EnderBackpack item) {
+                              UUID uuid = item.getOrCreateUUID(owner, viewer.level(), backStack);
+                              if (uuid.equals(owner)) {
+                                    holders.accept(new ViewerRecord(viewer, backData, null, null));
+                              }
+                        }
+                  }
+                  else if (viewer instanceof EntityEnder ender && ender.level() instanceof ServerLevel serverLevel && !ender.isRemoved()) {
+                        UUID placedBy = ender.getPlacedBy();
+                        if (placedBy.equals(owner)) {
+                              holders.accept(new ViewerRecord(viewer, null, ender, serverLevel));
+                        }
+                  }
+                  else iterator.remove();
+            }
+
+            if (inventories.isEmpty())
+                  VIEWERS.remove(owner);
+      }
+
+      public record ViewerRecord(Entity entity, BackData backData, EntityEnder ender, ServerLevel level) {}
+
       public void syncViewers(UUID owner) {
             forEachViewing(owner, (viewer) -> SendEnderStacks.send(viewer, owner));
       }

@@ -3,8 +3,10 @@ package com.beansgalaxy.backpacks.inventory;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.data.Traits;
+import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
+import com.beansgalaxy.backpacks.network.clientbound.SendEnderSound;
 import com.beansgalaxy.backpacks.network.clientbound.SendEnderStacks;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.BlockPos;
@@ -16,6 +18,8 @@ import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.armortrim.ArmorTrim;
@@ -25,9 +29,7 @@ import net.minecraft.world.level.entity.EntityAccess;
 import net.minecraft.world.level.entity.EntityInLevelCallback;
 import net.minecraft.world.phys.AABB;
 
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class EnderInventory extends BackpackInventory implements EntityAccess {
@@ -125,7 +127,15 @@ public class EnderInventory extends BackpackInventory implements EntityAccess {
       }
 
       @Override
-      public void playSound(PlaySound sound) {
+      public void playSound(PlaySound sound, float volume) {
+            System.out.println(level());
+            if (level() instanceof ServerLevel serverLevel) {
+                  ArrayList<Entity> holders = new ArrayList<>();
+                  getEnderStorage().forEachHolding(getUUID(), ctx -> {
+                        holders.add(ctx.entity());
+                  });
+                  SendEnderSound.send(holders, sound, volume, serverLevel);
+            }
       }
 
       @Override

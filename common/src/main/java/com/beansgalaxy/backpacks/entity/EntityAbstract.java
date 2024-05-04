@@ -683,7 +683,7 @@ public abstract class EntityAbstract extends Backpack {
                         return interact;
 
                   if (getViewable().getViewers() < 1)
-                        PlaySound.OPEN.at(this, getTraits().kind);
+                        getInventory().playSound(PlaySound.OPEN);
                   if (Kind.ENDER.is(traits.kind))
                         SendEnderStacks.send(serverPlayer, getPlacedBy());
 

@@ -4,6 +4,8 @@ import com.beansgalaxy.backpacks.access.MinecraftAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
+import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.items.Tooltip;
@@ -12,15 +14,19 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -91,5 +97,17 @@ public class CommonAtClient {
             ClientLevel level = Minecraft.getInstance().level;
             EnderInventory computed = EnderStorage.get(level).MAP.computeIfAbsent(uuid, in -> new EnderInventory(uuid, level));
             consumer.accept(computed);
+      }
+
+      public static void receiveEnderSoundEvent(PlaySound sound, double volume, List<BlockPos> posList) {
+            Minecraft minecraft = Minecraft.getInstance();
+            ClientLevel level = minecraft.level;
+            if (level == null) return;
+
+            for (BlockPos pos : posList) {
+                  PlaySound.Playable play = sound.getSound(Kind.ENDER);
+                  float vol = (float) (volume * play.volume());
+                  level.playSound(minecraft.player, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, play.event(), SoundSource.BLOCKS, vol, play.pitch());
+            }
       }
 }

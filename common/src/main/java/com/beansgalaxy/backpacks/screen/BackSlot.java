@@ -95,7 +95,7 @@ public class BackSlot extends Slot {
                         PlaySound.HIT.at(owner, backData.getTraits().kind);
                   } else {
                         Services.NETWORK.openBackpackMenu(viewer, backData);
-                        PlaySound.OPEN.at(owner, backData.getTraits().kind, 0.4f);
+                        backData.getBackpackInventory().playSound(PlaySound.OPEN, 0.6f);
                   }
                   return InteractionResult.SUCCESS;
             }
