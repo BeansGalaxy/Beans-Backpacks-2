@@ -1,10 +1,12 @@
 package com.beansgalaxy.backpacks.items;
 
 import com.beansgalaxy.backpacks.data.EnderStorage;
+import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.network.clientbound.SendEnderDisplay;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ItemCombinerMenu;
 import net.minecraft.world.item.ItemStack;
@@ -89,7 +91,8 @@ public class EnderBackpack extends BackpackItem {
             UUID ownerUUID = this.getOrCreateUUID(player, backpackStack);
             if (playerUUID.equals(ownerUUID)) {
                   EnderInventory enderData = EnderStorage.getEnderData(player);
-                  enderData.setLocked(!enderData.isLocked());
+                  boolean locked = !enderData.isLocked();
+                  enderData.setLocked(locked);
                   SendEnderDisplay.send(player);
                   EnderStorage.get(player.level()).forEachViewing(ownerUUID, viewer -> {}, equipped -> {
                         if (equipped.owner.getUUID() != ownerUUID) {
@@ -97,6 +100,11 @@ public class EnderBackpack extends BackpackItem {
                         }
                   });
                   enderData.clearViewers();
+
+                  if (player.level().isClientSide) {
+                        SoundEvent event = locked ? PlaySound.Events.LOCK.get() : PlaySound.Events.UNLOCK.get();
+                        Tooltip.playSound(event, 1f, 1f);
+                  }
                   return true;
             }
             return false;

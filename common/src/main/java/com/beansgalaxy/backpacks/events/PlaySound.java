@@ -46,7 +46,7 @@ public enum PlaySound {
 
     public Playable getSound(Kind kind) {
         switch (kind) {
-            case LEATHER, WINGED -> {
+            case LEATHER -> {
                 switch (this) {
                     case PLACE -> {
                         return Events.LEATHER_PLACE.playable(1f, 1f);
@@ -104,27 +104,70 @@ public enum PlaySound {
             }
             case POT -> {
                 switch (this) {
+                    case HIT -> {
+                        return Events.POT_HIT.playable(1f, 1f);
+                    }
                     case INSERT -> {
-                        return new Playable(SoundEvents.DECORATED_POT_HIT, 1f, new Random().nextFloat(0.7f, 1.1f));
+                        return Events.POT_INSERT.playable(1f, 1f);
                     }
                     case TAKE -> {
-                        return new Playable(SoundEvents.DECORATED_POT_FALL, 1f, new Random().nextFloat(0.7f, 1.1f));
+                        return Events.POT_TAKE.playable(1f, 1f);
                     }
                 }
             }
             case ENDER -> {
                 switch (this) {
+                    case PLACE -> {
+                        return Events.ENDER_PLACE.playable(1f, 1f);
+                    }
+                    case EQUIP -> {
+                        return Events.ENDER_EQUIP.playable(1f, 1f);
+                    }
+                    case HIT -> {
+                        return Events.ENDER_HIT.playable(1f, new Random().nextFloat(0.9f, 1.1f));
+                    }
+                    case BREAK -> {
+                        return Events.ENDER_BREAK.playable(1f, 1f);
+                    }
                     case OPEN -> {
-                        return new Playable(SoundEvents.ENDER_CHEST_OPEN, 0.3f, 1f);
+                        return Events.ENDER_OPEN.playable(1f, 1f);
                     }
                     case CLOSE -> {
-                        return new Playable(SoundEvents.ENDER_CHEST_CLOSE, 0.5f, 1f);
+                        return Events.ENDER_CLOSE.playable(1f, 1f);
                     }
                     case TAKE-> {
-                        return new Playable(SoundEvents.ENDERMAN_TELEPORT, 0.1f, new Random().nextFloat(0.8f, 0.9f));
+                        return Events.ENDER_TAKE.playable(1f, new Random().nextFloat(0.9f, 1.1f));
                     }
                     case INSERT -> {
-                        return new Playable(SoundEvents.ENDERMAN_TELEPORT, 0.1f, new Random().nextFloat(0.9f, 1.1f));
+                        return Events.ENDER_INSERT.playable(1f, new Random().nextFloat(0.9f, 1.1f));
+                    }
+                }
+            }
+            case WINGED -> {
+                switch (this) {
+                    case PLACE -> {
+                        return Events.WINGED_PLACE.playable(1f, 1f);
+                    }
+                    case EQUIP -> {
+                        return Events.WINGED_EQUIP.playable(1f, 1f);
+                    }
+                    case HIT -> {
+                        return Events.WINGED_HIT.playable(1f, new Random().nextFloat(0.7f, 1.1f));
+                    }
+                    case BREAK -> {
+                        return Events.WINGED_BREAK.playable(1f, 1f);
+                    }
+                    case INSERT -> {
+                        return Events.LEATHER_INSERT.playable(1f, new Random().nextFloat(0.7f, 1.1f));
+                    }
+                    case TAKE -> {
+                        return Events.LEATHER_INSERT.playable(1f, new Random().nextFloat(1, 1.3f));
+                    }
+                    case OPEN -> {
+                        return Events.WINGED_OPEN.playable(1f, 1f);
+                    }
+                    case CLOSE -> {
+                        return Events.WINGED_CLOSE.playable(1f, 1f);
                     }
                 }
             }
@@ -147,7 +190,26 @@ public enum PlaySound {
         METAL_INSERT   ("metal_insert"),
         METAL_TAKE     ("metal_take"),
         METAL_OPEN     ("metal_open"),
-        METAL_CLOSE    ("metal_close");
+        METAL_CLOSE    ("metal_close"),
+        ENDER_PLACE    ("ender_place"),
+        ENDER_EQUIP    ("ender_equip"),
+        ENDER_HIT      ("ender_hit"),
+        ENDER_BREAK    ("ender_break"),
+        ENDER_INSERT   ("ender_insert"),
+        ENDER_TAKE     ("ender_take"),
+        ENDER_OPEN     ("ender_open"),
+        ENDER_CLOSE    ("ender_close"),
+        WINGED_PLACE   ("winged_place"),
+        WINGED_EQUIP   ("winged_equip"),
+        WINGED_HIT     ("winged_hit"),
+        WINGED_BREAK   ("winged_break"),
+        WINGED_OPEN    ("winged_open"),
+        WINGED_CLOSE   ("winged_close"),
+        POT_HIT        ("pot_hit"),
+        POT_INSERT     ("pot_insert"),
+        POT_TAKE       ("pot_take"),
+        LOCK           ("lock_backpack"),
+        UNLOCK         ("unlock_backpack");
 
         public final String id;
 
@@ -155,7 +217,7 @@ public enum PlaySound {
             this.id = id;
         }
 
-        private SoundEvent get() {
+        public SoundEvent get() {
             return Services.REGISTRY.soundEvent(id);
         }
 

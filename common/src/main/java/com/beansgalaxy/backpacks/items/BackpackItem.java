@@ -70,17 +70,21 @@ public class BackpackItem extends Item {
 
                   if (backpackStack.getItem() instanceof EnderBackpack ender) {
                         if (ender.lockEnder(player, backpackStack)) {
-                              if (level.isClientSide)
-                                    Tooltip.playSound(SoundEvents.CHEST_LOCKED, 1f, 1f);
                               return InteractionResultHolder.success(backpackStack);
                         }
                   } else {
+                        boolean locked = false;
                         if (tag != null && tag.contains("Locked"))
                               tag.remove("Locked");
-                        else backpackStack.getOrCreateTag().putBoolean("Locked", true);
+                        else {
+                              backpackStack.getOrCreateTag().putBoolean("Locked", true);
+                              locked = true;
+                        }
 
-                        if (level.isClientSide)
-                              Tooltip.playSound(SoundEvents.CHEST_LOCKED, 1f, 1f);
+                        if (level.isClientSide) {
+                              SoundEvent event = locked ? PlaySound.Events.LOCK.get() : PlaySound.Events.UNLOCK.get();
+                              Tooltip.playSound(event, 1f, 1f);
+                        }
                         return InteractionResultHolder.success(backpackStack);
                   }
             }
