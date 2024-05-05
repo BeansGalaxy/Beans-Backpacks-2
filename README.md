@@ -23,7 +23,24 @@ the issues tab. </p>
 
 <h1 align="center"> Changelog </h1>
 
-### 20.1-0.26-v3
+### 20.1-0.27-v2
+
+- Finalized All Backpack Sounds
+  - Sound for locking backpacks
+  - Unique Winged Backpack sound
+  - Unique Decorated Pot sounds
+  - Unique Ender Backpack Sounds
+- Ender Backpacks now play sounds at all linked inventories
+- Added Advancement for a player attempting to access your locked backpack
+- Removed the Back Slot from being disabled
+  - If it had been disabled, it will now not render on your back
+  - Winged Backpacks & Elytra still cannot be worn together
+- Pick-Block with Pots work again
+- Fixed Crash on client while accessing ender inventory
+- Fixed items disappearing after stacking over 127
+- Fixed empty slot in BP menus not disappearing when inventory is full
+
+### 20.1-0.26-v2
 
 - Backpacks can now be locked by holding them & right-clicking
   - Other players cannot access or equip a locked backpack
