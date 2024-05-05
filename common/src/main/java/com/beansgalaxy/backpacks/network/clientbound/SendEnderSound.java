@@ -8,18 +8,21 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SendEnderSound implements Packet2C {
-      final PlaySound sound;
-      final List<BlockPos> posList;
-      final double volume;
+      public static final ArrayList<SendEnderSound> soundQue = new ArrayList<>();
+      public final PlaySound sound;
+      public final ArrayList<BlockPos> posList;
+      public double volume;
 
-      public SendEnderSound(PlaySound sound, double volume, List<BlockPos> posList) {
+      public SendEnderSound(PlaySound sound, double volume, ArrayList<BlockPos> posList) {
             this.sound = sound;
             this.volume = volume;
             this.posList = posList;
@@ -28,7 +31,7 @@ public class SendEnderSound implements Packet2C {
       public SendEnderSound(FriendlyByteBuf buf) {
             this.sound = buf.readEnum(PlaySound.class);
             this.volume = buf.readDouble();
-            this.posList = buf.readList(FriendlyByteBuf::readBlockPos);
+            this.posList = new ArrayList<>(buf.readList(FriendlyByteBuf::readBlockPos));
       }
 
       @Override
@@ -74,6 +77,20 @@ public class SendEnderSound implements Packet2C {
 
       @Override
       public void handle() {
-            CommonAtClient.receiveEnderSoundEvent(sound, volume, posList);
+            CommonAtClient.receiveEnderSoundEvent(this);
+      }
+
+      public static void indexSounds(Player player) {
+            while (!soundQue.isEmpty()) {
+                  SendEnderSound ctx = soundQue.get(0);
+                  if (!ctx.posList.isEmpty()) {
+                        BlockPos pos = ctx.posList.remove(0);
+                        PlaySound.Playable play = ctx.sound.getSound(Kind.ENDER);
+                        float vol = (float) (ctx.volume * play.volume());
+                        player.level().playSound(player, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, play.event(), SoundSource.BLOCKS, vol, play.pitch());
+                        return;
+                  }
+                  else soundQue.remove(0);
+            }
       }
 }

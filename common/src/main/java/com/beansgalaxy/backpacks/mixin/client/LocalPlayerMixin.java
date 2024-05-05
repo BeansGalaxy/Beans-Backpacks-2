@@ -5,6 +5,7 @@ import com.beansgalaxy.backpacks.access.ClickAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.network.clientbound.SendBackInventory;
 import com.beansgalaxy.backpacks.network.clientbound.SendBackSlot;
+import com.beansgalaxy.backpacks.network.clientbound.SendEnderSound;
 import com.beansgalaxy.backpacks.network.serverbound.SyncActionKey;
 import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.beansgalaxy.backpacks.events.KeyPress;
@@ -16,7 +17,9 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,18 +27,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LocalPlayer.class)
 public class LocalPlayerMixin {
-      @Unique private NonNullList<ItemStack> bpi = null;
+      @Shadow @Final protected Minecraft minecraft;
+      @Unique private LocalPlayer instance = (LocalPlayer) (Object) this;
 
       @Inject(method = "tick", at = @At("TAIL"))
       public void tick(CallbackInfo ci) {
             SendBackSlot.indexHeldSlots();
             SendBackInventory.indexInventories();
-
-            LocalPlayer localPlayer = (LocalPlayer) (Object) this;
-            Minecraft instance = Minecraft.getInstance();
+            SendEnderSound.indexSounds(instance);
             KeyMapping keyBinding = Tooltip.getKeyBinding();
 
-            KeyMapping sneakKey = instance.options.keyShift;
+            KeyMapping sneakKey = minecraft.options.keyShift;
             if (sneakKey.same(keyBinding))
                   sneakKey.setDown(keyBinding.isDown());
 
@@ -43,10 +45,10 @@ public class LocalPlayerMixin {
             boolean isMouseKey = key.getType().equals(InputConstants.Type.MOUSE);
 
 
-            long window = instance.getWindow().getWindow();
+            long window = minecraft.getWindow().getWindow();
             int value = key.getValue();
 
-            BackData backData = BackData.get(localPlayer);
+            BackData backData = BackData.get(instance);
             boolean actionKeyPressed = isMouseKey ? GLFW.glfwGetMouseButton(window, value) == 1 : InputConstants.isKeyDown(window, value);
             boolean actionKeyPrevious = backData.actionKeyPressed;
 
@@ -58,16 +60,10 @@ public class LocalPlayerMixin {
 
             boolean instantPlace = Constants.CLIENT_CONFIG.instant_place.get();
             if ((instantPlace || isMouseKey) && actionKeyPressed) {
-                  if (instance.screen instanceof ClickAccessor clickAccessor)
+                  if (minecraft.screen instanceof ClickAccessor clickAccessor)
                         clickAccessor.beans_Backpacks_2$instantPlace();
-                  else if (!(instance.screen instanceof BackpackScreen))
-                        KeyPress.instantPlace(localPlayer);
+                  else if (!(minecraft.screen instanceof BackpackScreen))
+                        KeyPress.instantPlace(instance);
             }
       }
-
-      @Inject(method = "handleEntityEvent", at = @At("HEAD"))
-      private void catchBackSlotEvent(byte id, CallbackInfo ci) {
-
-      }
-
 }

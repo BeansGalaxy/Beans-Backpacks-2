@@ -157,7 +157,9 @@ public class BackData {
                   if (enderData.isLocked() && uuid != owner.getUUID()) {
                         msg = Component.translatable("entity.beansbackpacks.locked.is_locked");
                   }
-            } else if (notEmpty) {
+            }
+
+            if (msg == null && notEmpty) {
                   if (!inMenu && wornStack != toEquip)
                         msg = Component.translatable("entity.beansbackpacks.blocked.already_equipped",
                                     Constants.getName(wornStack));

@@ -10,6 +10,7 @@ import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.items.Tooltip;
+import com.beansgalaxy.backpacks.network.clientbound.SendEnderSound;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -26,10 +27,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.EntityHitResult;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class CommonAtClient {
@@ -101,27 +99,30 @@ public class CommonAtClient {
             consumer.accept(computed);
       }
 
-      public static void receiveEnderSoundEvent(PlaySound sound, double volume, List<BlockPos> posList) {
+      public static void receiveEnderSoundEvent(SendEnderSound ctx) {
             Minecraft minecraft = Minecraft.getInstance();
             ClientLevel level = minecraft.level;
             if (level == null) return;
 
+            boolean noMatch = true;
             if (minecraft.hitResult instanceof EntityHitResult hitResult && hitResult.getEntity() instanceof EntityEnder ender) {
                   BlockPos containing = BlockPos.containing(ender.position());
-                  for (BlockPos pos : posList) {
+                  Iterator<BlockPos> iterator = ctx.posList.iterator();
+                  while (iterator.hasNext() && noMatch) {
+                        BlockPos pos = iterator.next();
                         if (pos.equals(containing)) {
-                              PlaySound.Playable play = sound.getSound(Kind.ENDER);
-                              float vol = (float) (volume + volume + play.volume()) / 3;
+                              PlaySound.Playable play = ctx.sound.getSound(Kind.ENDER);
+                              float vol = (float) (ctx.volume + ctx.volume + play.volume()) / 3;
                               level.playSound(minecraft.player, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, play.event(), SoundSource.BLOCKS, vol, play.pitch());
-                              volume = volume - Math.abs(volume - vol);
+                              ctx.volume = ctx.volume - Math.abs(ctx.volume - vol);
+
+                              ctx.posList.remove(pos);
+                              noMatch = false;
                         }
                   }
             }
 
-            for (BlockPos pos : posList) {
-                  PlaySound.Playable play = sound.getSound(Kind.ENDER);
-                  float vol = (float) (volume * play.volume());
-                  level.playSound(minecraft.player, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, play.event(), SoundSource.BLOCKS, vol, play.pitch());
-            }
+            SendEnderSound.soundQue.add(ctx);
+            if (noMatch) SendEnderSound.indexSounds(minecraft.player);
       }
 }
