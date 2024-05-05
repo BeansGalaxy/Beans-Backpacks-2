@@ -4,24 +4,29 @@ import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.inventory.PotInventory;
 import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.network.clientbound.SendBackInventory;
 import com.beansgalaxy.backpacks.network.serverbound.PickBackpack;
 import com.beansgalaxy.backpacks.platform.Services;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public class PickBlockEvent {
 
       public static void pickBackpack(int backpackSlot, ServerPlayer player) {
             BackData backData = BackData.get(player);
+            ItemStack backStack = backData.getStack();
+            Kind kind = Kind.fromStack(backStack);
+
             Inventory inventory = player.getInventory();
 
-            Kind kind = Kind.fromStack(backData.getStack());
             int freeSlot = inventory.getFreeSlot();
             if (freeSlot == -1)
             {
@@ -35,7 +40,11 @@ public class PickBlockEvent {
 
             ItemStack selectedStack = inventory.getItem(inventory.selected);
             BackpackInventory backpackInventory = backData.getBackpackInventory();
-            inventory.setItem(inventory.selected, backpackInventory.removeItemSilent(backpackSlot));
+            ItemStack take;
+            if (backpackSlot != -1 || (take = PotInventory.take(backStack, false, player.level())) == null)
+                  take = backpackInventory.removeItemSilent(backpackSlot);
+
+            inventory.setItem(inventory.selected, take);
             backpackInventory.playSound(PlaySound.TAKE);
 
             int overflowSlot = -1;
@@ -74,6 +83,19 @@ public class PickBlockEvent {
                   return false;
 
             BackData backData = BackData.get(player);
+            if (backData.getTraits().kind.is(Kind.POT)) {
+                  ItemStack backStack = backData.getStack();
+                  CompoundTag tag = backStack.getTag();
+                  if (tag != null && tag.contains("back_slot")) {
+                        CompoundTag backSlot = tag.getCompound("back_slot");
+                        if (itemStack.is(PotInventory.getContent(backSlot))) {
+                              PotInventory.take(backStack, false, player.level());
+                              PickBackpack.send(-1);
+                              return true;
+                        }
+                  }
+                  return false;
+            }
             slot = PickBlockEvent.slotMatchingItem(itemStack, backData.getBackpackInventory());
 
             if (slot < 0)

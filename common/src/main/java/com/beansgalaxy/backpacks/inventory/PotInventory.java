@@ -22,6 +22,14 @@ public class PotInventory {
             return Traits.get("POT").getMaxStacks();
       }
 
+      public static Item getContent(CompoundTag itemTag) {
+            if (itemTag.contains("id")) {
+                  String string = itemTag.getString("id");
+                  return BuiltInRegistries.ITEM.get(new ResourceLocation(string));
+            }
+            return null;
+      }
+
       public static ItemStack add(ItemStack pot, ItemStack inserted, Player player) {
             Level level = player.level();
             if (inserted.isEmpty() || (inserted.isStackable() && inserted.hasTag()))
@@ -37,13 +45,12 @@ public class PotInventory {
                   return null;
             
             CompoundTag itemTag = pot.getOrCreateTagElement("back_slot");
-            if (itemTag.contains("id") && itemTag.contains("amount")) {
+            Item content = getContent(itemTag);
+            if (content != null && itemTag.contains("amount")) {
                   int storedAmount = itemTag.getInt("amount");
                   if (storedAmount >= max_amount) return null;
                   amount += storedAmount;
-                  String string = itemTag.getString("id");
-                  Item stored = BuiltInRegistries.ITEM.get(new ResourceLocation(string));
-                  if (!inserted.is(stored)) return null;
+                  if (!inserted.is(content)) return null;
             } else {
                   ResourceLocation key = BuiltInRegistries.ITEM.getKey(inserted.getItem());
                   itemTag.putString("id", key.toString());
