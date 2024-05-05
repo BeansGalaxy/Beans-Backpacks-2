@@ -4,6 +4,7 @@ import com.beansgalaxy.backpacks.access.MinecraftAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
+import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
@@ -23,6 +24,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.EntityHitResult;
 
 import java.util.HashSet;
 import java.util.List;
@@ -103,6 +105,18 @@ public class CommonAtClient {
             Minecraft minecraft = Minecraft.getInstance();
             ClientLevel level = minecraft.level;
             if (level == null) return;
+
+            if (minecraft.hitResult instanceof EntityHitResult hitResult && hitResult.getEntity() instanceof EntityEnder ender) {
+                  BlockPos containing = BlockPos.containing(ender.position());
+                  for (BlockPos pos : posList) {
+                        if (pos.equals(containing)) {
+                              PlaySound.Playable play = sound.getSound(Kind.ENDER);
+                              float vol = (float) (volume + volume + play.volume()) / 3;
+                              level.playSound(minecraft.player, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, play.event(), SoundSource.BLOCKS, vol, play.pitch());
+                              volume = volume - Math.abs(volume - vol);
+                        }
+                  }
+            }
 
             for (BlockPos pos : posList) {
                   PlaySound.Playable play = sound.getSound(Kind.ENDER);

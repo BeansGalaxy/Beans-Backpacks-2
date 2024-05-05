@@ -90,7 +90,7 @@ public abstract class BackpackInventory implements Container {
        **/
 
       public void playSound(PlaySound sound) {
-            playSound(sound, 1.2f);
+            playSound(sound, 0.8f);
       }
 
       public void playSound(PlaySound sound, float volume) {
