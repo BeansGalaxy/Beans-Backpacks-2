@@ -38,7 +38,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.UUID;
 
 public class Tooltip {
@@ -116,23 +115,10 @@ public class Tooltip {
       }
 
       private static final MutableComponent empty = Component.literal("");
-      public static String keyBind = "§6" + getKeyBinding().getTranslatedKeyMessage().getString()
-                  .replace("Left ", "L")
-                  .replace("Right ", "R")
-                  .replace("Control", "Ctrl");
 
       public static void nullTitle(List<Component> components) {
-            components.add(Component.translatable("tooltip.beansbackpacks.null_title", Component.literal(keyBind).withStyle(ChatFormatting.GOLD)));
-      }
-
-      public static KeyMapping getKeyBinding() {
-            Minecraft instance = Minecraft.getInstance();
-            KeyMapping sprintKey = instance.options.keySprint;
-            KeyMapping customKey = KeyPress.INSTANCE.ACTION_KEY;
-
-            boolean isCustomUnbound = customKey.same(sprintKey) || customKey.isUnbound();
-
-            return isCustomUnbound ? sprintKey : customKey;
+            components.add(Component.translatable("tooltip.beansbackpacks.null_title",
+                        KeyPress.getKeyReadable(KeyPress.getMenusKeyBind()).plainCopy().withStyle(ChatFormatting.GOLD)));
       }
 
       public static boolean isBarVisible(ItemStack stack) {

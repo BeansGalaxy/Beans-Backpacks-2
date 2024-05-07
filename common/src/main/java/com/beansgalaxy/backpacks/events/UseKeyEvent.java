@@ -7,7 +7,6 @@ import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.inventory.PotInventory;
 import com.beansgalaxy.backpacks.network.serverbound.UseCauldron;
-import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.inventory.CauldronInventory;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -86,7 +85,7 @@ public class UseKeyEvent {
 
       public static boolean cauldronPickup(Player player) {
             BackData backData = BackData.get(player);
-            if (backData.actionKeyPressed && Kind.CAULDRON.is(backData.getStack())) {
+            if (backData.actionKeyDown && Kind.CAULDRON.is(backData.getStack())) {
                   Player owner = backData.owner;
                   Level level = owner.level();
                   BlockHitResult blockHitResult = getPlayerPOVHitResult(level, owner, ClipContext.Fluid.SOURCE_ONLY);
@@ -101,7 +100,7 @@ public class UseKeyEvent {
 
       public static boolean cauldronPickup(BlockHitResult blockHitResult, Player player) {
             BackData backData = BackData.get(player);
-            if (backData.actionKeyPressed && blockHitResult.getType() == HitResult.Type.BLOCK) {
+            if (backData.actionKeyDown && blockHitResult.getType() == HitResult.Type.BLOCK) {
                   Player owner = backData.owner;
                   Level level = owner.level();
                   BlockPos blockPos = blockHitResult.getBlockPos();
@@ -282,7 +281,7 @@ public class UseKeyEvent {
 
             BackData backData = BackData.get(player);
             ItemStack cauldron = backData.getStack();
-            if (backData.actionKeyPressed && Kind.CAULDRON.is(cauldron)) {
+            if (backData.actionKeyDown && Kind.CAULDRON.is(cauldron)) {
                   Item bucket = CauldronInventory.getBucket(cauldron);
                   if (bucket.equals(Items.AIR)) return false;
 

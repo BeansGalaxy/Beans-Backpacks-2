@@ -85,6 +85,7 @@ public class ClientModEvents {
       @SubscribeEvent
       public static void registerKeys(RegisterKeyMappingsEvent event) {
             event.register(KeyPress.INSTANCE.ACTION_KEY);
+            event.register(KeyPress.INSTANCE.MENUS_KEY);
       }
 
       @SubscribeEvent

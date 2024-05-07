@@ -90,7 +90,7 @@ public class BackSlot extends Slot {
             boolean looking = e > 1.0 - radius * maxRadius && viewer.hasLineOfSight(owner);
 
             if (yawMatches && looking) { // INTERACT WITH BACKPACK CODE GOES HERE
-                  if (!backData.actionKeyPressed && backpackStack.hasTag() && backpackStack.getTag().getBoolean("Locked")) {
+                  if (!backData.actionKeyDown && backpackStack.hasTag() && backpackStack.getTag().getBoolean("Locked")) {
                         EquipLockedMsg.send(viewer, owner);
                         PlaySound.HIT.at(owner, backData.getTraits().kind);
                   } else {

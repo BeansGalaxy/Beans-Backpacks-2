@@ -1,10 +1,8 @@
-package com.beansgalaxy.backpacks.screen;
+package com.beansgalaxy.backpacks.screen.InfoTabs;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.config.ClientConfig;
 import com.beansgalaxy.backpacks.data.config.MenuVisibility;
-import com.beansgalaxy.backpacks.items.Tooltip;
-import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -16,7 +14,6 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
-import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.NonNullList;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.CommonComponents;
@@ -24,14 +21,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.function.Function;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry {
@@ -44,7 +37,7 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
       private int topPos;
       private boolean focused = false;
       private Runnable onClick;
-      private Tab selected = Tab.BACKPACK;
+      private Tabs selected = Tabs.BACKPACK;
       public NonNullList<Optional<InfoButton>> buttons = NonNullList.create();
       public HomeButton homeButton;
       public HideButton hideButton;
@@ -66,7 +59,7 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
       public void updateButtonPositions(int leftPos) {
             for (Optional<InfoButton> optional : buttons) {
                   optional.ifPresent(button -> {
-                        Tab tab = button.tab;
+                        Tabs tab = button.tab;
                         button.setPosition(leftPos + tab.offsetXY[0], topPos);
                   });
             }
@@ -76,7 +69,6 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
       public void render(GuiGraphics ctx, int i, int i1, float v) {
             if (focused) {
                   ctx.blit(TEXTURE, leftPos - 166, topPos + 22, 0, 1, 53, 167, 144, 256, 256);
-                  Component textVariable = selected.getTextVariable(minecraft);
                   String lowerCase = minecraft.player.getName().plainCopy().getString().toLowerCase();
                   MutableComponent title = Component.translatable("help.beansbackpacks." + selected.name().toLowerCase() + "_title", lowerCase);
                   FormattedCharSequence titleSequence = title.withStyle(ChatFormatting.BOLD).getVisualOrderText();
@@ -88,12 +80,6 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
                   Color c = selected.color;
                   int transparent = new Color(c.getRed(), c.getGreen(), c.getBlue(), 0).getRGB();
                   ctx.fillGradient(leftPos - 152, topPos + 25, leftPos - 1, topPos + 160, 0, transparent, c.getRGB());
-
-                  String useKey = "§0" + minecraft.options.keyUse.getTranslatedKeyMessage().getString()
-                              .replace("Right Button", "RClick")
-                              .replace("Left Button", "LClick")
-                              .replace("Left ", "L")
-                              .replace("Right ", "R");
 
                   int stringY = 44;
                   int hLineY = 0;
@@ -115,7 +101,7 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
                               hLineY = 0;
                               stringY += 5;
                         } else {
-                              MutableComponent mutableComponent = Component.translatableWithFallback(key, "", textVariable, useKey);
+                              MutableComponent mutableComponent = Component.translatableWithFallback(key, "", selected.getVarForLine(minecraft, j));
                               visualOrderText = mutableComponent.getVisualOrderText();
                               drawCenteredText(ctx, visualOrderText, this.topPos + stringY - 1);
                               hLineY = 0;
@@ -123,8 +109,8 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
                         }
                   }
 
-                  for (Tab tab : Tab.values()) {
-                        if (tab.tabUnlocked.apply(minecraft)) {
+                  for (Tabs tab : Tabs.values()) {
+                        if (tab.isUnlocked(minecraft)) {
                               tab.render(ctx, leftPos - 19, topPos + 4);
                         }
                   }
@@ -165,7 +151,7 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
 
             if (Constants.CLIENT_CONFIG.menu_visibility.get().equals(MenuVisibility.HIDE_ABLE))
                   hiddenTabs = Constants.CLIENT_CONFIG.hidden_tabs.get();
-            this.homeButton = new HomeButton(this, (button) -> onButtonClick(Tab.BACKPACK));
+            this.homeButton = new HomeButton(this, (button) -> onButtonClick(Tabs.BACKPACK));
             this.hideButton = new HideButton(this, (button) -> {
                   toggleHidden();
                   onClick.run();
@@ -175,8 +161,8 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
 
             buttons.clear();
             buttons.add(Optional.of(homeButton));
-            for (Tab tab : Tab.values()) {
-                  if (tab == Tab.BACKPACK) continue;
+            for (Tabs tab : Tabs.values()) {
+                  if (tab == Tabs.BACKPACK) continue;
                   buttons.add(createInfoButton(tab));
             }
       }
@@ -184,11 +170,11 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
       public void updateVisible() {
             boolean menuEnabled = !isHidden() || focused;
             boolean RecipeBookClosed = !recipeBook.isVisible();
-            Boolean BeganProgress = Tab.BACKPACK.tabUnlocked.apply(minecraft);
+            boolean BeganProgress = Tabs.BACKPACK.isUnlocked(minecraft);
             homeButton.setVisible(menuEnabled && RecipeBookClosed && BeganProgress);
       }
 
-      private Optional<InfoButton> createInfoButton(Tab tab) {
+      private Optional<InfoButton> createInfoButton(Tabs tab) {
             if (tab.isUnlocked(minecraft)) {
                   return Optional.of(new InfoButton(tab, this.leftPos, this.topPos, (button) -> {
                         onButtonClick(tab);
@@ -197,9 +183,9 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
             else return Optional.empty();
       }
 
-      private void onButtonClick(Tab selected) {
+      private void onButtonClick(Tabs selected) {
             if (this.selected == selected) {
-                  setSelected(Tab.BACKPACK);
+                  setSelected(Tabs.BACKPACK);
                   this.toggleFocus();
             }
             else {
@@ -208,7 +194,7 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
             onClick.run();
       }
 
-      public void setSelected(Tab selected) {
+      public void setSelected(Tabs selected) {
             this.selected = selected;
       }
 
@@ -250,9 +236,9 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
       }
 
 
-      HashSet<Tab> hiddenTabs = new HashSet<>();
-      private boolean anyUnlockedNonHidden(HashSet<Tab> hiddenTabs) {
-            for (Tab value : Tab.values()) {
+      HashSet<Tabs> hiddenTabs = new HashSet<>();
+      private boolean anyUnlockedNonHidden(HashSet<Tabs> hiddenTabs) {
+            for (Tabs value : Tabs.values()) {
                   if (!hiddenTabs.contains(value) && value.isUnlocked(minecraft))
                         return true;
             }
@@ -261,10 +247,10 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
 
       private void toggleHidden() {
             boolean hidden = anyUnlockedNonHidden(Constants.CLIENT_CONFIG.hidden_tabs.get());
-            HashSet<Tab> hiddenTabs = new HashSet<>();
+            HashSet<Tabs> hiddenTabs = new HashSet<>();
             if (hidden) {
-                  for (Tab tab : Tab.values())
-                        if (tab.tabUnlocked.apply(minecraft))
+                  for (Tabs tab : Tabs.values())
+                        if (tab.isUnlocked(minecraft))
                               hiddenTabs.add(tab);
             }
 
@@ -273,88 +259,10 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
             config.write();
       }
 
-      public static String keyBind = "§0" + Tooltip.getKeyBinding().getTranslatedKeyMessage().getString()
-                  .replace("Left ", "L")
-                  .replace("Right ", "R")
-                  .replace("Control", "Ctrl");
-
-      public enum Tab {
-            BACKPACK
-                        (1, new int[]{-23, 0},
-                        Services.REGISTRY.getLeather().getDefaultInstance(),
-                        in -> getAdvancement(in.getConnection(), "beansbackpacks:beansbackpacks"),
-                        in -> Component.literal(InfoWidget.keyBind),
-                        0x19EE5500
-            ),
-            ENDER       (2, new int[]{-46, 0},
-                        Services.REGISTRY.getEnder().getDefaultInstance(),
-                        in -> getAdvancement(in.getConnection(), "beansbackpacks:info/ender_backpacks"),
-                        in -> Component.literal(InfoWidget.keyBind),
-                        0x108800FF
-            ),
-            POT         (3, new int[]{-69, 0},
-                        Items.DECORATED_POT.getDefaultInstance(),
-                        in -> getAdvancement(in.getConnection(), "beansbackpacks:info/decorated_pots"),
-                        in -> Component.literal(InfoWidget.keyBind),
-                        0x19DDCC00
-            ),
-            CAULDRON    (4, new int[]{-92, -1},
-                        Items.CAULDRON.getDefaultInstance(),
-                        in -> getAdvancement(in.getConnection(), "beansbackpacks:info/fluid_cauldrons"),
-                        in -> Component.literal(InfoWidget.keyBind),
-                        0x120055FF
-            ),
-            NULL        (5, new int[]{-114, 0},
-                        Constants.createLabeledBackpack("null"),
-                        in -> getAdvancement(in.getConnection(), "beansbackpacks:info/thank_you"),
-                        in -> in.player.getName().plainCopy().withStyle(ChatFormatting.BLACK),
-                        0x1000FF00
-            );
-
-            final int index;
-            final Function<Minecraft, Boolean> tabUnlocked;
-            final int[] offsetXY;
-            final ItemStack display;
-            final Function<Minecraft, Component> textVariable;
-            final Color color;
-
-            Tab(int i, int[] offsetXY, ItemStack display, Function<Minecraft, Boolean> tabUnlocked, Function<Minecraft, Component> textVariable, int color) {
-                  index = i;
-                  this.tabUnlocked = tabUnlocked;
-                  this.offsetXY = offsetXY;
-                  this.display = display;
-                  this.textVariable = textVariable;
-                  this.color = new Color(color, true);
-            }
-
-            private boolean isUnlocked(Minecraft minecraft) {
-                  return tabUnlocked.apply(minecraft);
-            }
-            public static boolean getAdvancement(ClientPacketListener connection, String... locations) {
-                  if (connection == null)
-                        return false;
-
-                  for (String location : locations) {
-                        ResourceLocation resourceLocation = ResourceLocation.tryParse(location);
-                        if (resourceLocation != null && connection.getAdvancements().getAdvancements().get(resourceLocation) != null)
-                              return true;
-                  }
-                  return false;
-            }
-
-            public void render(GuiGraphics gui, int x, int y) {
-                  gui.renderFakeItem(display, x + offsetXY[0] - offsetXY[1] + 23, y + offsetXY[1]);
-            }
-
-            public Component getTextVariable(Minecraft minecraft) {
-                  return textVariable.apply(minecraft);
-            }
-      }
-
       public static class InfoButton extends ImageButton {
-            private final Tab tab;
+            private final Tabs tab;
 
-            public InfoButton(Tab tab, int leftPos, int topPos, OnPress o) {
+            public InfoButton(Tabs tab, int leftPos, int topPos, OnPress o) {
                   super(leftPos + tab.offsetXY[0], topPos, 24, 25, 24 * tab.index, 0, 25, TEXTURE, o);
                   this.tab = tab;
                   init();
@@ -378,7 +286,7 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
             private final InfoWidget parent;
 
             public HomeButton(InfoWidget parent, OnPress o) {
-                  super(Tab.BACKPACK, parent.leftPos, parent.topPos, o);
+                  super(Tabs.BACKPACK, parent.leftPos, parent.topPos, o);
                   this.parent = parent;
                   setVisible(!parent.isHidden());
             }

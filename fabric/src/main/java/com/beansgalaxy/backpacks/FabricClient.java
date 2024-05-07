@@ -15,14 +15,11 @@ import com.beansgalaxy.backpacks.items.DyableBackpack;
 import com.beansgalaxy.backpacks.items.WingedBackpack;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.platform.Services;
-import dev.onyxstudios.cca.api.v3.entity.PlayerSyncCallback;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.*;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -34,7 +31,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-import java.nio.file.Path;
 import java.util.UUID;
 
 public class FabricClient implements ClientModInitializer {
@@ -56,6 +52,7 @@ public class FabricClient implements ClientModInitializer {
             TooltipComponentCallback.EVENT.register(new TooltipImageEvent());
 
             KeyBindingHelper.registerKeyBinding(KeyPress.INSTANCE.ACTION_KEY);
+            KeyBindingHelper.registerKeyBinding(KeyPress.INSTANCE.MENUS_KEY);
             ColorProviderRegistry.ITEM.register((stack, layer) -> layer == 1 ? 16777215 :
                         DyableBackpack.shiftColor(((DyableBackpack) stack.getItem()).getColor(stack)).getRGB(), FabricMain.LEATHER_BACKPACK);
             ColorProviderRegistry.ITEM.register((stack, layer) -> switch (layer) {

@@ -1,7 +1,7 @@
 package com.beansgalaxy.backpacks.client.renderer;
 
 import com.beansgalaxy.backpacks.Constants;
-import com.beansgalaxy.backpacks.access.ClickAccessor;
+import com.beansgalaxy.backpacks.access.PosAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.config.TooltipType;
 import com.beansgalaxy.backpacks.inventory.BackpackTooltip;
@@ -9,7 +9,6 @@ import com.beansgalaxy.backpacks.items.Tooltip;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.ChatFormatting;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
@@ -25,7 +24,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -148,7 +146,7 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
             }
 
             boolean empty = player.inventoryMenu.getCarried().isEmpty();
-            boolean isQuickMove = backData.actionKeyPressed || InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 340) || InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 344);
+            boolean isQuickMove = backData.menusKeyDown || InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 340) || InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 344);
             int fillX = firstX + ((empty || isQuickMove) && hasSpace ? spacing : 0);
             gui.fill(fillX + 1, firstY + 1, fillX + 17, firstY + 17, 500, 0x78FFFFFF);
 
@@ -224,7 +222,7 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
                               : floor - (floor + 1) % 2;
             }
 
-            ClickAccessor invScreen = (ClickAccessor) screen;
+            PosAccessor invScreen = (PosAccessor) screen;
             int[] pos = invScreen.getPos();
 
             int x;

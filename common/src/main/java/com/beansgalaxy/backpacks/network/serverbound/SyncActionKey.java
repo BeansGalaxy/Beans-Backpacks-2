@@ -8,17 +8,19 @@ import net.minecraft.server.level.ServerPlayer;
 public class SyncActionKey implements Packet2S {
 
       private final boolean actionKeyPressed;
+      private final boolean menuKeyPressed;
 
-      public SyncActionKey(boolean actionKeyPressed) {
-            this.actionKeyPressed = actionKeyPressed;
+      public SyncActionKey(boolean actionPressed, boolean menuPressed) {
+            actionKeyPressed = actionPressed;
+            menuKeyPressed = menuPressed;
       }
 
       public SyncActionKey(FriendlyByteBuf buf) {
-            this(buf.readBoolean());
+            this(buf.readBoolean(), buf.readBoolean());
       }
 
-      public static void send(boolean actionKeyPressed) {
-            new SyncActionKey(actionKeyPressed).send2S();
+      public static void send(boolean actionPressed, boolean menuPressed) {
+            new SyncActionKey(actionPressed, menuPressed).send2S();
       }
 
       @Override
@@ -29,11 +31,14 @@ public class SyncActionKey implements Packet2S {
       @Override
       public void encode(FriendlyByteBuf buf) {
             buf.writeBoolean(actionKeyPressed);
+            buf.writeBoolean(menuKeyPressed);
       }
 
       @Override
       public void handle(ServerPlayer sender) {
             getNetwork().debugMsgDecode();
-            BackData.get(sender).actionKeyPressed = actionKeyPressed;
+            BackData backData = BackData.get(sender);
+            backData.actionKeyDown = actionKeyPressed;
+            backData.menusKeyDown = menuKeyPressed;
       }
 }

@@ -698,9 +698,9 @@ public abstract class EntityAbstract extends Backpack {
             ItemStack backStack = backData.getStack();
             ItemStack inHand = player.getItemInHand(hand);
 
-            ItemStack backpackStack = backData.actionKeyPressed && !backStack.isEmpty() ? backStack : inHand;
+            ItemStack backpackStack = backData.actionKeyDown && !backStack.isEmpty() ? backStack : inHand;
             if (Kind.isBackpack(backpackStack))
-                  return BackpackItem.useOnBackpack(player, this, backpackStack, backData.actionKeyPressed);
+                  return BackpackItem.useOnBackpack(player, this, backpackStack, backData.actionKeyDown);
 
             Vec3 vec3 = player.getEyePosition();
             Vec3 view = player.getViewVector(1).scale(10);
@@ -746,7 +746,7 @@ public abstract class EntityAbstract extends Backpack {
       public InteractionResult interact(ServerPlayer player) {
             Kind kind = getTraits().kind;
             BackData backData = BackData.get(player);
-            boolean actionKeyPressed = backData.actionKeyPressed;
+            boolean actionKeyPressed = backData.actionKeyDown;
             if (isLocked(backData, player.serverLevel(), kind))
                   return InteractionResult.SUCCESS;
 

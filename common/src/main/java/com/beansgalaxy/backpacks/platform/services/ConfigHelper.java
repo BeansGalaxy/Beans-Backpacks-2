@@ -2,12 +2,10 @@ package com.beansgalaxy.backpacks.platform.services;
 
 import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.data.config.Gamerules;
-import com.beansgalaxy.backpacks.screen.InfoWidget;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 
 import java.nio.file.Path;
-import java.util.HashSet;
 
 public interface ConfigHelper {
 

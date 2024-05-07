@@ -5,7 +5,6 @@ import com.beansgalaxy.backpacks.access.BackAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.Kind;
-import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.inventory.CauldronInventory;
 import com.beansgalaxy.backpacks.inventory.PotInventory;
@@ -181,7 +180,7 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                         return;
             }
 
-            if (backData.actionKeyPressed && selectedPlayerInventory ) {
+            if (backData.menusKeyDown && selectedPlayerInventory ) {
                   if (backStack.isEmpty() && backData.backSlot.isActive() && !stack.isEmpty() && Kind.isWearable(stack)) {
                         slot.set(backData.backSlot.safeInsert(stack));
                         return;

@@ -7,7 +7,7 @@ import com.beansgalaxy.backpacks.inventory.BackpackTooltip;
 import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.screen.BackSlot;
-import com.beansgalaxy.backpacks.screen.InfoWidget;
+import com.beansgalaxy.backpacks.screen.InfoTabs.InfoWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;

@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.access.ClickAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.data.Traits;
@@ -10,7 +11,6 @@ import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -18,30 +18,22 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.TextureAtlasHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.UUID;
 
-public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
+public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> implements ClickAccessor {
       private static final Component TITLE = Component.literal("");
       private static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/backpack.png");
       private final BackpackMenu handler;
@@ -199,5 +191,15 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
                                     || mouseY >= (double)(top + this.imageHeight);
 
             return inventory && backpackRender && backpackSlots;
+      }
+
+      @Override
+      public void beans_Backpacks_2$instantPlace() {
+            instantPlace(minecraft.player, hoveredSlot);
+      }
+
+      @Override
+      public void beans_Backpacks_2$slotClicked(Slot $$0, int $$1, int $$2, ClickType $$3) {
+            slotClicked($$0, $$1, $$2, $$3);
       }
 }

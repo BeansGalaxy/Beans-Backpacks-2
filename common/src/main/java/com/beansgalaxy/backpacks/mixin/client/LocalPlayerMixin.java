@@ -7,16 +7,9 @@ import com.beansgalaxy.backpacks.network.clientbound.SendBackInventory;
 import com.beansgalaxy.backpacks.network.clientbound.SendBackSlot;
 import com.beansgalaxy.backpacks.network.clientbound.SendEnderSound;
 import com.beansgalaxy.backpacks.network.serverbound.SyncActionKey;
-import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.beansgalaxy.backpacks.events.KeyPress;
-import com.beansgalaxy.backpacks.items.Tooltip;
-import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.NonNullList;
-import net.minecraft.world.item.ItemStack;
-import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -35,35 +28,26 @@ public class LocalPlayerMixin {
             SendBackSlot.indexHeldSlots();
             SendBackInventory.indexInventories();
             SendEnderSound.indexSounds(instance);
-            KeyMapping keyBinding = Tooltip.getKeyBinding();
 
-            KeyMapping sneakKey = minecraft.options.keyShift;
-            if (sneakKey.same(keyBinding))
-                  sneakKey.setDown(keyBinding.isDown());
-
-            InputConstants.Key key = InputConstants.getKey(keyBinding.saveString());
-            boolean isMouseKey = key.getType().equals(InputConstants.Type.MOUSE);
-
-
-            long window = minecraft.getWindow().getWindow();
-            int value = key.getValue();
+            KeyPress.isPressed actionKey = KeyPress.isPressed(minecraft, KeyPress.getActionKeyBind());
+            KeyPress.isPressed menusKey = KeyPress.isPressed(minecraft, KeyPress.getMenusKeyBind());
 
             BackData backData = BackData.get(instance);
-            boolean actionKeyPressed = isMouseKey ? GLFW.glfwGetMouseButton(window, value) == 1 : InputConstants.isKeyDown(window, value);
-            boolean actionKeyPrevious = backData.actionKeyPressed;
-
-            if (actionKeyPressed == actionKeyPrevious)
+            if (actionKey.pressed() == backData.actionKeyDown && menusKey.pressed() == backData.menusKeyDown)
                   return;
 
-            backData.actionKeyPressed = actionKeyPressed;
-            SyncActionKey.send(actionKeyPressed);
+            backData.actionKeyDown = actionKey.pressed();
+            backData.menusKeyDown = menusKey.pressed();
+            SyncActionKey.send(actionKey.pressed(), menusKey.pressed());
 
             boolean instantPlace = Constants.CLIENT_CONFIG.instant_place.get();
-            if ((instantPlace || isMouseKey) && actionKeyPressed) {
-                  if (minecraft.screen instanceof ClickAccessor clickAccessor)
-                        clickAccessor.beans_Backpacks_2$instantPlace();
-                  else if (!(minecraft.screen instanceof BackpackScreen))
-                        KeyPress.instantPlace(instance);
+            if (actionKey.pressed() && (instantPlace || actionKey.onMouse()) && minecraft.screen == null) {
+                  KeyPress.instantPlace(instance);
             }
+            else if (menusKey.pressed() && menusKey.onMouse() && minecraft.screen instanceof ClickAccessor clickAccessor)
+                  clickAccessor.beans_Backpacks_2$instantPlace();
+
+            System.out.println("A:" + actionKey.pressed() + "   M:" + menusKey.pressed());
       }
+
 }

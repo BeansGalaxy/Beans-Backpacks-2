@@ -65,7 +65,8 @@ public class BackData {
       private final HashSet<EnderStorage.PackagedLocation> enderLocations = new HashSet<>();
       private Traits.LocalData traits = Traits.LocalData.EMPTY;
       private ItemStack backStack = ItemStack.EMPTY;
-      public boolean actionKeyPressed = false;
+      public boolean actionKeyDown = false;
+      public boolean menusKeyDown = false;
 
       public void setEnderLocations(HashSet<EnderStorage.PackagedLocation> newLocations) {
             this.enderLocations.clear();

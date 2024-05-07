@@ -59,14 +59,14 @@ public abstract class ItemStackMixin {
             ItemStack backStack = backData.getStack();
             Traits.LocalData traits = Traits.LocalData.fromStack(instance, player);
             Kind instanceKind = traits.kind;
-            boolean actionKeyPressed = backData.actionKeyPressed;
+            boolean menusKeyDown = backData.menusKeyDown;
 
             if (traits.isEmpty())
                   return;
 
             if (instance.is(Services.REGISTRY.getUpgraded()))
             {
-                  if (actionKeyPressed) {
+                  if (menusKeyDown) {
                         components.add(Component.translatable("tooltip.beansbackpacks.null0"));
                         components.add(Component.translatable("tooltip.beansbackpacks.null1"));
                         components.add(Component.empty());

@@ -62,6 +62,10 @@ subprojects {
             name = "Curios"
             url = "https://maven.theillusivec4.top/"
         }
+        maven {
+            name = "Modrinth"
+            url = "https://api.modrinth.com/maven"
+        }
     }
 
     tasks.withType(JavaCompile).configureEach {

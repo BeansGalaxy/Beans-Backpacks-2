@@ -6,6 +6,7 @@ import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.events.KeyPress;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.inventory.EnderInventory;
@@ -83,7 +84,7 @@ public class CommonAtClient {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null) return;
 
-            MutableComponent keybind = Component.literal(Tooltip.keyBind).withStyle(ChatFormatting.GOLD);
+            MutableComponent keybind = KeyPress.getReadable(false).plainCopy().withStyle(ChatFormatting.GOLD);
             player.displayClientMessage(Component.translatable("entity.beansbackpacks.equip_locked_msg", keybind, requester), true);
       }
 

@@ -9,11 +9,9 @@ import com.beansgalaxy.backpacks.entity.Backpack;
 import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
-import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.items.BackpackItem;
 import com.beansgalaxy.backpacks.network.clientbound.SendBackInventory;
 import com.beansgalaxy.backpacks.platform.Services;
-import com.google.common.base.Suppliers;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,15 +21,12 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.entity.EntityAccess;
 
-import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 public class BackpackMenu extends AbstractContainerMenu {
       public static int FIRST_SLOT_INDEX;
@@ -192,7 +187,7 @@ public class BackpackMenu extends AbstractContainerMenu {
                   return;
             }
 
-            if (BackData.get(player).actionKeyPressed)
+            if (BackData.get(player).menusKeyDown)
                   actionType = ClickType.QUICK_MOVE;
 
 

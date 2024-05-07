@@ -19,7 +19,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -103,7 +102,7 @@ public class BackpackItem extends Item {
                   return false;
 
             Level level = player.level();
-            boolean quickMove = backData.actionKeyPressed || shiftIsDown;
+            boolean quickMove = backData.menusKeyDown || shiftIsDown;
             if (Kind.CAULDRON.is(kind))
                   return handleCauldronClick(backStack, player, access, cursorStack, level);
             if (Kind.POT.is(kind))
