@@ -81,14 +81,6 @@ public class Constants {
 		return true;
 	}
 
-	public static boolean elytraOrDisables(Item item) {
-		return !item.equals(Items.AIR) && (DISABLES_BACK_SLOT.contains(item) || ELYTRA_ITEMS.contains(item));
-	}
-
-	public static boolean cantEquipWithBackpack(Item item) {
-		return !item.equals(Items.AIR) && (DISABLES_BACK_SLOT.contains(item) || ELYTRA_ITEMS.contains(item) || CHESTPLATE_DISABLED.contains(item));
-	}
-
 	protected static void register() {
 		LOG.info("Initializing Beans' Backpacks Constants");
 	}
@@ -137,74 +129,4 @@ public class Constants {
 		return items;
 	}
 
-	public static HashSet<String> readStringList(ResourceManager resourceManager, String location) {
-		Map<ResourceLocation, Resource> locations = resourceManager.listResources("modify",
-				(in) -> in.getPath().endsWith(location));
-
-		HashSet<String> strings = new HashSet<>();
-		HashSet<String> removedStrings = new HashSet<>();
-		locations.forEach( (resourceLocation, resource) -> {
-			try {
-				InputStream open = resource.open();
-				BufferedReader reader = new BufferedReader(new InputStreamReader(open));
-
-				String line;
-				while ((line = reader.readLine()) != null) {
-					String[] split = line.replaceAll(" ", "").split(",");
-					for (String id: split) {
-						if (id.startsWith("!"))
-							removedStrings.add(id.replace("!", ""));
-						else
-							strings.add(id);
-					}
-				}
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		});
-
-		strings.removeIf(String::isEmpty);
-		strings.removeAll(removedStrings);
-		return strings;
-
-	}
-
-	public static void receiveItemLists(Map<String, String> map) {
-		for (String key : map.keySet()) {
-			String ids = map.get(key);
-			HashSet<Item> list;
-			switch (key) {
-				case "disables_back_slot" -> list = DISABLES_BACK_SLOT;
-				case "chestplate_disabled" -> list = CHESTPLATE_DISABLED;
-				case "elytra_items" -> list = ELYTRA_ITEMS;
-				case "blacklist_items" -> list = BLACKLIST_ITEMS;
-				default -> {
-					continue;
-				}
-			}
-
-			list.clear();
-			if (isEmpty(ids))
-				continue;
-
-			String[] split = ids.split(",");
-			for (String string : split) {
-				list.add(itemFromString(string));
-			}
-			LOG.info("Configured " + MOD_ID + " item list: " + key);
-		}
-	}
-
-	public static String writeList(HashSet<Item> list) {
-		StringBuilder sb = new StringBuilder();
-		Iterator<Item> iterator = list.iterator();
-		while (iterator.hasNext()) {
-			Item item = iterator.next();
-			sb.append(BuiltInRegistries.ITEM.getKey(item));
-			if (iterator.hasNext())
-				sb.append(",");
-		}
-
-		return sb.toString();
-	}
 }

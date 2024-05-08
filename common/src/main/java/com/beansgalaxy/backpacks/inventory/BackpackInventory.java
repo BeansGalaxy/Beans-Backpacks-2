@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.inventory;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.config.IConfig;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.data.Viewable;
@@ -334,7 +335,7 @@ public abstract class BackpackInventory implements Container {
 
 
       public boolean canPlaceItem(ItemStack inserted) {
-            if (Constants.BLACKLIST_ITEMS.contains(inserted.getItem()))
+            if (IConfig.blacklistedItem(inserted.getItem()))
                   return false;
 
             boolean isEmpty = getItemStacks().isEmpty();

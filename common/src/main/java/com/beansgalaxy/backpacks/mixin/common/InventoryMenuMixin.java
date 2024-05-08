@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.access.BackAccessor;
+import com.beansgalaxy.backpacks.config.IConfig;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.Kind;
@@ -103,11 +104,11 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
             ItemStack carried = getCarried();
             boolean cursorEmpty = carried.isEmpty();
             Item carriedItem = carried.getItem();
-            if (selectedEquipment && !selectedBackSlot && !cursorEmpty && Constants.CHESTPLATE_DISABLED.contains(carriedItem)) {
+            if (selectedEquipment && !selectedBackSlot && !cursorEmpty && IConfig.chestplateDisabled(carriedItem)) {
                   return;
             }
 
-            if (!backData.isEmpty() && actionType == ClickType.QUICK_MOVE && Constants.cantEquipWithBackpack(stack.getItem())) {
+            if (!backData.isEmpty() && actionType == ClickType.QUICK_MOVE && IConfig.cantEquipWithBackpack(stack.getItem())) {
                   cancelQuickMoveArmor = true;
                   super.clicked(slotIndex, button, actionType, player);
                   cancelQuickMoveArmor = false;

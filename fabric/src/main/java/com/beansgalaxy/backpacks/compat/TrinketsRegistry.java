@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.compat;
 
 import com.beansgalaxy.backpacks.CommonClass;
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.config.IConfig;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -106,7 +107,7 @@ public class TrinketsRegistry {
             Optional<TrinketComponent> trinketComponent = TrinketsApi.getTrinketComponent(entity);
             return trinketComponent.map(component -> component.getAllEquipped().stream().map((ref -> {
                   ItemStack item = ref.getB();
-                  if (Constants.elytraOrDisables(item.getItem()))
+                  if (IConfig.elytraOrDisables(item.getItem()))
                         return item;
                   return ItemStack.EMPTY;
             })).toList()).orElse(List.of());

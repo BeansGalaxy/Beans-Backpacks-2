@@ -94,21 +94,11 @@ public class CommonForgeEvents {
       public static void syncDataPackEvent(OnDatapackSyncEvent event)
       {
             ServerPlayer player = event.getPlayer();
-            HashMap<String, String> listMap = new HashMap<>();
-            listMap.put("disables_back_slot", Constants.writeList(Constants.DISABLES_BACK_SLOT));
-            listMap.put("chestplate_disabled", Constants.writeList(Constants.CHESTPLATE_DISABLED));
-            listMap.put("elytra_items", Constants.writeList(Constants.ELYTRA_ITEMS));
-            listMap.put("blacklist_items", Constants.writeList(Constants.BLACKLIST_ITEMS));
-
             // Null Player means data pack is being sent to all players
-            if (player == null) {
+            if (player == null)
                   NetworkPackages.S2All(new ConfigureTraits(Constants.TRAITS_MAP));
-                  NetworkPackages.S2All(new ConfigureLists(listMap));
-            }
-            else {
-                  NetworkPackages.S2C(new ConfigureTraits(Constants.TRAITS_MAP), player);
-                  NetworkPackages.S2C(new ConfigureLists(listMap), player);
-            }
+            else
+                  ConfigureTraits.send(player);
 
             String syncedPlayers = player == null ? "all players" : "\"" + player.getDisplayName().getString() + "\"";
             Constants.LOG.info("Syncing {} data to {}", Constants.MOD_ID, syncedPlayers);

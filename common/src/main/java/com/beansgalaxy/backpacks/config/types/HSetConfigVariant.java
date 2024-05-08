@@ -33,7 +33,7 @@ public class HSetConfigVariant<ENTRY> extends ConfigVariant<HashSet<ENTRY>> {
                   String name = encode.apply(iterator.next());
                   sb.append(name);
                   if (iterator.hasNext())
-                        sb.append(',');
+                        sb.append(", ");
             }
             sb.append('"');
 
@@ -42,6 +42,8 @@ public class HSetConfigVariant<ENTRY> extends ConfigVariant<HashSet<ENTRY>> {
 
       @Override
       public void decode(JsonObject jsonObject) {
+            if (!jsonObject.has(name)) return;
+
             String string = GsonHelper.getAsString(jsonObject, name);
             String[] split = string.replace(" ", "").split(",");
             for (String entry : split) {

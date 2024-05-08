@@ -10,12 +10,11 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public enum Network2C {
+      CONFIG_2C("config_c", new Packet<>(ConfigureConfig.class, ConfigureConfig::encode, ConfigureConfig::new, ConfigureConfig::handle)),
+      TRAITS_2C("traits_c", new Packet<>(ConfigureTraits.class, ConfigureTraits::encode, ConfigureTraits::new, ConfigureTraits::handle)),
       SYNC_VIEWERS_2C("sync_viewers_c", new Packet<>(SendViewers.class, SendViewers::encode, SendViewers::new, SendViewers::handle)),
       SYNC_BACK_SLOT_2C("sync_back_slot_c", new Packet<>(SendBackSlot.class, SendBackSlot::encode, SendBackSlot::new, SendBackSlot::handle)),
       SYNC_BACK_INV_2C("sync_back_inv_c", new Packet<>(SendBackInventory.class, SendBackInventory::encode, SendBackInventory::new, SendBackInventory::handle)),
-      CONFIG_TRAITS_2C("config_traits_c", new Packet<>(ConfigureTraits.class, ConfigureTraits::encode, ConfigureTraits::new, ConfigureTraits::handle)),
-      CONFIG_LISTS_2C("config_lists_c", new Packet<>(ConfigureLists.class, ConfigureLists::encode, ConfigureLists::new, ConfigureLists::handle)),
-      CONFIG_2C("config_c", new Packet<>(ConfigureConfig.class, ConfigureConfig::encode, ConfigureConfig::new, ConfigureConfig::handle)),
       ENDER_POS_2C("ender_pos_c", new Packet<>(SendEnderPos.class, SendEnderPos::encode, SendEnderPos::new, SendEnderPos::handle)),
       ENDER_INV_2C("ender_inv_c", new Packet<>(SendEnderStacks.class, SendEnderStacks::encode, SendEnderStacks::new, SendEnderStacks::handle)),
       ENDER_DISPLAY_2C("ender_display_c", new Packet<>(SendEnderDisplay.class, SendEnderDisplay::encode, SendEnderDisplay::new, SendEnderDisplay::handle)),

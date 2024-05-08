@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.config.IConfig;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
@@ -43,7 +44,7 @@ public abstract class ArmorItemMixin implements Equipable {
                                           PlaySound.EQUIP.at(player, kind);
                         }
                   } else {
-                        if (Constants.cantEquipWithBackpack(item)) {
+                        if (IConfig.cantEquipWithBackpack(item)) {
                               cir.setReturnValue(false);
                               if (player.level().isClientSide()) {
                                     Tooltip.playSound(kind, PlaySound.HIT);
@@ -59,7 +60,7 @@ public abstract class ArmorItemMixin implements Equipable {
             ItemStack itemStack = player.getItemInHand(hand);
             BackData backData = BackData.get(player);
 
-            if (Constants.CHESTPLATE_DISABLED.contains(item)) {
+            if (IConfig.chestplateDisabled(item)) {
                   if (backData.isEmpty()) {
                         if (!level.isClientSide())
                               player.awardStat(Stats.ITEM_USED.get(item));

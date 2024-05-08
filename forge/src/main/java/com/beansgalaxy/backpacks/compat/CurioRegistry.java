@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.compat;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.config.IConfig;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -61,7 +62,7 @@ public class CurioRegistry {
             Optional<ICuriosItemHandler> resolve = CuriosApi.getCuriosInventory(owner).resolve();
             return resolve.map(iCuriosItemHandler ->
                         iCuriosItemHandler.findCurios(stack ->
-                              Constants.elytraOrDisables(stack.getItem())).stream().map(SlotResult::stack)
+                              IConfig.elytraOrDisables(stack.getItem())).stream().map(SlotResult::stack)
                                     .toList()).orElseGet(List::of);
       }
 

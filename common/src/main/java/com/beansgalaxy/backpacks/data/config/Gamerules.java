@@ -11,7 +11,6 @@ public enum Gamerules {
       LOCK_ENDER_OFFLINE("lockEnderOffline", false),
       LOCK_BACKPACK_OFFLINE("lockBackpackOffline", false),
       LOCK_BACKPACK_NOT_OWNER("lockBackpackNotOwner", false),
-      LOCK_BACKPACK_NO_KEY("lockBackpackNoKey", false),
       KEEP_BACK_SLOT("keepBackSlot", false);
 
       private final String readable;

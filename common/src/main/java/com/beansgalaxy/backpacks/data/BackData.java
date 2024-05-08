@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.data;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.access.BackAccessor;
+import com.beansgalaxy.backpacks.config.IConfig;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.events.PlaySound;
@@ -205,7 +206,7 @@ public class BackData {
             List<ItemStack> items = Services.COMPAT.backSlotDisabled(owner);
             NonNullList<ItemStack> disabling = NonNullList.create();
             for (ItemStack stack : owner.getInventory().armor) {
-                  if (!stack.isEmpty() && Constants.elytraOrDisables(stack.getItem()))
+                  if (!stack.isEmpty() && IConfig.elytraOrDisables(stack.getItem()))
                         disabling.add(stack);
             }
             items.forEach(in -> {

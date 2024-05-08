@@ -3,9 +3,12 @@ package com.beansgalaxy.backpacks.config;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.config.types.ConfigLine;
 import com.beansgalaxy.backpacks.config.types.ConfigLabel;
+import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -79,6 +82,31 @@ public interface IConfig {
             } catch (IOException e) {
                   e.printStackTrace();
             }
+      }
 
+      /* ============================= Item Whitelist Helpers ============================ */
+
+      static boolean chestplateDisabled(Item item) {
+            return ServerSave.CONFIG.disable_chestplate.get().contains(item);
+      }
+
+      static boolean disablesBackSlot(Item item) {
+            return ServerSave.CONFIG.disables_back_slot.get().contains(item);
+      }
+
+      static boolean blacklistedItem(Item item) {
+            return ServerSave.CONFIG.blacklist_items.get().contains(item);
+      }
+
+      static boolean elytraItem(Item item) {
+            return ServerSave.CONFIG.elytra_items.get().contains(item);
+      }
+
+      static boolean elytraOrDisables(Item item) {
+            return !item.equals(Items.AIR) && (disablesBackSlot(item) || elytraItem(item));
+      }
+
+      static boolean cantEquipWithBackpack(Item item) {
+            return !item.equals(Items.AIR) && (disablesBackSlot(item) || chestplateDisabled(item));
       }
 }

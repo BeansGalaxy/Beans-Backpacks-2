@@ -4,6 +4,7 @@ import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
@@ -29,5 +30,9 @@ public class PlayerListMixin {
                         save.setDirty();
                   }
             }
+
+            if (ServerSave.CONFIG.usesOldDataPackConfig)
+                  player.displayClientMessage(Component.literal("§cModifying Item Whitelists is outdated!!§r\nThis world uses Data-Packs to modify §eBeans' Backpacks.\nUse §e\"Whitelists\"§r in beansbackpacks-common config instead.\nCheck the server's log for more info."), false);
+
       }
 }

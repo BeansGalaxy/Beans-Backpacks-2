@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.inventory;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.config.IConfig;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.data.config.Config;
 import com.beansgalaxy.backpacks.entity.Kind;
@@ -35,7 +36,7 @@ public class PotInventory {
             if (inserted.isEmpty() || (inserted.isStackable() && inserted.hasTag()))
                   return null;
 
-            if (Constants.BLACKLIST_ITEMS.contains(inserted.getItem()))
+            if (IConfig.blacklistedItem(inserted.getItem()))
                   return null;
 
             int amount = inserted.getCount();

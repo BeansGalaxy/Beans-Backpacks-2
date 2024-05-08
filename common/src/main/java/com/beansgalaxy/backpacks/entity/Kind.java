@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.entity;
 
 import com.beansgalaxy.backpacks.Constants;
+import com.beansgalaxy.backpacks.config.IConfig;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.inventory.CauldronInventory;
 import com.beansgalaxy.backpacks.inventory.PotInventory;
@@ -83,7 +84,7 @@ public enum Kind {
                         boolean potDisabled = !(Kind.POT.is(kind) && PotInventory.getMaxSize() == 0);
                         return cauldronDisabled && potDisabled;
                   }
-            return Constants.CHESTPLATE_DISABLED.contains(item) || isWearableElytra(item);
+            return IConfig.chestplateDisabled(item) || isWearableElytra(item);
       }
 
       public static boolean isWings(ItemStack backStack) {
@@ -94,7 +95,7 @@ public enum Kind {
       }
 
       public static boolean isWearableElytra(Item item) {
-            return Constants.ELYTRA_ITEMS.contains(item) && !Services.COMPAT.isModLoaded(CompatHelper.ELYTRA_SLOT);
+            return IConfig.elytraItem(item) && !Services.COMPAT.isModLoaded(CompatHelper.ELYTRA_SLOT);
       }
 
       public static Kind fromStack(ItemStack stack) {
