@@ -20,7 +20,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -74,14 +73,16 @@ public class DataResourcesMixin {
                         boolean fireResistant = GsonHelper.getAsBoolean(settings, "fire_resistant", ironTraits.fireResistant);
                         String button = GsonHelper.getAsString(settings, "button", ironTraits.button);
                         String material = GsonHelper.getAsString(settings, "material", null);
+                        String sound = GsonHelper.getAsString(settings, "sound", "hard");
 
-                        Traits.register(key, new Traits(fallbackName, fireResistant, button, material, maxStacks));
+                        Traits.register(key, new Traits(fallbackName, fireResistant, button, material, maxStacks, sound));
                   } catch (IOException e) {
                         throw new RuntimeException(e);
                   }
             }));
 
-            Traits.register("null", new Traits("Null Backpack", true, "none", null, 11));
+            Traits.register("null", new Traits("Null Backpack", true, "none", null, 11, "hard"));
+            Traits.register("bundle", new Traits("Back Bundle", false, "none", "leather", () -> ServerSave.CONFIG.leather_max_stacks.get(), Traits.Sound.SOFT));
 
             for (Kind kind : Kind.values()) {
                   Traits.register(kind.name(), kind.defaultTraits);

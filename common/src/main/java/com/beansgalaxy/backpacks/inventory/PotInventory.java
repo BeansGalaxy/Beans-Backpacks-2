@@ -73,7 +73,7 @@ public class PotInventory {
             }
 
             if (level.isClientSide())
-                  Tooltip.playSound(Kind.POT, PlaySound.INSERT);
+                  Tooltip.playSound(Traits.Sound.CLAY, PlaySound.INSERT);
 
             return inserted;
       }
@@ -106,7 +106,7 @@ public class PotInventory {
                   else pot.removeTagKey("back_slot");
                   stack.setCount(count);
                   if (level.isClientSide())
-                        Tooltip.playSound(Kind.POT, PlaySound.TAKE);
+                        Tooltip.playSound(Traits.Sound.CLAY, PlaySound.TAKE);
                   return stack;
             }
             return null;

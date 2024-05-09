@@ -92,7 +92,7 @@ public class BackSlot extends Slot {
             if (yawMatches && looking) { // INTERACT WITH BACKPACK CODE GOES HERE
                   if (!backData.actionKeyDown && backpackStack.hasTag() && backpackStack.getTag().getBoolean("Locked")) {
                         EquipLockedMsg.send(viewer, owner);
-                        PlaySound.HIT.at(owner, backData.getTraits().kind);
+                        PlaySound.HIT.at(owner, backData.getTraits().sound());
                   } else {
                         Services.NETWORK.openBackpackMenu(viewer, backData);
                         backData.getBackpackInventory().playSound(PlaySound.OPEN, 1f);

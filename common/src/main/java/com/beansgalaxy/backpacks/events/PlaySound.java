@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.events;
 
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.sounds.SoundEvent;
@@ -30,23 +31,23 @@ public enum PlaySound {
         return soundEvent;
     }
 
-    public void at(Entity entity, Kind kind) {
-        this.at(entity, kind, 1.2f);
+    public void at(Entity entity, Traits.Sound sound) {
+        this.at(entity, sound, 1.2f);
     }
 
-    public void at(Entity entity, Kind kind, float volume) {
+    public void at(Entity entity, Traits.Sound sound, float volume) {
         Level world = entity.level();
         if (!world.isClientSide) {
-            Playable sound = getSound(kind);
-            world.playSound(null, entity.blockPosition(), sound.event, SoundSource.BLOCKS, volume * sound.volume(), sound.pitch());
+            Playable playable = getSound(sound);
+            world.playSound(null, entity.blockPosition(), playable.event, SoundSource.BLOCKS, volume * playable.volume(), playable.pitch());
         }
     }
 
     public record Playable(SoundEvent event, float volume, float pitch) {}
 
-    public Playable getSound(Kind kind) {
-        switch (kind) {
-            case LEATHER -> {
+    public Playable getSound(Traits.Sound sound) {
+        switch (sound) {
+            case SOFT -> {
                 switch (this) {
                     case PLACE -> {
                         return Events.LEATHER_PLACE.playable(1f, 1f);
@@ -74,7 +75,7 @@ public enum PlaySound {
                     }
                 }
             }
-            case METAL, UPGRADED -> {
+            case HARD -> {
                 switch (this) {
                     case PLACE -> {
                         return Events.METAL_PLACE.playable(1f, 1f);
@@ -102,7 +103,7 @@ public enum PlaySound {
                     }
                 }
             }
-            case POT -> {
+            case CLAY -> {
                 switch (this) {
                     case HIT -> {
                         return Events.POT_HIT.playable(1f, 1f);
@@ -115,7 +116,7 @@ public enum PlaySound {
                     }
                 }
             }
-            case ENDER -> {
+            case VWOOMP -> {
                 switch (this) {
                     case PLACE -> {
                         return Events.ENDER_PLACE.playable(1f, 1f);
@@ -143,7 +144,7 @@ public enum PlaySound {
                     }
                 }
             }
-            case WINGED -> {
+            case CRUNCH -> {
                 switch (this) {
                     case PLACE -> {
                         return Events.WINGED_PLACE.playable(1f, 1f);

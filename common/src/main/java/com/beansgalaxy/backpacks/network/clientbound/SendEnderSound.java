@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.network.clientbound;
 
 import com.beansgalaxy.backpacks.client.network.CommonAtClient;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.network.Network2C;
@@ -40,7 +41,7 @@ public class SendEnderSound implements Packet2C {
       }
 
       public static void send(List<Entity> owners, PlaySound sound, float volume, ServerLevel level) {
-            PlaySound.Playable playable = sound.getSound(Kind.ENDER);
+            PlaySound.Playable playable = sound.getSound(Traits.Sound.VWOOMP);
             float range = playable.event().getRange(playable.volume());
 
             for (ServerPlayer player : level.players()) {
@@ -85,7 +86,7 @@ public class SendEnderSound implements Packet2C {
                   SendEnderSound ctx = soundQue.get(0);
                   if (!ctx.posList.isEmpty()) {
                         BlockPos pos = ctx.posList.remove(0);
-                        PlaySound.Playable play = ctx.sound.getSound(Kind.ENDER);
+                        PlaySound.Playable play = ctx.sound.getSound(Traits.Sound.VWOOMP);
                         float vol = (float) (ctx.volume * play.volume());
                         player.level().playSound(player, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, play.event(), SoundSource.BLOCKS, vol, play.pitch());
                         return;

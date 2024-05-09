@@ -160,13 +160,13 @@ public class Tooltip {
       private static final int FULL_COLOR = Mth.color(0.9F, 0.2F, 0.3F);
       public static int barColor = BAR_COLOR;
 
-      public static void playSound(Kind kind, PlaySound playSound) {
-            playSound(kind, playSound, 0.3f);
+      public static void playSound(Traits.Sound sound, PlaySound playSound) {
+            playSound(sound, playSound, 0.3f);
       }
 
-      public static void playSound(Kind kind, PlaySound playSound, float volume) {
-            PlaySound.Playable sound = playSound.getSound(kind);
-            playSound(sound.event(), sound.pitch(), volume * sound.volume());
+      public static void playSound(Traits.Sound sound, PlaySound playSound, float volume) {
+            PlaySound.Playable playable = playSound.getSound(sound);
+            playSound(playable.event(), playable.pitch(), volume * playable.volume());
       }
 
       public static void playSound(SoundEvent soundEvent, float pitch, float volume) {

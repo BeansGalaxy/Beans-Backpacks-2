@@ -3,6 +3,7 @@ package com.beansgalaxy.backpacks.mixin.common;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.config.IConfig;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.items.Tooltip;
@@ -30,6 +31,7 @@ public abstract class ArmorItemMixin implements Equipable {
             if (entity instanceof Player player) {
                   BackData backData = BackData.get(player);
                   ItemStack backStack = backData.getStack();
+                  Traits traits = Kind.getTraits(backStack);
                   Kind kind = Kind.fromStack(backStack);
                   Item item = stack.getItem();
 
@@ -40,14 +42,14 @@ public abstract class ArmorItemMixin implements Equipable {
                               if (!player.level().isClientSide() && !player.isSilent())
                                     if (item instanceof Equipable equipable)
                                           player.level().playSound(null, player.getX(), player.getY(), player.getZ(), equipable.getEquipSound(), player.getSoundSource(), 1.0F, 1.0F);
-                                    else if (kind != null)
-                                          PlaySound.EQUIP.at(player, kind);
+                                    else if (!traits.isEmpty())
+                                          PlaySound.EQUIP.at(player, traits.sound);
                         }
                   } else {
                         if (IConfig.cantEquipWithBackpack(item)) {
                               cir.setReturnValue(false);
                               if (player.level().isClientSide()) {
-                                    Tooltip.playSound(kind, PlaySound.HIT);
+                                    Tooltip.playSound(traits.sound, PlaySound.HIT);
                               }
                         }
                   }

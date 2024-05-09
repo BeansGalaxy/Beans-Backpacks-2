@@ -4,13 +4,13 @@ import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.entity.Kind;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -19,7 +19,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Traits {
-      public static final Traits EMPTY = new Traits("Err", true, "none", null, 0);
+      public static final Traits EMPTY = new Traits("Err", true, "none", null, 0, "clay");
       public static final Traits LEATHER;
       public static final Traits METAL;
       public static final Traits ENDER;
@@ -34,21 +34,24 @@ public class Traits {
       public final boolean fireResistant;
       public final String button;
       public final ArmorMaterial material;
+      public final Sound sound;
 
-      public Traits(String name, boolean fireResistant, String button, String material, int maxStacks) {
-            this(name, fireResistant, button, material, getOverrideableMaxStack(name, maxStacks));
+      public Traits(String name, boolean fireResistant, String button, String material, int maxStacks, String sound) {
+            this(name, fireResistant, button, material, getOverrideableMaxStack(name, maxStacks), Sound.from(sound));
       }
 
-      public Traits(String name, boolean fireResistant, String button, String material, Supplier<Integer> maxStacks) {
+      public Traits(String name, boolean fireResistant, String button, String material, Supplier<Integer> maxStacks, Sound sound) {
             this.name = name;
             this.maxStacks = maxStacks;
             this.fireResistant = fireResistant;
             this.button = button;
             this.material = getMaterial(material);
+            this.sound = sound;
       }
 
       public Traits(String key, CompoundTag tag) {
             this.name = tag.getString("name");
+            this.sound = Sound.valueOf(tag.getString("sound"));
             this.maxStacks = getOverrideableMaxStack(key, tag.getInt("max_stacks"));
             this.fireResistant = tag.getBoolean("fire_resistant");
             this.button = tag.getString("button");
@@ -90,6 +93,7 @@ public class Traits {
             data.putBoolean("fire_resistant", fireResistant);
             data.putString("button", button);
             data.putString("material", material.getName());
+            data.putString("sound", sound.name());
 
             return data;
       }
@@ -215,7 +219,8 @@ public class Traits {
                                     return new LocalData("", Kind.METAL, 0xFFFFFF, trim, hoverName);
 
                               String key = tag.getString("backpack_id");
-                              return new LocalData(key, Kind.METAL, 0xFFFFFF, trim, hoverName);
+                              Sound sound = Traits.get(key).sound;
+                              return new LocalData(key, kind, 0xFFFFFF, trim, hoverName);
                         }
                         case LEATHER -> {
                               int itemColor = stack.getItem() instanceof DyeableLeatherItem dyable ? dyable.getColor(stack) : 0xFFFFFF;
@@ -281,31 +286,57 @@ public class Traits {
             public ArmorMaterial material() {
                   return traits().material;
             }
+
+            public Sound sound(){
+                  return traits().sound;
+            }
       }
 
       static {
             LEATHER = new Traits("Backpack",
                         false, "minecraft:gold", "leather",
-                        ServerSave.CONFIG.leather_max_stacks::get);
+                        ServerSave.CONFIG.leather_max_stacks::get,
+                        Sound.SOFT);
 
             METAL = new Traits("Iron Backpack",
                         false, "minecraft:diamond", "iron",
-                        ServerSave.CONFIG.metal_max_stacks::get);
+                        ServerSave.CONFIG.metal_max_stacks::get,
+                        Sound.HARD);
 
             ENDER = new Traits("Ender Backpack",
                         false, "none", "turtle",
-                        ServerSave.CONFIG.ender_max_stacks::get);
+                        ServerSave.CONFIG.ender_max_stacks::get,
+                        Sound.VWOOMP);
 
             WINGED = new Traits("Winged Backpack",
                         false, "minecraft:gold", "leather",
-                        ServerSave.CONFIG.winged_max_stacks::get);
+                        ServerSave.CONFIG.winged_max_stacks::get,
+                        Sound.CRUNCH);
 
             POT = new Traits("Decorated Pot",
                         false, "none", null,
-                        ServerSave.CONFIG.pot_max_stacks::get);
+                        ServerSave.CONFIG.pot_max_stacks::get,
+                        Sound.CLAY);
 
-            CAULDRON= new Traits("Cauldron",
+            CAULDRON = new Traits("Cauldron",
                         false, "none", null,
-                        ServerSave.CONFIG.cauldron_max_buckets::get);
+                        ServerSave.CONFIG.cauldron_max_buckets::get,
+                        Sound.HARD);
+      }
+
+      public enum Sound {
+            SOFT,
+            HARD,
+            VWOOMP,
+            CRUNCH,
+            CLAY;
+
+            public static Sound from(String sound) {
+                  try {
+                        return Sound.valueOf(sound.toUpperCase());
+                  } catch (IllegalArgumentException ignored) {
+                        return Sound.HARD;
+                  }
+            }
       }
 }

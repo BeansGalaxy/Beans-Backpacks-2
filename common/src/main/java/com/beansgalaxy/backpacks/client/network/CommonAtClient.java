@@ -3,6 +3,7 @@ package com.beansgalaxy.backpacks.client.network;
 import com.beansgalaxy.backpacks.access.MinecraftAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.EnderStorage;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.beansgalaxy.backpacks.entity.Kind;
@@ -112,7 +113,7 @@ public class CommonAtClient {
                   while (iterator.hasNext() && noMatch) {
                         BlockPos pos = iterator.next();
                         if (pos.equals(containing)) {
-                              PlaySound.Playable play = ctx.sound.getSound(Kind.ENDER);
+                              PlaySound.Playable play = ctx.sound.getSound(Traits.Sound.VWOOMP);
                               float vol = (float) (ctx.volume + ctx.volume + play.volume()) / 3;
                               level.playSound(minecraft.player, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, play.event(), SoundSource.BLOCKS, vol, play.pitch());
                               ctx.volume = ctx.volume - Math.abs(ctx.volume - vol);

@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.entity.Kind;
@@ -9,6 +10,7 @@ import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.network.clientbound.SendBackInventory;
 import com.beansgalaxy.backpacks.network.serverbound.PickBackpack;
 import com.beansgalaxy.backpacks.platform.Services;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
@@ -23,7 +25,6 @@ public class PickBlockEvent {
       public static void pickBackpack(int backpackSlot, ServerPlayer player) {
             BackData backData = BackData.get(player);
             ItemStack backStack = backData.getStack();
-            Kind kind = Kind.fromStack(backStack);
 
             Inventory inventory = player.getInventory();
 
@@ -31,7 +32,7 @@ public class PickBlockEvent {
             if (freeSlot == -1)
             {
                   if (player.level().isClientSide())
-                        Tooltip.playSound(kind, PlaySound.HIT, 0.1f);
+                        Tooltip.playSound(Kind.getTraits(backStack).sound, PlaySound.HIT, 0.1f);
                   return;
             }
 

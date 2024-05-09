@@ -96,7 +96,7 @@ public abstract class BackpackInventory implements Container {
 
       public void playSound(PlaySound sound, float volume) {
             if (getOwner() instanceof Entity entity) {
-                  sound.at(entity, getTraits().kind, volume);
+                  sound.at(entity, getTraits().sound(), volume);
             }
       }
 

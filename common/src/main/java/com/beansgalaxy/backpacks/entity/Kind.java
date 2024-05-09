@@ -100,8 +100,11 @@ public enum Kind {
 
       public static Kind fromStack(ItemStack stack) {
             for(Kind kind: Kind.values())
-                  if (kind.is(stack))
+                  if (kind.is(stack)) {
+                        if (kind.is(METAL) && stack.getTagElement("backpack_id") != null && stack.getTag().getString("backpack_id").equals("bundle"))
+                              return Kind.LEATHER;
                         return kind;
+                  }
             return null;
       }
 

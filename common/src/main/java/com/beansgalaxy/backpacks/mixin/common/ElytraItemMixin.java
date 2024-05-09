@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.items.Tooltip;
@@ -49,7 +50,7 @@ public class ElytraItemMixin {
                   if (msg != null) {
                         player.displayClientMessage(msg, true);
                         if (player.level().isClientSide) {
-                              Tooltip.playSound(Kind.WINGED, PlaySound.HIT);
+                              Tooltip.playSound(Traits.Sound.CRUNCH, PlaySound.HIT);
                               Tooltip.pushInventoryMessage(msg);
                         }
                         cir.setReturnValue(InteractionResultHolder.fail(itemStack));

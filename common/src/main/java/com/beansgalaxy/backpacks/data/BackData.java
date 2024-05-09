@@ -131,9 +131,9 @@ public class BackData {
       }
 
       public void playEquipSound(ItemStack stack) {
-            Kind kind = Kind.fromStack(stack);
-            if (owner.level().isClientSide() && kind != null) {
-                  Tooltip.playSound(kind, PlaySound.EQUIP);
+            Traits traits = Kind.getTraits(stack);
+            if (owner.level().isClientSide() && !traits.isEmpty()) {
+                  Tooltip.playSound(traits.sound, PlaySound.EQUIP);
             }
             if (stack.getItem() instanceof Equipable equipable)
                   owner.level().playSound(null, owner.getX(), owner.getY(), owner.getZ(), equipable.getEquipSound(), owner.getSoundSource(), 1.0F, 1.0F);

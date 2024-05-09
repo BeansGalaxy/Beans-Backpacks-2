@@ -133,7 +133,7 @@ public abstract class EntityAbstract extends Backpack {
             boolean isHorizontal = direction.getAxis().isHorizontal();
             if (!isHorizontal) backpack.setYRot(yaw);
 
-            PlaySound.PLACE.at(backpack, Kind.fromStack(backpackStack));
+            PlaySound.PLACE.at(backpack, traits.sound());
             if (level instanceof ServerLevel) {
                   level.addFreshEntity(backpack);
             }
@@ -477,6 +477,7 @@ public abstract class EntityAbstract extends Backpack {
                          kind = Kind.WINGED;
                   }
             }
+
             Traits.LocalData traits = new Traits.LocalData(key, kind, color, trim, hoverName);
             this.traits = traits;
             this.entityData.set(LOCAL_DATA, traits.toNBT());
@@ -564,17 +565,17 @@ public abstract class EntityAbstract extends Backpack {
                   breakAndDropContents();
             else if (!silent)
             {
-                  PlaySound.HIT.at(this, getTraits().kind);
+                  PlaySound.HIT.at(this, getTraits().sound());
                   return hop(0.1);
             }
             return true;
       }
 
       private void breakAndDropContents() {
-            Kind kind = getTraits().kind;
-            PlaySound.BREAK.at(this, kind);
+            Traits.LocalData traits = getTraits();
+            PlaySound.BREAK.at(this, traits.sound());
             boolean dropItems = level().getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS);
-            if (dropItems && !Kind.ENDER.is(kind)) {
+            if (dropItems && !Kind.ENDER.is(traits.kind)) {
                   NonNullList<ItemStack> stacks = getInventory().getItemStacks();
                   while (!stacks.isEmpty()) {
                         ItemStack stack = stacks.remove(0);
@@ -657,7 +658,7 @@ public abstract class EntityAbstract extends Backpack {
 
       }
 
-      public boolean isLocked(BackData backData, ServerLevel level, Kind kind) {
+      public boolean isLocked(BackData backData, ServerLevel level, Traits.Sound sound) {
             Player player = backData.owner;
             if (player.isCreative())
                   return false;
@@ -665,7 +666,7 @@ public abstract class EntityAbstract extends Backpack {
             for (LockedReason value : LockedReason.values()) {
                   if (value.apply(backData, level, this)) {
                         player.displayClientMessage(Component.translatable("entity.beansbackpacks.locked." + value.toString().toLowerCase()), true);
-                        PlaySound.HIT.at(this, kind);
+                        PlaySound.HIT.at(this, sound);
                         this.hop(.1);
                         return true;
                   }
@@ -744,10 +745,10 @@ public abstract class EntityAbstract extends Backpack {
       }
 
       public InteractionResult interact(ServerPlayer player) {
-            Kind kind = getTraits().kind;
+            Traits.Sound sound = getTraits().sound();
             BackData backData = BackData.get(player);
             boolean actionKeyPressed = backData.actionKeyDown;
-            if (isLocked(backData, player.serverLevel(), kind))
+            if (isLocked(backData, player.serverLevel(), sound))
                   return InteractionResult.SUCCESS;
 
             if (actionKeyPressed) {
@@ -767,7 +768,7 @@ public abstract class EntityAbstract extends Backpack {
                               playerInventoryStacks.addAll(backpackEntityStacks);
                         }
                         backData.set(backpackStack);
-                        PlaySound.EQUIP.at(player, kind);
+                        PlaySound.EQUIP.at(player, sound);
                         SendBackInventory.send(player);
 
                         if (!this.isRemoved())
@@ -775,7 +776,7 @@ public abstract class EntityAbstract extends Backpack {
                               this.kill();
                               this.markHurt();
                         }
-                  } else PlaySound.HIT.at(this, getTraits().kind);
+                  } else PlaySound.HIT.at(this, sound);
                   return InteractionResult.SUCCESS;
             }
             return InteractionResult.PASS;
