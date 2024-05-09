@@ -65,11 +65,7 @@ public interface IConfig {
                         length += 1;
                   }
 
-                  String comment = line.comment();
-                  if (!Constants.isEmpty(comment)) {
-                        sb.append(" ".repeat(Math.max(0, 34 - length)));
-                        sb.append(" // ").append(comment);
-                  }
+                  sb.append(line.comment(Math.max(0, 34 - length)));
                   sb.append('\n');
             }
             sb.append('}');

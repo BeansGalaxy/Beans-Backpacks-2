@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
+import com.beansgalaxy.backpacks.network.clientbound.ConfigureConfig;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
@@ -31,6 +32,7 @@ public class PlayerListMixin {
                   }
             }
 
+            ConfigureConfig.send(ServerSave.CONFIG, player);
             if (ServerSave.CONFIG.usesOldDataPackConfig)
                   player.displayClientMessage(Component.literal("§cModifying Item Whitelists is outdated!!§r\nThis world uses Data-Packs to modify §eBeans' Backpacks.\nUse §e\"Whitelists\"§r in beansbackpacks-common config instead.\nCheck the server's log for more info."), false);
 

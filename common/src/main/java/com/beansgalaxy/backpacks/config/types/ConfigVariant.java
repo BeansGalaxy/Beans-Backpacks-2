@@ -18,12 +18,20 @@ public abstract class ConfigVariant<T> implements ConfigLine {
       }
 
       @Override
-      public String comment() {
+      public String comment(int whiteSpace) {
             String autoComment = autoComment();
-            boolean hasTwo = !Constants.isEmpty(comment) && !Constants.isEmpty(autoComment);
-            return hasTwo
-                        ? comment + " : " + autoComment
-                        : comment + autoComment;
+            boolean noComment = Constants.isEmpty(comment);
+            boolean noAuto = Constants.isEmpty(autoComment);
+
+            StringBuilder sb = new StringBuilder();
+            if (!noComment || !noAuto) {
+                  sb.append(" ".repeat(whiteSpace));
+                  sb.append(" // ").append(comment);
+                  if (!noComment && !noAuto)
+                        sb.append(" : ");
+                  sb.append(autoComment);
+            }
+            return sb.toString();
       }
 
       public String autoComment() {

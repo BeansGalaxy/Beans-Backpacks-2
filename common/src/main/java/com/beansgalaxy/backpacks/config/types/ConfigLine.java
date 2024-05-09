@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 public interface ConfigLine {
       String encode();
 
-      String comment();
+      String comment(int max);
 
       void decode(JsonObject jsonObject);
 }

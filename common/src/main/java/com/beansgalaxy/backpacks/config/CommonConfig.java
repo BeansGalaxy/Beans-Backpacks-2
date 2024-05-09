@@ -3,16 +3,8 @@ package com.beansgalaxy.backpacks.config;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.config.types.*;
 import com.beansgalaxy.backpacks.data.config.Gamerules;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.ChatType;
-import net.minecraft.network.chat.PlayerChatMessage;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 
 import java.util.*;
 
@@ -27,16 +19,22 @@ public class CommonConfig implements IConfig {
       public HSetConfigVariant<Item> disable_chestplate;
       public HSetConfigVariant<Item> disables_back_slot;
       public HSetConfigVariant<Item> elytra_items;
+      public HMapConfigVariant<String, Integer> data_driven_overrides;
+
       public boolean usesOldDataPackConfig = false;
 
       private final ConfigLine[] LINES = new ConfigLine[] {
                   new ConfigLabel("Maximum Stacks"),
-                  leather_max_stacks =      new IntConfigVariant("leather_max_stacks", 4, 1, 64),
-                  ender_max_stacks =        new IntConfigVariant("ender_max_stacks",   4, 1, 8),
-                  winged_max_stacks =       new IntConfigVariant("winged_max_stacks",  4, 1, 64),
-                  metal_max_stacks =        new IntConfigVariant("metal_max_stacks",   7, 1, 64),
-                  pot_max_stacks =          new IntConfigVariant("pot_max_stacks",   128, 0, 128),
-                  cauldron_max_buckets = new IntConfigVariant("cauldron_max_buckets", 24, 0, 128),
+                  leather_max_stacks =       new IntConfigVariant("leather_max_stacks", 4, 1, 64),
+                  ender_max_stacks =         new IntConfigVariant("ender_max_stacks",   4, 1, 8),
+                  winged_max_stacks =        new IntConfigVariant("winged_max_stacks",  4, 1, 64),
+                  metal_max_stacks =         new IntConfigVariant("metal_max_stacks",   7, 1, 64),
+                  pot_max_stacks =           new IntConfigVariant("pot_max_stacks",   128, 0, 128),
+                  cauldron_max_buckets =  new IntConfigVariant("cauldron_max_buckets", 24, 0, 128),
+                  data_driven_overrides = HMapConfigVariant.Builder.create(String::valueOf, Integer::valueOf)
+                              .example(new String[]{"gold", "netherite"}, new Integer[]{7, 11}).validator(i -> Mth.clamp(i, 1, 64))
+                              .comment("If a backpack is Data-Driven, find it's 'backpack_id' with F3 + H")
+                              .build("data_driven_overrides"),
                   new ConfigLabel("Item Whitelists"),
                   disable_chestplate = ItemListConfigVariant.create("disable_chestplate"),
                   disables_back_slot = ItemListConfigVariant.create("disables_back_slot", "create:copper_backtank", "create:netherite_backtank"),
@@ -49,6 +47,13 @@ public class CommonConfig implements IConfig {
                               "minecraft:green_shulker_box", "minecraft:red_shulker_box", "minecraft:black_shulker_box"
                   )
       };
+
+      private static HashMap<String, Integer> createDDOsDefaults() {
+            HashMap<String, Integer> map = new HashMap<>();
+            map.put("gold", 7);
+            map.put("netherite", 11);
+            return map;
+      }
 
       private final ConfigLabel GAMERULE_LABEL = new ConfigLabel("Gamerules");
       public final HashMap<Gamerules, BoolConfigVariant> gamerules = Gamerules.getBoolConfig();

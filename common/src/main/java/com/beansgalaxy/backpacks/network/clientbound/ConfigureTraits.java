@@ -45,7 +45,7 @@ public class ConfigureTraits implements Packet2C {
             for (String key: map.keySet())
             {
                   CompoundTag tag = map.get(key);
-                  Traits traits = new Traits(tag);
+                  Traits traits = new Traits(key, tag);
 
                   Traits.register(key, traits);
             }

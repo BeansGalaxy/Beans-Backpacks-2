@@ -30,8 +30,8 @@ public class HSetConfigVariant<ENTRY> extends ConfigVariant<HashSet<ENTRY>> {
             sb.append('"');
             Iterator<ENTRY> iterator = value.iterator();
             while (iterator.hasNext()) {
-                  String name = encode.apply(iterator.next());
-                  sb.append(name);
+                  String entry = encode.apply(iterator.next());
+                  sb.append(entry);
                   if (iterator.hasNext())
                         sb.append(", ");
             }

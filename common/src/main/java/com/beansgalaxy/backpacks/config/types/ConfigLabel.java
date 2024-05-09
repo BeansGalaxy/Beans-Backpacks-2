@@ -18,7 +18,7 @@ public class ConfigLabel implements ConfigLine {
       }
 
       @Override
-      public String comment() {
+      public String comment(int max) {
             return "";
       }
 

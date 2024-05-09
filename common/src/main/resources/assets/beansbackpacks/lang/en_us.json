@@ -124,7 +124,7 @@
   "tooltip.beansbackpacks.storage.stacks": "§9Holds %d §9Stacks",
   "tooltip.beansbackpacks.storage.fire_resistant": "§9Fire Resistant",
   "tooltip.beansbackpacks.storage.locked": "§9Locked",
-  "tooltip.beansbackpacks.hidden.backpack_id": "§8backpack_id: %d",
+  "tooltip.beansbackpacks.hidden.backpack_id": "§8backpack_id:%d",
 
   "tooltip.beansbackpacks.null_title": "%d §7for more info.",
   "tooltip.beansbackpacks.null0": "§7This is a legacy netherite",

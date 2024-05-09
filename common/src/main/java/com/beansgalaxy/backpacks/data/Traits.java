@@ -4,6 +4,7 @@ import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.entity.Kind;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ArmorMaterials;
@@ -12,6 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import java.awt.*;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -34,7 +36,7 @@ public class Traits {
       public final ArmorMaterial material;
 
       public Traits(String name, boolean fireResistant, String button, String material, int maxStacks) {
-            this(name, fireResistant, button, material, () -> maxStacks);
+            this(name, fireResistant, button, material, getOverrideableMaxStack(name, maxStacks));
       }
 
       public Traits(String name, boolean fireResistant, String button, String material, Supplier<Integer> maxStacks) {
@@ -45,12 +47,19 @@ public class Traits {
             this.material = getMaterial(material);
       }
 
-      public Traits(CompoundTag tag) {
-            this.maxStacks = () -> tag.getInt("max_stacks");
+      public Traits(String key, CompoundTag tag) {
             this.name = tag.getString("name");
+            this.maxStacks = getOverrideableMaxStack(key, tag.getInt("max_stacks"));
             this.fireResistant = tag.getBoolean("fire_resistant");
             this.button = tag.getString("button");
             this.material = getMaterial(tag.getString("material"));
+      }
+
+      public static Supplier<Integer> getOverrideableMaxStack(String backpack_id, int max_stacks) {
+            return () -> {
+                  HashMap<String, Integer> map = ServerSave.CONFIG.data_driven_overrides.get();
+                  return map.getOrDefault(backpack_id, max_stacks);
+            };
       }
 
       public int getMaxStacks() {
