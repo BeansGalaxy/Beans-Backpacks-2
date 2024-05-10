@@ -66,4 +66,20 @@ public class DyableBackpack extends BackpackItem implements DyeableLeatherItem {
             }
             return Backpack.DEFAULT_COLOR;
       }
+
+      public static final int BUNDLE_COLOR = 0xFFbf6e3c;
+      public int getBundleColor(ItemStack stack) {
+            CompoundTag nbtCompound = stack.getTagElement(TAG_DISPLAY);
+            if (nbtCompound != null && nbtCompound.contains(TAG_COLOR, Tag.TAG_ANY_NUMERIC)) {
+                  return nbtCompound.getInt(TAG_COLOR);
+            }
+            return BUNDLE_COLOR;
+      }
+
+      public static Color shiftBundleColor(int colorInt) {
+            Color base = new Color(BUNDLE_COLOR);
+            Color tint = new Color(colorInt);
+            return weightedShift(base, tint, 3, 3, 3, 0);
+      }
+
 }

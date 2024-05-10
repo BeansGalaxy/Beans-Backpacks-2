@@ -3,6 +3,7 @@
   "values": [
     "beansbackpacks:metal_backpack",
     "beansbackpacks:upgraded_backpack",
-    "beansbackpacks:ender_backpack"
+    "beansbackpacks:ender_backpack",
+    "beansbackpacks:back_bundle"
   ]
 }

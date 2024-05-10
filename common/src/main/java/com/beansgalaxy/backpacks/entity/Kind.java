@@ -29,7 +29,8 @@ public enum Kind {
       WINGED(   Services.REGISTRY.getWinged(),   Traits.WINGED,   WingedBackpack::shiftColor, data -> Kind.getAppendedName("winged_", "Winged Backpack")),
       ENDER(    Services.REGISTRY.getEnder(),    Traits.ENDER,    Traits.IGNORE_COLOR,        data -> Kind.getAppendedName("ender_", "Ender Backpack")),
       POT(      Items.DECORATED_POT.asItem(),    Traits.POT,      Traits.IGNORE_COLOR,        data -> Component.empty()),
-      CAULDRON( Items.CAULDRON.asItem(),         Traits.CAULDRON, Traits.IGNORE_COLOR,        data -> Component.empty());
+      CAULDRON( Items.CAULDRON.asItem(),         Traits.CAULDRON, Traits.IGNORE_COLOR,        data -> Component.empty()),
+      BIG_BUNDLE(Services.REGISTRY.getBigBundle(),  Traits.BIG_BUNDLE,  DyableBackpack::shiftBundleColor, data -> Kind.getAppendedName("", "Backpack"));
 
       final Item item;
       private final Function<Traits.LocalData, Component> getName;
@@ -150,6 +151,7 @@ public enum Kind {
                               string.append("backpack/").append(key);
                         else string.append("metal");
                   }
+                  case BIG_BUNDLE -> string.append("back_bundle/bundle");
                   default -> string.append(this.name().toLowerCase());
             }
 

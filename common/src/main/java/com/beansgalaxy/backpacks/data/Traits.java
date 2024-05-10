@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.data;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.items.DyableBackpack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -10,7 +11,6 @@ import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -26,6 +26,7 @@ public class Traits {
       public static final Traits WINGED;
       public static final Traits POT;
       public static final Traits CAULDRON;
+      public static final Traits BIG_BUNDLE;
 
       public static final Function<Integer, Color> IGNORE_COLOR = i -> new Color(0xFFFFFF);
 
@@ -219,8 +220,7 @@ public class Traits {
                                     return new LocalData("", Kind.METAL, 0xFFFFFF, trim, hoverName);
 
                               String key = tag.getString("backpack_id");
-                              Sound sound = Traits.get(key).sound;
-                              return new LocalData(key, kind, 0xFFFFFF, trim, hoverName);
+                              return new LocalData(key, Kind.METAL, 0xFFFFFF, trim, hoverName);
                         }
                         case LEATHER -> {
                               int itemColor = stack.getItem() instanceof DyeableLeatherItem dyable ? dyable.getColor(stack) : 0xFFFFFF;
@@ -249,6 +249,11 @@ public class Traits {
                         }
                         case POT -> {
                               return POT;
+                        }
+                        case BIG_BUNDLE -> {
+                              CompoundTag trim = stack.getTagElement("Trim");
+                              int itemColor = stack.getItem() instanceof DyableBackpack dyable ? dyable.getBundleColor(stack) : 0xFFFFFF;
+                              return new LocalData("", Kind.BIG_BUNDLE, itemColor, trim, hoverName);
                         }
                   }
 
@@ -322,6 +327,11 @@ public class Traits {
                         false, "none", null,
                         ServerSave.CONFIG.cauldron_max_buckets::get,
                         Sound.HARD);
+
+            BIG_BUNDLE = new Traits("Big Bundle",
+                        false, "minecraft:emerald", "leather",
+                        () -> ServerSave.CONFIG.leather_max_stacks.get() + 1,
+                        Sound.SOFT);
       }
 
       public enum Sound {

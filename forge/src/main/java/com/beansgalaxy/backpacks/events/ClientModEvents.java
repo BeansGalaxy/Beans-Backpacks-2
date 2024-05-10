@@ -72,6 +72,8 @@ public class ClientModEvents {
       public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
             event.register((stack, layer) ->
                         (layer != 1 ? ((DyableBackpack) stack.getItem()).getColor(stack) : 16777215), ForgeMain.LEATHER_BACKPACK.get());
+            event.register((stack, layer) ->
+                        (layer != 1 ? ((DyableBackpack) stack.getItem()).getBundleColor(stack) : 16777215), ForgeMain.BACK_BUNDLE.get());
             event.register((stack, layer) -> switch (layer) {
                   case 0 -> WingedBackpack.shiftLayer0(((WingedBackpack) stack.getItem()).getColor(stack));
                   case 2 -> WingedBackpack.shiftLayer2(((WingedBackpack) stack.getItem()).getColor(stack));

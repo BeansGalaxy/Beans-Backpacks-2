@@ -53,6 +53,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 
+import static com.beansgalaxy.backpacks.items.DyableBackpack.BUNDLE_COLOR;
+
 public abstract class EntityAbstract extends Backpack {
       public static final EntityDataAccessor<Boolean> LOCKED = SynchedEntityData.defineId(EntityAbstract.class, EntityDataSerializers.BOOLEAN);
       public Direction direction;
@@ -218,6 +220,7 @@ public abstract class EntityAbstract extends Backpack {
                   }
                   case LEATHER -> hasDefaultColor = color == DEFAULT_COLOR;
                   case WINGED -> hasDefaultColor = color == WingedBackpack.WINGED_ENTITY;
+                  case BIG_BUNDLE -> hasDefaultColor = color == BUNDLE_COLOR;
             }
 
             if (!hasDefaultColor && stack.getItem() instanceof DyableBackpack)

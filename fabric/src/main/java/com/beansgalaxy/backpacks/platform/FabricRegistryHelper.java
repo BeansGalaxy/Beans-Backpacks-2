@@ -1,12 +1,8 @@
 package com.beansgalaxy.backpacks.platform;
 
-import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.FabricMain;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.platform.services.RegistryHelper;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
@@ -39,6 +35,11 @@ public class FabricRegistryHelper implements RegistryHelper {
       @Override
       public Item getEnder() {
             return FabricMain.ENDER_BACKPACK.asItem();
+      }
+
+      @Override
+      public Item getBigBundle() {
+            return FabricMain.BACK_BUNDLE.asItem();
       }
 
       @Override

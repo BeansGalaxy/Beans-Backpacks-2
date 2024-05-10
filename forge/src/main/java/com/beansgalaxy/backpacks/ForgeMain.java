@@ -129,6 +129,8 @@ public class ForgeMain {
                 new WingedBackpack(new Item.Properties().defaultDurability(432).rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<Item> ENDER_BACKPACK = ITEMS.register("ender_backpack", () ->
                 new EnderBackpack(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> BACK_BUNDLE = ITEMS.register("back_bundle", () ->
+                new DyableBackpack(new Item.Properties().stacksTo(1)));
 
     // REGISTER CREATIVE TAB
     public static final DeferredRegister<CreativeModeTab> CREATIVE_TABS =

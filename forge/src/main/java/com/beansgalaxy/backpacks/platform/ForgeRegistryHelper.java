@@ -1,20 +1,15 @@
 package com.beansgalaxy.backpacks.platform;
 
-import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.ForgeMain;
 import com.beansgalaxy.backpacks.entity.EntityGeneral;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.platform.services.RegistryHelper;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.registries.RegistryObject;
-
-import java.util.HashMap;
 
 public class ForgeRegistryHelper implements RegistryHelper {
       @Override
@@ -40,6 +35,11 @@ public class ForgeRegistryHelper implements RegistryHelper {
       @Override
       public Item getEnder() {
             return ForgeMain.ENDER_BACKPACK.get();
+      }
+
+      @Override
+      public Item getBigBundle() {
+            return ForgeMain.BACK_BUNDLE.get();
       }
 
       @Override
