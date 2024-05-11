@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks;
 
+import com.beansgalaxy.backpacks.access.Tint;
 import com.beansgalaxy.backpacks.client.renderer.RenderHelper;
 import com.beansgalaxy.backpacks.client.renderer.*;
 import com.beansgalaxy.backpacks.client.renderer.models.BackpackModel;
@@ -64,9 +65,9 @@ public class FabricClient implements ClientModInitializer {
             }, FabricMain.WINGED_BACKPACK);
 
             ItemProperties.register(Services.REGISTRY.getLeather(),
-                        new ResourceLocation("is_yellow"), RenderHelper.IS_YELLOW_ITEM_PREDICATE);
+                        new ResourceLocation("is_yellow"), Tint.COLOR_PREDICATE);
             ItemProperties.register(Services.REGISTRY.getWinged(),
-                        new ResourceLocation("is_yellow"), RenderHelper.IS_YELLOW_ITEM_PREDICATE);
+                        new ResourceLocation("is_yellow"), Tint.COLOR_PREDICATE);
 
             ModelLoadingPlugin.register(new LoadItemModels());
 

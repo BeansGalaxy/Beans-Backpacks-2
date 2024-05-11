@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.events;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.ForgeMain;
+import com.beansgalaxy.backpacks.access.Tint;
 import com.beansgalaxy.backpacks.client.renderer.RenderHelper;
 import com.beansgalaxy.backpacks.client.renderer.*;
 import com.beansgalaxy.backpacks.client.renderer.features.BackFeature;
@@ -79,9 +80,9 @@ public class ClientModEvents {
                   case 2 -> WingedBackpack.shiftLayer2(((WingedBackpack) stack.getItem()).getColor(stack));
                   default -> 0xFFFFFF; }, ForgeMain.WINGED_BACKPACK.get());
             ItemProperties.register(Services.REGISTRY.getLeather(),
-                        new ResourceLocation(Constants.MOD_ID, "is_yellow"), RenderHelper.IS_YELLOW_ITEM_PREDICATE);
+                        new ResourceLocation(Constants.MOD_ID, "is_yellow"), Tint.COLOR_PREDICATE);
             ItemProperties.register(Services.REGISTRY.getWinged(),
-                        new ResourceLocation(Constants.MOD_ID, "is_yellow"), RenderHelper.IS_YELLOW_ITEM_PREDICATE);
+                        new ResourceLocation(Constants.MOD_ID, "is_yellow"), Tint.COLOR_PREDICATE);
       }
 
       @SubscribeEvent

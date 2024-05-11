@@ -1,5 +1,7 @@
 package com.beansgalaxy.backpacks.access;
 
+import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 
 import static java.lang.Math.*;
@@ -33,8 +35,8 @@ public class Tint {
                    ((Mth.floor(b * 255) & 0xFF));
       }
 
-      private void setRGB(int r, int g, int b) {
-            rgba = ((r & 0xFF) << 16) |
+      private int setRGB(int r, int g, int b) {
+            return ((r & 0xFF) << 16) |
                    ((g & 0xFF) << 8)  |
                    ((b & 0xFF));
       }
@@ -77,6 +79,31 @@ public class Tint {
             //r * 0.2126 + g * 0.7152 + b * 0.0722;
             double y = r * 0.2126 + g * 0.7152 + b * 0.0722;
             return y;
+      }
+
+      public static ClampedItemPropertyFunction COLOR_PREDICATE = (itemStack, clientLevel, livingEntity, i) -> {
+            CompoundTag display = itemStack.getTagElement("display");
+            if (display == null || !display.contains("color"))
+                  return 0;
+
+            int color = display.getInt("color");
+            return isYellow(color) ? 1
+                 : isGreen(color) ? 2
+                 : 0;
+      };
+
+      public static boolean isYellow(int color) {
+            Tint.HSL hsl1 = new Tint(color).HSL();
+            double hue = hsl1.getHue();
+            double lum = hsl1.getLum();
+            return hue > 40 && hue < 70 && lum > .20 && lum < .90 && hsl1.getSat() > .15;
+      }
+
+      public static boolean isGreen(int color) {
+            Tint.HSL hsl1 = new Tint(color).HSL();
+            double hue = hsl1.getHue();
+            double lum = hsl1.getLum();
+            return hue > 69 && hue < 140 && lum > .30 && lum < .90 && hsl1.getSat() > .15;
       }
 
       public class HSV {
@@ -198,7 +225,6 @@ public class Tint {
                   return "HSV:[" + hue + ", " + sat + ", " + val + ']';
             }
       }
-
 
       public class HSL {
             private final Tint tint;
@@ -326,6 +352,66 @@ public class Tint {
             @Override
             public String toString() {
                   return "HSL:[" + hue + ", " + sat + ", " + lum + ']';
+            }
+      }
+
+      public class LCH {
+            private double l = 0; // Brightness
+            private double a = 0; // Red - Green
+            private double b = 0; // Blue - Yellow
+
+            double linear(int x)
+            {
+                  if (x >= 0.0031308)
+                        return ((1.055) * Math.pow(x , 1.0/2.4) - 0.055);
+                  else
+                        return 12.92 * x;
+            }
+
+            double non_linear(double x)
+            {
+                  if (x >= 0.04045)
+                        return Math.pow((x + 0.055)/(1 + 0.055), 2.4);
+                  else
+                        return x / 12.92f;
+            }
+
+            private LCH() {
+                  double r = linear((rgba >> 16) & 0xff);
+                  double g = linear((rgba >>  8) & 0xff);
+                  double b = linear( rgba        & 0xff);
+
+                  double l = 0.4122214708f * r + 0.5363325363f * g + 0.0514459929f * b;
+                  double m = 0.2119034982f * r + 0.6806995451f * g + 0.1073969566f * b;
+                  double s = 0.0883024619f * r + 0.2817188376f * g + 0.6299787005f * b;
+
+                  double l_ = Math.cbrt(l);
+                  double m_ = Math.cbrt(m);
+                  double s_ = Math.cbrt(s);
+
+                  this.l = 0.2104542553f*l_ + 0.7936177850f*m_ - 0.0040720468f*s_;
+                  this.a = 1.9779984951f*l_ - 2.4285922050f*m_ + 0.4505937099f*s_;
+                  this.b = 0.0259040371f*l_ + 0.7827717662f*m_ - 0.8086757660f*s_;
+            }
+
+            public int rgb() {
+                  double l_ = l + 0.3963377774f * a + 0.2158037573f * b;
+                  double m_ = l - 0.1055613458f * a - 0.0638541728f * b;
+                  double s_ = l - 0.0894841775f * a - 1.2914855480f * b;
+
+                  double l = l_*l_*l_;
+                  double m = m_*m_*m_;
+                  double s = s_*s_*s_;
+
+                  int r = (int) (non_linear(+4.0767416621f * l - 3.3077115913f * m + 0.2309699292f * s) * 255);
+                  int g = (int) (non_linear(-1.2684380046f * l + 2.6097574011f * m - 0.3413193965f * s) * 255);
+                  int b = (int) (non_linear(-0.0041960863f * l - 0.7034186147f * m + 1.7076147010f * s) * 255);
+
+                  return setRGB(r, g, b);
+            }
+
+            public void push() {
+                  rgba = rgb();
             }
       }
 

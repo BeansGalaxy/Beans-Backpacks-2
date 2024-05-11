@@ -147,8 +147,11 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
             String button = traits.button();
             int color = traits.color;
             if (!button.equals("none") && (!trim.contains("material") || !trim.contains("pattern"))) {
-                  if (RenderHelper.isYellow(new Color(color))) {
+                  if (Tint.isYellow(color)) {
                         button = "amethyst";
+                  }
+                  else if (Kind.BIG_BUNDLE.is(kind) &&Tint.isGreen(color)) {//
+                        button = "copper";
                   }
                   if (!Constants.isEmpty(button)) {
                         CompoundTag tag = new CompoundTag();
@@ -197,6 +200,7 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
                         hsv.setLum(Math.cbrt(brightness)).scaleSat(Math.sqrt(sat));
                         hsv.push();
                         renderDyableColorOverlay(pose, light, source, yaw, model, inflate, tint.getFloats(), "back_bundle/bundle");
+                        renderInteriorMask(pose, light, source, yaw, model, deflate, kind);
 
                         pose.pushPose();
                         pose.mulPose(Axis.YN.rotationDegrees(yaw));
