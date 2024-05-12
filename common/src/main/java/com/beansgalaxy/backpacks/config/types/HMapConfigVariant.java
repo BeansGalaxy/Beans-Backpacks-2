@@ -6,7 +6,6 @@ import net.minecraft.util.GsonHelper;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 public class HMapConfigVariant<KEY, ENTRY> extends ConfigVariant<HashMap<KEY, ENTRY>> {
@@ -34,7 +33,7 @@ public class HMapConfigVariant<KEY, ENTRY> extends ConfigVariant<HashMap<KEY, EN
 
       @Override
       public String encode() {
-            String formattedName = formattedName();
+            String formattedName = toString();
             StringBuilder sb = new StringBuilder().append(formattedName);
             sb.append("{");
             if (!comment.isBlank())

@@ -64,10 +64,7 @@ public class FabricClient implements ClientModInitializer {
                   default -> 0xFFFFFF;
             }, FabricMain.WINGED_BACKPACK);
 
-            ItemProperties.register(Services.REGISTRY.getLeather(),
-                        new ResourceLocation("is_yellow"), Tint.COLOR_PREDICATE);
-            ItemProperties.register(Services.REGISTRY.getWinged(),
-                        new ResourceLocation("is_yellow"), Tint.COLOR_PREDICATE);
+            ItemProperties.registerGeneric(new ResourceLocation("is_yellow"), RenderHelper.IS_YELLOW_ITEM_PREDICATE);
 
             ModelLoadingPlugin.register(new LoadItemModels());
 

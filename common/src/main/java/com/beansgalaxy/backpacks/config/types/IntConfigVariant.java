@@ -52,7 +52,7 @@ public class IntConfigVariant extends ConfigVariant<Integer> {
 
       @Override
       public String encode() {
-            return formattedName() + value;
+            return toString() + value;
       }
 
       @Override

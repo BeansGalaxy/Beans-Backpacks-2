@@ -18,6 +18,11 @@ public class ConfigLabel implements ConfigLine {
       }
 
       @Override
+      public String toString() {
+            return label;
+      }
+
+      @Override
       public String comment(int max) {
             return "";
       }

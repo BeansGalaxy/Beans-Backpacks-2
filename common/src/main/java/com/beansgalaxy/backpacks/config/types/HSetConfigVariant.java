@@ -26,7 +26,7 @@ public class HSetConfigVariant<ENTRY> extends ConfigVariant<HashSet<ENTRY>> {
 
       @Override
       public String encode() {
-            StringBuilder sb = new StringBuilder().append(formattedName());
+            StringBuilder sb = new StringBuilder().append(toString());
             sb.append('"');
             Iterator<ENTRY> iterator = value.iterator();
             while (iterator.hasNext()) {

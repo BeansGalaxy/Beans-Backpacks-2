@@ -42,7 +42,8 @@ public abstract class ConfigVariant<T> implements ConfigLine {
             return name;
       }
 
-      public String formattedName() {
+      @Override
+      public String toString() {
             return '"' + name() + "\": ";
       }
 

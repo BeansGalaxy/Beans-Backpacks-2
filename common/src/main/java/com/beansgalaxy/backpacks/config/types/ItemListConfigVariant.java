@@ -34,7 +34,7 @@ public class ItemListConfigVariant extends HSetConfigVariant<Item> {
 
       @Override
       public String encode() {
-            StringBuilder sb = new StringBuilder().append(formattedName());
+            StringBuilder sb = new StringBuilder().append(toString());
             sb.append('"');
 
             Iterator<Item> iterator = value.iterator();

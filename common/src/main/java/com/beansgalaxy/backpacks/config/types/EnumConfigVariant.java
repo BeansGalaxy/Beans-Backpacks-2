@@ -37,7 +37,7 @@ public class EnumConfigVariant<T extends Enum<T>> extends ConfigVariant<T> {
 
       @Override
       public String encode() {
-            return formattedName() + '"' + value.name() + '"';
+            return toString() + '"' + value.name() + '"';
       }
 
       @Override

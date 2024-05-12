@@ -1,6 +1,21 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "beansbackpacks:item/back_bundle"
-  }
+    "layer0": "beansbackpacks:item/back_bundle/0",
+    "layer1": "beansbackpacks:item/back_bundle/emerald"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "is_yellow": 0.1
+      },
+      "model": "beansbackpacks:item/back_bundle_copp"
+    },
+    {
+      "predicate": {
+        "is_yellow": 0.8
+      },
+      "model": "beansbackpacks:item/back_bundle_amet"
+    }
+  ]
 }

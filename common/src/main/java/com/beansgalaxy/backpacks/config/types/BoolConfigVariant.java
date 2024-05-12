@@ -1,6 +1,5 @@
 package com.beansgalaxy.backpacks.config.types;
 
-import com.beansgalaxy.backpacks.Constants;
 import com.google.gson.JsonObject;
 import net.minecraft.util.GsonHelper;
 
@@ -21,7 +20,7 @@ public class BoolConfigVariant extends ConfigVariant<Boolean> {
 
       @Override
       public String encode() {
-            return formattedName() + value;
+            return toString() + value;
       }
 
       @Override

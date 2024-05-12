@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.network.clientbound;
 
 import com.beansgalaxy.backpacks.config.CommonConfig;
+import com.beansgalaxy.backpacks.config.types.ConfigLabel;
 import com.beansgalaxy.backpacks.config.types.ConfigLine;
 import com.beansgalaxy.backpacks.config.types.ConfigVariant;
 import com.beansgalaxy.backpacks.data.ServerSave;
@@ -27,7 +28,10 @@ public class ConfigureConfig implements Packet2C {
             Iterator<ConfigLine> iterator = config.getLines().iterator();
             StringBuilder sb = new StringBuilder().append('{');
             while (iterator.hasNext()) {
-                  String encode = iterator.next().encode();
+                  ConfigLine line = iterator.next();
+                  if (line instanceof ConfigLabel) continue;
+
+                  String encode = line.encode();
                   sb.append(encode);
 
                   if (iterator.hasNext())
@@ -51,6 +55,7 @@ public class ConfigureConfig implements Packet2C {
 
       @Override
       public void handle() {
-            ServerSave.CONFIG.parse(encodedConfig);
+            String jsonContent = encodedConfig.replaceAll("/\\*.*?\\*/", "").replaceAll("//.*", "");
+            ServerSave.CONFIG.parse(jsonContent);
       }
 }
