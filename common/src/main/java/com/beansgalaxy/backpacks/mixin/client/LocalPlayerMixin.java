@@ -46,8 +46,6 @@ public class LocalPlayerMixin {
             }
             else if (menusKey.pressed() && menusKey.onMouse() && minecraft.screen instanceof ClickAccessor clickAccessor)
                   clickAccessor.beans_Backpacks_2$instantPlace();
-
-            System.out.println("A:" + actionKey.pressed() + "   M:" + menusKey.pressed());
       }
 
 }

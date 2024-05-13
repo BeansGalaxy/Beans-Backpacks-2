@@ -26,8 +26,8 @@ public class CurioItem implements ICurioItem {
       @Override
       public boolean canEquip(SlotContext slotContext, ItemStack stack) {
             boolean defaults = ICurioItem.super.canEquip(slotContext, stack) && slotContext.index() == 0;
-            boolean backSlotDisabled = slotContext.entity() instanceof Player player && BackData.get(player).mayEquip(stack);
-            return defaults && !backSlotDisabled && stack.getCount() > 1;
+            boolean backSlotEnabled = slotContext.entity() instanceof Player player && BackData.get(player).mayEquip(stack);
+            return defaults && backSlotEnabled && stack.getCount() <= 1;
       }
 
       @Override

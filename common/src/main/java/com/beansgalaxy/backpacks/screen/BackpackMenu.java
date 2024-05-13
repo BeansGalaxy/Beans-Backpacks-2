@@ -111,11 +111,11 @@ public class BackpackMenu extends AbstractContainerMenu {
       }
 
       public void updateSlots() {
+            boolean hasSpace = backpackInventory.spaceLeft() > 0;
+            int size = backpackInventory.getContainerSize();
+            int shift = Math.max(0, size - MenuSlot.MAX_SLOTS - (hasSpace? 0: 1));
             for (MenuSlot backpackSlot : backpackSlots) {
                   int backIndex = backpackSlot.backIndex;
-                  int size = backpackInventory.getContainerSize();
-                  boolean hasSpace = backpackInventory.spaceLeft() > 0;
-                  int shift = Math.max(0, size - MenuSlot.MAX_SLOTS - (hasSpace? 0: 1));
                   if (backIndex + shift < size) {
                         backpackSlot.index = backIndex + 36;
                         backpackSlot.state = MenuSlot.State.ACTIVE;
