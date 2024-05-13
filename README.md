@@ -27,6 +27,8 @@ the issues tab. </p>
 
 - Migrated `data/modify` files from Data Packs into Config
   - The data-pack method will continue to work in this version but will be removed soon.
+- Added "Backpack Lock" Item. Used on a placed backpack to lock it. Shift RClick your locked backpack to unlock
+- Shift Clicking a Backpack Item no longer locks it.
 - Added Config option to override the max_stacks of data-driven backpacks such as Gold & Netherite Backpacks
 - Separated Keybind into in-menu uses & in-world uses
 - Added an option to specify the sounds when creating a data-driven backpack.

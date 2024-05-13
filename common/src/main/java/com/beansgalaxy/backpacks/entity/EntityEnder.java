@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.entity;
 
 import com.beansgalaxy.backpacks.data.*;
+import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -12,6 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
@@ -141,5 +143,17 @@ public class EntityEnder extends EntityAbstract {
                   return 0;
 
             return super.getAnalogOutput();
+      }
+
+      @Override
+      protected void breakAndDropContents() {
+            Traits.LocalData traits = getTraits();
+            PlaySound.BREAK.at(this, traits.sound());
+            boolean dropItems = level().getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS);
+            if (!this.isRemoved() && !this.level().isClientSide()) {
+                  this.kill();
+                  this.markHurt();
+                  if (dropItems) this.spawnAtLocation(toStack());
+            }
       }
 }

@@ -19,6 +19,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
@@ -66,7 +67,6 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
       public void renderImage(Font font, int cursorX, int cursorY, GuiGraphics gui) {
             if (!isCuriosMenu) {
                   cursorX += 10000;
-                  cursorY += 10000;
             }
 
             switch (tooltipType) {
@@ -306,6 +306,8 @@ public class ClientBackpackTooltip implements ClientTooltipComponent {
       }
 
       private static void drawTooltipBox(GuiGraphics gui, int x, int y, int w, int h, int z) {
+//            TooltipRenderUtil.renderTooltipBackground(gui, x, y, w, h, z);
+
             int bgColor = 0xF0100010;
             gui.fill(x - 1, y - 1, x + w + 2, y + h + 1, z, bgColor);
             gui.fill(x, y - 1, x + w, y - 2, z, bgColor);

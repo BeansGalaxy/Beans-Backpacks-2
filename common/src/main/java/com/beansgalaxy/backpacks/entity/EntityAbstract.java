@@ -201,9 +201,10 @@ public abstract class EntityAbstract extends Backpack {
 
             UUID placedBy = this.getPlacedBy();
             if (item instanceof EnderBackpack enderBackpack && placedBy != null) {
-                  EnderInventory enderData = EnderStorage.getEnderData(placedBy, this.level());
-                  boolean enderLocked = enderData.isLocked();
-                  if (!enderLocked) enderBackpack.setUUID(placedBy, stack);
+                  if (!isLocked()) {
+                        EnderStorage.getEnderData(placedBy, this.level());
+                        enderBackpack.setUUID(placedBy, stack);
+                  }
             } else {
                   CompoundTag trim = traits.getTrim();
                   if (!trim.isEmpty())
@@ -575,7 +576,10 @@ public abstract class EntityAbstract extends Backpack {
             return true;
       }
 
-      private void breakAndDropContents() {
+      protected void breakAndDropContents() {
+            if (isLocked())
+                  playSound(PlaySound.Events.UNLOCK.get());
+            setLocked(false);
             Traits.LocalData traits = getTraits();
             PlaySound.BREAK.at(this, traits.sound());
             boolean dropItems = level().getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS);

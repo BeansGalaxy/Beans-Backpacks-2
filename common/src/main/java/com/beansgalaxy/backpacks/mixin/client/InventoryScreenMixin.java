@@ -79,7 +79,7 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
                   BackData backData = BackData.get(minecraft.player);
                   if (!itemstack.isEmpty() && !backData.getBackpackInventory().isEmpty() && Kind.isBackpack(itemstack)) {
                         BackpackTooltip tooltip = new BackpackTooltip(backData.getBackpackInventory().getItemStacks());
-                        gui.renderTooltip(minecraft.font, List.of(Component.empty()), Optional.of(tooltip), mouseX - 10000, mouseY - 10000);
+                        gui.renderTooltip(minecraft.font, List.of(Component.empty()), Optional.of(tooltip), mouseX - 10000, mouseY);
                         return;
                   }
             }
