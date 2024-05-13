@@ -33,6 +33,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
@@ -661,6 +662,11 @@ public abstract class EntityAbstract extends Backpack {
 
       }
 
+      protected void setLocked(boolean isLocked) {
+            entityData.set(LOCKED, isLocked);
+
+      }
+
       public boolean isLocked(BackData backData, ServerLevel level, Traits.Sound sound) {
             Player player = backData.owner;
             if (player.isCreative())
@@ -679,9 +685,35 @@ public abstract class EntityAbstract extends Backpack {
 
       @Override @NotNull
       public InteractionResult interact(Player player, InteractionHand hand) {
+            ItemStack itemInHand = player.getItemInHand(hand);
+            if (!isLocked() && itemInHand.is(Services.REGISTRY.getLock()))
+            {
+                  playSound(PlaySound.Events.LOCK.get());
+                  setLocked(true);
+                  if (!player.isCreative())
+                        itemInHand.shrink(1);
+                  return InteractionResult.SUCCESS;
+            }
+
             if (player.isDiscrete())
-                  return shiftClickOnBackpack(player, hand);
-            else if (player instanceof ServerPlayer serverPlayer) {
+            {
+                  if (itemInHand.isEmpty()) {
+                        if (!isLocked() || !player.getUUID().equals(getPlacedBy()))
+                              return InteractionResult.PASS;
+
+                        playSound(PlaySound.Events.UNLOCK.get());
+                        setLocked(false);
+                        if (!player.isCreative()) {
+                              Inventory inventory = player.getInventory();
+                              int selected = inventory.selected;
+                              inventory.add(selected, Services.REGISTRY.getLock().getDefaultInstance());
+                        }
+                        return InteractionResult.SUCCESS;
+                  }
+                  else return shiftClickOnBackpack(player, hand);
+            }
+            else if (player instanceof ServerPlayer serverPlayer)
+            {
                   InteractionResult interact = interact(serverPlayer);
                   if (interact.consumesAction())
                         return interact;

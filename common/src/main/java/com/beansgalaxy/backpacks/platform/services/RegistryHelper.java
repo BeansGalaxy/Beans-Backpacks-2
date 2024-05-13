@@ -27,6 +27,8 @@ public interface RegistryHelper {
 
       Item getBigBundle();
 
+      Item getLock();
+
       EntityType<? extends Entity> getGeneralEntity();
 
       EntityType<? extends Entity> getEnderEntity();

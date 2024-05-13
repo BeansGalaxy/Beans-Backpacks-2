@@ -43,6 +43,11 @@ public class EntityEnder extends EntityAbstract {
       }
 
       @Override
+      protected void setLocked(boolean isLocked) {
+            getEnderData().ifPresent(ender -> ender.setLocked(isLocked));
+      }
+
+      @Override
       public BackpackInventory getInventory() {
             return getEnderData().orElse(null);
       }

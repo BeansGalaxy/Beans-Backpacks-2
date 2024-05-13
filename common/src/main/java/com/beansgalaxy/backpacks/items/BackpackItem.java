@@ -47,9 +47,6 @@ public class BackpackItem extends Item {
       @Override
       public InteractionResult useOn(UseOnContext ctx) {
             Player player = ctx.getPlayer();
-            if (player.isShiftKeyDown())
-                  return InteractionResult.PASS;
-
             Direction direction = ctx.getClickedFace();
             BlockPos clickedPos = ctx.getClickedPos();
             ItemStack backpackStack = ctx.getItemInHand();
@@ -59,35 +56,6 @@ public class BackpackItem extends Item {
             }
 
             return InteractionResult.PASS;
-      }
-
-      @Override
-      public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-            if (player.isShiftKeyDown()) {
-                  ItemStack backpackStack = player.getItemInHand(hand);
-                  CompoundTag tag = backpackStack.getTag();
-
-                  if (backpackStack.getItem() instanceof EnderBackpack ender) {
-                        if (ender.lockEnder(player, backpackStack)) {
-                              return InteractionResultHolder.success(backpackStack);
-                        }
-                  } else {
-                        boolean locked = false;
-                        if (tag != null && tag.contains("Locked"))
-                              tag.remove("Locked");
-                        else {
-                              backpackStack.getOrCreateTag().putBoolean("Locked", true);
-                              locked = true;
-                        }
-
-                        if (level.isClientSide) {
-                              SoundEvent event = locked ? PlaySound.Events.LOCK.get() : PlaySound.Events.UNLOCK.get();
-                              Tooltip.playSound(event, 1f, 1f);
-                        }
-                        return InteractionResultHolder.success(backpackStack);
-                  }
-            }
-            return super.use(level, player, hand);
       }
 
       public static boolean interact(ItemStack backStack, ClickAction clickAction, Player player, SlotAccess access, boolean shiftIsDown) {

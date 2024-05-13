@@ -43,6 +43,11 @@ public class ForgeRegistryHelper implements RegistryHelper {
       }
 
       @Override
+      public Item getLock() {
+            return ForgeMain.LOCK.get();
+      }
+
+      @Override
       public EntityType<EntityGeneral> getGeneralEntity() {
             return ForgeMain.ENTITY_GENERAL.get();
       }

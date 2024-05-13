@@ -23,6 +23,16 @@ the issues tab. </p>
 
 <h1 align="center"> Changelog </h1>
 
+### 20.1-0.28-v2
+
+- Migrated `data/modify` files from Data Packs into Config
+  - The data-pack method will continue to work in this version but will be removed soon.
+- Added Config option to override the max_stacks of data-driven backpacks such as Gold & Netherite Backpacks
+- Separated Keybind into in-menu uses & in-world uses
+- Added an option to specify the sounds when creating a data-driven backpack.
+- Cleaned Up code when rearranging the backpack's menu to *hopefully* prevent crashes when taking items
+- Fixed bug causing players not to be able to manually equip backpacks with curios/trinkets
+
 ### 20.1-0.27-v2
 
 - Finalized All Backpack Sounds

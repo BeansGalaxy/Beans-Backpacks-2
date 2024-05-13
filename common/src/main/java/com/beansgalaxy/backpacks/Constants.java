@@ -41,7 +41,7 @@ public class Constants {
 
 	public static final CreativeModeTab.DisplayItemsGenerator CREATIVE_TAB_GENERATOR = (params, output) -> {
 		for (Kind value : Kind.values()) {
-			if (!Kind.UPGRADED.is(value))
+			if (!Kind.is(value, Kind.UPGRADED, Kind.BIG_BUNDLE))
 				output.accept(value.getItem());
 			if (Kind.METAL.is(value))
 				Constants.TRAITS_MAP.keySet().forEach(key -> {
@@ -49,6 +49,7 @@ public class Constants {
 						output.accept(Traits.toStack(key));
 				});
 		}
+		output.accept(Services.REGISTRY.getLock());
 	};
 
 	public static MutableComponent getName(ItemStack stack) {
@@ -93,11 +94,13 @@ public class Constants {
             return BuiltInRegistries.ITEM.get(resourceLocation);
 	}
 
+	@Deprecated(since = "0.27-v2")
 	public static void addToList(HashSet<Item> list, Collection<Item> items) {
 		list.addAll(items);
 		list.removeIf(item -> item.equals(Items.AIR));
 	}
 
+	@Deprecated(since = "0.27-v2")
 	public static NonNullList<Item> readItemList(ResourceManager resourceManager, String location) {
 		Map<ResourceLocation, Resource> locations = resourceManager.listResources("modify",
 				(in) -> in.getPath().endsWith(location));

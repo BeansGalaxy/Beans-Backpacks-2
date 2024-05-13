@@ -107,6 +107,7 @@ public class FabricMain implements ModInitializer {
     public static final Item WINGED_BACKPACK = registerItem("winged_backpack", new WingedBackpack(new Item.Properties().defaultDurability(432).rarity(Rarity.UNCOMMON)));
     public static final Item ENDER_BACKPACK = registerItem("ender_backpack", new EnderBackpack(new Item.Properties().stacksTo(1)));
     public static final Item BACK_BUNDLE = registerItem("back_bundle", new DyableBackpack(new Item.Properties().stacksTo(1)));
+    public static final Item LOCK = registerItem("lock", new Item(new Item.Properties()));
 
     private static Item registerItem(String name, Item item)
     {

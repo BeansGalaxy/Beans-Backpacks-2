@@ -43,6 +43,11 @@ public class FabricRegistryHelper implements RegistryHelper {
       }
 
       @Override
+      public Item getLock() {
+            return FabricMain.LOCK.asItem();
+      }
+
+      @Override
       public EntityType<? extends Entity> getGeneralEntity() {
             return FabricMain.BACKPACK_ENTITY;
       }

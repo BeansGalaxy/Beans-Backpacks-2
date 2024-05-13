@@ -168,6 +168,10 @@ public class BackData {
                   else if (wornStack.is(Services.REGISTRY.getWinged()) && Constants.ELYTRA_ITEMS.contains(toEquip.getItem()))
                         msg = Component.translatable("entity.beansbackpacks.blocked.already_equipped",
                                     Constants.getName(wornStack));
+                  else {
+                        msg = Component.translatable("entity.beansbackpacks.blocked.already_equipped",
+                                    Constants.getName(wornStack));
+                  }
             }
 
             if (msg == null) {

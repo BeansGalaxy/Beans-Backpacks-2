@@ -131,6 +131,8 @@ public class ForgeMain {
                 new EnderBackpack(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> BACK_BUNDLE = ITEMS.register("back_bundle", () ->
                 new DyableBackpack(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> LOCK = ITEMS.register("lock", () ->
+                new Item(new Item.Properties()));
 
     // REGISTER CREATIVE TAB
     public static final DeferredRegister<CreativeModeTab> CREATIVE_TABS =
