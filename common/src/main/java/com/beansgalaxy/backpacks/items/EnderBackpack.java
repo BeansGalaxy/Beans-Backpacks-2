@@ -1,17 +1,16 @@
 package com.beansgalaxy.backpacks.items;
 
 import com.beansgalaxy.backpacks.data.EnderStorage;
-import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.network.clientbound.SendEnderDisplay;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ItemCombinerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class EnderBackpack extends BackpackItem {
@@ -42,14 +41,20 @@ public class EnderBackpack extends BackpackItem {
       }
 
       public UUID getOrCreateUUID(UUID uuid, Level level, ItemStack stack) {
-            CompoundTag tag = stack.getTag();
-            if (stack.hasTag() && tag.contains("owner")) {
-                  uuid = tag.getUUID("owner");
-            }
+            UUID uuid1 = getUUID(stack).orElse(uuid);
+            EnderStorage.getEnderData(uuid1, level);
+            stack.getOrCreateTag().putUUID("owner", uuid1);
+            return uuid1;
+      }
 
-            EnderStorage.getEnderData(uuid, level);
-            stack.getOrCreateTag().putUUID("owner", uuid);
-            return uuid;
+      private Optional<UUID> getUUID(ItemStack stack) {
+            CompoundTag tag = stack.getTag();
+            UUID uuid = null;
+
+            if (stack.hasTag() && tag.contains("owner"))
+                  uuid = tag.getUUID("owner");
+
+            return Optional.ofNullable(uuid);
       }
 
       public void setUUID(UUID uuid, ItemStack stack) {
@@ -87,26 +92,9 @@ public class EnderBackpack extends BackpackItem {
       }
 
       public boolean lockEnder(Player player, ItemStack backpackStack) {
-            UUID playerUUID = player.getUUID();
-            UUID ownerUUID = this.getOrCreateUUID(player, backpackStack);
-            if (playerUUID.equals(ownerUUID)) {
-                  EnderInventory enderData = EnderStorage.getEnderData(player);
-                  boolean locked = !enderData.isLocked();
-                  enderData.setLocked(locked);
-                  SendEnderDisplay.send(player);
-                  EnderStorage.get(player.level()).forEachViewing(ownerUUID, viewer -> {}, equipped -> {
-                        if (equipped.owner.getUUID() != ownerUUID) {
-                              equipped.drop();
-                        }
-                  });
-                  enderData.clearViewers();
-
-                  if (player.level().isClientSide) {
-                        SoundEvent event = locked ? PlaySound.Events.LOCK.get() : PlaySound.Events.UNLOCK.get();
-                        Tooltip.playSound(event, 1f, 1f);
-                  }
+            return getUUID(backpackStack).map(uuid -> {
+                  EnderInventory enderData = EnderStorage.getEnderData(uuid, player.level());
                   return true;
-            }
-            return false;
+            }).orElse(false);
       }
 }

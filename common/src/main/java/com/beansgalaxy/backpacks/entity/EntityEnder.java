@@ -4,6 +4,7 @@ import com.beansgalaxy.backpacks.data.*;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.inventory.EnderInventory;
+import com.beansgalaxy.backpacks.network.clientbound.SendEnderDisplay;
 import com.beansgalaxy.backpacks.platform.Services;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -46,7 +47,15 @@ public class EntityEnder extends EntityAbstract {
 
       @Override
       protected void setLocked(boolean isLocked) {
-            getEnderData().ifPresent(ender -> ender.setLocked(isLocked));
+            getEnderData().ifPresent(enderData -> {
+                  boolean locked = !enderData.isLocked();
+                  enderData.setLocked(locked);
+                  getEnderStorage().forEachViewing(uuid, SendEnderDisplay::send, equipped -> {
+                        if (equipped.owner.getUUID() != uuid)
+                              equipped.drop();
+                  });
+                  enderData.clearViewers();
+            });
       }
 
       @Override
