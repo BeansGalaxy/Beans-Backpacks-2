@@ -6,10 +6,7 @@ import com.beansgalaxy.backpacks.access.Tint;
 import com.beansgalaxy.backpacks.client.renderer.RenderHelper;
 import com.beansgalaxy.backpacks.client.renderer.*;
 import com.beansgalaxy.backpacks.client.renderer.features.BackFeature;
-import com.beansgalaxy.backpacks.client.renderer.models.BackpackModel;
-import com.beansgalaxy.backpacks.client.renderer.models.BackpackWingsModel;
-import com.beansgalaxy.backpacks.client.renderer.models.CauldronModel;
-import com.beansgalaxy.backpacks.client.renderer.models.PotModel;
+import com.beansgalaxy.backpacks.client.renderer.models.*;
 import com.beansgalaxy.backpacks.inventory.BackpackTooltip;
 import com.beansgalaxy.backpacks.inventory.SpecialTooltip;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -66,6 +63,7 @@ public class ClientModEvents {
       public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
             event.registerLayerDefinition(RenderHelper.BACKPACK_MODEL, BackpackModel::getTexturedModelData);
             event.registerLayerDefinition(RenderHelper.PACK_WINGS_MODEL, BackpackWingsModel::createBodyLayer);
+            event.registerLayerDefinition(RenderHelper.PACK_CAPE_MODEL, BackpackCapeModel::createBodyLayer);
             event.registerLayerDefinition(RenderHelper.POT_MODEL, PotModel::getTexturedModelData);
             event.registerLayerDefinition(RenderHelper.CAULDRON_MODEL, CauldronModel::createBodyLayer);
       }

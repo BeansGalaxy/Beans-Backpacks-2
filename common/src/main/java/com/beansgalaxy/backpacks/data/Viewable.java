@@ -31,7 +31,7 @@ public class Viewable {
             if (newPitch > 0)
                   newPitch = 0;
 
-            //newPitch = -1f; // HOLDS TOP OPEN FOR TEXTURING
+            //newPitch = -3f; // HOLDS TOP OPEN FOR TEXTURING
             lastPitch = headPitch;
             headPitch = newPitch;
       }

@@ -12,6 +12,7 @@ import java.awt.*;
 public interface RenderHelper {
       ModelLayerLocation BACKPACK_MODEL = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "backpack_model"), "main");
       ModelLayerLocation PACK_WINGS_MODEL = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "backpack_wings_model"), "main");
+      ModelLayerLocation PACK_CAPE_MODEL = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "backpack_cape_model"), "main");
       ModelLayerLocation POT_MODEL = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "pot_player"), "main");
       ModelLayerLocation CAULDRON_MODEL = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "cauldron_player"), "main");
 

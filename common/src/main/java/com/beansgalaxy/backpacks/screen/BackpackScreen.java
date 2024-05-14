@@ -168,8 +168,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> implem
             context.pose().mulPose(Axis.YP.rotationDegrees((float) rot * (isNegative ? 150 : 140) + (j)));
             context.pose().scale(scale, -scale, scale);
             EntityRenderDispatcher entRD = Minecraft.getInstance().getEntityRenderDispatcher();
-            Lighting.setupFor3DItems();
-            RenderSystem.setShaderLights(new Vector3f(0f, 10f, 0.4f), new Vector3f(0f, -10f, 0.4f));
+            RenderSystem.setShaderLights(new Vector3f(1f, 0f, 0f), new Vector3f(-1f, 0f, 0f));
             RenderSystem.runAsFancy(() ->
                         entRD.render(entity, 0D, 0D, 0D, 20, 1F, context.pose(), context.bufferSource(), 0xFF00FF));
             context.flush();

@@ -79,6 +79,17 @@ public abstract class EntityAbstract extends Backpack {
             this.pos = BlockPos.containing(x, y, z);
       }
 
+      @Override
+      public boolean shouldRenderAtSqrDistance(double $$0) {
+            double $$1 = this.getBoundingBox().getSize();
+            if (Double.isNaN($$1)) {
+                  $$1 = 1.0;
+            }
+
+            $$1 *= 128.0 * getViewScale();
+            return $$0 < $$1 * $$1;
+      }
+
       @Nullable
       public static EntityAbstract create(ItemStack backpackStack, int x, double y, int z, float yaw, boolean onDeath,
                                           Direction direction, Player player, NonNullList<ItemStack> stacks)

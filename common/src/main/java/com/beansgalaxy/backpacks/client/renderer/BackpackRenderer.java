@@ -64,18 +64,6 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
             if (traits.isEmpty() || traits.kind == null)
                   return;
 
-            Kind kind = traits.kind;
-            Color tint = kind.getShiftedColor(traits.color);
-            if (Kind.WINGED.is(kind)) {
-                  if (backpack.getDirection().getAxis().isHorizontal()) {
-                        pose.pushPose();
-                        pose.mulPose(Axis.YN.rotationDegrees(yaw));
-                        pose.scale(1.09f, 1.09f, 1.09f);
-                        this.wings.renderToBuffer(pose, source.getBuffer(this.model.renderType(ElytraFeature.WINGED_LOCATION)), light,
-                                    OverlayTexture.NO_OVERLAY, tint.getRed() / 255f, tint.getGreen() / 255f, tint.getBlue() / 255f, 1f);
-                        pose.popPose();
-                  }
-            }
 
             Viewable viewable = backpack.getViewable();
             EntityAbstract abstractBackpack = null;
@@ -99,6 +87,20 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
 
             pose.pushPose();
             pose.mulPose(Axis.YN.rotationDegrees(yaw));
+
+            Kind kind = traits.kind;
+            Color tint = kind.getShiftedColor(traits.color);
+            if (Kind.WINGED.is(kind)) {
+                  if (backpack.getDirection().getAxis().isHorizontal()) {
+                        pose.pushPose();
+                        pose.scale(1.09f, 1.09f, 1.09f);
+                        this.wings.renderToBuffer(pose, source.getBuffer(this.model.renderType(ElytraFeature.WINGED_LOCATION)), light,
+                                    OverlayTexture.NO_OVERLAY, tint.getRed() / 255f, tint.getGreen() / 255f, tint.getBlue() / 255f, 1f);
+                        pose.popPose();
+                  }
+            }
+
+            pose.pushPose();
             float[] colors = {tint.getRed() / 255F, tint.getGreen() / 255F, tint.getBlue() / 255F};
             ResourceLocation texture = kind.getAppendedResource(traits.backpack_id, "");
             VertexConsumer outer = source.getBuffer(RenderType.entityCutout(texture));
@@ -107,14 +109,17 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
 
             RegistryAccess registryAccess = backpack.getCommandSenderWorld().registryAccess();
             double distance = Math.sqrt(this.entityRenderDispatcher.distanceToSqr(entity));
-            renderOverlays(pose, light, source, colors, yaw, registryAccess, traits, this.model, this.trimAtlas, distance);
 
+            Screen currentScreen = Minecraft.getInstance().screen;
+            boolean inBackpackScreen = currentScreen instanceof BackpackScreen || currentScreen instanceof SmithingScreen;
+            float inflate = inBackpackScreen ? 0.02f : ((float) distance + 5) * 0.002f;
+            float deflate = distance < 10 || inBackpackScreen ? 0 : (float) (distance - 10.0) * -0.03f;
+            renderOverlays(pose, light, source, colors, registryAccess, traits, this.model, this.trimAtlas, inflate, deflate, false);
 
             if (abstractBackpack != null) {
                   int breakAmount = abstractBackpack.breakAmount;
                   if (breakAmount > 0) {
                         pose.pushPose();
-                        pose.mulPose(Axis.YN.rotationDegrees(yaw));
                         int breakStage = Math.min(Mth.ceil(breakAmount / 3f), 7);
                         ResourceLocation location = new ResourceLocation(Constants.MOD_ID, "textures/entity/destroy_stage/" + breakStage + ".png");
                         VertexConsumer crumble = source.getBuffer(RenderType.crumbling(location));
@@ -122,21 +127,25 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
                         pose.popPose();
                   }
             }
-
+            pose.popPose();
       }
 
-      private static float[] inflate(float scale) {
-            return new float[]{(scale + 8)/8f, (scale + 9)/9f, (scale + 4)/4f, -scale/32f};
+      private static float[] inflate(float scale, boolean reverseY) {
+            return new float[]{
+                        (scale + 8)/8f,
+                        (scale + 9)/9f,
+                        (scale + 4)/4f,
+                        (reverseY ? 1 : -1) * scale/32f,
+                        (reverseY ? -5 : -1) * scale/32};
       }
 
-      public static void renderOverlays(PoseStack pose, int light, MultiBufferSource source, float[] colors, float yaw, RegistryAccess registryAccess, Traits.LocalData traits, BackpackModel model, TextureAtlas atlas, double distance) {
-            Screen currentScreen = Minecraft.getInstance().screen;
-            float[] deflate = inflate(-0.02f);
+      public static void renderOverlays(PoseStack pose, int light, MultiBufferSource source, float[] colors, RegistryAccess registryAccess, Traits.LocalData traits, BackpackModel model, TextureAtlas atlas, float inflateScale, float deflateScale, boolean reverseY) {
+            float[] inflate = inflate(inflateScale, reverseY);
+            float[] deflate = inflate(deflateScale, reverseY);
 
             pose.pushPose();
-            pose.mulPose(Axis.YN.rotationDegrees(yaw));
-            pose.scale(deflate[0], deflate[1], deflate[2]);
-            pose.translate(0, deflate[3] * 2, -deflate[3]);
+            pose.scale(deflate[1], inflate[1], deflate[2] / 2 + 0.5f);
+            pose.translate(0, inflate[3] * 2, -deflate[3] / 3);
             Kind kind = traits.kind;
             ResourceLocation texture = kind.getAppendedResource(traits.backpack_id, "");
             VertexConsumer inner = source.getBuffer(RenderType.entitySmoothCutout(texture));
@@ -161,22 +170,18 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
                   }
             }
 
-            boolean inBackpackScreen = currentScreen instanceof BackpackScreen || currentScreen instanceof SmithingScreen;
-            float[] inflate = inflate(inBackpackScreen ? 0.01f : ((float) distance + 5) * 0.001f);
-
             boolean noClipTrims = false;
             switch (kind) {
                   case WINGED ->
-                        renderInteriorMask(pose, light, source, yaw, model, deflate, kind);
+                        renderInteriorMask(pose, light, source, model, inflate, deflate, kind);
                   case LEATHER -> {
-                        renderInteriorMask(pose, light, source, yaw, model, deflate, kind);
+                        renderInteriorMask(pose, light, source, model, inflate, deflate, kind);
                         Color weighted = DyableBackpack.weightedShift(new Color(0xffd7bf), new Color(color), 2.5f, 2.5f, 2.5f, 0);
                         float[] floats = {weighted.getRed() / 255f, weighted.getGreen() / 255f, weighted.getBlue() / 255f};
-                        renderDyableColorOverlay(pose, light, source, yaw, model, inflate, floats, "leather/leather");
+                        renderDyableColorOverlay(pose, light, source, model, inflate, floats, "leather/leather");
 
                         pose.pushPose();
-                        pose.mulPose(Axis.YN.rotationDegrees(yaw));
-                        float[] pouchScale = inflate(0.5f);
+                        float[] pouchScale = inflate(0.5f, reverseY);
                         pose.scale(pouchScale[0], pouchScale[1], pouchScale[2]);
                         pose.translate(0, pouchScale[3]/2, 0);
                         ResourceLocation pouch = new ResourceLocation(Constants.MOD_ID, "textures/entity/leather/pouch.png");
@@ -191,7 +196,6 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
                         pose.popPose();
                   }
                   case BIG_BUNDLE -> {
-                        noClipTrims = true;
                         int rgb = DyableBackpack.shiftBundleColor(color).getRGB();
                         Tint tint = new Tint(rgb);
                         Tint.HSL hsv = tint.HSL().rotate(230);
@@ -199,13 +203,13 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
                         double sat = hsv.getSat();
                         hsv.setLum(Math.cbrt(brightness)).scaleSat(Math.sqrt(sat));
                         hsv.push();
-                        renderDyableColorOverlay(pose, light, source, yaw, model, inflate, tint.getFloats(), "back_bundle/bundle");
-                        renderInteriorMask(pose, light, source, yaw, model, deflate, kind);
+                        renderDyableColorOverlay(pose, light, source, model, inflate, tint.getFloats(), "back_bundle/bundle");
+                        renderInteriorMask(pose, light, source, model, inflate, deflate, kind);
 
+                        noClipTrims = true;
                         pose.pushPose();
-                        pose.mulPose(Axis.YN.rotationDegrees(yaw));
-                        pose.scale(inflate[0], (inflate[1] - 1) * 2 + 1, inflate[2]);
-                        pose.translate(0, inflate[3] * 2, 0);
+                        pose.scale(inflate[0], inflate[1], inflate[2] * 2 - 1);
+                        pose.translate(0, inflate[3], inflate[4]);
                         ResourceLocation overlay = new ResourceLocation(Constants.MOD_ID, "textures/entity/back_bundle/bundle_highlight.png");
                         VertexConsumer overlayTexture = source.getBuffer(RenderType.entityTranslucentCull(overlay));
                         Tint highlight = new Tint(color);
@@ -215,46 +219,41 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
                         hsl.push();
                         float[] f = highlight.getFloats();
                         model.renderToBuffer(pose, overlayTexture, light, OverlayTexture.NO_OVERLAY, f[0], f[1], f[2], 0.6f);
-                        pose.popPose();
                   }
             }
 
-            boolean finalNoClipTrims = noClipTrims;
             TrimHelper.getBackpackTrim(registryAccess, trim).ifPresent((trim1) -> {
                   pose.pushPose();
-                  pose.mulPose(Axis.YN.rotationDegrees(yaw));
+                  pose.scale(inflate[0], inflate[1], inflate[2] * 2 - 1);
+                  pose.pushPose();
                   VertexConsumer vc = atlas.getSprite(trim1.backpackTexture(traits.material())).wrap(source.getBuffer(RenderType.entityCutout(Sheets.ARMOR_TRIMS_SHEET)));
-                  pose.scale(inflate[0], inflate[1], inflate[2]);
-                  if (finalNoClipTrims)
-                        pose.scale(1.001f, 1.001f, 1.001f);
-                  pose.translate(0, inflate[3], 0);
-                  if (inBackpackScreen) {
-                        pose.translate(0, inflate[3], 0);
-                        model.renderToBuffer(pose, vc, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
-                        pose.translate(0, -inflate[3] * 4, inflate[3]);
-                        pose.scale(1/inflate[0], 1, inflate[2]);
-                  }
+                  pose.translate(0, -inflate[3], inflate[4]);
+                  model.renderToBuffer(pose, vc, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+                  pose.popPose();
+
+                  pose.translate(0, inflate[3] * 3, 0);
+                  pose.scale(1, 1, 1);
                   model.renderToBuffer(pose, vc, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
                   pose.popPose();
             });
+
+            if (noClipTrims) pose.popPose();
       }
 
-      private static void renderDyableColorOverlay(PoseStack pose, int light, MultiBufferSource source, float yaw, BackpackModel model, float[] inflate, float[] color, String path) {
+      private static void renderDyableColorOverlay(PoseStack pose, int light, MultiBufferSource source, BackpackModel<?> model, float[] inflate, float[] color, String path) {
             pose.pushPose();
-            pose.mulPose(Axis.YN.rotationDegrees(yaw));
-            pose.scale(inflate[0], (inflate[1] - 1) * 2 + 1, inflate[2]);
-            pose.translate(0, inflate[3] * 3, 0);
+            pose.scale(inflate[0], inflate[1], inflate[2] * 2 - 1);
+            pose.translate(0, inflate[3], inflate[4]);
             ResourceLocation overlay = new ResourceLocation(Constants.MOD_ID, "textures/entity/" + path + "_overlay.png");
             VertexConsumer overlayTexture = source.getBuffer(RenderType.entityTranslucentCull(overlay));
             model.renderToBuffer(pose, overlayTexture, light, OverlayTexture.NO_OVERLAY, color[0], color[1], color[2], 1);
             pose.popPose();
       }
 
-      private static void renderInteriorMask(PoseStack pose, int light, MultiBufferSource source, float yaw, BackpackModel model, float[] deflate, Kind kind) {
+      private static void renderInteriorMask(PoseStack pose, int light, MultiBufferSource source, BackpackModel<?> model, float[] inflate, float[] deflate, Kind kind) {
             pose.pushPose();
-            pose.mulPose(Axis.YN.rotationDegrees(yaw));
-            pose.scale(deflate[0], deflate[1], deflate[2]);
-            pose.translate(0, deflate[3] * 2, -deflate[3]);
+            pose.scale(deflate[1], inflate[1], deflate[2] / 2 + 0.5f);
+            pose.translate(0, inflate[3], -deflate[3] / 3);
             ResourceLocation pouchTexture = kind.getAppendedResource("", "_interior");
             VertexConsumer pouch = source.getBuffer(RenderType.entityCutoutNoCull(pouchTexture));
             model.renderMask(pose, pouch, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1f);
