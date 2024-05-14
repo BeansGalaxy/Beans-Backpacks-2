@@ -45,7 +45,7 @@ public class CommonAtClient {
 
       public static boolean syncBackInventory(CompoundTag tag, int container) {
             LocalPlayer player = Minecraft.getInstance().player;
-            if (player == null && container == -1) return false;
+            if (player == null) return container > -1;
 
             if (container > -1) {
                   AbstractContainerMenu containerMenu = player.containerMenu;
