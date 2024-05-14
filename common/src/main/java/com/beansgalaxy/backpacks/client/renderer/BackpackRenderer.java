@@ -108,12 +108,12 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
             pose.popPose();
 
             RegistryAccess registryAccess = backpack.getCommandSenderWorld().registryAccess();
-            double distance = Math.sqrt(this.entityRenderDispatcher.distanceToSqr(entity));
+            double distance = this.entityRenderDispatcher.distanceToSqr(entity);
 
             Screen currentScreen = Minecraft.getInstance().screen;
             boolean inBackpackScreen = currentScreen instanceof BackpackScreen || currentScreen instanceof SmithingScreen;
-            float inflate = inBackpackScreen ? 0.02f : ((float) distance + 5) * 0.002f;
-            float deflate = distance < 10 || inBackpackScreen ? 0 : (float) (distance - 10.0) * -0.03f;
+            float inflate = inBackpackScreen ? 0.005f : (float) Math.cbrt(distance + 3) * 0.003f;
+            float deflate = distance < 100 || inBackpackScreen ? 0 : ((float) Math.sqrt(distance) - 10f) * -0.03f;
             renderOverlays(pose, light, source, colors, registryAccess, traits, this.model, this.trimAtlas, inflate, deflate, false);
 
             if (abstractBackpack != null) {
@@ -201,7 +201,8 @@ public class BackpackRenderer<T extends Entity> extends EntityRenderer<T> {
                         Tint.HSL hsv = tint.HSL().rotate(230);
                         double brightness = tint.brightness();
                         double sat = hsv.getSat();
-                        hsv.setLum(Math.cbrt(brightness)).scaleSat(Math.sqrt(sat));
+                        double lum1 = hsv.getLum();
+                        hsv.setLum(Math.sqrt(brightness * (-lum1 * 0.8 + 1))).scaleSat(Math.sqrt(sat) * 0.8);
                         hsv.push();
                         renderDyableColorOverlay(pose, light, source, model, inflate, tint.getFloats(), "back_bundle/bundle");
                         renderInteriorMask(pose, light, source, model, inflate, deflate, kind);

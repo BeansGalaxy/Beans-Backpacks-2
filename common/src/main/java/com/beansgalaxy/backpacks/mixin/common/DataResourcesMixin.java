@@ -82,7 +82,6 @@ public class DataResourcesMixin {
             }));
 
             Traits.register("null", new Traits("Null Backpack", true, "none", null, 11, "hard"));
-            Traits.register("bundle", new Traits("Back Bundle", false, "none", "leather", () -> ServerSave.CONFIG.leather_max_stacks.get(), Traits.Sound.SOFT));
 
             for (Kind kind : Kind.values()) {
                   Traits.register(kind.name(), kind.defaultTraits);
