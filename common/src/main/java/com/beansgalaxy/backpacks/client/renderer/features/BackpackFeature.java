@@ -82,8 +82,7 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
         float fallDistance = player.fallDistance;
         float fallPitch = player.isFallFlying() ? 0 : (float) (Math.log(fallDistance * 3 + 1)) * -0.05f;
         float headPitch = Mth.lerp(tick, viewable.lastPitch, viewable.headPitch) * 0.3f;
-        backpackModel.body.getChild("body_head").xRot = headPitch + fallPitch;
-        backpackModel.mask.getChild("mask_head").xRot = headPitch + fallPitch;
+        backpackModel.setOpenAngle(headPitch + fallPitch);
 
         ResourceLocation cloakTexture = player.getCloakTextureLocation();
         if (player.isCapeLoaded() && !player.isInvisible() && player.isModelPartShown(PlayerModelPart.CAPE) && cloakTexture != null) {

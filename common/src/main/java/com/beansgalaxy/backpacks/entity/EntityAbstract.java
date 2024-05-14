@@ -700,8 +700,8 @@ public abstract class EntityAbstract extends Backpack {
 
       @Override @NotNull
       public InteractionResult interact(Player player, InteractionHand hand) {
-            ItemStack itemInHand = player.getItemInHand(hand);
-            if (!isLocked() && itemInHand.is(Services.REGISTRY.getLock()))
+            ItemStack itemInHand;
+            if (!isLocked() && (itemInHand = player.getItemInHand(hand)).is(Services.REGISTRY.getLock()))
             {
                   playSound(PlaySound.Events.LOCK.get());
                   setLocked(true);
@@ -712,20 +712,20 @@ public abstract class EntityAbstract extends Backpack {
 
             if (player.isDiscrete())
             {
-                  if (itemInHand.isEmpty()) {
-                        if (!isLocked() || !player.getUUID().equals(getPlacedBy()))
-                              return InteractionResult.PASS;
-
+                  if (isLocked() && player.getUUID().equals(getPlacedBy())) {
                         playSound(PlaySound.Events.UNLOCK.get());
                         setLocked(false);
                         if (!player.isCreative()) {
                               Inventory inventory = player.getInventory();
-                              int selected = inventory.selected;
-                              inventory.add(selected, Services.REGISTRY.getLock().getDefaultInstance());
+                              itemInHand = player.getItemInHand(InteractionHand.MAIN_HAND);
+                              int slot = itemInHand.isEmpty()
+                                          ? inventory.selected
+                                          : -1;
+                              inventory.add(slot, Services.REGISTRY.getLock().getDefaultInstance());
                         }
-                        return InteractionResult.SUCCESS;
                   }
-                  else return shiftClickOnBackpack(player, hand);
+
+                  return shiftClickOnBackpack(player, hand);
             }
             else if (player instanceof ServerPlayer serverPlayer)
             {

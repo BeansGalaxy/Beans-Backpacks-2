@@ -69,6 +69,10 @@ public class BackpackModel<T extends Entity>
 			part.y = 9;
 		}
 
+		setOpenAngle(headPitch);
+	}
+
+	public void setOpenAngle(float headPitch) {
 		ModelPart[] topParts = {body.getChild("body_head"), mask.getChild("mask_head")};
 		for (ModelPart topPart : topParts) {
 			topPart.xRot = headPitch;
