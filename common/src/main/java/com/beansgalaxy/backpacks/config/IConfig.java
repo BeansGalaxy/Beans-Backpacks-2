@@ -55,12 +55,11 @@ public interface IConfig {
             while (iterator.hasNext()) {
                   ConfigLine line = iterator.next();
                   String encode = line.encode();
-                  boolean notLabel = !(line instanceof ConfigLabel);
-                  if (notLabel)
+                  if (line.punctuate())
                         sb.append("  ");
                   sb.append(encode);
                   int length = encode.length();
-                  if (notLabel && iterator.hasNext()) {
+                  if (line.punctuate() && iterator.hasNext()) {
                         sb.append(',');
                         length += 1;
                   }

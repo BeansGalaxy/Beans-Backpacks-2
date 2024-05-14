@@ -203,7 +203,7 @@ public class BackData {
       }
 
       public boolean backSlotDisabled() {
-            return getDisabling().stream().anyMatch(in -> !in.isEmpty() && !Kind.isWings(in));
+            return ServerSave.CONFIG.always_disables_back_slot.get() || getDisabling().stream().anyMatch(in -> !in.isEmpty() && !Kind.isWings(in));
       }
 
       public List<ItemStack> getDisabling() {

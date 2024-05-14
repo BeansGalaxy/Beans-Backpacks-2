@@ -8,4 +8,8 @@ public interface ConfigLine {
       String comment(int max);
 
       void decode(JsonObject jsonObject);
+
+      default boolean punctuate() {
+            return true;
+      }
 }

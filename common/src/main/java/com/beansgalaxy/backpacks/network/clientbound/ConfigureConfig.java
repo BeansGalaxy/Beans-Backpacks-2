@@ -29,7 +29,7 @@ public class ConfigureConfig implements Packet2C {
             StringBuilder sb = new StringBuilder().append('{');
             while (iterator.hasNext()) {
                   ConfigLine line = iterator.next();
-                  if (line instanceof ConfigLabel) continue;
+                  if (!line.punctuate()) continue;
 
                   String encode = line.encode();
                   sb.append(encode);

@@ -20,6 +20,7 @@ public class CommonConfig implements IConfig {
       public HSetConfigVariant<Item> disables_back_slot;
       public HSetConfigVariant<Item> elytra_items;
       public HMapConfigVariant<String, Integer> data_driven_overrides;
+      public BoolConfigVariant always_disables_back_slot;
 
       public boolean usesOldDataPackConfig = false;
 
@@ -36,24 +37,23 @@ public class CommonConfig implements IConfig {
                               .comment("If a backpack is Data-Driven, find it's 'backpack_id' with F3 + H")
                               .build("data_driven_overrides"),
                   new ConfigLabel("Item Whitelists"),
+                  new ConfigComment("┏▶ items can be worn on the back & not as equipment. Item does not keep functioning or rendering on the back."),
                   disable_chestplate = ItemListConfigVariant.create("disable_chestplate"),
+                  new ConfigComment("┏▶ if any items are in armor/trinkets/curios slots then back equipment is not rendered."),
                   disables_back_slot = ItemListConfigVariant.create("disables_back_slot", "create:copper_backtank", "create:netherite_backtank"),
+                  new ConfigComment("┏▶ cannot be worn with Winged Backpack & other backpacks will be positioned off the player's back"),
                   elytra_items       = ItemListConfigVariant.create("elytra_items", "minecraft:elytra"),
+                  new ConfigComment("┏▶ cannot be stored in any backpack's inventory"),
                   blacklist_items    = ItemListConfigVariant.create("blacklist_items", "minecraft:shulker_box", "minecraft:white_shulker_box",
                               "minecraft:orange_shulker_box", "minecraft:magenta_shulker_box", "minecraft:light_blue_shulker_box",
                               "minecraft:yellow_shulker_box", "minecraft:lime_shulker_box", "minecraft:pink_shulker_box",
                               "minecraft:gray_shulker_box", "minecraft:light_gray_shulker_box", "minecraft:cyan_shulker_box",
                               "minecraft:purple_shulker_box", "minecraft:blue_shulker_box", "minecraft:brown_shulker_box",
                               "minecraft:green_shulker_box", "minecraft:red_shulker_box", "minecraft:black_shulker_box"
-                  )
+                  ),
+                  new ConfigLabel("Miscellaneous"),
+                  always_disables_back_slot = new BoolConfigVariant("always_disables_back_slot", false)
       };
-
-      private static HashMap<String, Integer> createDDOsDefaults() {
-            HashMap<String, Integer> map = new HashMap<>();
-            map.put("gold", 7);
-            map.put("netherite", 11);
-            return map;
-      }
 
       private final ConfigLabel GAMERULE_LABEL = new ConfigLabel("Gamerules");
       public final HashMap<Gamerules, BoolConfigVariant> gamerules = Gamerules.getBoolConfig();
