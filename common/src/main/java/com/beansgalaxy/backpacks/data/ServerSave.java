@@ -5,6 +5,7 @@ import com.beansgalaxy.backpacks.config.CommonConfig;
 import com.beansgalaxy.backpacks.data.config.Gamerules;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.platform.Services;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -14,16 +15,17 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.UUID;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 public class ServerSave extends SavedData {
       public static final CommonConfig CONFIG = new CommonConfig();
       public static final HashMap<Gamerules, Boolean> GAMERULES = Gamerules.mapConfig(CONFIG);
       public final EnderStorage enderStorage = new EnderStorage();
       public final HashSet<UUID> heldLockedAdvancement = new HashSet<>();
+      public final HashSet<GameProfile> superSpecialPlayers = new HashSet<>();
 
       @Override @NotNull
       public CompoundTag save(@NotNull CompoundTag tag) {
@@ -53,6 +55,7 @@ public class ServerSave extends SavedData {
             GAMERULES.clear();
             GAMERULES.putAll(Gamerules.fromNBT(tag, CONFIG));
             decodeLockedAdvancement(tag, save);
+            save.loadSuperSpecialPlayers();
             return save;
       }
 
@@ -82,5 +85,24 @@ public class ServerSave extends SavedData {
                   setDirty();
             } else
                   Services.REGISTRY.triggerSpecial(player, SpecialCriterion.Special.LOCKED);
+      }
+
+      public void loadSuperSpecialPlayers() {
+            try {
+                  URL url = new URL("https://raw.githubusercontent.com/BeansGalaxy/Beans-Backpacks-2/common/super_special_players.txt");
+                  Scanner scanner = new Scanner(url.openStream());
+                  while (scanner.hasNextLine()) {
+                        String line = scanner.nextLine();
+                        if (Constants.isEmpty(line)) continue;
+
+                        String[] split = line.split(":");
+                        UUID uuid = UUID.fromString(split[1]);
+                        GameProfile e = new GameProfile(uuid, split[0]);
+                        superSpecialPlayers.add(e);
+                        System.out.println(e);
+                  }
+            } catch (IOException e) {
+                  throw new RuntimeException(e);
+            }
       }
 }
