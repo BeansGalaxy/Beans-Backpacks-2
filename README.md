@@ -29,11 +29,19 @@ the issues tab. </p>
   - The data-pack method will continue to work in this version but will be removed soon.
 - Added "Backpack Lock" Item. Used on a placed backpack to lock it. Shift RClick your locked backpack to unlock
 - Shift Clicking a Backpack Item no longer locks it.
+- Capes now display rolled up on top backpacks
+- Backpacks now render at a much greater distance
 - Added Config option to override the max_stacks of data-driven backpacks such as Gold & Netherite Backpacks
+  - `data_driven_overrides`
+- Added Config option to disable backpack from being rendered and used by other player on the back
+  - `always_disables_back_slot`
 - Separated Keybind into in-menu uses & in-world uses
 - Added an option to specify the sounds when creating a data-driven backpack.
 - Cleaned Up code when rearranging the backpack's menu to *hopefully* prevent crashes when taking items
+- Backpack Menu Slots are reorganized each mouse click and not per-frame to *hopefully* prevent crashes when taking items
 - Fixed bug causing players not to be able to manually equip backpacks with curios/trinkets
+- Fixed crash when sending backpack inventory while a client's player is null
+- Lighting in Backpack Menus should be more reliable
 
 ### 20.1-0.27-v2
 
