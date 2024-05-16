@@ -49,6 +49,12 @@ public class MenuSlot extends Slot {
       }
 
       @Override
+      public void setChanged() {
+            super.setChanged();
+            onClick.run();
+      }
+
+      @Override
       public ItemStack getItem() {
             if (State.EMPTY.equals(state))
                   return ItemStack.EMPTY;
@@ -78,7 +84,6 @@ public class MenuSlot extends Slot {
 
       @Override
       public void onTake(Player $$0, ItemStack $$1) {
-            onClick.run();
             super.onTake($$0, $$1);
       }
 
@@ -88,12 +93,11 @@ public class MenuSlot extends Slot {
             HIDDEN
       }
 
-      public static int[] getXY(BackpackInventory inventory, int slot) {
+      public static int[] getXY(BackpackInventory inventory, int slot, boolean hasSpace) {
             int size = Math.min(MAX_SLOTS, inventory.getContainerSize());
             int slots;
             int index;
 
-            boolean hasSpace = inventory.spaceLeft() > 0;
             if (hasSpace) {
                   index = slot + 1;
                   slots = size + 1;

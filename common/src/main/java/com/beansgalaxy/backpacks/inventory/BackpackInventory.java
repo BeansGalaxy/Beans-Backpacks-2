@@ -29,6 +29,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.entity.EntityAccess;
 
+import java.util.List;
 import java.util.UUID;
 
 public abstract class BackpackInventory implements Container {
@@ -260,6 +261,9 @@ public abstract class BackpackInventory implements Container {
 
             if (Kind.isBackpack(stack))
                   return 16;
+
+            if (stack.isEmpty())
+                  return 0;
 
             return 64 / stack.getMaxStackSize();
       };

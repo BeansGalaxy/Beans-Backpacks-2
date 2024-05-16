@@ -6,6 +6,7 @@ import com.beansgalaxy.backpacks.config.IConfig;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.Kind;
+import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.inventory.CauldronInventory;
 import com.beansgalaxy.backpacks.inventory.PotInventory;
@@ -145,19 +146,7 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                   if (!selectedBackpackInventory) {
                         super.clicked(slotIndex, button, actionType, player);
                         int sizeLeft = carried.getMaxStackSize() - carried.getCount();
-                        if (sizeLeft > 0) {
-                              Iterator<ItemStack> stacks = backpackInventory.getItemStacks().iterator();
-                              while (stacks.hasNext() && sizeLeft > 0) {
-                                    ItemStack backpackItem = stacks.next();
-                                    if (ItemStack.isSameItemSameTags(backpackItem, carried)) {
-                                          int count = Math.max(0, backpackItem.getCount() - sizeLeft);
-                                          backpackItem.shrink(count);
-                                          carried.grow(count);
-                                          sizeLeft -= count;
-                                    }
-                              }
-                              backpackInventory.mergeItems();
-                        }
+                        beans_Backpacks_2$pickupAll(sizeLeft, backpackInventory, carried);
                   }
                   return;
             }
@@ -208,5 +197,30 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
             }
 
             super.clicked(slotIndex, button, actionType, player);
+      }
+
+      @Unique
+      private void beans_Backpacks_2$pickupAll(int sizeLeft, BackpackInventory backpackInventory, ItemStack carried) {
+            if (sizeLeft > 0) {
+                  boolean playSound = false;
+                  Iterator<ItemStack> stacks = backpackInventory.getItemStacks().iterator();
+                  while (stacks.hasNext() && sizeLeft > 0) {
+                        ItemStack backpackItem = stacks.next();
+                        if (ItemStack.isSameItemSameTags(backpackItem, carried)) {
+                              int count = Math.min(sizeLeft, backpackItem.getCount());
+                              if (count > 0) {
+                                    playSound = true;
+                                    backpackItem.shrink(count);
+                                    carried.grow(count);
+                                    sizeLeft -= count;
+                                    if (backpackItem.isEmpty())
+                                          stacks.remove();
+                              }
+                        }
+                  }
+                  if (playSound)
+                        backpackInventory.playSound(PlaySound.TAKE, 0.8f);
+                  backpackInventory.mergeItems();
+            }
       }
 }

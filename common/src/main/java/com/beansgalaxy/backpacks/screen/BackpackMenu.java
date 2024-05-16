@@ -119,7 +119,7 @@ public class BackpackMenu extends AbstractContainerMenu {
                   if (backIndex + shift < size) {
                         backpackSlot.index = backIndex + 36;
                         backpackSlot.state = MenuSlot.State.ACTIVE;
-                        int[] xy = MenuSlot.getXY(backpackInventory, backIndex);
+                        int[] xy = MenuSlot.getXY(backpackInventory, backIndex, hasSpace);
                         backpackSlot.x = xy[0];
                         backpackSlot.y = xy[1];
                         continue;
@@ -127,7 +127,7 @@ public class BackpackMenu extends AbstractContainerMenu {
                   if (hasSpace && backIndex + shift == size) {
                         backpackSlot.index = size + 36;
                         backpackSlot.state = MenuSlot.State.EMPTY;
-                        int[] xy = MenuSlot.getXY(backpackInventory, -1);
+                        int[] xy = MenuSlot.getXY(backpackInventory, -1, true);
                         backpackSlot.x = xy[0];
                         backpackSlot.y = xy[1];
                   } else {
@@ -151,16 +151,17 @@ public class BackpackMenu extends AbstractContainerMenu {
       }
 
       @Override
+      public boolean canDragTo(Slot slot) {
+            return !(slot instanceof MenuSlot);
+      }
+
+      @Override
       public void clicked(int slotIndex, int button, ClickType actionType, Player player) {
             handleClick(slotIndex, button, actionType, player);
             updateSlots();
       }
 
       private void handleClick(int slotIndex, int button, ClickType actionType, Player player) {
-            Kind kind = backpackInventory.getTraits().kind;
-            boolean clientSide = viewer.level().isClientSide();
-            //if (clientSide && Kind.ENDER.is(kind)) return;
-
             ItemStack carried = getCarried();
             boolean carriedEmpty = carried.isEmpty();
             if (slotIndex >= slots.size()) {
@@ -182,7 +183,7 @@ public class BackpackMenu extends AbstractContainerMenu {
             }
 
             if (actionType == ClickType.PICKUP_ALL) {
-                  if (backIndex != -1)
+                  if (backIndex == -1)
                         super.clicked(slotIndex, button, actionType, player);
                   return;
             }

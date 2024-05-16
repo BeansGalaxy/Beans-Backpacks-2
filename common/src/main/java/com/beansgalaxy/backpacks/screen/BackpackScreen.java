@@ -96,9 +96,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> implem
 
       @Override
       public boolean mouseClicked(double $$0, double $$1, int $$2) {
-            boolean clicked = super.mouseClicked($$0, $$1, $$2);
-            menu.updateSlots();
-            return clicked;
+            return super.mouseClicked($$0, $$1, $$2);
       }
 
       @Override
@@ -206,6 +204,5 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> implem
       @Override
       public void beans_Backpacks_2$slotClicked(Slot $$0, int $$1, int $$2, ClickType $$3) {
             slotClicked($$0, $$1, $$2, $$3);
-            menu.updateSlots();
       }
 }
