@@ -10,13 +10,11 @@ import com.beansgalaxy.backpacks.events.advancements.EquipAnyCriterion;
 import com.beansgalaxy.backpacks.events.advancements.PlaceCriterion;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
-import com.beansgalaxy.backpacks.items.BackpackItem;
-import com.beansgalaxy.backpacks.items.DyableBackpack;
-import com.beansgalaxy.backpacks.items.EnderBackpack;
-import com.beansgalaxy.backpacks.items.WingedBackpack;
+import com.beansgalaxy.backpacks.items.*;
 import com.beansgalaxy.backpacks.items.recipes.Conversion;
 import com.beansgalaxy.backpacks.items.recipes.Crafting;
 import com.beansgalaxy.backpacks.items.recipes.Smithing;
+import com.beansgalaxy.backpacks.items.recipes.SuperSpecialRecipe;
 import com.beansgalaxy.backpacks.network.NetworkPackages;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
@@ -106,7 +104,7 @@ public class FabricMain implements ModInitializer {
     public static final Item UPGRADED_BACKPACK = registerItem("upgraded_backpack", new BackpackItem(new Item.Properties().fireResistant().stacksTo(1)));
     public static final Item WINGED_BACKPACK = registerItem("winged_backpack", new WingedBackpack(new Item.Properties().defaultDurability(432).rarity(Rarity.UNCOMMON)));
     public static final Item ENDER_BACKPACK = registerItem("ender_backpack", new EnderBackpack(new Item.Properties().stacksTo(1)));
-    public static final Item BACK_BUNDLE = registerItem("back_bundle", new DyableBackpack(new Item.Properties().stacksTo(1)));
+    public static final Item BACK_BUNDLE = registerItem("back_bundle", new BackBundle(new Item.Properties().stacksTo(1)));
     public static final Item LOCK = registerItem("lock", new Item(new Item.Properties()));
 
     private static Item registerItem(String name, Item item)
@@ -124,6 +122,9 @@ public class FabricMain implements ModInitializer {
 
     public static final RecipeSerializer<Conversion> RECIPE_CONVERSION = Registry.register(
                 BuiltInRegistries.RECIPE_SERIALIZER, Conversion.LOCATION, Conversion.INSTANCE);
+
+    public static final RecipeSerializer<SuperSpecialRecipe> RECIPE_SUPER_SPECIAL = Registry.register(
+                BuiltInRegistries.RECIPE_SERIALIZER, SuperSpecialRecipe.LOCATION, SuperSpecialRecipe.INSTANCE);
 
     /* ========================================= REGISTER CREATIVE TAB ========================================= */
     public static final CreativeModeTab BACKPACK_TAB = FabricItemGroup.builder()

@@ -8,13 +8,11 @@ import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.EquipAnyCriterion;
 import com.beansgalaxy.backpacks.events.advancements.PlaceCriterion;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
-import com.beansgalaxy.backpacks.items.BackpackItem;
-import com.beansgalaxy.backpacks.items.DyableBackpack;
-import com.beansgalaxy.backpacks.items.EnderBackpack;
-import com.beansgalaxy.backpacks.items.WingedBackpack;
+import com.beansgalaxy.backpacks.items.*;
 import com.beansgalaxy.backpacks.items.recipes.Conversion;
 import com.beansgalaxy.backpacks.items.recipes.Crafting;
 import com.beansgalaxy.backpacks.items.recipes.Smithing;
+import com.beansgalaxy.backpacks.items.recipes.SuperSpecialRecipe;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
@@ -115,6 +113,9 @@ public class ForgeMain {
     public static final RegistryObject<RecipeSerializer<Conversion>> BACKPACK_CONVERSION =
                 RECIPES.register(Conversion.ID, () -> Conversion.INSTANCE);
 
+    public static final RegistryObject<RecipeSerializer<SuperSpecialRecipe>> BACKPACK_SUPER_SPECIAL =
+                RECIPES.register(SuperSpecialRecipe.ID, () -> SuperSpecialRecipe.INSTANCE);
+
     // REGISTER ITEMS
     public static final DeferredRegister<Item> ITEMS =
                 DeferredRegister.create(ForgeRegistries.ITEMS, Constants.MOD_ID);
@@ -130,7 +131,7 @@ public class ForgeMain {
     public static final RegistryObject<Item> ENDER_BACKPACK = ITEMS.register("ender_backpack", () ->
                 new EnderBackpack(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> BACK_BUNDLE = ITEMS.register("back_bundle", () ->
-                new DyableBackpack(new Item.Properties().stacksTo(1)));
+                new BackBundle(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LOCK = ITEMS.register("lock", () ->
                 new Item(new Item.Properties()));
 

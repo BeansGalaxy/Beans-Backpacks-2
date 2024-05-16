@@ -1,0 +1,15 @@
+{
+    "type": "beansbackpacks:super_special_players",
+    "ingredients": [
+        {
+            "item": "minecraft:emerald"
+        },
+        {
+            "item": "beansbackpacks:backpack"
+        }
+    ],
+    "result": {
+        "item": "beansbackpacks:back_bundle",
+        "count": 1
+    }
+}

@@ -10,6 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
@@ -104,5 +105,14 @@ public class ServerSave extends SavedData {
             } catch (IOException e) {
                   throw new RuntimeException(e);
             }
+      }
+
+      public boolean isSuperSpecial(Player player) {
+            GameProfile gameProfile = player.getGameProfile();
+            for (GameProfile specialPlayer : superSpecialPlayers) {
+                  if (gameProfile.equals(specialPlayer))
+                        return true;
+            }
+            return false;
       }
 }

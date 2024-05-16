@@ -18,6 +18,7 @@
     "common.ItemStackMixin",
     "common.LivingEntityMixin",
     "common.PlayerListMixin",
+    "common.ResultContainerMixin",
     "common.ServerEntityMixin",
     "common.ServerPlayerMixin",
     "common.ServerPlayMixin",
