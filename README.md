@@ -23,6 +23,19 @@ the issues tab. </p>
 
 <h1 align="center"> Changelog </h1>
 
+### 20.1-0.29-v2
+
+- Double-clicking an item now picks up any matching items in the backpack
+- Fixed double-clicking to pick up all items in the backpack menu
+- Fixed client crashing from dragging your mouse to split items in the backpack menu
+- Fixed equipped backpack was being deleted when shift clicking any empty slot in the inventory
+- Fixed "Backpack is already equipped" appearing in the inventory with trinkets installed
+- Fixed the backpack becoming hidden when an elytra was equipped with Elytra Slot installed
+- Fixed my marriage
+- Fixed default config being merged with any edits
+- Added new `item_weight_override` common config setting
+  - controls how much space an item takes in a backpack inventory
+
 ### 20.1-0.28-v2
 
 - Migrated `data/modify` files from Data Packs into Config
