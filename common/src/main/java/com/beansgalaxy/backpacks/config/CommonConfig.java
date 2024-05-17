@@ -3,8 +3,11 @@ package com.beansgalaxy.backpacks.config;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.config.types.*;
 import com.beansgalaxy.backpacks.data.config.Gamerules;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 import java.util.*;
 
@@ -21,11 +24,13 @@ public class CommonConfig implements IConfig {
       public HSetConfigVariant<Item> elytra_items;
       public HMapConfigVariant<String, Integer> data_driven_overrides;
       public BoolConfigVariant always_disables_back_slot;
+      private HMapConfigVariant<Item, Integer> item_weight_override;
 
       public boolean usesOldDataPackConfig = false;
 
       private final ConfigLine[] LINES = new ConfigLine[] {
-                  new ConfigLabel("Maximum Stacks"),
+
+      new ConfigLabel("Maximum Stacks"),
                   leather_max_stacks =       new IntConfigVariant("leather_max_stacks", 4, 1, 64),
                   ender_max_stacks =         new IntConfigVariant("ender_max_stacks",   4, 1, 8),
                   winged_max_stacks =        new IntConfigVariant("winged_max_stacks",  4, 1, 64),
@@ -33,25 +38,36 @@ public class CommonConfig implements IConfig {
                   pot_max_stacks =           new IntConfigVariant("pot_max_stacks",   128, 0, 128),
                   cauldron_max_buckets =  new IntConfigVariant("cauldron_max_buckets", 24, 0, 128),
                   data_driven_overrides = HMapConfigVariant.Builder.create(String::valueOf, Integer::valueOf)
-                              .example(new String[]{"gold", "netherite"}, new Integer[]{7, 11}).validator(i -> Mth.clamp(i, 1, 64))
+                              .example(new String[]{"gold", "netherite"}, new Integer[]{7, 11}).validEntry(i -> Mth.clamp(i, 1, 64))
                               .comment("If a backpack is Data-Driven, find it's 'backpack_id' with F3 + H")
                               .build("data_driven_overrides"),
-                  new ConfigLabel("Item Whitelists"),
+                  item_weight_override = HMapConfigVariant.Builder.create(
+                              encodeKey -> BuiltInRegistries.ITEM.getKey(encodeKey).toShortLanguageKey(),
+                              decodeKey -> {
+                                    ResourceLocation location = new ResourceLocation(decodeKey);
+                                    if (BuiltInRegistries.ITEM.containsKey(location))
+                                          return BuiltInRegistries.ITEM.get(location);
+                                    return null;
+                              },
+                              String::valueOf, Integer::valueOf)
+                              .validEntry(i -> Mth.clamp(i, 1, 64))
+                              .defau(new Item[]{Items.ENCHANTED_BOOK}, new Integer[]{16})
+                              .comment("Stored items will act like they stack to the declared whole number").build("item_weight_override"),
+
+      new ConfigLabel("Item Whitelists"),
                   new ConfigComment("┌▶ items can be worn on the back & not as equipment. Item does not keep functioning or rendering on the back."),
-                  disable_chestplate = ItemListConfigVariant.create("disable_chestplate"),
+                  disable_chestplate = UniqueConfigVariants.itemList("disable_chestplate", ""),
                   new ConfigComment("┌▶ if any items are in armor/trinkets/curios slots then back equipment is not rendered."),
-                  disables_back_slot = ItemListConfigVariant.create("disables_back_slot", "create:copper_backtank", "create:netherite_backtank"),
+                  disables_back_slot = UniqueConfigVariants.itemList("disables_back_slot", "create:copper_backtank, create:netherite_backtank"),
                   new ConfigComment("┌▶ cannot be worn with Winged Backpack & other backpacks will be positioned off the player's back"),
-                  elytra_items       = ItemListConfigVariant.create("elytra_items", "minecraft:elytra"),
+                  elytra_items = UniqueConfigVariants.itemList("elytra_items", "elytra"),
                   new ConfigComment("┌▶ cannot be stored in any backpack's inventory"),
-                  blacklist_items    = ItemListConfigVariant.create("blacklist_items", "minecraft:shulker_box", "minecraft:white_shulker_box",
-                              "minecraft:orange_shulker_box", "minecraft:magenta_shulker_box", "minecraft:light_blue_shulker_box",
-                              "minecraft:yellow_shulker_box", "minecraft:lime_shulker_box", "minecraft:pink_shulker_box",
-                              "minecraft:gray_shulker_box", "minecraft:light_gray_shulker_box", "minecraft:cyan_shulker_box",
-                              "minecraft:purple_shulker_box", "minecraft:blue_shulker_box", "minecraft:brown_shulker_box",
-                              "minecraft:green_shulker_box", "minecraft:red_shulker_box", "minecraft:black_shulker_box"
-                  ),
-                  new ConfigLabel("Miscellaneous"),
+                  blacklist_items = UniqueConfigVariants.itemList("blacklist_items", "shulker_box",
+                              "white_shulker_box, orange_shulker_box, magenta_shulker_box, light_blue_shulker_box, yellow_shulker_box, lime_shulker_box",
+                              "pink_shulker_box, gray_shulker_box, light_gray_shulker_box, cyan_shulker_box, purple_shulker_box, blue_shulker_box",
+                              "brown_shulker_box, green_shulker_box, red_shulker_box, black_shulker_box"),
+
+      new ConfigLabel("Miscellaneous"),
                   always_disables_back_slot = new BoolConfigVariant("always_disables_back_slot", false)
       };
 

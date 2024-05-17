@@ -20,7 +20,8 @@ public class ClientConfig implements IConfig {
                   new ConfigLabel("Client"),
                   instant_place =         new BoolConfigVariant("instant_place", false),
                   menu_visibility =     new EnumConfigVariant<>("menu_visibility", MenuVisibility.HIDE_ABLE, MenuVisibility.values()),
-                  hidden_tabs =         new HSetConfigVariant<>("hidden_tabs", new HashSet<>(), Enum::name, Tabs::valueOf, "For Internal Use (Employees Only!)"),
+                  hidden_tabs = HSetConfigVariant.Builder.create(Enum::name, Tabs::valueOf).comment("For Internal Use (Employees Only!)")
+                                                         .build("hidden_tabs"),
                   tooltip_style =       new EnumConfigVariant<>("tooltip_style", TooltipType.COMPACT, TooltipType.values())
       };
 

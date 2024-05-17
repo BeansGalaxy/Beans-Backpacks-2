@@ -6,6 +6,7 @@ import net.minecraft.util.GsonHelper;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 public class HMapConfigVariant<KEY, ENTRY> extends ConfigVariant<HashMap<KEY, ENTRY>> {
@@ -80,8 +81,10 @@ public class HMapConfigVariant<KEY, ENTRY> extends ConfigVariant<HashMap<KEY, EN
 
             JsonObject jsonValue = jsonObject.getAsJsonObject(name);
             for (String key : jsonValue.keySet()) {
+                  KEY apply = keyDecode.apply(key);
+                  if (apply == null) continue;
                   String entry = GsonHelper.getAsString(jsonValue, key);
-                  value.put(keyDecode.apply(key), validate.apply(entryDecode.apply(entry)));
+                  value.put(apply, validate.apply(entryDecode.apply(entry)));
             }
       }
 
@@ -125,7 +128,11 @@ public class HMapConfigVariant<KEY, ENTRY> extends ConfigVariant<HashMap<KEY, EN
                   return this;
             }
 
-            public Builder<K, E> validator(UnaryOperator<E> validate) {
+            public Builder<K, E> validKey(Predicate<String> validate) {
+                  return null;
+            }
+
+            public Builder<K, E> validEntry(UnaryOperator<E> validate) {
                   this.validator = validate;
                   return this;
             }

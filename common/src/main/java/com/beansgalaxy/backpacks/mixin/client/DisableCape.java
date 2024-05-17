@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.mixin.client;
 
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.data.ServerSave;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -16,7 +17,7 @@ public class DisableCape {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z"), cancellable = true)
       public void disable(PoseStack $$0, MultiBufferSource $$1, int $$2, AbstractClientPlayer player, float $$4, float $$5, float $$6, float $$7, float $$8, float $$9, CallbackInfo ci) {
             BackData backData = BackData.get(player);
-            if (!backData.isEmpty())
+            if (!backData.isEmpty() && !ServerSave.CONFIG.always_disables_back_slot.get())
                   ci.cancel();
       }
 }
