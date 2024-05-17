@@ -96,7 +96,7 @@ public enum Kind {
       }
 
       public static boolean isWearableElytra(Item item) {
-            return IConfig.elytraItem(item) && !Services.COMPAT.isModLoaded(CompatHelper.ELYTRA_SLOT);
+            return IConfig.elytraItem(item);
       }
 
       public static Kind fromStack(ItemStack stack) {

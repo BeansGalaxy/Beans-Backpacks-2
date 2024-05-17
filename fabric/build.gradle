@@ -34,6 +34,8 @@ dependencies {
     modApi("me.shedaniel.cloth:cloth-config-fabric:11.1.118") {
         exclude(group: "net.fabricmc.fabric-api")
     }
+
+    //modRuntimeOnly "maven.modrinth:elytra-slot:6uCj1VmZ"
 }
 
 loom {

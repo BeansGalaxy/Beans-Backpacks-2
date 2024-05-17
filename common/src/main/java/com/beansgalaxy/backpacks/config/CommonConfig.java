@@ -24,7 +24,8 @@ public class CommonConfig implements IConfig {
       public HSetConfigVariant<Item> elytra_items;
       public HMapConfigVariant<String, Integer> data_driven_overrides;
       public BoolConfigVariant always_disables_back_slot;
-      private HMapConfigVariant<Item, Integer> item_weight_override;
+      public HMapConfigVariant<Item, Integer> item_weight_override;
+      public int override_all_item_weights = -1;
 
       public boolean usesOldDataPackConfig = false;
 
@@ -51,7 +52,14 @@ public class CommonConfig implements IConfig {
                               },
                               String::valueOf, Integer::valueOf)
                               .validEntry(i -> Mth.clamp(i, 1, 64))
-                              .defau(new Item[]{Items.ENCHANTED_BOOK}, new Integer[]{16})
+                              .defau(new Item[]{Items.ENCHANTED_BOOK, Items.BUNDLE}, new Integer[]{16, 4})
+                              .example(new String[]{"all"}, new Integer[]{64})
+                              .inject((key, i) -> {
+                                    if (key.equals("all")) {
+                                          override_all_item_weights = i;
+                                          return true;
+                                    } else return false;
+                              })
                               .comment("Stored items will act like they stack to the declared whole number").build("item_weight_override"),
 
       new ConfigLabel("Item Whitelists"),

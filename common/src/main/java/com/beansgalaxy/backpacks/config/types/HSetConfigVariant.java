@@ -52,6 +52,8 @@ public class HSetConfigVariant<ENTRY> extends ConfigVariant<HashSet<ENTRY>> {
       public void decode(JsonObject jsonObject) {
             if (!jsonObject.has(name)) return;
 
+            value.clear();
+            rejects.clear();
             String string = GsonHelper.getAsString(jsonObject, name);
             decode(string, isValid, decode, value, rejects);
       }
