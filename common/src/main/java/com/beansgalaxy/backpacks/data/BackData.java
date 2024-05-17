@@ -151,7 +151,6 @@ public class BackData {
                   return false;
 
             ItemStack wornStack = this.getStack();
-            boolean notEmpty = !wornStack.isEmpty();
             Component msg = null;
             if (toEquip.getItem() instanceof EnderBackpack ender) {
                   UUID uuid = ender.getOrCreateUUID(owner, toEquip);
@@ -161,17 +160,9 @@ public class BackData {
                   }
             }
 
-            if (msg == null && notEmpty) {
-                  if (!inMenu && wornStack != toEquip)
-                        msg = Component.translatable("entity.beansbackpacks.blocked.already_equipped",
-                                    Constants.getName(wornStack));
-                  else if (wornStack.is(Services.REGISTRY.getWinged()) && Constants.ELYTRA_ITEMS.contains(toEquip.getItem()))
-                        msg = Component.translatable("entity.beansbackpacks.blocked.already_equipped",
-                                    Constants.getName(wornStack));
-                  else {
-                        msg = Component.translatable("entity.beansbackpacks.blocked.already_equipped",
-                                    Constants.getName(wornStack));
-                  }
+            if (msg == null && !wornStack.isEmpty() && wornStack != toEquip) {
+                  msg = Component.translatable("entity.beansbackpacks.blocked.already_equipped",
+                              Constants.getName(wornStack));
             }
 
             if (msg == null) {

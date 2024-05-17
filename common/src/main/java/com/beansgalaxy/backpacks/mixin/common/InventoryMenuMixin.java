@@ -62,7 +62,7 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
             Slot slot = this.slots.get(slotInt);
             ItemStack stack = slot.getItem();
             boolean canQuickEquip = !Constants.SLOTS_MOD_ACTIVE || !player.isCreative();
-            if (!(slot instanceof ResultSlot) && canQuickEquip && backData.mayEquip(stack, true, false)) {
+            if (!(slot instanceof ResultSlot) && backData.isEmpty() && canQuickEquip && backData.mayEquip(stack, true, false)) {
                   backData.set(stack);
                   slot.set(ItemStack.EMPTY);
                   cir.setReturnValue(ItemStack.EMPTY);

@@ -33,7 +33,6 @@ public class TrinketsRegistry {
                         boolean defaults = Trinket.super.canEquip(stack, slot, entity) && slot.index() == 0;
                         boolean mayEquip = entity instanceof Player player && BackData.get(player).mayEquip(stack);
                         return defaults && mayEquip && stack.getCount() <= 1;
-
                   }
 
                   @Override
