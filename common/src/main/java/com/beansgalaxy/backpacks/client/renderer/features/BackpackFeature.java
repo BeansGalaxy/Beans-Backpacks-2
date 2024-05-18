@@ -1,6 +1,5 @@
 package com.beansgalaxy.backpacks.client.renderer.features;
 
-import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.client.renderer.RenderHelper;
 import com.beansgalaxy.backpacks.client.renderer.models.BackpackCapeModel;
 import com.beansgalaxy.backpacks.client.renderer.models.BackpackModel;
@@ -9,12 +8,9 @@ import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.data.Viewable;
 import com.beansgalaxy.backpacks.entity.Kind;
-import com.beansgalaxy.backpacks.items.WingedBackpack;
-import com.beansgalaxy.backpacks.screen.BackpackScreen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.SmithingScreen;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelPart;
@@ -22,7 +18,6 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.ModelManager;
@@ -64,16 +59,6 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
         ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
 
         pose.translate(0, 12/16f, 0);
-        Kind kind = traits.kind;
-        if (kind.is(Kind.WINGED) || Kind.isWings(chestStack)) {
-            setUpWings(player, scale, pose);
-        }
-        else {
-            boolean hasChestplate = !chestStack.isEmpty();
-            pose.translate(0, (0.24 * scale) + (hasChestplate ? 0.02 : 0),
-                        -(0.096 * scale) + (hasChestplate ? 0.065 : 0.001));
-        }
-
         Viewable viewable = backData.getBackpackInventory().getViewable();
         if (viewable.lastDelta > tick)
             viewable.updateOpen();
@@ -84,19 +69,14 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
         float headPitch = Mth.lerp(tick, viewable.lastPitch, viewable.headPitch) * 0.3f;
         backpackModel.setOpenAngle(headPitch + fallPitch);
 
-        ResourceLocation cloakTexture = player.getCloakTextureLocation();
-        if (player.isCapeLoaded() && !player.isInvisible() && player.isModelPartShown(PlayerModelPart.CAPE) && cloakTexture != null) {
-            if (chestStack.isEmpty())
-                pose.translate(0, 1/16f, 0);
-            weld(capeModel.cape, backpackModel.main);
-            capeModel.cape.yRot = (float) Math.PI * 2;
-            capeModel.cape.xRot = -headPitch;
-            capeModel.cape.y = fallPitch * 6 - 11f;
-            capeModel.cape.z = 2f;
-            //ResourceLocation $$0 = new ResourceLocation(Constants.MOD_ID, "textures/cape_template.png");
-            RenderType renderType = RenderType.entitySolid(cloakTexture);
-            VertexConsumer vertexConsumer = mbs.getBuffer(renderType);
-            capeModel.cape.render(pose, vertexConsumer, light, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
+        Kind kind = traits.kind;
+        if (kind.is(Kind.WINGED) || Kind.isWings(chestStack)) {
+            setUpWithWings(player, scale, pose);
+        } else {
+            renderCape(pose, mbs, light, player, chestStack, headPitch, fallPitch);
+            boolean hasChestplate = !chestStack.isEmpty();
+            pose.translate(0, (0.24 * scale) + (hasChestplate ? 0.02 : 0),
+                        -(0.096 * scale) + (hasChestplate ? 0.065 : 0.001));
         }
 
         Color tint = kind.getShiftedColor(traits.color);
@@ -114,7 +94,24 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
         pose.popPose();
     }
 
-    private void setUpWings(AbstractClientPlayer player, float scale, PoseStack poseStack) {
+    private void renderCape(PoseStack pose, MultiBufferSource mbs, int light, AbstractClientPlayer player, ItemStack chestStack, float headPitch, float fallPitch) {
+        ResourceLocation cloakTexture = player.getCloakTextureLocation();
+        if (player.isCapeLoaded() && !player.isInvisible() && player.isModelPartShown(PlayerModelPart.CAPE) && cloakTexture != null) {
+            if (chestStack.isEmpty())
+                pose.translate(0, 1/16f, 0);
+            weld(capeModel.cape, backpackModel.main);
+            capeModel.cape.yRot = (float) Math.PI * 2;
+            capeModel.cape.xRot = -headPitch;
+            capeModel.cape.y = fallPitch * 6 - 11f;
+            capeModel.cape.z = 2f;
+            //ResourceLocation $$0 = new ResourceLocation(Constants.MOD_ID, "textures/cape_template.png");
+            RenderType renderType = RenderType.entitySolid(cloakTexture);
+            VertexConsumer vertexConsumer = mbs.getBuffer(renderType);
+            capeModel.cape.render(pose, vertexConsumer, light, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
+        }
+    }
+
+    private void setUpWithWings(AbstractClientPlayer player, float scale, PoseStack poseStack) {
         boolean fallFlying = player.isFallFlying();
         float wingSpread;
         if (fallFlying) {

@@ -68,12 +68,6 @@ public class BackFeature<T extends LivingEntity, M extends EntityModel<T>>
     }
 
     static float sneakInter(Entity entity, float sneakInter) {
-        if (entity.isCrouching())
-            sneakInter += sneakInter < 3 ? 1 : 0;
-        else {
-            sneakInter -= sneakInter > 1 ? 1 : 0;
-            sneakInter -= sneakInter > 0 ? 1 : 0;
-        }
-        return sneakInter;
+        return entity.isCrouching() ? 3 : 0;
     }
 }
