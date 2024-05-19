@@ -7,6 +7,7 @@ import com.beansgalaxy.backpacks.client.renderer.RenderHelper;
 import com.beansgalaxy.backpacks.client.renderer.*;
 import com.beansgalaxy.backpacks.client.renderer.features.BackFeature;
 import com.beansgalaxy.backpacks.client.renderer.models.*;
+import com.beansgalaxy.backpacks.config.ConfigScreen;
 import com.beansgalaxy.backpacks.inventory.BackpackTooltip;
 import com.beansgalaxy.backpacks.inventory.SpecialTooltip;
 import com.beansgalaxy.backpacks.platform.Services;
@@ -21,9 +22,14 @@ import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.IConfigEvent;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -34,6 +40,9 @@ public class ClientModEvents {
                   ItemProperties.registerGeneric(new ResourceLocation(Constants.MOD_ID, "is_yellow"), RenderHelper.IS_YELLOW_ITEM_PREDICATE);
                   MenuScreens.register(ForgeMain.MENU.get(), BackpackScreen::new);
                   Constants.CLIENT_CONFIG.read();
+                  ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () ->
+                              new ConfigScreenHandler.ConfigScreenFactory(((minecraft, screen) -> new ConfigScreen(screen)))
+                  );
             });
       }
 
