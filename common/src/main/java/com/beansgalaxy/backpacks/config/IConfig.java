@@ -29,8 +29,11 @@ public interface IConfig {
                   line.decode(jsonObject);
             }
       }
-
       default void read() {
+            read(true);
+      }
+
+      default void read(boolean andWrite) {
             try {
                   // Read the .json5 content from the file
                   Path path = Services.CONFIG.getPath();
@@ -44,7 +47,8 @@ public interface IConfig {
             } catch (IOException e) {
                   Constants.LOG.warn("No Config for " + Constants.MOD_ID + " : Created new config");
             }
-            this.write();
+
+            if (andWrite) this.write();
       }
 
       default void write() {

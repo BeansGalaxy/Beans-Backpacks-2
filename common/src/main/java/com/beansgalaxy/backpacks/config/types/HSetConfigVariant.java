@@ -18,6 +18,7 @@ public class HSetConfigVariant<ENTRY> extends ConfigVariant<HashSet<ENTRY>> {
 
       private HSetConfigVariant(String name, HashSet<ENTRY> defau, HashSet<String> rejects, Predicate<String> isValid, Function<ENTRY, String> encode, Function<String, ENTRY> decode, String comment) {
             super(name, defau, comment);
+            this.value = new HashSet<>(defau);
             this.encode = encode;
             this.decode = decode;
             this.isValid = isValid;

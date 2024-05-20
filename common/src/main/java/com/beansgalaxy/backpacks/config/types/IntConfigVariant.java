@@ -5,8 +5,8 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
 
 public class IntConfigVariant extends ConfigVariant<Integer> {
-      private final int max;
-      private final int min;
+      public final int max;
+      public final int min;
       private final boolean clamped;
 
       public IntConfigVariant(String name, Integer defau) {

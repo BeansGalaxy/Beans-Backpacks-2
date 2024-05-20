@@ -21,6 +21,7 @@ public class HMapConfigVariant<KEY, ENTRY> extends ConfigVariant<HashMap<KEY, EN
 
       private HMapConfigVariant(String name, HashMap<KEY, ENTRY> defau, BiPredicate<String, ENTRY> injection, UnaryOperator<ENTRY> validate, Function<KEY, String> keyEncode, Function<String, KEY> keyDecode, Function<ENTRY, String> entryEncode, Function<String, ENTRY> entryDecode, HashMap<String, ENTRY> example, String comment) {
             super(name, defau, comment);
+            this.value = new HashMap<>(defau);
             this.keyEncode = keyEncode;
             this.keyDecode = keyDecode;
             this.injection = injection;
