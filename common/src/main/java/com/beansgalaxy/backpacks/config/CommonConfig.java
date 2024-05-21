@@ -3,6 +3,7 @@ package com.beansgalaxy.backpacks.config;
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.config.types.*;
 import com.beansgalaxy.backpacks.data.config.Gamerules;
+import com.google.gson.JsonElement;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -24,6 +25,7 @@ public class CommonConfig implements IConfig {
       public HSetConfigVariant<Item> elytra_items;
       public HMapConfigVariant<String, Integer> data_driven_overrides;
       public BoolConfigVariant always_disables_back_slot;
+      public ListConfigVariant<Integer> back_slot_pos;
       public HMapConfigVariant<Item, Integer> item_weight_override;
       public int override_all_item_weights = -1;
 
@@ -76,7 +78,10 @@ public class CommonConfig implements IConfig {
                               "brown_shulker_box, green_shulker_box, red_shulker_box, black_shulker_box"),
 
       new ConfigLabel("Miscellaneous"),
-                  always_disables_back_slot = new BoolConfigVariant("always_disables_back_slot", false)
+                  always_disables_back_slot = new BoolConfigVariant("always_disables_back_slot", false),
+                  back_slot_pos = ListConfigVariant.Builder.create(String::valueOf, JsonElement::getAsInt)
+                              .defau(59, 62).valid(in -> in.size() == 2)
+                              .build("back_slot_pos")
       };
 
       private final ConfigLabel GAMERULE_LABEL = new ConfigLabel("Gamerules");

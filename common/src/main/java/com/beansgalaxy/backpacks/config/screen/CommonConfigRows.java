@@ -28,7 +28,8 @@ public class CommonConfigRows extends ConfigRows {
                         new ItemListConfigRow(screen.commonConfig.elytra_items),
                         new ItemListConfigRow(screen.commonConfig.blacklist_items),
             new ConfigLabel(Component.literal("Miscellaneous")),
-                        new BoolConfigRow(screen.commonConfig.always_disables_back_slot)
+                        new BoolConfigRow(screen.commonConfig.always_disables_back_slot),
+                        new MoveBackSlotConfigRow(screen.commonConfig.back_slot_pos)
             );
       }
 }

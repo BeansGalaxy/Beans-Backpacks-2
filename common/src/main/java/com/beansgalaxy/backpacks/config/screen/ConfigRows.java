@@ -2,10 +2,7 @@ package com.beansgalaxy.backpacks.config.screen;
 
 import com.beansgalaxy.backpacks.config.ConfigScreen;
 import com.beansgalaxy.backpacks.config.IConfig;
-import com.beansgalaxy.backpacks.config.types.BoolConfigVariant;
-import com.beansgalaxy.backpacks.config.types.EnumConfigVariant;
-import com.beansgalaxy.backpacks.config.types.HSetConfigVariant;
-import com.beansgalaxy.backpacks.config.types.IntConfigVariant;
+import com.beansgalaxy.backpacks.config.types.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -14,6 +11,7 @@ import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.searchtree.SearchTree;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
@@ -317,6 +315,7 @@ public abstract class ConfigRows extends ContainerObjectSelectionList<ConfigRows
                         if (hoveredStoredItem != null)
                               value.get().remove(hoveredStoredItem.item);
                   }
+                  searchResults = getSearchResults();
                   return super.mouseClicked(mouseX, mouseY, i);
             }
 
@@ -350,16 +349,14 @@ public abstract class ConfigRows extends ContainerObjectSelectionList<ConfigRows
                               int entriesX = (i / 3);
                               int entriesY = (i % 3);
                               gui.renderItem(next.getDefaultInstance(), -entriesX * 16, entriesY * 16);
-                              if (checkHovering && Mth.floor(slotX) / 8 == entriesX && Mth.floor(slotY) / 8 == entriesY) {
+                              if (checkHovering && Mth.floor(slotX) / 8 == entriesX && Mth.floor(slotY) / 8 == entriesY)
                                     hoveredSearchItem = new HoveredItem(next, entriesX, entriesY);
-                                    System.out.println(next);
-                              }
                         } gui.pose().popPose();
 
                         if (hoveredSearchItem != null) {
                               gui.pose().pushPose();
                               gui.pose().translate(0, 0, 300);
-                              gui.drawString(minecraft.font, Component.literal("✔"), x - hoveredSearchItem.x * 8 - 9, y - 1 + hoveredSearchItem.y * 8, 0xFF77EE77);
+                              gui.drawString(minecraft.font, Component.literal("✔"), x - hoveredSearchItem.x * 8 - 9, y - 2 + hoveredSearchItem.y * 8, 0xFF77EE77);
                               gui.pose().popPose();
                         }
                   }
@@ -430,24 +427,34 @@ public abstract class ConfigRows extends ContainerObjectSelectionList<ConfigRows
       }
 
       public class MoveBackSlotConfigRow extends ConfigLabel {
-            private final HSetConfigVariant<Integer> bool;
+            private final ListConfigVariant<Integer> value;
             private final Button button;
 
-            public MoveBackSlotConfigRow(HSetConfigVariant<Integer> bool) {
-                  super(Component.literal(bool.name()));
-                  this.bool = bool;
+            public MoveBackSlotConfigRow(ListConfigVariant<Integer> value) {
+                  super(Component.literal(value.name()));
+                  this.value = value;
                   this.button = Button.builder(Component.literal("Edit"), in -> {
+                        MoveElementConfigScreen screen = MoveElementConfigScreen.Builder.create()
+                                    .background(InventoryScreen.INVENTORY_LOCATION)
+                                    .backgroundSize(176, 166)
+                                    .elementSize(16, 16)
+                                    .elementPos(value.get(0), value.get(1))
+                                    .onSave((x, y) -> {
+                                          value.get().set(0, x);
+                                          value.get().set(1, y);
+                                    }).build(ConfigRows.this.screen);
+                        minecraft.setScreen(screen);
                   }).bounds(0, 0, 70, 20).build();
             }
 
             @Override
             public void resetToDefault() {
-                  bool.set(bool.getDefau());
+                  value.set(value.getDefau());
             }
 
             @Override
             public void render(GuiGraphics guiGraphics, int index, int y, int x, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
-                  guiGraphics.drawString(minecraft.font, bool.name(), x, y + 6, 0xFFFFFFFF);
+                  guiGraphics.drawString(minecraft.font, value.name(), x, y + 6, 0xFFFFFFFF);
                   button.setX(x + rowWidth - button.getWidth());
                   button.setY(y);
                   button.render(guiGraphics, mouseX, mouseY, delta);

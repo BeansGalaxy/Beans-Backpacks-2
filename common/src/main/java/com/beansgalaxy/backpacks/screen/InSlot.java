@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.access.BucketsAccess;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.mojang.datafixers.util.Pair;
@@ -14,12 +15,11 @@ import net.minecraft.world.item.ItemStack;
 
 public class InSlot extends Slot {
       public static final ResourceLocation BACKPACK_ATLAS = new ResourceLocation("textures/atlas/blocks.png");
-      public static final ResourceLocation INPUT = new ResourceLocation("sprites/empty_slot_input");
       public static final ResourceLocation INPUT_ALT = new ResourceLocation("sprites/empty_slot_input_alt");
       public final BackData backData;
 
       public InSlot(BackData backData) {
-            super(backData.getBackpackInventory(), 0, BackData.UV_SURVIVAL[0], BackData.UV_SURVIVAL[1]);
+            super(backData.getBackpackInventory(), 0, ServerSave.CONFIG.back_slot_pos.get(0), ServerSave.CONFIG.back_slot_pos.get(1));
             this.backData = backData;
       }
 

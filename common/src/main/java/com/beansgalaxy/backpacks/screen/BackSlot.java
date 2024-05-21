@@ -2,6 +2,7 @@ package com.beansgalaxy.backpacks.screen;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
@@ -21,7 +22,7 @@ public class BackSlot extends Slot {
       public int slotIndex = -1;
 
       public BackSlot(BackData backData) {
-            super(new SimpleContainer(1), 0, BackData.UV_SURVIVAL[0], BackData.UV_SURVIVAL[1]);
+            super(new SimpleContainer(1), 0, ServerSave.CONFIG.back_slot_pos.get(0), ServerSave.CONFIG.back_slot_pos.get(1));
             this.backData = backData;
       }
 
