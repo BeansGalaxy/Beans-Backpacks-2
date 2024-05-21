@@ -6,7 +6,7 @@ public abstract class ConfigVariant<T> implements ConfigLine {
       protected final String name;
       protected final String comment;
       protected final boolean hasComment;
-      protected final T defau;
+      private final T defau;
       protected T value;
 
       protected ConfigVariant(String name, T defau, String comment) {

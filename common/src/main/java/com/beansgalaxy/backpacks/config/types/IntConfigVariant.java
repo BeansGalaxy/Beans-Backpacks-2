@@ -46,7 +46,7 @@ public class IntConfigVariant extends ConfigVariant<Integer> {
             StringBuilder sb = new StringBuilder();
             if (clamped)
                   sb.append(min).append(" - ").append(max).append("  ");
-            sb.append("Default: ").append(defau);
+            sb.append("Default: ").append(getDefau());
             return sb.toString();
       }
 
@@ -57,7 +57,7 @@ public class IntConfigVariant extends ConfigVariant<Integer> {
 
       @Override
       public void decode(JsonObject jsonObject) {
-            int i = GsonHelper.getAsInt(jsonObject, name, defau);
+            int i = GsonHelper.getAsInt(jsonObject, name, getDefau());
             value = clamped
                   ? Mth.clamp(i, min, max)
                   : i;

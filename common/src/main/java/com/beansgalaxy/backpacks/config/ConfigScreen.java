@@ -14,9 +14,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 public class ConfigScreen extends Screen {
       private final Screen lastScreen;
@@ -95,6 +93,13 @@ public class ConfigScreen extends Screen {
       @Override
       public void onClose() {
             this.minecraft.setScreen(this.lastScreen);
+      }
+
+      public void onSave() {
+            for (ConfigRows.ConfigLabel row : commonConfigRows.getRows())
+                  row.onSave();
+            for (ConfigRows.ConfigLabel row : clientConfigRows.getRows())
+                  row.onSave();
       }
 
       @Override

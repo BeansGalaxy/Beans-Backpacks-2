@@ -9,34 +9,41 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
-public class HMapConfigVariant<KEY, ENTRY> extends ConfigVariant<HashMap<KEY, ENTRY>> {
+public class MapConfigVariant<KEY, ENTRY> extends ConfigVariant<HashMap<String, ENTRY>> {
       private final Function<KEY, String> keyEncode;
       private final Function<String, KEY> keyDecode;
-      private final BiPredicate<String, ENTRY> injection;
-      private final HashMap<String, ENTRY> injectedMap = new HashMap<>();
-      private final UnaryOperator<ENTRY> validate;
       private final Function<ENTRY, String> entryEncode;
       private final Function<String, ENTRY> entryDecode;
+      public final BiPredicate<String, ENTRY> validate;
+      public final UnaryOperator<ENTRY> clamp;
       private final HashMap<String, ENTRY> example;
 
-      private HMapConfigVariant(String name, HashMap<KEY, ENTRY> defau, BiPredicate<String, ENTRY> injection, UnaryOperator<ENTRY> validate, Function<KEY, String> keyEncode, Function<String, KEY> keyDecode, Function<ENTRY, String> entryEncode, Function<String, ENTRY> entryDecode, HashMap<String, ENTRY> example, String comment) {
+      protected MapConfigVariant(String name, HashMap<String, ENTRY> defau, String comment,
+                                 Function<KEY, String> keyEncode, Function<String, KEY> keyDecode,
+                                 Function<ENTRY, String> entryEncode, Function<String, ENTRY> entryDecode,
+                                 BiPredicate<String, ENTRY> validate, UnaryOperator<ENTRY> clamp, HashMap<String, ENTRY> example)
+      {
             super(name, defau, comment);
             this.value = new HashMap<>(defau);
             this.keyEncode = keyEncode;
             this.keyDecode = keyDecode;
-            this.injection = injection;
-            this.validate = validate;
             this.entryEncode = entryEncode;
             this.entryDecode = entryDecode;
+            this.validate = validate;
+            this.clamp = clamp;
             this.example = example;
       }
 
-      public ENTRY get(KEY key) {
-            return value.get(key);
+      public boolean contains(KEY key) {
+            return value.containsKey(keyEncode.apply(key));
       }
 
-      public boolean contains(KEY key) {
-            return value.containsKey(key);
+      public ENTRY get (KEY key) {
+            return value.get(keyEncode.apply(key));
+      }
+
+      public void put(String key, ENTRY entry) {
+            value.put(key, entry);
       }
 
       @Override
@@ -52,30 +59,22 @@ public class HMapConfigVariant<KEY, ENTRY> extends ConfigVariant<HashMap<KEY, EN
             if (!comment.isBlank())
                   sb.append(" ".repeat(Math.max(0, 34 - formattedName.length())))
                               .append("// ").append(comment);
-            writeValues(sb);
+
+            writeEntries(sb);
             writeExamples(sb);
             sb.append("\n  }");
             return sb.toString();
       }
 
-      private void writeValues(StringBuilder sb) {
-            HashMap<KEY, ENTRY> map = value;
-            Iterator<KEY> iterator = map.keySet().iterator();
-            Iterator<String> injectIterator = injectedMap.keySet().iterator();
-            while (injectIterator.hasNext()) {
-                  String key = injectIterator.next();
-                  ENTRY entry = validate.apply(injectedMap.get(key));
+      private void writeEntries(StringBuilder sb) {
+            Iterator<String> iterator = value.keySet().iterator();
+            while (iterator.hasNext()) {
+                  String key = iterator.next();
+                  ENTRY entry = value.get(key);
+                  if (!validate.test(key, entry)) continue;
+
                   sb.append("\n    \"");
                   sb.append(key).append("\": ").append(entryEncode.apply(entry));
-                  if (iterator.hasNext() || injectIterator.hasNext())
-                        sb.append(",");
-            }
-
-            while (iterator.hasNext()) {
-                  KEY key = iterator.next();
-                  ENTRY entry = validate.apply(map.get(key));
-                  sb.append("\n    \"");
-                  sb.append(keyEncode.apply(key)).append("\": ").append(entryEncode.apply(entry));
                   if (iterator.hasNext())
                         sb.append(",");
             }
@@ -83,15 +82,15 @@ public class HMapConfigVariant<KEY, ENTRY> extends ConfigVariant<HashMap<KEY, EN
 
       private void writeExamples(StringBuilder sb) {
             HashMap<String, ENTRY> map = new HashMap<>(example);
-            for (KEY key : value.keySet()) {
-                  String apply = keyEncode.apply(key);
-                  map.remove(apply);
-            }
+            for (String key : value.keySet())
+                  map.remove(key);
 
             Iterator<String> iterator = map.keySet().iterator();
             while (iterator.hasNext()) {
                   String key = iterator.next();
-                  ENTRY entry = validate.apply(map.get(key));
+                  ENTRY entry = map.get(key);
+                  if (!validate.test(key, entry)) continue;
+
                   sb.append("\n    //\"");
                   sb.append(key).append("\": ").append(entryEncode.apply(entry));
                   if (iterator.hasNext())
@@ -108,27 +107,19 @@ public class HMapConfigVariant<KEY, ENTRY> extends ConfigVariant<HashMap<KEY, EN
             for (String key : jsonValue.keySet()) {
                   String entry = GsonHelper.getAsString(jsonValue, key);
                   ENTRY appliedEntry = entryDecode.apply(entry);
-                  if (injection.test(key, appliedEntry)) {
-                        injectedMap.put(key, appliedEntry);
-                        continue;
-                  }
-
-                  KEY appliedKey = keyDecode.apply(key);
-                  if (appliedKey == null) continue;
-
-                  value.put(appliedKey, validate.apply(appliedEntry));
+                  put(key, appliedEntry);
             }
       }
 
       public static class Builder<K, E> {
-            private final HashMap<K, E> defau = new HashMap<>();
+            private final HashMap<String, E> defau = new HashMap<>();
             private final HashMap<String, E> example = new HashMap<>();
             private final Function<K, String> keyEncode;
             private final Function<String, K> keyDecode;
             private final Function<E, String> entryEncode;
             private final Function<String, E> entryDecode;
-            private BiPredicate<String, E> injection = (k, e) -> false;
-            private UnaryOperator<E> validator = in -> in;
+            private BiPredicate<String, E> validator = (k, e) -> true;
+            private UnaryOperator<E> clamp = e -> e;
             private String comment = "";
 
             private Builder(Function<K, String> keyEncode, Function<String, K> keyDecode, Function<E, String> entryEncode, Function<String, E> entryDecode) {
@@ -138,50 +129,47 @@ public class HMapConfigVariant<KEY, ENTRY> extends ConfigVariant<HashMap<KEY, EN
                   this.entryDecode = entryDecode;
             }
 
-            public static <K, E> Builder<K, E> create(Function<K, String> keyEncode, Function<String, K> keyDecode, Function<E, String> entryEncode, Function<String, E> entryDecode) {
-                  return new Builder<>(keyEncode, keyDecode, entryEncode, entryDecode);
+            public static <K, E> MapConfigVariant.Builder<K, E> create(Function<K, String> keyEncode, Function<String, K> keyDecode, Function<E, String> entryEncode, Function<String, E> entryDecode) {
+                  return new MapConfigVariant.Builder<>(keyEncode, keyDecode, entryEncode, entryDecode);
             }
 
-            public static <E> Builder<String, E> create(Function<E, String> entryEncode, Function<String, E> entryDecode) {
+            public static <E> MapConfigVariant.Builder<String, E> create(Function<E, String> entryEncode, Function<String, E> entryDecode) {
                   Function<String, String> transcode = in -> in;
-                  return new Builder<>(transcode, transcode, entryEncode, entryDecode);
+                  return new MapConfigVariant.Builder<>(transcode, transcode, entryEncode, entryDecode);
             }
 
-            public Builder<K, E> defau(K[] keys, E[] entries) {
+            public MapConfigVariant.Builder<K, E> defau(String[] keys, E[] entries) {
                   int size = Math.min(keys.length, entries.length);
                   for (int i = 0; i < size; i++)
                         defau.put(keys[i], entries[i]);
                   return this;
             }
 
-            public Builder<K, E> example(String[] keys, E[] entries) {
+            public MapConfigVariant.Builder<K, E> example(String[] keys, E[] entries) {
                   int size = Math.min(keys.length, entries.length);
                   for (int i = 0; i < size; i++)
                         example.put(keys[i], entries[i]);
                   return this;
             }
 
-            /**
-             * Runs this while collecting every key in the json
-             * @param injection Continues to the next entry if returns true
-             */
-            public Builder<K, E> inject(BiPredicate<String, E> injection) {
-                  this.injection = injection;
-                  return this;
-            }
-
-            public Builder<K, E> validEntry(UnaryOperator<E> validate) {
+            public MapConfigVariant.Builder<K, E> validate(BiPredicate<String, E> validate) {
                   this.validator = validate;
                   return this;
             }
 
-            public Builder<K, E> comment(String comment) {
+            public MapConfigVariant.Builder<K, E> clamp(UnaryOperator<E> clamp) {
+                  this.clamp = clamp;
+                  return this;
+            }
+
+            public MapConfigVariant.Builder<K, E> comment(String comment) {
                   this.comment = comment;
                   return this;
             }
 
-            public HMapConfigVariant<K, E> build(String name) {
-                  return new HMapConfigVariant<>(name, defau, injection, validator, keyEncode, keyDecode, entryEncode, entryDecode, example, comment);
+            public MapConfigVariant<K, E> build(String name) {
+                  return new MapConfigVariant<>(name, defau, comment, keyEncode, keyDecode, entryEncode, entryDecode, validator, clamp, example);
             }
+
       }
 }

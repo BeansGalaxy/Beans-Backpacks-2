@@ -22,6 +22,8 @@ public class CommonConfigRows extends ConfigRows {
                         new IntConfigRow(screen.commonConfig.metal_max_stacks),
                         new IntConfigRow(screen.commonConfig.pot_max_stacks),
                         new IntConfigRow(screen.commonConfig.cauldron_max_buckets),
+                        new IntMapConfigRow<>(screen.commonConfig.data_driven_overrides),
+                        new IntMapConfigRow<>(screen.commonConfig.item_weight_override),
             new ConfigLabel(Component.literal("Item Whitelists")),
                         new ItemListConfigRow(screen.commonConfig.disable_chestplate),
                         new ItemListConfigRow(screen.commonConfig.disables_back_slot),

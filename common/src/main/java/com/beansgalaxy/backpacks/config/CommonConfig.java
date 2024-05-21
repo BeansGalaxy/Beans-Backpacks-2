@@ -23,10 +23,10 @@ public class CommonConfig implements IConfig {
       public HSetConfigVariant<Item> disable_chestplate;
       public HSetConfigVariant<Item> disables_back_slot;
       public HSetConfigVariant<Item> elytra_items;
-      public HMapConfigVariant<String, Integer> data_driven_overrides;
+      public MapConfigVariant<String, Integer> data_driven_overrides;
       public BoolConfigVariant always_disables_back_slot;
       public ListConfigVariant<Integer> back_slot_pos;
-      public HMapConfigVariant<Item, Integer> item_weight_override;
+      public MapConfigVariant<Item, Integer> item_weight_override;
       public int override_all_item_weights = -1;
 
       public boolean usesOldDataPackConfig = false;
@@ -40,29 +40,30 @@ public class CommonConfig implements IConfig {
                   metal_max_stacks =         new IntConfigVariant("metal_max_stacks",   7, 1, 64),
                   pot_max_stacks =           new IntConfigVariant("pot_max_stacks",   128, 0, 128),
                   cauldron_max_buckets =  new IntConfigVariant("cauldron_max_buckets", 24, 0, 128),
-                  data_driven_overrides = HMapConfigVariant.Builder.create(String::valueOf, Integer::valueOf)
-                              .example(new String[]{"gold", "netherite"}, new Integer[]{7, 11}).validEntry(i -> Mth.clamp(i, 1, 64))
+                  data_driven_overrides = MapConfigVariant.Builder.create(String::valueOf, Integer::valueOf)
+                              .example(new String[]{"gold", "netherite"}, new Integer[]{7, 11})
+                              .clamp(e -> Mth.clamp(e, 1, 64))
                               .comment("If a backpack is Data-Driven, find it's 'backpack_id' with F3 + H")
                               .build("data_driven_overrides"),
-                  item_weight_override = HMapConfigVariant.Builder.create(
-                              encodeKey -> BuiltInRegistries.ITEM.getKey(encodeKey).toShortLanguageKey(),
+                  item_weight_override = MapConfigVariant.Builder.create(Constants::itemShortString,
                               decodeKey -> {
                                     ResourceLocation location = new ResourceLocation(decodeKey);
-                                    if (BuiltInRegistries.ITEM.containsKey(location))
-                                          return BuiltInRegistries.ITEM.get(location);
-                                    return null;
+                                    Item item = BuiltInRegistries.ITEM.get(location);
+                                    return item.equals(Items.AIR) ? null : item;
                               },
                               String::valueOf, Integer::valueOf)
-                              .validEntry(i -> Mth.clamp(i, 1, 64))
-                              .defau(new Item[]{Items.ENCHANTED_BOOK, Items.BUNDLE}, new Integer[]{16, 4})
+                              .clamp(i -> Mth.clamp(i, 1, 64))
+                              .defau(new String[]{"enchanted_book", "bundle"}, new Integer[]{16, 4})
                               .example(new String[]{"all"}, new Integer[]{64})
-                              .inject((key, i) -> {
-                                    if (key.equals("all")) {
-                                          override_all_item_weights = i;
+                              .validate((k, e) -> {
+                                    if (k.equals("all")) {
+                                          override_all_item_weights = e;
                                           return true;
-                                    } else return false;
+                                    }
+                                    return BuiltInRegistries.ITEM.get(new ResourceLocation(k)) != Items.AIR;
                               })
-                              .comment("Stored items will act like they stack to the declared whole number").build("item_weight_override"),
+                              .comment("Stored items will act like they stack to the declared whole number")
+                              .build("item_weight_override"),
 
       new ConfigLabel("Item Whitelists"),
                   new ConfigComment("┌▶ items can be worn on the back & not as equipment. Item does not keep functioning or rendering on the back."),

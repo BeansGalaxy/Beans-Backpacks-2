@@ -6,6 +6,7 @@ import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.platform.Services;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -58,6 +59,14 @@ public class Constants {
 			msg.withStyle(ChatFormatting.ITALIC);
 
 		return msg;
+	}
+
+	public static String itemShortString(Item item) {
+		ResourceLocation key = BuiltInRegistries.ITEM.getKey(item);
+		if (key.getNamespace().equals("minecraft"))
+			return key.getPath();
+		else
+			return key.getNamespace() + ":" + key.getPath();
 	}
 
       public static ItemStack createLabeledBackpack(String backpack_id) {

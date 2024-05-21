@@ -15,7 +15,7 @@ public class BoolConfigVariant extends ConfigVariant<Boolean> {
 
       @Override
       public String autoComment() {
-            return "Default: " + defau;
+            return "Default: " + getDefau();
       }
 
       @Override
@@ -25,7 +25,7 @@ public class BoolConfigVariant extends ConfigVariant<Boolean> {
 
       @Override
       public void decode(JsonObject jsonObject) {
-            value = GsonHelper.getAsBoolean(jsonObject, name, defau);
+            value = GsonHelper.getAsBoolean(jsonObject, name, getDefau());
       }
 
 }

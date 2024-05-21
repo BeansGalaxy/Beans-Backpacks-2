@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.config.screen;
 
+import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.config.ConfigScreen;
 import com.beansgalaxy.backpacks.config.IConfig;
 import com.beansgalaxy.backpacks.config.types.*;
@@ -16,6 +17,7 @@ import net.minecraft.client.searchtree.SearchTree;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
@@ -62,6 +64,7 @@ public abstract class ConfigRows extends ContainerObjectSelectionList<ConfigRows
             @Override
             public void render(GuiGraphics guiGraphics, int index, int y, int x, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
                   guiGraphics.drawCenteredString(minecraft.font, name, x + rowWidth / 2, y + 8, 0xFFFFFFFF);
+                  guiGraphics.hLine(x + 30, x + rowWidth - 30, y + 18, 0xFFFFFFFF);
             }
 
             @Override // BUTTONS GO HERE
@@ -75,6 +78,10 @@ public abstract class ConfigRows extends ContainerObjectSelectionList<ConfigRows
             }
 
             public void hungryClick(double mouseX, double mouseY, int i) {
+
+            }
+
+            public void onSave() {
 
             }
       }
@@ -179,58 +186,23 @@ public abstract class ConfigRows extends ContainerObjectSelectionList<ConfigRows
 
       public class IntConfigRow extends ConfigLabel {
             private final IntConfigVariant value;
-            private int storedValue = 0;
-            private boolean isFirstEdit = true;
-            private final Button button;
+            private final IntButton button;
 
             public IntConfigRow(IntConfigVariant value) {
                   super(Component.literal(value.name()));
                   this.value = value;
-                  this.button = Button.builder(Component.literal(value.get().toString()), in -> {
-                        isFirstEdit = true;
-                  }).bounds(0, 0, 70, 20).build();
+                  this.button = IntButton.builder(in -> {}, value::get)
+                              .onEnter(in -> value.set(Mth.clamp(in, value.min, value.max)))
+                              .onClose(in -> close())
+                              .bounds(0, 0, 70, 20).build();
             }
 
             @Override
             public void resetToDefault() {
                   value.set(value.getDefau());
-                  button.setMessage(getTranslatedValue(value.get()));
-            }
-
-            static Component getTranslatedValue(int value) {
-                  return Component.literal(String.valueOf(value));
-            }
-
-            @Override
-            public boolean keyPressed(int i, int j, int k) {
-                  switch (i) {
-                        case 259 -> { // DELETE
-                              if (storedValue == 0) {
-                                    close();
-                              }
-                              storedValue /= 10;
-                        }
-                        case 45 -> { // MINUS
-                              storedValue *= -1;
-                        }
-                        case 48, 49, 50, 51, 52, 53, 54, 55, 56, 57 -> {
-                              if (storedValue < 1000000 && storedValue > -1000000) {
-                                    int n = i - 48;
-                                    storedValue = storedValue * 10 + n;
-                              }
-                        }
-                        case 257 -> { // ENTER
-                              if (!isFirstEdit)
-                                    value.set(Mth.clamp(storedValue, value.min, value.max));
-                              close();
-                        }
-                  }
-                  isFirstEdit = false;
-                  return super.keyPressed(i, j, k);
             }
 
             private void close() {
-                  storedValue = 0;
                   ConfigRows.this.setFocused(null);
                   button.setFocused(false);
                   setFocused(false);
@@ -239,13 +211,6 @@ public abstract class ConfigRows extends ContainerObjectSelectionList<ConfigRows
             @Override
             public void render(GuiGraphics guiGraphics, int index, int y, int x, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
                   guiGraphics.drawString(minecraft.font, value.name(), x, y + 6, 0xFFFFFFFF);
-                  Component literal;
-                  if (isFocused())
-                        literal = Component.literal("[" + (isFirstEdit ? value.get() : storedValue) + "]");
-                  else
-                        literal = getTranslatedValue(value.get());
-
-                  button.setMessage(literal);
                   button.setX(x + rowWidth - button.getWidth());
                   button.setY(y);
                   button.render(guiGraphics, mouseX, mouseY, delta);
@@ -449,7 +414,7 @@ public abstract class ConfigRows extends ContainerObjectSelectionList<ConfigRows
 
             @Override
             public void resetToDefault() {
-                  value.set(value.getDefau());
+                  value.set(new ArrayList<>(value.getDefau()));
             }
 
             @Override
@@ -470,5 +435,136 @@ public abstract class ConfigRows extends ContainerObjectSelectionList<ConfigRows
                   return List.of(button);
             }
       }
+
+      public class IntMapConfigRow<K> extends ConfigLabel {
+            private final MapConfigVariant<K, Integer> value;
+            private final EditBox keyBox;
+            private final IntButton intButton;
+            private final Button add;
+            private final Button expand;
+            private boolean expanded = false;
+
+            public IntMapConfigRow(MapConfigVariant<K, Integer> value) {
+                  super(Component.literal(value.name()));
+                  this.value = value;
+                  int x = getRowLeft();
+
+                  this.expand = Button.builder(Component.literal("⏵"), this::toggleExpanded)
+                              .bounds(x - 1, 0, 20, 20)
+                              .build();
+
+                  this.keyBox = new EditBox(minecraft.font, x + 43, 0, (getRowWidth() - 40) - (47), 20, Component.literal(value.name()));
+                  keyBox.setHint(Component.literal(value.name()).withStyle(ChatFormatting.GRAY));
+
+                  this.intButton = IntButton.builder(in -> {}, null)
+                              .bounds(x + getRowWidth() - 40, 0, 40, 20)
+                              .build();
+
+                  this.add = Button.builder(Component.literal("+"), in -> {
+                        String key = keyBox.getValue();
+                        int entry = intButton.storedValue;
+                        if (!Constants.isEmpty(key) && value.validate.test(key, entry)) {
+                              value.put(key, value.clamp.apply(entry));
+                        }
+                  }).bounds(x + 20, 0, 20, 20)
+                              .build();
+            }
+
+            @Override
+            public void onSave() {
+            }
+
+            private void toggleExpanded(Button in) {
+                  expanded = !expanded;
+                  if (expanded) {
+                        in.setMessage(Component.literal("⏴"));
+                  } else {
+                        in.setMessage(Component.literal("⏵"));
+                  }
+            }
+
+            @Override
+            public void hungryClick(double mouseX, double mouseY, int i) {
+                  if (i == 0 && hoveredEntry != null && mouseX < getRowLeft() && hoveredEntry.y - 2 < mouseY && hoveredEntry.y + 8 > mouseY)
+                        value.get().remove(hoveredEntry.key);
+
+                  super.hungryClick(mouseX, mouseY, i);
+            }
+
+            @Override
+            public void resetToDefault() {
+                  value.set(new HashMap<>(value.getDefau()));
+            }
+
+            private float lastDelta = 0;
+            private int scrollText = -80;
+            @Override
+            public void render(GuiGraphics gui, int index, int y, int x, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
+                  keyBox.setY(y);
+                  keyBox.render(gui, mouseX, mouseY, delta);
+                  intButton.setY(y);
+                  intButton.render(gui, mouseX, mouseY, delta);
+                  add.setY(y);
+                  add.render(gui, mouseX, mouseY, delta);
+                  expand.setY(y);
+                  expand.render(gui, mouseX, mouseY, delta);
+                  if (!isFocused()) keyBox.setValue("");
+                  if (expanded) {
+                        if (!isFocused())
+                              toggleExpanded(expand);
+                        else
+                              renderSideMenu(gui, x, mouseX, mouseY, delta);
+                  }
+            }
+
+            private void renderSideMenu(GuiGraphics gui, int x, int mouseX, int mouseY, float delta) {
+                  int i = 0;
+                  hoveredEntry = null;
+                  gui.enableScissor(10, 0, x - 1, screen.height);
+                  for (String key : value.get().keySet())
+                  {
+                        Integer entry = value.get().get(key);
+                        MutableComponent line = Component.literal(key + ": " + entry);
+                        int lineX = 10;
+                        int lineY = 60 + 10 * i;
+                        if (mouseX < x && lineY - 2 < mouseY && lineY + 8 > mouseY)
+                        {
+                              line.withStyle(ChatFormatting.RED);
+                              hoveredEntry = new HoveredEntry(key, lineY);
+                              int width = minecraft.font.width(line);
+                              if (width > x) {
+                                    if (lastDelta > delta)
+                                          scrollText++;
+                                    lineX = 10 - Mth.clamp(scrollText, 0, width - x + 14);
+                                    if (scrollText > width)
+                                          scrollText = -80;
+                              } else scrollText = -20;
+                        }
+                        gui.drawString(minecraft.font, line, lineX, lineY, 0xFFFFFFFF);
+                        i++;
+                  }
+                  gui.disableScissor();
+
+                  if (hoveredEntry != null)
+                        gui.drawString(minecraft.font, Component.literal("✘").withStyle(ChatFormatting.RED), 3, hoveredEntry.y + 1, 0xFFFFFF);
+
+                  lastDelta = delta;
+            }
+
+            private HoveredEntry hoveredEntry = null;
+            public record HoveredEntry(String key, int y) {}
+
+            @Override
+            public List<? extends GuiEventListener> children() {
+                  return List.of(keyBox, intButton, add, expand);
+            }
+
+            @Override
+            public List<? extends NarratableEntry> narratables() {
+                  return List.of(keyBox, intButton, add, expand);
+            }
+      }
+
+
 
 }

@@ -1,8 +1,7 @@
 package com.beansgalaxy.backpacks.inventory;
 
-import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.config.IConfig;
-import com.beansgalaxy.backpacks.config.types.HMapConfigVariant;
+import com.beansgalaxy.backpacks.config.types.MapConfigVariant;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.data.Traits;
@@ -28,12 +27,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.entity.EntityAccess;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 public abstract class BackpackInventory implements Container {
@@ -269,7 +265,7 @@ public abstract class BackpackInventory implements Container {
             if (stack.isEmpty())
                   return 0;
 
-            HMapConfigVariant<Item, Integer> itemWeights = ServerSave.CONFIG.item_weight_override;
+            MapConfigVariant<Item, Integer> itemWeights = ServerSave.CONFIG.item_weight_override;
             if (itemWeights.contains(stack.getItem()))
                   return itemWeights.get(stack.getItem());
 

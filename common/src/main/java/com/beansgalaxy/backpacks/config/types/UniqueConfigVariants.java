@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.config.types;
 
+import com.beansgalaxy.backpacks.Constants;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -13,7 +14,7 @@ public interface UniqueConfigVariants {
 
             String string = stringJoiner.toString();
             HSetConfigVariant.Builder<Item> configBuilder = HSetConfigVariant.Builder.create(
-                        /* ENCODE */   in -> BuiltInRegistries.ITEM.getKey(in).toShortLanguageKey(),
+                        /* ENCODE */   Constants::itemShortString,
                         /* DECODE */   in -> BuiltInRegistries.ITEM.get(new ResourceLocation(in)));
             return configBuilder
                         .isValid(in -> BuiltInRegistries.ITEM.containsKey(new ResourceLocation(in)))
