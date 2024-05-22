@@ -124,8 +124,6 @@ public class ForgeMain {
                 new DyableBackpack(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> METAL_BACKPACK = ITEMS.register("metal_backpack", () ->
                 new BackpackItem(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> UPGRADED_BACKPACK = ITEMS.register("upgraded_backpack", () ->
-                new BackpackItem(new Item.Properties().stacksTo(1).fireResistant()));
     public static final RegistryObject<Item> WINGED_BACKPACK = ITEMS.register("winged_backpack", () ->
                 new WingedBackpack(new Item.Properties().defaultDurability(432).rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<Item> ENDER_BACKPACK = ITEMS.register("ender_backpack", () ->

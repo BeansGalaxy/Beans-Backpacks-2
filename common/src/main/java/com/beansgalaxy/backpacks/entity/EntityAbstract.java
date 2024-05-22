@@ -6,7 +6,6 @@ import com.beansgalaxy.backpacks.data.config.Gamerules;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
-import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.items.*;
 import com.beansgalaxy.backpacks.network.clientbound.SendEnderStacks;
 import com.beansgalaxy.backpacks.network.clientbound.SendBackInventory;
@@ -16,7 +15,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
@@ -197,8 +195,6 @@ public abstract class EntityAbstract extends Backpack {
       public ItemStack toStack() {
             Traits.LocalData traits = this.getTraits();
             Kind kind = traits.kind;
-            if (Kind.UPGRADED.is(kind))
-                  kind = Kind.METAL;
             Item item = kind.getItem();
             ItemStack stack = item.getDefaultInstance();
             CompoundTag itemTags = this.itemTags;
@@ -226,9 +222,9 @@ public abstract class EntityAbstract extends Backpack {
             boolean hasDefaultColor = false;
 
             switch (kind) {
-                  case METAL, UPGRADED -> {
+                  case METAL -> {
                         String key = traits.backpack_id;
-                        if (!Constants.isEmpty(key) && !key.equals("iron")) // TODO: 20.1-0.18-v2 REMOVE KEY EQUALS IRON CHECK
+                        if (!Constants.isEmpty(key))
                               stack.getOrCreateTag().putString("backpack_id", key);
                   }
                   case LEATHER -> hasDefaultColor = color == DEFAULT_COLOR;
@@ -436,17 +432,12 @@ public abstract class EntityAbstract extends Backpack {
 
       protected void fromNBT(CompoundTag tag) {
             this.setDirection(Direction.from3DDataValue(tag.getByte("facing")));
-            if (tag.contains("display")) // TODO: FOR REMOVAL 20.1-0.18-v2 : DISPLAY TAG IS THE OLD METHOD FOR SAVING
-                  this.setDisplay(tag.getCompound("display"));
-            else {
-                  this.setNoGravity(tag.getBoolean("hanging"));
-                  entityData.set(LOCKED, tag.getBoolean("Locked"));
-                  CompoundTag localData = tag.getCompound("local_data");
-                  this.entityData.set(OWNER, Optional.of(localData.getUUID("owner")));
-                  entityData.set(LOCAL_DATA, localData);
-                  itemTags = tag.getCompound("item_tags");
-            }
-
+            this.setNoGravity(tag.getBoolean("hanging"));
+            entityData.set(LOCKED, tag.getBoolean("Locked"));
+            CompoundTag localData = tag.getCompound("local_data");
+            this.entityData.set(OWNER, Optional.of(localData.getUUID("owner")));
+            entityData.set(LOCAL_DATA, localData);
+            itemTags = tag.getCompound("item_tags");
       }
 
       @Override
@@ -466,42 +457,6 @@ public abstract class EntityAbstract extends Backpack {
             tag.put("local_data", traits);
             if (itemTags != null)
                   tag.put("item_tags", itemTags);
-      }
-
-      // LOCAL
-      @Deprecated // 20.1-0.18-v2
-      public void setDisplay(CompoundTag display) {
-            String key = display.getString("key");
-            int color = display.getInt("color");
-            CompoundTag trim = display.getCompound("Trim");
-            MutableComponent hoverName = Component.Serializer.fromJson(display.getString("hover_name"));
-
-            Kind kind = Kind.METAL;
-            switch (key) {
-                  case "iron" -> key = "";
-                  case "netherite" -> key = "null";
-                  case "leather" -> {
-                        key = "";
-                        kind = Kind.LEATHER;
-                  }
-                  case "ender" -> {
-                        key = "";
-                        kind = Kind.ENDER;
-                  }
-                  case "winged" -> {
-                        key = "";
-                         kind = Kind.WINGED;
-                  }
-            }
-
-            Traits.LocalData traits = new Traits.LocalData(key, kind, color, trim, hoverName);
-            this.traits = traits;
-            this.entityData.set(LOCAL_DATA, traits.toNBT());
-
-            if (!display.contains("placed_by"))
-                  Constants.LOG.warn("No \"Placed By\" UUID provided from -> " + this);
-            else
-                  this.entityData.set(OWNER, Optional.of(display.getUUID("placed_by")));
       }
 
       /** COLLISIONS AND INTERACTIONS **/

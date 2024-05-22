@@ -66,7 +66,6 @@ public abstract class InventoryContainerMixin implements BackAccessor {
 
       @Inject(method = "load", at = @At("TAIL"))
       public void readMixin(ListTag tag, CallbackInfo info) {
-            depricatedLoad(tag);
             for (int i = 0; i < tag.size(); ++i) {
                   CompoundTag compoundTag = tag.getCompound(i);
                   ItemStack itemStack = ItemStack.of(compoundTag.getCompound("BackSlot"));
@@ -76,24 +75,6 @@ public abstract class InventoryContainerMixin implements BackAccessor {
                         Traits.LocalData traits = backData.getTraits();
                         if (traits.isStorage() && !Kind.ENDER.is(traits.kind))
                               backData.getBackpackInventory().readStackNbt(compoundTag.getCompound("Contents"));
-                  }
-            }
-      }
-
-      @Unique
-      private void depricatedLoad(ListTag tag) { // TODO: REMOVE THIS LOAD BEFORE RELEASE
-            BackData backData = getBackData();
-            backData.set(ItemStack.EMPTY);
-            for (int i = 0; i < tag.size(); ++i) {
-                  CompoundTag compoundTag = tag.getCompound(i);
-                  int slot = compoundTag.getByte("Slot") & 255;
-                  ItemStack itemStack = ItemStack.of(compoundTag);
-                  if (!itemStack.isEmpty()) {
-                        if (slot == 110) {
-                              backData.set(itemStack);
-                              if (backData.getTraits().isStorage())
-                                    backData.getBackpackInventory().readStackNbt(compoundTag.getCompound("Contents"));
-                        }
                   }
             }
       }

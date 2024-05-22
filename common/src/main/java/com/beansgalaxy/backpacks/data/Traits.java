@@ -209,10 +209,6 @@ public class Traits {
 
                   Component hoverName = stack.hasCustomHoverName() ? stack.getHoverName(): Component.empty();
                   switch (kind) {
-                        case UPGRADED -> {
-                              CompoundTag trim = stack.getTagElement("Trim");
-                              return new LocalData("null", Kind.METAL, 0xFFFFFF, trim, hoverName);
-                        }
                         case METAL -> {
                               CompoundTag tag = stack.getTag();
                               CompoundTag trim = stack.getTagElement("Trim");

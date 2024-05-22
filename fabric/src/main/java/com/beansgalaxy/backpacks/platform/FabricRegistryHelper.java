@@ -23,11 +23,6 @@ public class FabricRegistryHelper implements RegistryHelper {
       }
 
       @Override
-      public Item getUpgraded() {
-            return FabricMain.UPGRADED_BACKPACK.asItem();
-      }
-
-      @Override
       public Item getWinged() {
             return FabricMain.WINGED_BACKPACK.asItem();
       }

@@ -14,18 +14,6 @@
         ]
       }
     },
-    "has_upgraded": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "items": [
-          {
-            "items": [
-              "beansbackpacks:upgraded_backpack"
-            ]
-          }
-        ]
-      }
-    },
     "equipped_null": {
       "trigger": "minecraft:beansbackpacks/equip_any",
       "conditions": {

@@ -42,7 +42,7 @@ public class Constants {
 
 	public static final CreativeModeTab.DisplayItemsGenerator CREATIVE_TAB_GENERATOR = (params, output) -> {
 		for (Kind value : Kind.values()) {
-			if (!Kind.is(value, Kind.UPGRADED, Kind.BIG_BUNDLE))
+			if (!Kind.is(value, Kind.BIG_BUNDLE))
 				output.accept(value.getItem());
 			if (Kind.METAL.is(value))
 				Constants.TRAITS_MAP.keySet().forEach(key -> {

@@ -14,16 +14,10 @@ import net.minecraft.world.item.ItemStack;
 public class REI implements REIClientPlugin {
 
       public void register() {
-
       }
 
       @Override
       public void registerBasicEntryFiltering(BasicFilteringRule<?> rule) {
-            rule.hide(() -> {
-                  EntryIngredient.Builder builder = EntryIngredient.builder();
-                  builder.add(EntryStacks.of(Services.REGISTRY.getUpgraded()));
-                  return builder.build();
-            });
       }
 
       @Override

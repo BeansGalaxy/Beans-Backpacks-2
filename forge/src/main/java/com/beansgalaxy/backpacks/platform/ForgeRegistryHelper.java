@@ -23,11 +23,6 @@ public class ForgeRegistryHelper implements RegistryHelper {
       }
 
       @Override
-      public Item getUpgraded() {
-            return ForgeMain.UPGRADED_BACKPACK.get();
-      }
-
-      @Override
       public Item getWinged() {
             return ForgeMain.WINGED_BACKPACK.get();
       }

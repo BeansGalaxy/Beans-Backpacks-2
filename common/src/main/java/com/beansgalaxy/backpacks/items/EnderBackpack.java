@@ -19,21 +19,6 @@ public class EnderBackpack extends BackpackItem {
             super(properties);
       }
 
-      @Override @Deprecated // Since 20.1-0.18-v2
-      public void verifyTagAfterLoad(CompoundTag tag) {
-            if (tag.contains("display")) {
-                  CompoundTag display = tag.getCompound("display");
-                  if (display.contains("placed_by")) {
-                        UUID uuid = display.getUUID("placed_by");
-                        tag.putUUID("owner", uuid);
-                        display.remove("placed_by");
-                        if (display.isEmpty())
-                              tag.remove("display");
-                  }
-            }
-            super.verifyTagAfterLoad(tag);
-      }
-
       public UUID getOrCreateUUID(Player viewer, ItemStack stack) {
             UUID uuid = viewer.getUUID();
             Level level = viewer.level();
@@ -89,12 +74,5 @@ public class EnderBackpack extends BackpackItem {
                   }
             }
             super.onCraftedBy(stack, level, player);
-      }
-
-      public boolean lockEnder(Player player, ItemStack backpackStack) {
-            return getUUID(backpackStack).map(uuid -> {
-                  EnderInventory enderData = EnderStorage.getEnderData(uuid, player.level());
-                  return true;
-            }).orElse(false);
       }
 }

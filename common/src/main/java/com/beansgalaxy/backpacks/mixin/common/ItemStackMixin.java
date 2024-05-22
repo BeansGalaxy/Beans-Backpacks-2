@@ -59,28 +59,9 @@ public abstract class ItemStackMixin {
             ItemStack backStack = backData.getStack();
             Traits.LocalData traits = Traits.LocalData.fromStack(instance, player);
             Kind instanceKind = traits.kind;
-            boolean menusKeyDown = backData.menusKeyDown;
 
             if (traits.isEmpty())
                   return;
-
-            if (instance.is(Services.REGISTRY.getUpgraded()))
-            {
-                  if (menusKeyDown) {
-                        components.add(Component.translatable("tooltip.beansbackpacks.null0"));
-                        components.add(Component.translatable("tooltip.beansbackpacks.null1"));
-                        components.add(Component.empty());
-                        components.add(Component.translatable("tooltip.beansbackpacks.null2"));
-                        components.add(Component.translatable("tooltip.beansbackpacks.null3"));
-                        components.add(Component.empty());
-                        components.add(Component.translatable("tooltip.beansbackpacks.null4"));
-                        components.add(Component.translatable("tooltip.beansbackpacks.null5"));
-                        components.add(Component.translatable("tooltip.beansbackpacks.null6"));
-                        cir.setReturnValue(components);
-                  }
-                  else Tooltip.nullTitle(components);;
-                  return;
-            }
 
             if (Constants.CLIENT_CONFIG.tooltip_style.get() != TooltipType.INTEGRATED
             && instance == backStack

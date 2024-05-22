@@ -361,25 +361,6 @@ public class BackpackItem extends Item {
             return super.getName(stack);
       }
 
-      @Override @Deprecated // Since 20.1-0.18-v2
-      public void verifyTagAfterLoad(CompoundTag tag) {
-            if (tag.contains("display")) {
-                  CompoundTag display = tag.getCompound("display");
-                  if (display.contains("key")) {
-                        String key = display.getString("key");
-                        display.remove("key");
-                        if (display.isEmpty())
-                              tag.remove("display");
-                        switch (key) {
-                              case "leather", "iron", "ender", "winged" -> {}
-                              case "netherite" -> tag.putString("backpack_id", "null");
-                              default -> tag.putString("backpack_id", key);
-                        }
-                  }
-            }
-            super.verifyTagAfterLoad(tag);
-      }
-
       @Override
       public boolean isBarVisible(ItemStack stack) {
             return Tooltip.isBarVisible(stack);

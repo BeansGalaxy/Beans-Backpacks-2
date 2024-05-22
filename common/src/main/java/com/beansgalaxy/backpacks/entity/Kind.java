@@ -25,7 +25,6 @@ import java.util.function.Function;
 public enum Kind {
       LEATHER(  Services.REGISTRY.getLeather(),  Traits.LEATHER,  DyableBackpack::shiftColor, data -> Kind.getAppendedName("", "Backpack")),
       METAL(    Services.REGISTRY.getMetal(),    Traits.METAL,    Traits.IGNORE_COLOR,        Traits::getName),
-      UPGRADED( Services.REGISTRY.getUpgraded(), Traits.METAL,    Traits.IGNORE_COLOR,        Traits::getName),
       WINGED(   Services.REGISTRY.getWinged(),   Traits.WINGED,   WingedBackpack::shiftColor, data -> Kind.getAppendedName("winged_", "Winged Backpack")),
       ENDER(    Services.REGISTRY.getEnder(),    Traits.ENDER,    Traits.IGNORE_COLOR,        data -> Kind.getAppendedName("ender_", "Ender Backpack")),
       POT(      Items.DECORATED_POT.asItem(),    Traits.POT,      Traits.IGNORE_COLOR,        data -> Component.empty()),
@@ -146,7 +145,7 @@ public enum Kind {
 
             switch (this) {
                   case LEATHER -> string.append("leather/leather");
-                  case METAL, UPGRADED -> {
+                  case METAL -> {
                         if (!Constants.isEmpty(key))
                               string.append("backpack/").append(key);
                         else string.append("metal");

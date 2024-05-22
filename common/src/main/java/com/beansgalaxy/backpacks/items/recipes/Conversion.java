@@ -85,7 +85,7 @@ public class Conversion extends CustomRecipe {
 
       @Override
       public NonNullList<Ingredient> getIngredients() {
-            return NonNullList.of(Ingredient.of(Services.REGISTRY.getMetal(), Services.REGISTRY.getUpgraded()));
+            return NonNullList.of(Ingredient.of(Services.REGISTRY.getMetal()));
       }
 
       @Override @NotNull
