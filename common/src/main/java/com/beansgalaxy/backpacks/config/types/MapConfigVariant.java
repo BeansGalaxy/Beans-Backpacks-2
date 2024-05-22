@@ -89,8 +89,6 @@ public class MapConfigVariant<KEY, ENTRY> extends ConfigVariant<HashMap<String, 
             while (iterator.hasNext()) {
                   String key = iterator.next();
                   ENTRY entry = map.get(key);
-                  if (!validate.test(key, entry)) continue;
-
                   sb.append("\n    //\"");
                   sb.append(key).append("\": ").append(entryEncode.apply(entry));
                   if (iterator.hasNext())

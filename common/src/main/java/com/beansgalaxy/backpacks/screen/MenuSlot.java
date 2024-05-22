@@ -94,19 +94,18 @@ public class MenuSlot extends Slot {
       }
 
       public static int[] getXY(BackpackInventory inventory, int slot, boolean hasSpace) {
-            int size = Math.min(MAX_SLOTS, inventory.getContainerSize());
-            int slots;
+            int containerSize = inventory.getContainerSize();
+            int slots = Math.min(MAX_SLOTS, containerSize) + 1;
             int index;
 
             if (hasSpace) {
                   index = slot + 1;
-                  slots = size + 1;
             }
             else {
                   index = slot;
-                  slots = size + 1;
+                  if (MAX_SLOTS >= containerSize)
+                        slots -= 1;
             }
-
 
             int columns = COLUMN_START;
             int limit = COLUMN_START * MAX_ROWS;
