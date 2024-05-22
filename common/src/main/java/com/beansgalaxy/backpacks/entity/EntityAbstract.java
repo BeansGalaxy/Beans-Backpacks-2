@@ -561,9 +561,9 @@ public abstract class EntityAbstract extends Backpack {
                         this.markHurt();
                   }
                   else {
-                        float damage = player.getUUID().equals(getPlacedBy()) || !isLocked()
-                                    ? 10
-                                    : 3;
+                        float damage = !player.getUUID().equals(getPlacedBy()) && (isLocked() || Kind.BIG_BUNDLE.is(getTraits().kind))
+                                    ? 3
+                                    : 10;
                         return damage((int) (damage), false);
                   }
             }
@@ -701,7 +701,7 @@ public abstract class EntityAbstract extends Backpack {
       @Override @NotNull
       public InteractionResult interact(Player player, InteractionHand hand) {
             ItemStack itemInHand;
-            if (!isLocked() && (itemInHand = player.getItemInHand(hand)).is(Services.REGISTRY.getLock()))
+            if (!isLocked() && (itemInHand = player.getItemInHand(hand)).is(Services.REGISTRY.getLock()) && player.getUUID().equals(getPlacedBy()))
             {
                   playSound(PlaySound.Events.LOCK.get());
                   setLocked(true);
@@ -802,6 +802,13 @@ public abstract class EntityAbstract extends Backpack {
                   return InteractionResult.SUCCESS;
 
             if (actionKeyPressed) {
+                  if (Kind.BIG_BUNDLE.is(getTraits().kind) && !player.getUUID().equals(getPlacedBy())) {
+                        player.displayClientMessage(Component.translatable("entity.beansbackpacks.locked.back_bundle_equip"), true);
+                        PlaySound.HIT.at(this, sound);
+                        this.hop(.1);
+                        return InteractionResult.SUCCESS;
+                  }
+
                   ItemStack backpackStack = toStack();
                   if (backData.mayEquip(backpackStack, false, true))
                   {

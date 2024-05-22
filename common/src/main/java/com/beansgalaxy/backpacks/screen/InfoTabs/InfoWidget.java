@@ -59,8 +59,7 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
       public void updateButtonPositions(int leftPos) {
             for (Optional<InfoButton> optional : buttons) {
                   optional.ifPresent(button -> {
-                        Tabs tab = button.tab;
-                        button.setPosition(leftPos + tab.offsetXY[0], topPos);
+                        button.setPosition(button.tab.getX() + leftPos, button.tab.getY() + topPos);
                   });
             }
       }
@@ -263,7 +262,7 @@ public class InfoWidget implements Renderable, GuiEventListener, NarratableEntry
             private final Tabs tab;
 
             public InfoButton(Tabs tab, int leftPos, int topPos, OnPress o) {
-                  super(leftPos + tab.offsetXY[0], topPos, 24, 25, 24 * tab.index, 0, 25, TEXTURE, o);
+                  super(tab.getX() + leftPos, topPos + tab.getY(), 24, 25, tab.getTexX(), 0, 25, TEXTURE, o);
                   this.tab = tab;
                   init();
             }

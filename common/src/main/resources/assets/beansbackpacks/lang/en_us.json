@@ -116,6 +116,22 @@
   "help.beansbackpacks.null13": "This mod's come a long way,",
   "help.beansbackpacks.null14": "Thank you %d",
 
+  "help.beansbackpacks.bundle_title": "Super Special Thanks!",
+  "help.beansbackpacks.bundle0": "Thank you for supporting",
+  "help.beansbackpacks.bundle1": "Beans' Backpacks!",
+  "help.beansbackpacks.bundle2": "------------------------",
+  "help.beansbackpacks.bundle3": "You are now able to combine",
+  "help.beansbackpacks.bundle4": "an Emerald with a Leather",
+  "help.beansbackpacks.bundle5": "Backpack to craft the",
+  "help.beansbackpacks.bundle6": "Big Bundle backpack skin.",
+  "help.beansbackpacks.bundle7": "------------------------",
+  "help.beansbackpacks.bundle8": "The Big Bundle can be dyed",
+  "help.beansbackpacks.bundle9": "and Trimmed. It also can't be",
+  "help.beansbackpacks.bundle10": "equipped by other players.",
+  "help.beansbackpacks.bundle11": "------------------------",
+  "help.beansbackpacks.bundle12": "This mod's come a long way,",
+  "help.beansbackpacks.bundle13": "Thank you %d",
+
   "help.beansbackpacks.hide": "Hide this menu until a new backpack is discovered",
 
   "tooltip.beansbackpacks.special_title": "§7When on Back:",
@@ -151,6 +167,7 @@
   "entity.beansbackpacks.locked.not_owner": "You do not own this backpack.",
   "entity.beansbackpacks.locked.ender_offline": "This backpack's owner is not online.",
   "entity.beansbackpacks.locked.ender_no_owner": "This backpack has no inventory.",
+  "entity.beansbackpacks.locked.back_bundle_equip": "You do not own this backpack.",
   "entity.beansbackpacks.locked.request_access": "%d wants to access your backpack.",
   "entity.beansbackpacks.equip_locked_msg": "Hold %d to let %d access your backpack.",
 

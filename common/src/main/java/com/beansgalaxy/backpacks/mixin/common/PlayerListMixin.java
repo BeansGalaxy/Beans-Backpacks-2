@@ -36,5 +36,7 @@ public class PlayerListMixin {
             if (ServerSave.CONFIG.usesOldDataPackConfig)
                   player.displayClientMessage(Component.literal("§cModifying Item Whitelists is outdated!!§r\nThis world uses Data-Packs to modify §eBeans' Backpacks.\nUse §e\"Whitelists\"§r in beansbackpacks-common config instead.\nCheck the server's log for more info."), false);
 
+            if (save.isSuperSpecial(player))
+                  Services.REGISTRY.triggerSpecial(player, SpecialCriterion.Special.SUPER_SPECIAL_PLAYER);
       }
 }

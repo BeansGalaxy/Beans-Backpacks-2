@@ -100,7 +100,6 @@ public class ServerSave extends SavedData {
                         UUID uuid = UUID.fromString(split[1]);
                         GameProfile e = new GameProfile(uuid, split[0]);
                         superSpecialPlayers.add(e);
-                        System.out.println(e);
                   }
             } catch (IOException e) {
                   throw new RuntimeException(e);

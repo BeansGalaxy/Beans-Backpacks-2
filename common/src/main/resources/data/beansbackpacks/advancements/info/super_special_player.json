@@ -1,0 +1,12 @@
+{
+  "parent": "beansbackpacks:info/root",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:beansbackpacks/special",
+      "conditions": {
+        "special": "SUPER_SPECIAL_PLAYER"
+      }
+    }
+  },
+  "sends_telemetry_event": false
+}

@@ -13,80 +13,157 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import java.awt.*;
+import java.util.List;
 
 public enum Tabs {
-      BACKPACK(1, new int[]{-23, 0}, 0x19EE5500, new InfoTab() {
+      BACKPACK(1, 0x19EE5500, new InfoTab() {
             public ItemStack getDisplay() {
                   return Services.REGISTRY.getLeather().getDefaultInstance();
-            }
-
-            public boolean isUnlocked(Minecraft minecraft) {
-                  return getAdvancement(minecraft.getConnection(), "beansbackpacks:beansbackpacks");
             }
 
             public Component getVariableForLine(Minecraft minecraft, int line) {
                   return KeyPress.getReadable(line < 10);
             }
-      }),
-      ENDER(    2, new int[]{-46,  0}, 0x108800FF, new InfoTab() {
+      }) {
+            public boolean isUnlocked(Minecraft minecraft) {
+                  return getAdvancement(minecraft.getConnection(), "beansbackpacks:beansbackpacks");
+            }
+
+            public int getX() {
+                  return -23;
+            }
+      },
+      ENDER(    2, 0x108800FF, new InfoTab() {
             public ItemStack getDisplay() {
                   return Services.REGISTRY.getEnder().getDefaultInstance();
             }
-
+      }) {
             public boolean isUnlocked(Minecraft minecraft) {
                   return getAdvancement(minecraft.getConnection(), "beansbackpacks:info/ender_backpacks");
             }
-      }),
-      POT(3, new int[]{-69,  0}, 0x19DDCC00, new InfoTab() {
+
+            public int getX() {
+                  return -46;
+            }
+      },
+      POT(3, 0x19DDCC00, new InfoTab() {
             public ItemStack getDisplay() {
                   return Items.DECORATED_POT.getDefaultInstance();
             }
-
+      }) {
             public boolean isUnlocked(Minecraft minecraft) {
                   return getAdvancement(minecraft.getConnection(), "beansbackpacks:info/decorated_pots");
             }
-      }),
-      CAULDRON(4, new int[]{-92, -1}, 0x120055FF, new InfoTab() {
+
+            public int getX() {
+                  return -69;
+            }
+      },
+      CAULDRON(4, 0x120055FF, new InfoTab() {
             public ItemStack getDisplay() {
                   return Items.CAULDRON.getDefaultInstance();
-            }
-
-            public boolean isUnlocked(Minecraft minecraft) {
-                  return getAdvancement(minecraft.getConnection(), "beansbackpacks:info/fluid_cauldrons");
             }
 
             public Component getVariableForLine(Minecraft minecraft, int line) {
                   return KeyPress.getReadable(line < 7);
             }
-      }),
-      NULL(5, new int[]{-114, 0}, 0x1000FF00, new InfoTab() {
-            public ItemStack getDisplay() {
-                  return Constants.createLabeledBackpack("null");
+      }) {
+            public boolean isUnlocked(Minecraft minecraft) {
+                  return getAdvancement(minecraft.getConnection(), "beansbackpacks:info/fluid_cauldrons");
             }
 
-            public boolean isUnlocked(Minecraft minecraft) {
-                  return getAdvancement(minecraft.getConnection(), "beansbackpacks:info/thank_you");
+            public int getX() {
+                  return -92;
+            }
+
+            public int getIconX() {
+                  return getX() + 1;
+            }
+
+            public int getIconY() {
+                  return getY() - 1;
+            }
+      },
+      NULL(-1, 0x1000FF00, new InfoTab() {
+            public ItemStack getDisplay() {
+                  return Constants.createLabeledBackpack("null");
             }
 
             public Component getVariableForLine(Minecraft minecraft, int line) {
                   return minecraft.player.getName().plainCopy().withStyle(ChatFormatting.BLACK);
             }
-      });
+      }) {
+            public boolean isUnlocked(Minecraft minecraft) {
+                  return getAdvancement(minecraft.getConnection(), "beansbackpacks:info/thank_you");
+            }
+
+            public int getX() {
+                  return -150;
+            }
+
+            public int getY() {
+                  return 144 + 16;
+            }
+
+            public int getIconY() {
+                  return getY() + 1;
+            }
+      },
+      BUNDLE(-2, 0x23d95842, new InfoTab() {
+            public ItemStack getDisplay() {
+                  return Services.REGISTRY.getBigBundle().getDefaultInstance();
+            }
+
+            public Component getVariableForLine(Minecraft minecraft, int line) {
+                  return minecraft.player.getName().plainCopy().withStyle(ChatFormatting.BLACK);
+            }
+      }) {
+            public boolean isUnlocked(Minecraft minecraft) {
+                  return getAdvancement(minecraft.getConnection(), "beansbackpacks:info/super_special_player");
+            }
+
+            public int getX() {
+                  boolean unlocked = NULL.isUnlocked(Minecraft.getInstance());
+                  return -150 + (unlocked ? 23 : 0);
+            }
+
+            public int getY() {
+                  return 144 + 16;
+            }
+
+            public int getIconY() {
+                  return getY() + 1;
+            }
+      };
 
       final int index;
-      final int[] offsetXY;
       final Color color;
       private final InfoTab tab;
 
-      Tabs(int index, int[] offsetXY, int color, InfoTab tab) {
+      Tabs(int index, int color, InfoTab tab) {
             this.index = index;
-            this.offsetXY = offsetXY;
             this.color = new Color(color, true);
             this.tab = tab;
       }
 
+      public int getX() {
+            return 0;
+      }
+
+      public int getY() {
+            return 0;
+      }
+
+      public int getIconX() {
+            return getX();
+      }
+
+      public int getIconY() {
+            return getY();
+      }
+
       public boolean isUnlocked(Minecraft minecraft) {
-            return tab.isUnlocked(minecraft);
+            return false;
       }
 
       public static boolean getAdvancement(ClientPacketListener connection, String... locations) {
@@ -102,18 +179,20 @@ public enum Tabs {
       }
 
       public void render(GuiGraphics gui, int x, int y) {
-            gui.renderFakeItem(tab.getDisplay(), x + offsetXY[0] - offsetXY[1] + 23, y + offsetXY[1]);
+            gui.renderFakeItem(tab.getDisplay(), getIconX() + x + 23, getIconY() + y);
       }
 
       public Component getVarForLine(Minecraft minecraft, int line) {
             return tab.getVariableForLine(minecraft, line).plainCopy().withStyle(ChatFormatting.BLACK);
       }
 
+      public int getTexX() {
+            return index * 24;
+      }
+
       private interface InfoTab {
 
             ItemStack getDisplay();
-
-            boolean isUnlocked(Minecraft minecraft);
 
             default Component getVariableForLine(Minecraft minecraft, int line) {
                   return Component.empty();
