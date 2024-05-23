@@ -1,17 +1,12 @@
 package com.beansgalaxy.backpacks.network.clientbound;
 
-import com.beansgalaxy.backpacks.client.network.CommonAtClient;
 import com.beansgalaxy.backpacks.config.CommonConfig;
-import com.beansgalaxy.backpacks.config.types.ConfigLabel;
 import com.beansgalaxy.backpacks.config.types.ConfigLine;
-import com.beansgalaxy.backpacks.config.types.ConfigVariant;
 import com.beansgalaxy.backpacks.data.ServerSave;
 import com.beansgalaxy.backpacks.network.Network2C;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 
 public class ConfigureConfig implements Packet2C {

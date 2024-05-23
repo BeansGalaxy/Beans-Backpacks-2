@@ -2,9 +2,8 @@ package com.beansgalaxy.backpacks.data;
 
 import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.access.BackAccessor;
-import com.beansgalaxy.backpacks.client.network.CommonAtClient;
 import com.beansgalaxy.backpacks.config.IConfig;
-import com.beansgalaxy.backpacks.data.config.BackpackCapePos;
+import com.beansgalaxy.backpacks.data.config.Gamerules;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.events.PlaySound;
@@ -13,13 +12,10 @@ import com.beansgalaxy.backpacks.items.EnderBackpack;
 import com.beansgalaxy.backpacks.items.Tooltip;
 import com.beansgalaxy.backpacks.network.clientbound.SendBackSlot;
 import com.beansgalaxy.backpacks.platform.Services;
-import com.beansgalaxy.backpacks.platform.services.ConfigHelper;
 import com.beansgalaxy.backpacks.screen.BackSlot;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.screen.InSlot;
-import com.beansgalaxy.backpacks.screen.SecondOrderDynamics;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -71,9 +67,6 @@ public class BackData {
       private ItemStack backStack = ItemStack.EMPTY;
       public boolean actionKeyDown = false;
       public boolean menusKeyDown = false;
-      public BackpackCapePos capePos = BackpackCapePos.ON_TOP;
-      public SecondOrderDynamics capeY = new SecondOrderDynamics(0.06, 0.25, 2, 0);
-      public SecondOrderDynamics capeYRot = new SecondOrderDynamics(0.1, 0.6, 5, 0);
 
       public void setEnderLocations(HashSet<EnderStorage.PackagedLocation> newLocations) {
             this.enderLocations.clear();
@@ -220,7 +213,7 @@ public class BackData {
       public void drop() {
             Level level = owner.level();
             boolean isCanceled = Services.COMPAT.invokeListenersOnDeath(this);
-            if (isCanceled || ConfigHelper.keepBackSlot(level))
+            if (isCanceled || ServerSave.GAMERULES.get(Gamerules.KEEP_BACK_SLOT))
                   return;
 
             BlockPos blockPos = owner.getOnPos();
@@ -271,7 +264,6 @@ public class BackData {
 
       public void copyTo(BackData newBackData) {
             newBackData.set(this.backStack);
-            newBackData.capePos = capePos;
             if (getStack().getItem() instanceof EnderBackpack)
                   return;
 

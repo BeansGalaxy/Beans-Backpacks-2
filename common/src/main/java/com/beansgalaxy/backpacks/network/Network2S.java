@@ -14,8 +14,7 @@ public enum Network2S {
       INSTANT_PLACE_2S("instant_place_s", new Packet<>(InstantPlace.class, InstantPlace::encode, InstantPlace::new, InstantPlace::handle)),
       PICK_BACKPACK_2S("pick_backpack_s", new Packet<>(PickBackpack.class, PickBackpack::encode, PickBackpack::new, PickBackpack::handle)),
       USE_CAULDRON_2S("use_cauldron_s", new Packet<>(UseCauldron.class, UseCauldron::encode, UseCauldron::new, UseCauldron::handle)),
-      CLEAR_BACK_SLOT_2S("clear_back_slot_s", new Packet<>(ClearBackSlot.class, ClearBackSlot::encode, ClearBackSlot::new, ClearBackSlot::handle)),
-      SYNC_CAPE_POS("cape_pos_s", new Packet<>(SyncCapePos.class, SyncCapePos::encode, SyncCapePos::new, SyncCapePos::handle));
+      CLEAR_BACK_SLOT_2S("clear_back_slot_s", new Packet<>(ClearBackSlot.class, ClearBackSlot::encode, ClearBackSlot::new, ClearBackSlot::handle));
 
       public final Packet<? extends Packet2S> packet;
       public final ResourceLocation id;

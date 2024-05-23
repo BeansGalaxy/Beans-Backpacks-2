@@ -27,14 +27,12 @@ public class SendBackSlot implements Packet2C {
 
 
       public static void send(Player owner, ServerPlayer sender) {
-            BackData backData = BackData.get(owner);
-            ItemStack stack = backData.getStack();
+            ItemStack stack = BackData.get(owner).getStack();
             new SendBackSlot(owner.getId(), stack).send2C(sender);
       }
 
       public static void send(ServerPlayer owner) {
-            BackData backData = BackData.get(owner);
-            ItemStack stack = backData.getStack();
+            ItemStack stack = BackData.get(owner).getStack();
             new SendBackSlot(owner.getId(), stack).send2A(owner.level().getServer());
       }
 

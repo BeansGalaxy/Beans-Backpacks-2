@@ -30,7 +30,25 @@ public class SecondOrderDynamics {
       }
 
       public double update(double T, double x, double xd) {
-            double k2_stable = max(k2, 1.1 * (T * T/4 + T * k1/2));
+            double k2_stable = max(k2, max(T*T/2 + T*k1/2, T*k1));
+            y = y + T * yd;
+            yd = yd + T * (x + k3*xd - y - k1 * yd) / k2_stable;
+            return y;
+      }
+
+      public double update(double f, double z, double r, double T, double x) {
+            double xd = (x - xp) /T;
+            xp = x;
+
+            return update(f, z, r, T, x, xd);
+      }
+
+      public double update(double f, double z, double r, double T, double x, double xd) {
+            double k1 = z / (PI * f);
+            double k2 = 1 / pow(2 * PI * f, 2);
+            double k3 = r * z / (2 * PI * f);
+
+            double k2_stable = max(k2, max(T*T/2 + T*k1/2, T*k1));
             y = y + T * yd;
             yd = yd + T * (x + k3*xd - y - k1 * yd) / k2_stable;
             return y;

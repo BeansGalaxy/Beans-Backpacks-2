@@ -8,7 +8,6 @@ import com.beansgalaxy.backpacks.client.renderer.BackpackRenderer;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.data.Viewable;
-import com.beansgalaxy.backpacks.data.config.BackpackCapePos;
 import com.beansgalaxy.backpacks.entity.Kind;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -29,7 +28,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
@@ -77,15 +75,7 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
             boolean hasChestplate = !chestStack.isEmpty();
             pose.translate(0, (0.24 * scale) + (hasChestplate ? 0.02 : 0),
                         -(0.096 * scale) + (hasChestplate ? 0.065 : 0.001));
-
-            if (player.isCapeLoaded() && !player.isInvisible() && player.isModelPartShown(PlayerModelPart.CAPE))
-            {
-                BackpackCapePos capePos = backData.capePos;
-                switch (capePos) {
-                    case ON_TOP -> renderCapeAbove(pose, mbs, light, player, chestStack, headPitch, fallPitch);
-                    case BELOW -> renderCapeBelow(pose, mbs, light, player, backData, delta);
-                }
-            }
+            renderCapeAbove(pose, mbs, light, player, chestStack, headPitch, fallPitch);
         }
 
         Color tint = kind.getShiftedColor(traits.color);
@@ -106,7 +96,7 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
 
     private void renderCapeAbove(PoseStack pose, MultiBufferSource mbs, int light, AbstractClientPlayer player, ItemStack chestStack, float headPitch, float fallPitch) {
         ResourceLocation testCape = new ResourceLocation(Constants.MOD_ID, "textures/cape_template.png");
-        ResourceLocation cloakTexture = testCape;// player.getCloakTextureLocation();
+        ResourceLocation cloakTexture =testCape;// player.getCloakTextureLocation();
         if (cloakTexture != null) {
             if (chestStack.isEmpty())
                 pose.translate(0, 1/16f, 0);
@@ -115,28 +105,6 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
             capeModel.cape.xRot = -headPitch;
             capeModel.cape.y = fallPitch * 6 - 11f;
             capeModel.cape.z = 2f;
-            RenderType renderType = RenderType.entitySolid(cloakTexture);
-            VertexConsumer vertexConsumer = mbs.getBuffer(renderType);
-            capeModel.cape.render(pose, vertexConsumer, light, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
-        }
-    }
-
-    private void renderCapeBelow(PoseStack pose, MultiBufferSource mbs, int light, AbstractClientPlayer player, BackData backData, float delta) {
-        ResourceLocation testCape = new ResourceLocation(Constants.MOD_ID, "textures/cape_template.png");
-        ResourceLocation cloakTexture = testCape;// player.getCloakTextureLocation();
-        if (cloakTexture != null) {
-            weld(capeModel.cape, backpackModel.main);
-            double localYRot = backData.capeYRot.update(delta, player.yBodyRotO - player.yBodyRot);
-            localYRot = localYRot == 0 ? 0
-                        : localYRot > 0
-                        ? Math.sqrt(localYRot)
-                        : -Math.sqrt(-localYRot);
-            localYRot = Mth.clamp(localYRot * 2, -50, 50);
-            capeModel.cape.yRot = (float) (localYRot * Math.PI) / 360f;
-            capeModel.cape.xRot = 0;
-            double a = Math.max(0, backData.capeY.update(delta, (player.getY() - player.yOld) * 3));
-            capeModel.cape.y = (float) Math.cbrt(1 + a);
-            capeModel.cape.z = 3f;
             RenderType renderType = RenderType.entitySolid(cloakTexture);
             VertexConsumer vertexConsumer = mbs.getBuffer(renderType);
             capeModel.cape.render(pose, vertexConsumer, light, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);

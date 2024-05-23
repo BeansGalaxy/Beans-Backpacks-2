@@ -1,7 +1,6 @@
 package com.beansgalaxy.backpacks.mixin.common;
 
 import com.beansgalaxy.backpacks.access.BackAccessor;
-import com.beansgalaxy.backpacks.client.network.CommonAtClient;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.Traits;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;

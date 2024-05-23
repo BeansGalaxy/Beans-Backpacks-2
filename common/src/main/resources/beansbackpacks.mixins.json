@@ -30,7 +30,6 @@
   ],
   "client": [
     "client.ArmorTrimMixin",
-    "client.ClientPacketListenerMixin",
     "client.DisableCape",
     "client.EffectRenderingScreenMixin",
     "client.InventoryScreenMixin",

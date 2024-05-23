@@ -1,11 +1,9 @@
 package com.beansgalaxy.backpacks.client.network;
 
-import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.access.MinecraftAccessor;
 import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.data.EnderStorage;
 import com.beansgalaxy.backpacks.data.Traits;
-import com.beansgalaxy.backpacks.data.config.BackpackCapePos;
 import com.beansgalaxy.backpacks.entity.EntityAbstract;
 import com.beansgalaxy.backpacks.entity.EntityEnder;
 import com.beansgalaxy.backpacks.events.KeyPress;
@@ -13,7 +11,6 @@ import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.inventory.BackpackInventory;
 import com.beansgalaxy.backpacks.inventory.EnderInventory;
 import com.beansgalaxy.backpacks.network.clientbound.SendEnderSound;
-import com.beansgalaxy.backpacks.network.serverbound.SyncCapePos;
 import com.beansgalaxy.backpacks.screen.BackpackMenu;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -127,17 +124,5 @@ public class CommonAtClient {
 
             SendEnderSound.soundQue.add(ctx);
             if (noMatch) SendEnderSound.indexSounds(minecraft.player);
-      }
-
-      public static void sendBackpackCapePos(LocalPlayer player) {
-            BackpackCapePos backpackCapePos = Constants.CLIENT_CONFIG.backpack_cape_pos.get();
-            BackData.get(player).capePos = backpackCapePos;
-            SyncCapePos.send(backpackCapePos);
-      }
-
-      public static void receiveCapePos(int playerId, byte capePos) {
-            if (capePos > 0 && Minecraft.getInstance().level.getEntity(playerId) instanceof Player player) {
-                  BackData.get(player).capePos = BackpackCapePos.fromIndex(capePos);
-            }
       }
 }

@@ -2,6 +2,8 @@ package com.beansgalaxy.backpacks.platform;
 
 import com.beansgalaxy.backpacks.compat.CurioRegistry;
 import com.beansgalaxy.backpacks.data.BackData;
+import com.beansgalaxy.backpacks.data.ServerSave;
+import com.beansgalaxy.backpacks.data.config.Gamerules;
 import com.beansgalaxy.backpacks.platform.services.CompatHelper;
 import com.beansgalaxy.backpacks.inventory.CauldronInventory;
 import com.beansgalaxy.backpacks.platform.services.ConfigHelper;
@@ -96,7 +98,7 @@ public class ForgeCompatHelper implements CompatHelper {
             }
 
             public boolean keepBackSlotGamerule() {
-                  return !ConfigHelper.keepBackSlot(this.getEntity().level());
+                  return ServerSave.GAMERULES.get(Gamerules.KEEP_BACK_SLOT);
             }
       }
 }

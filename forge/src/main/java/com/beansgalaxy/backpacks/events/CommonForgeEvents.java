@@ -52,10 +52,9 @@ public class CommonForgeEvents {
 
       @SubscribeEvent
       public static void PlayerCloneEvent(PlayerEvent.Clone event) {
-            Player oldPlayer = event.getOriginal();
             if (!event.isWasDeath() || ServerSave.GAMERULES.get(Gamerules.KEEP_BACK_SLOT)) {
+                  Player oldPlayer = event.getOriginal();
                   Player newPlayer = event.getEntity();
-
                   BackData oldBackData = BackData.get(oldPlayer);
                   BackData newBackData = BackData.get(newPlayer);
                   oldBackData.copyTo(newBackData);
