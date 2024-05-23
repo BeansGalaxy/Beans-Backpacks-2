@@ -23,9 +23,10 @@ the issues tab. </p>
 
 <h1 align="center"> Changelog </h1>
 
-### 20.1-2.0
+### 20.1-0.30-v2
 
 - Added Config Screen
+- Added Option to display your cape below your backpack
 - Removed `beansbackpacks:upgraded_backpack` item
 - Fixed Backpack Menu removing the bottom right most slot when full
 - Fixed Backpack would separate from Player's back while shifting
