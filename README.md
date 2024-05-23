@@ -23,6 +23,13 @@ the issues tab. </p>
 
 <h1 align="center"> Changelog </h1>
 
+### 20.1-2.0
+
+- Added Config Screen
+- Removed `beansbackpacks:upgraded_backpack` item
+- Fixed Backpack Menu removing the bottom right most slot when full
+- Fixed Backpack would separate from Player's back while shifting
+
 ### 20.1-0.29-v2
 
 - Double-clicking an item now picks up any matching items in the backpack

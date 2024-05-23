@@ -20,7 +20,8 @@ public enum Network2C {
       ENDER_DISPLAY_2C("ender_display_c", new Packet<>(SendEnderDisplay.class, SendEnderDisplay::encode, SendEnderDisplay::new, SendEnderDisplay::handle)),
       ENDER_VIEWING_2C("ender_viewing_c", new Packet<>(SendEnderViewing.class, SendEnderViewing::encode, SendEnderViewing::new, SendEnderViewing::handle)),
       ENDER_SOUND_2C("ender_sound_evt_c", new Packet<>(SendEnderSound.class, SendEnderSound::encode, SendEnderSound::new, SendEnderSound::handle)),
-      EQUIP_LOCKED_MSG("equip_locked_msg_c", new Packet<>(EquipLockedMsg.class, EquipLockedMsg::encode, EquipLockedMsg::new, EquipLockedMsg::handle));
+      EQUIP_LOCKED_MSG("equip_locked_msg_c", new Packet<>(EquipLockedMsg.class, EquipLockedMsg::encode, EquipLockedMsg::new, EquipLockedMsg::handle)),
+      SEND_CAPE_POS("cape_pos_c", new Packet<>(SendCapePos.class, SendCapePos::encode, SendCapePos::new, SendCapePos::handle));
 
       public final Packet<? extends Packet2C> packet;
       public final ResourceLocation id;

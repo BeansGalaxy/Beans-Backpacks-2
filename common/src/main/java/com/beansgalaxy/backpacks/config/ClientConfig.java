@@ -1,6 +1,7 @@
 package com.beansgalaxy.backpacks.config;
 
 import com.beansgalaxy.backpacks.config.types.*;
+import com.beansgalaxy.backpacks.data.config.BackpackCapePos;
 import com.beansgalaxy.backpacks.data.config.MenuVisibility;
 import com.beansgalaxy.backpacks.data.config.TooltipType;
 import com.beansgalaxy.backpacks.screen.InfoTabs.Tabs;
@@ -15,6 +16,7 @@ public class ClientConfig implements IConfig {
       public EnumConfigVariant<MenuVisibility> menu_visibility;
       public HSetConfigVariant<Tabs> hidden_tabs;
       public EnumConfigVariant<TooltipType> tooltip_style;
+      public EnumConfigVariant<BackpackCapePos> backpack_cape_pos;
 
       private final ConfigLine[] LINES = new ConfigLine[] {
                   new ConfigLabel("Client"),
@@ -22,7 +24,8 @@ public class ClientConfig implements IConfig {
                   menu_visibility =     new EnumConfigVariant<>("menu_visibility", MenuVisibility.HIDE_ABLE, MenuVisibility.values()),
                   hidden_tabs = HSetConfigVariant.Builder.create(Enum::name, Tabs::valueOf).comment("For Internal Use (Employees Only!)")
                                                          .build("hidden_tabs"),
-                  tooltip_style =       new EnumConfigVariant<>("tooltip_style", TooltipType.COMPACT, TooltipType.values())
+                  tooltip_style =       new EnumConfigVariant<>("tooltip_style", TooltipType.COMPACT, TooltipType.values()),
+                  backpack_cape_pos =   new EnumConfigVariant<>("backpack_cape_pos", BackpackCapePos.ON_TOP, BackpackCapePos.values())
       };
 
       @Override

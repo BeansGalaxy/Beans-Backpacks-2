@@ -1,6 +1,8 @@
 package com.beansgalaxy.backpacks.mixin.common;
 
+import com.beansgalaxy.backpacks.data.BackData;
 import com.beansgalaxy.backpacks.network.clientbound.SendBackSlot;
+import com.beansgalaxy.backpacks.network.clientbound.SendCapePos;
 import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -21,6 +23,8 @@ public class ServerEntityMixin {
             if (entity instanceof ServerPlayer listener) {
                   SendBackSlot.send(owner, listener);
                   SendBackSlot.send(listener, owner);
+                  BackData backData = BackData.get(owner);
+                  SendCapePos.send(backData.capePos, owner, listener);
             }
       }
 }

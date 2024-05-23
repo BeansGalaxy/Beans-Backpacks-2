@@ -42,6 +42,8 @@ public class EnumConfigVariant<T extends Enum<T>> extends ConfigVariant<T> {
 
       @Override
       public void decode(JsonObject jsonObject) {
+            if (!jsonObject.has(name)) return;
+
             String string = GsonHelper.getAsString(jsonObject, name);
             for (T value : values) {
                   if (value.name().equals(string))

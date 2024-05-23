@@ -1,5 +1,6 @@
 package com.beansgalaxy.backpacks.network.clientbound;
 
+import com.beansgalaxy.backpacks.client.network.CommonAtClient;
 import com.beansgalaxy.backpacks.config.CommonConfig;
 import com.beansgalaxy.backpacks.config.types.ConfigLabel;
 import com.beansgalaxy.backpacks.config.types.ConfigLine;

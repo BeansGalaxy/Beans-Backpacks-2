@@ -449,7 +449,7 @@ public abstract class ConfigRows extends ContainerObjectSelectionList<ConfigRows
                   this.value = value;
                   int x = getRowLeft();
 
-                  this.expand = Button.builder(Component.literal("⏵"), this::toggleExpanded)
+                  this.expand = Button.builder(Component.literal(">"), this::toggleExpanded)
                               .bounds(x - 1, 0, 20, 20)
                               .build();
 
@@ -477,9 +477,9 @@ public abstract class ConfigRows extends ContainerObjectSelectionList<ConfigRows
             private void toggleExpanded(Button in) {
                   expanded = !expanded;
                   if (expanded) {
-                        in.setMessage(Component.literal("⏴"));
+                        in.setMessage(Component.literal("<"));
                   } else {
-                        in.setMessage(Component.literal("⏵"));
+                        in.setMessage(Component.literal(">"));
                   }
             }
 

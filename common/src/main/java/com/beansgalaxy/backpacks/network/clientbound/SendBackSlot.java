@@ -13,8 +13,8 @@ import java.util.*;
 
 public class SendBackSlot implements Packet2C {
       private static final HashMap<Integer, HeldSlot> HELD_BACK_SLOT = new HashMap<>();
-      public final int entity;
-      public final ItemStack stack;
+      private final int entity;
+      private final ItemStack stack;
 
       public SendBackSlot(int entity, ItemStack stack) {
             this.entity = entity;
@@ -27,12 +27,14 @@ public class SendBackSlot implements Packet2C {
 
 
       public static void send(Player owner, ServerPlayer sender) {
-            ItemStack stack = BackData.get(owner).getStack();
+            BackData backData = BackData.get(owner);
+            ItemStack stack = backData.getStack();
             new SendBackSlot(owner.getId(), stack).send2C(sender);
       }
 
       public static void send(ServerPlayer owner) {
-            ItemStack stack = BackData.get(owner).getStack();
+            BackData backData = BackData.get(owner);
+            ItemStack stack = backData.getStack();
             new SendBackSlot(owner.getId(), stack).send2A(owner.level().getServer());
       }
 
