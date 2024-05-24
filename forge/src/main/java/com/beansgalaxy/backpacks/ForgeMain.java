@@ -131,7 +131,7 @@ public class ForgeMain {
     public static final RegistryObject<Item> BACK_BUNDLE = ITEMS.register("back_bundle", () ->
                 new BackBundle(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LOCK = ITEMS.register("lock", () ->
-                new Item(new Item.Properties()));
+                new LockItem(new Item.Properties()));
 
     // REGISTER CREATIVE TAB
     public static final DeferredRegister<CreativeModeTab> CREATIVE_TABS =

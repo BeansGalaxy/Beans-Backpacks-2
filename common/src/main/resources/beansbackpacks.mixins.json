@@ -6,6 +6,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "common.ArmorItemMixin",
+    "common.BaseContainerMixin",
     "common.CommonHopperMixin",
     "common.ComparatorMixin",
     "common.DataResourcesMixin",
@@ -22,6 +23,7 @@
     "common.ServerEntityMixin",
     "common.ServerPlayerMixin",
     "common.ServerPlayMixin",
+    "common.access.LockCodeAccess",
     "common.buckets.BeehiveBlockMixin",
     "common.buckets.BucketItemMixin",
     "common.buckets.BucketSolidsMixin",
