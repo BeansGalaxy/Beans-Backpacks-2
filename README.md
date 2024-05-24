@@ -3,7 +3,7 @@
 <h3> FYI <img align="right" src="assets/images/back_slot.gif" alt="Back Slot" style="margin:10px"> </h3>
 
 1.20.1 is the most up-to-date version. 1.20.2 development has been canceled and updates to 
-other 1.20 versions are unlikely until a 1.21 version is released. 
+1.20.5+ are unlikely until a 1.21 version is released. 
 
 Ports to previous versions 
 are difficult since trims and the decorated pot were added in 1.20. A simplified version for 1.18.2 is the most likely if any back port does happen.
@@ -22,6 +22,16 @@ the issues tab. </p>
 <br>
 
 <h1 align="center"> Changelog </h1>
+
+### 20.1-2.0
+
+- Config Screen is now translatable 
+- "Backpack Lock" have been renamed to "Lock"
+- Locks can now be used to lock all kinds of storage blocks
+- Removed hanging cape below backpack (Bad, Buggy, Bloat)
+- Fixed Backpacks disappearing on death with KeepInventory set to true;
+- Fixed cauldrons could be equipped as a full stack if shift clicked
+- Fixed edge case where you could still equip equipment that's supposed to be blocked by winged backpack
 
 ### 20.1-0.30-v2
 
