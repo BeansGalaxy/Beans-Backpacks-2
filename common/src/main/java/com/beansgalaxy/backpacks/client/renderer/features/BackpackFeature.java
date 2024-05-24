@@ -95,8 +95,8 @@ public class BackpackFeature<T extends LivingEntity, M extends EntityModel<T>> {
     }
 
     private void renderCapeAbove(PoseStack pose, MultiBufferSource mbs, int light, AbstractClientPlayer player, ItemStack chestStack, float headPitch, float fallPitch) {
-        ResourceLocation testCape = new ResourceLocation(Constants.MOD_ID, "textures/cape_template.png");
-        ResourceLocation cloakTexture =testCape;// player.getCloakTextureLocation();
+//        ResourceLocation testCape = new ResourceLocation(Constants.MOD_ID, "textures/cape_template.png");
+        ResourceLocation cloakTexture = player.getCloakTextureLocation();
         if (cloakTexture != null) {
             if (chestStack.isEmpty())
                 pose.translate(0, 1/16f, 0);
