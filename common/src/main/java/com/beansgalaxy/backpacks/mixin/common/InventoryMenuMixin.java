@@ -109,31 +109,29 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<TransientCraftin
                   return;
             }
 
-            if (!backData.isEmpty() && actionType == ClickType.QUICK_MOVE && IConfig.cantEquipWithBackpack(stack.getItem())) {
+            Traits.LocalData traits = backData.getTraits();
+            Kind kind = traits.kind;
+            Level level = player.level();
+            if (!backData.isEmpty() && selectedEquipment && !cursorEmpty && Kind.isWings(carried) && Kind.isWings(backStack))
+            {
+                  if (level.isClientSide)
+                        Tooltip.pushInventoryMessage(Component.translatable(
+                                    "entity.beansbackpacks.blocked.inventory",
+                                    Constants.getName(carried), Constants.getName(backStack)
+                        ));
+                  return;
+            }
+
+            if (!backData.isEmpty() && actionType == ClickType.QUICK_MOVE && (IConfig.cantEquipWithBackpack(stack.getItem()) || (Kind.isWings(stack) && Kind.isWings(backStack)))) {
+                  if (level.isClientSide)
+                        Tooltip.pushInventoryMessage(Component.translatable(
+                                    "entity.beansbackpacks.blocked.inventory",
+                                    Constants.getName(stack), Constants.getName(backStack)
+                        ));
                   cancelQuickMoveArmor = true;
                   super.clicked(slotIndex, button, actionType, player);
                   cancelQuickMoveArmor = false;
                   return;
-            }
-
-            Traits.LocalData traits = backData.getTraits();
-            Kind kind = traits.kind;
-            Level level = player.level();
-            if (!backData.isEmpty() && Kind.isWings(carried) && Kind.isWings(backStack))
-            {
-                  MutableComponent msg = Component.translatable("entity.beansbackpacks.blocked.inventory", Constants.getName(carried), Constants.getName(backStack));
-                  if (selectedEquipment && !slot.hasItem() && !cursorEmpty)
-                  {
-                        if (level.isClientSide)
-                              Tooltip.pushInventoryMessage(msg);
-                        return;
-                  }
-                  if (actionType == ClickType.QUICK_MOVE && !selectedBackpackInventory) {
-                        if (level.isClientSide()) {
-                              Tooltip.pushInventoryMessage(msg);
-                        }
-                        return;
-                  }
             }
 
             if (slotIndex < InventoryMenu.INV_SLOT_START || actionType == ClickType.THROW) {
