@@ -55,12 +55,12 @@ public class MoveElementConfigScreen extends Screen {
             this.topPos = (int) (bgHeight / -2.0 + height / 2.0);
 
             int center = width / 2;
-            Button save = Button.builder(Component.literal("Save & Close"), in -> {
+            Button save = Button.builder(Component.translatable("screen.beansbackpacks.move_element.save_and_close"), in -> {
                   onSave.accept(elementX, elementY);
                   onClose();
             }).bounds(center + 5, height - 26, 80, 20).build();
 
-            Button exit = Button.builder(Component.literal("Cancel & Exit"), in -> {
+            Button exit = Button.builder(Component.translatable("screen.beansbackpacks.move_element.cancel_and_exit"), in -> {
                   onClose();
             }).bounds(center - 85, height - 26, 80, 20).build();
 

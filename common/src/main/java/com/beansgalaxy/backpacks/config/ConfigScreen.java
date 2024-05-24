@@ -51,23 +51,23 @@ public class ConfigScreen extends Screen {
 
       private void addWidgets() {
             int center = this.width / 2;
-            this.addRenderableWidget(Button.builder(Component.literal("Reset All"), ($$0) -> {
+            this.addRenderableWidget(Button.builder(Component.translatable("screen.beansbackpacks.config.main.reset_all"), ($$0) -> {
                   for (ConfigRows.ConfigLabel row : currentPage.getRows())
                         row.resetToDefault();
             }).bounds(center - 165, this.height - 26, 70, 20).build());
 
-            this.addRenderableWidget(Button.builder(Component.literal("Undo All"), ($$0) -> {
+            this.addRenderableWidget(Button.builder(Component.translatable("screen.beansbackpacks.config.main.undo_all"), ($$0) -> {
                   clientConfig.read(false);
                   commonConfig.read(false);
             }).bounds(center - 80, this.height - 26, 70, 20).build());
 
-            this.addRenderableWidget(Button.builder(Component.literal("Save Changes & Exit"), ($$0) -> {
+            this.addRenderableWidget(Button.builder(Component.translatable("screen.beansbackpacks.config.main.save_and_exit"), ($$0) -> {
                   clientConfig.write();
                   commonConfig.write();
                   this.minecraft.setScreen(this.lastScreen);
             }).bounds(center + 5, this.height - 26, 160, 20).build());
 
-            MutableComponent client = Component.literal("Client Config");
+            MutableComponent client = Component.translatable("screen.beansbackpacks.config.title.client");
             int clientWidth = minecraft.font.width(client);
             this.addRenderableWidget(new PlainTextButton(center + 20, 20, clientWidth, 20, client, in -> {
                   currentPage = clientConfigRows;
@@ -78,7 +78,7 @@ public class ConfigScreen extends Screen {
                   }
             });
 
-            MutableComponent common = Component.literal("Common Config");
+            MutableComponent common = Component.translatable("screen.beansbackpacks.config.title.common");
             int commonWidth = minecraft.font.width(common);
             this.addRenderableWidget(new PlainTextButton(center - commonWidth - 20, 20, commonWidth, 20, common, in -> {
                   currentPage = commonConfigRows;
@@ -105,7 +105,6 @@ public class ConfigScreen extends Screen {
       @Override
       public void render(GuiGraphics gui, int x, int y, float delta) {
             renderBackground(gui);
-            gui.drawString(minecraft.font, "------", x, height, 0xFFFFFFFF);
             gui.drawCenteredString(minecraft.font, Component.literal(Constants.MOD_NAME).withStyle(ChatFormatting.BOLD), minecraft.getWindow().getGuiScaledWidth() / 2, 6, 0xFFCCDDFF);
             currentPage.render(gui, x, y, delta);
             super.render(gui, x, y, delta);

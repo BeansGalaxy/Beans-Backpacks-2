@@ -91,7 +91,7 @@ public abstract class ConfigRows extends ContainerObjectSelectionList<ConfigRows
             private final Button button;
 
             public BoolConfigRow(BoolConfigVariant bool) {
-                  super(Component.literal(bool.name()));
+                  super(Component.translatableWithFallback("screen.beansbackpacks.config." + bool.name(), bool.name()));
                   this.bool = bool;
                   this.button = Button.builder(getTranslatedValue(bool.get()), in -> {
                         bool.set(!bool.get());
@@ -133,7 +133,7 @@ public abstract class ConfigRows extends ContainerObjectSelectionList<ConfigRows
             private final Button button;
 
             public EnumConfigRow(EnumConfigVariant<T> value, T[] values) {
-                  super(Component.literal(value.name()));
+                  super(Component.translatableWithFallback("screen.beansbackpacks.config." + value.name(), value.name()));
                   this.value = value;
                   this.values = values;
                   this.button = Button.builder(getTranslatedValue(value.get()), in -> {
@@ -161,7 +161,7 @@ public abstract class ConfigRows extends ContainerObjectSelectionList<ConfigRows
             }
 
             Component getTranslatedValue(T value) {
-                  return Component.literal(value.name());
+                  return Component.translatableWithFallback("screen.beansbackpacks.config.enum." + value.name(), value.name());
             }
 
             @Override
@@ -189,7 +189,7 @@ public abstract class ConfigRows extends ContainerObjectSelectionList<ConfigRows
             private final IntButton button;
 
             public IntConfigRow(IntConfigVariant value) {
-                  super(Component.literal(value.name()));
+                  super(Component.translatableWithFallback("screen.beansbackpacks.config." + value.name(), value.name()));
                   this.value = value;
                   this.button = IntButton.builder(in -> {}, value::get)
                               .onEnter(in -> value.set(Mth.clamp(in, value.min, value.max)))
@@ -255,10 +255,10 @@ public abstract class ConfigRows extends ContainerObjectSelectionList<ConfigRows
             };
 
             public ItemListConfigRow(HSetConfigVariant<Item> value) {
-                  super(Component.literal(value.name()));
+                  super(Component.translatableWithFallback("screen.beansbackpacks.config." + value.name(), value.name()));
                   this.value = value;
-                  this.searchBox = new EditBox(minecraft.font, 0, 0, 120, 20, Component.literal(value.name()));
-                  searchBox.setHint(Component.literal(value.name()).withStyle(ChatFormatting.GRAY));
+                  this.searchBox = new EditBox(minecraft.font, 0, 0, 120, 20, Component.translatableWithFallback("screen.beansbackpacks.config." + value.name(), value.name()));
+                  searchBox.setHint(Component.translatableWithFallback("screen.beansbackpacks.config." + value.name(), value.name()).withStyle(ChatFormatting.GRAY));
             }
 
             @Override
@@ -396,9 +396,9 @@ public abstract class ConfigRows extends ContainerObjectSelectionList<ConfigRows
             private final Button button;
 
             public MoveBackSlotConfigRow(ListConfigVariant<Integer> value) {
-                  super(Component.literal(value.name()));
+                  super(Component.translatableWithFallback("screen.beansbackpacks.config." + value.name(), value.name()));
                   this.value = value;
-                  this.button = Button.builder(Component.literal("Edit"), in -> {
+                  this.button = Button.builder(Component.translatable("screen.beansbackpacks.config.back_slot_pos.edit"), in -> {
                         MoveElementConfigScreen screen = MoveElementConfigScreen.Builder.create()
                                     .background(InventoryScreen.INVENTORY_LOCATION)
                                     .backgroundSize(176, 166)
@@ -445,7 +445,7 @@ public abstract class ConfigRows extends ContainerObjectSelectionList<ConfigRows
             private boolean expanded = false;
 
             public IntMapConfigRow(MapConfigVariant<K, Integer> value) {
-                  super(Component.literal(value.name()));
+                  super(Component.translatableWithFallback("screen.beansbackpacks.config." + value.name(), value.name()));
                   this.value = value;
                   int x = getRowLeft();
 
@@ -453,8 +453,8 @@ public abstract class ConfigRows extends ContainerObjectSelectionList<ConfigRows
                               .bounds(x - 1, 0, 20, 20)
                               .build();
 
-                  this.keyBox = new EditBox(minecraft.font, x + 43, 0, (getRowWidth() - 40) - (47), 20, Component.literal(value.name()));
-                  keyBox.setHint(Component.literal(value.name()).withStyle(ChatFormatting.GRAY));
+                  this.keyBox = new EditBox(minecraft.font, x + 43, 0, (getRowWidth() - 40) - (47), 20, Component.translatableWithFallback("screen.beansbackpacks.config." + value.name(), value.name()));
+                  keyBox.setHint(Component.translatableWithFallback("screen.beansbackpacks.config." + value.name(), value.name()).withStyle(ChatFormatting.GRAY));
 
                   this.intButton = IntButton.builder(in -> {}, null)
                               .bounds(x + getRowWidth() - 40, 0, 40, 20)
@@ -527,7 +527,7 @@ public abstract class ConfigRows extends ContainerObjectSelectionList<ConfigRows
                         MutableComponent line = Component.literal(key + ": " + entry);
                         int lineX = 10;
                         int lineY = 60 + 10 * i;
-                        if (mouseX < x && lineY - 2 < mouseY && lineY + 8 > mouseY)
+                        if (mouseX < x - 10 && lineY - 2 < mouseY && lineY + 8 > mouseY)
                         {
                               line.withStyle(ChatFormatting.RED);
                               hoveredEntry = new HoveredEntry(key, lineY);
