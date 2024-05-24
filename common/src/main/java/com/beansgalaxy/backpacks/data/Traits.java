@@ -5,6 +5,7 @@ import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.items.DyableBackpack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ArmorMaterials;
@@ -326,7 +327,7 @@ public class Traits {
 
             BIG_BUNDLE = new Traits("Big Bundle",
                         false, "minecraft:emerald", "leather",
-                        () -> ServerSave.CONFIG.leather_max_stacks.get() + 1,
+                        () -> Mth.ceil((ServerSave.CONFIG.leather_max_stacks.get() + ServerSave.CONFIG.metal_max_stacks.get()) / 2f),
                         Sound.SOFT);
       }
 
