@@ -1,10 +1,7 @@
 package com.beansgalaxy.backpacks.inventory;
 
-import com.beansgalaxy.backpacks.Constants;
 import com.beansgalaxy.backpacks.config.IConfig;
 import com.beansgalaxy.backpacks.data.Traits;
-import com.beansgalaxy.backpacks.data.config.Config;
-import com.beansgalaxy.backpacks.entity.Kind;
 import com.beansgalaxy.backpacks.events.PlaySound;
 import com.beansgalaxy.backpacks.events.advancements.SpecialCriterion;
 import com.beansgalaxy.backpacks.items.Tooltip;

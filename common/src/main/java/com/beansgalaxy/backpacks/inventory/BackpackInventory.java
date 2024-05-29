@@ -87,10 +87,6 @@ public abstract class BackpackInventory implements Container {
             return Math.abs(yaw) > 180 - acceptableYaw;
       }
 
-      /**
-       * CONTAINER METHODS BELOW
-       **/
-
       public void playSound(PlaySound sound) {
             playSound(sound, 0.8f);
       }
@@ -100,6 +96,10 @@ public abstract class BackpackInventory implements Container {
                   sound.at(entity, getTraits().sound(), volume);
             }
       }
+
+      /**
+       * CONTAINER METHODS BELOW
+       **/
 
       @Override
       public int getContainerSize() {
