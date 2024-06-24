@@ -1,0 +1,48 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_backpack": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "beansbackpacks:backpack"
+            ]
+          }
+        ]
+      }
+    },
+    "has_leather": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:leather"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "beansbackpacks:leather_backpack"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_backpack",
+      "has_the_recipe",
+      "has_leather"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "beansbackpacks:leather_backpack"
+    ]
+  },
+  "sends_telemetry_event": false
+}

@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "beansbackpacks:metal_backpack",
+      "nbt": "{backpack_id:netherite}"
+    },
+    "title": "Deep Pockets in Every Sense",
+    "description": "Find a Place to Store Your Diamonds",
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "beansbackpacks:equipment/leather_filled",
+  "criteria": {
+    "requirement": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "beansbackpacks:metal_backpack"
+            ],
+            "nbt": "{backpack_id:netherite}"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  }
+}

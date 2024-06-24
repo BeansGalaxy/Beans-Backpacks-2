@@ -1,0 +1,8 @@
+{
+  "asset_id": "beansbackpacks:trim_button_default",
+  "decal": false,
+  "description": {
+    "translate": "trim_pattern.beansbackpacks.trim_button_default"
+  },
+  "template_item": "minecraft:bedrock"
+}

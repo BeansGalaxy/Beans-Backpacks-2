@@ -1,0 +1,16 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "beansbackpacks:item/leather_backpack/0",
+    "layer1": "beansbackpacks:item/leather_backpack/1",
+    "layer2": "beansbackpacks:item/leather_backpack/2"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "is_yellow": 1
+      },
+      "model": "beansbackpacks:item/backpack_yellow"
+    }
+  ]
+}

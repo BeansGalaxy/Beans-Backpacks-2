@@ -1,0 +1,195 @@
+{
+  "leather_place": {
+    "sounds": [
+      "beansbackpacks:leather/place"
+    ]
+  },
+  "leather_equip": {
+    "sounds": [
+      "beansbackpacks:leather/equip"
+    ]
+  },
+  "leather_hit": {
+    "sounds": [
+      "beansbackpacks:leather/hit"
+    ]
+  },
+  "leather_break": {
+    "sounds": [
+      "beansbackpacks:leather/break"
+    ]
+  },
+  "leather_insert": {
+    "sounds": [
+      "beansbackpacks:leather/insert"
+    ]
+  },
+  "leather_open": {
+    "sounds": [
+      "beansbackpacks:leather/open"
+    ]
+  },
+  "leather_close": {
+    "sounds": [
+      "beansbackpacks:leather/close"
+    ]
+  },
+
+
+  "metal_place": {
+    "sounds": [
+      "beansbackpacks:metal/place"
+    ]
+  },
+  "metal_equip": {
+    "sounds": [
+      "beansbackpacks:metal/equip"
+    ]
+  },
+  "metal_hit": {
+    "sounds": [
+      "beansbackpacks:metal/hit"
+    ]
+  },
+  "metal_break": {
+    "sounds": [
+      "beansbackpacks:metal/break"
+    ]
+  },
+  "metal_insert": {
+    "sounds": [
+      "beansbackpacks:metal/insert"
+    ]
+  },
+  "metal_take": {
+    "sounds": [
+      "beansbackpacks:metal/take"
+    ]
+  },
+  "metal_open": {
+    "sounds": [
+      "beansbackpacks:metal/open"
+    ]
+  },
+  "metal_close": {
+    "sounds": [
+      "beansbackpacks:metal/close"
+    ]
+  },
+
+
+  "ender_place": {
+    "sounds": [
+      "beansbackpacks:ender/place"
+    ]
+  },
+  "ender_equip": {
+    "sounds": [
+      "beansbackpacks:ender/equip"
+    ]
+  },
+  "ender_hit": {
+    "sounds": [
+      "beansbackpacks:ender/hit_0",
+      "beansbackpacks:ender/hit_1",
+      "beansbackpacks:ender/hit_2"
+    ]
+  },
+  "ender_break": {
+    "sounds": [
+      "beansbackpacks:ender/break"
+    ]
+  },
+  "ender_insert": {
+    "sounds": [
+      "beansbackpacks:ender/insert_0",
+      "beansbackpacks:ender/insert_1"
+    ]
+  },
+  "ender_take": {
+    "sounds": [
+      "beansbackpacks:ender/take_0",
+      "beansbackpacks:ender/take_1"
+    ]
+  },
+  "ender_open": {
+    "sounds": [
+      "beansbackpacks:ender/open_0",
+      "beansbackpacks:ender/open_1",
+      "beansbackpacks:ender/open_2",
+      "beansbackpacks:ender/open_3"
+    ]
+  },
+  "ender_close": {
+    "sounds": [
+      "beansbackpacks:ender/close_0",
+      "beansbackpacks:ender/close_1",
+      "beansbackpacks:ender/close_2"
+    ]
+  },
+
+
+  "winged_place": {
+    "sounds": [
+      "beansbackpacks:winged/place"
+    ]
+  },
+  "winged_equip": {
+    "sounds": [
+      "beansbackpacks:winged/equip"
+    ]
+  },
+  "winged_hit": {
+    "sounds": [
+      "beansbackpacks:winged/hit_0",
+      "beansbackpacks:winged/hit_1"
+    ]
+  },
+  "winged_break": {
+    "sounds": [
+      "beansbackpacks:winged/break"
+    ]
+  },
+  "winged_open": {
+    "sounds": [
+      "beansbackpacks:winged/open"
+    ]
+  },
+  "winged_close": {
+    "sounds": [
+      "beansbackpacks:winged/close"
+    ]
+  },
+
+
+  "pot_hit": {
+    "sounds": [
+      "beansbackpacks:pot/hit"
+    ]
+  },
+  "pot_insert": {
+    "sounds": [
+      "beansbackpacks:pot/insert_0",
+      "beansbackpacks:pot/insert_1",
+      "beansbackpacks:pot/insert_2"
+    ]
+  },
+  "pot_take": {
+    "sounds": [
+      "beansbackpacks:pot/take_0",
+      "beansbackpacks:pot/take_1"
+    ]
+  },
+
+
+  "lock_backpack": {
+    "sounds": [
+      "beansbackpacks:lock/lock"
+    ]
+  },
+  "unlock_backpack": {
+    "sounds": [
+      "beansbackpacks:lock/unlock"
+    ]
+  }
+}

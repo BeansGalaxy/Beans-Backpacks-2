@@ -1,0 +1,20 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:bee_nest"
+    },
+    "title": "Chris Robbin",
+    "description": "Use a cauldron on a hive",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "beansbackpacks:equipment/cauldron",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:beansbackpacks/special",
+      "conditions": {
+        "special": "CAULDRON_BEE_HIVE"
+      }
+    }
+  }
+}

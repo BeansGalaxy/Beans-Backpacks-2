@@ -1,0 +1,44 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_chests": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:chest"
+            ],
+            "count": 64
+          }
+        ]
+      }
+    },
+    "has_decorated_pot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:decorated_pot"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "minecraft:decorated_pot_simple"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_decorated_pot",
+      "has_chests"
+    ]
+  ],
+  "sends_telemetry_event": false
+}

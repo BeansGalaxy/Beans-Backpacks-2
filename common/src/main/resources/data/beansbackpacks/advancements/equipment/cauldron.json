@@ -1,0 +1,20 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:cauldron"
+    },
+    "title": "New Drip",
+    "description": "Equip a Cauldron",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "beansbackpacks:equipment/leather_filled",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:beansbackpacks/equip_any",
+      "conditions": {
+        "item": "minecraft:cauldron"
+      }
+    }
+  }
+}

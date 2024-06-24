@@ -1,0 +1,38 @@
+{
+  "parent": "beansbackpacks:info/root",
+  "criteria": {
+    "has_cauldron": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:cauldron"
+            ]
+          }
+        ]
+      }
+    },
+    "filled_bucket": {
+      "trigger": "minecraft:filled_bucket"
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "minecraft:cauldron"
+      }
+    },
+    "destroyed_bee_nest": {
+      "trigger": "minecraft:bee_nest_destroyed"
+    }
+  },
+  "requirements": [
+    [
+      "has_cauldron",
+      "filled_bucket",
+      "has_the_recipe",
+      "destroyed_bee_nest"
+    ]
+  ],
+  "sends_telemetry_event": false
+}

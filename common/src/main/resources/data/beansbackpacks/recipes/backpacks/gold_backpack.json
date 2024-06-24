@@ -1,0 +1,20 @@
+{
+  "type": "beansbackpacks:crafting",
+  "backpack_id": "gold",
+  "pattern": [
+    "gPg",
+    "g g",
+    "gPg"
+  ],
+  "key": {
+    "g": {
+      "item": "minecraft:gold_ingot"
+    },
+    "P": {
+      "item": "minecraft:phantom_membrane"
+    }
+  },
+  "traits": {
+    "fallback_name": "Gold Backpack"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "parent": "beansbackpacks:info/root",
+  "criteria": {
+    "has_null": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "beansbackpacks:metal_backpack"
+            ],
+            "nbt": "{backpack_id:null}"
+          }
+        ]
+      }
+    },
+    "equipped_null": {
+      "trigger": "minecraft:beansbackpacks/equip_any",
+      "conditions": {
+        "item": "beansbackpacks:metal_backpack",
+        "backpack_id": "null"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_null",
+      "has_upgraded",
+      "equipped_null"
+    ]
+  ],
+  "sends_telemetry_event": false
+}

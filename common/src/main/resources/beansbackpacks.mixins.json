@@ -1,0 +1,51 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.beansgalaxy.backpacks.mixin",
+  "refmap": "${mod_id}.refmap.json",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "common.ArmorItemMixin",
+    "common.BaseContainerMixin",
+    "common.CommonHopperMixin",
+    "common.ComparatorMixin",
+    "common.DataResourcesMixin",
+    "common.ElytraItemMixin",
+    "common.ExperienceOrbMixin",
+    "common.InventoryContainerMixin",
+    "common.InventoryMenuMixin",
+    "common.ItemCombinerMixin",
+    "common.ItemEntityMixin",
+    "common.ItemStackMixin",
+    "common.LivingEntityMixin",
+    "common.PlayerListMixin",
+    "common.ResultContainerMixin",
+    "common.ServerEntityMixin",
+    "common.ServerPlayerMixin",
+    "common.ServerPlayMixin",
+    "common.LockCodeAccess",
+    "common.buckets.BeehiveBlockMixin",
+    "common.buckets.BucketItemMixin",
+    "common.buckets.BucketSolidsMixin",
+    "common.buckets.HoneyBlockMixin",
+    "common.buckets.HoneyBottleMixin"
+  ],
+  "client": [
+    "client.ArmorTrimMixin",
+    "client.DisableCape",
+    "client.EffectRenderingScreenMixin",
+    "client.InventoryScreenMixin",
+    "client.ItemRendererMixin",
+    "client.KeyBindTooltip",
+    "client.LocalPlayerMixin",
+    "client.MinecraftMixin",
+    "client.SmithingScreenMixin",
+    "client.TrimsAtlasMixin"
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
+

@@ -1,0 +1,10 @@
+accessWidener v1 named
+
+accessible class net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen$SlotWrapper
+
+mutable field net/minecraft/world/inventory/Slot x I
+mutable field net/minecraft/world/inventory/Slot y I
+
+mutable field net/minecraft/client/renderer/texture/atlas/sources/PalettedPermutations permutations Ljava/util/Map;
+mutable field net/minecraft/client/renderer/texture/atlas/sources/PalettedPermutations textures Ljava/util/List;
+

@@ -1,0 +1,32 @@
+{
+  "display": {
+    "icon": {
+      "item": "beansbackpacks:metal_backpack",
+      "nbt": "{display:{key:gold}}"
+    },
+    "title": "Beans Backpacks",
+    "description": "Overhauls Minecraft's inventory with one simple-to-use feature",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "background": "beansbackpacks:textures/gui/background.png"
+  },
+  "criteria": {
+    "requirement": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "beansbackpacks:backpack",
+              "beansbackpacks:metal_backpack",
+              "beansbackpacks:ender_backpack",
+              "beansbackpacks:winged_backpack",
+              "minecraft:decorated_pot",
+              "minecraft:cauldron"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  }
+}

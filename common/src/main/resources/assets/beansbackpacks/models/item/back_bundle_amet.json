@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "beansbackpacks:item/back_bundle/0",
+    "layer1": "beansbackpacks:item/back_bundle/amethyst"
+  }
+}
