@@ -81,7 +81,6 @@ public class FabricClient implements ClientModInitializer {
                         }
                   });
                   computed.setPlayerName(playerName).setTrim(trim).setItemStacks(itemStacks);
-
             });
 
             Constants.CLIENT_CONFIG.read();

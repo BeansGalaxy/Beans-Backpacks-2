@@ -12,14 +12,18 @@ public class NetworkPackages {
       public static void register2S() {
             for (Network2S value : Network2S.values())
                   ServerPlayNetworking.registerGlobalReceiver(value.id, ((server, player, handler, buf, responseSender) -> {
-                        value.packet.decoder().apply(buf).handle(player);
+                        Packet2S applied = value.packet.decoder().apply(buf);
+                        server.executeIfPossible(() -> {
+                              applied.handle(player);
+                        });
                   }));
       }
 
       public static void register2C() {
             for (Network2C value : Network2C.values())
                   ClientPlayNetworking.registerGlobalReceiver(value.id, (minecraft, handler, buf, packetSender) -> {
-                        value.packet.decoder().apply(buf).handle();
+                        Packet2C applied = value.packet.decoder().apply(buf);
+                        minecraft.execute(applied::handle);
                   });
       }
 }

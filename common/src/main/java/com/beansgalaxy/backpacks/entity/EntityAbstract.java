@@ -146,7 +146,7 @@ public abstract class EntityAbstract extends Backpack {
             if (!isHorizontal) backpack.setYRot(yaw);
 
             PlaySound.PLACE.at(backpack, traits.sound());
-            if (level instanceof ServerLevel) {
+            if (!level.isClientSide) {
                   level.addFreshEntity(backpack);
             }
 
