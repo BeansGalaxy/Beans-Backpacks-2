@@ -81,7 +81,10 @@ public abstract class ClientSpecialTooltip implements ClientTooltipComponent {
                               Fluid fluid = bucket.beans_Backpacks_2$getFluid();
                               CauldronInventory.FluidAttributes attributes = Services.COMPAT.getFluidTexture(fluid, blockAtlas);
                               Color tint = attributes.tint();
-                              gui.blit(x, y + h, 16, 16, 16, attributes.sprite(), tint.getRed() / 255f, tint.getGreen() / 255f, tint.getBlue() / 255f, 1);
+                              TextureAtlasSprite sprite = attributes.sprite();
+                              if (sprite != null) {
+                                    gui.blit(x, y + h, 16, 16, 16, sprite, tint.getRed() / 255f, tint.getGreen() / 255f, tint.getBlue() / 255f, 1);
+                              }
                         } else {
                               Optional<BlockState> optional = access.getBlockState();
                               if (optional.isPresent()) {

@@ -160,7 +160,7 @@ public class BackpackItem extends Item {
             }
             else if (bucket instanceof BucketsAccess bucketsAccess && returned.equals(bucketsAccess.getEmptyInstance())) {
                   newStack = bucketsAccess.getEmptyInstance().getDefaultInstance();
-                  soundEvent = Optional.of(bucketsAccess.defaultPlaceSound());
+                  soundEvent = Optional.ofNullable(bucketsAccess.defaultPlaceSound());
             }
             else if (returned instanceof BucketsAccess bucketsAccess) {
                   newStack = returned.getDefaultInstance();

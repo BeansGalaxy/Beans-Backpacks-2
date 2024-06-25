@@ -74,8 +74,19 @@ public class CauldronFeature<T extends LivingEntity, M extends EntityModel<T>> {
                     pose.translate(0, -(cappedAmount / 8f) + 12 / 8f + (cappedAmount == 0 ? -0.01 : 0), 0);
                     if (bucket instanceof BucketItemAccess access) {
                         Fluid fluid = access.beans_Backpacks_2$getFluid();
+                        if (fluid == null) {
+                            close(pose);
+                            return;
+                        }
+
                         CauldronInventory.FluidAttributes attributes = Services.COMPAT.getFluidTexture(fluid, blocksAtlas);
-                        VertexConsumer fluidVC = attributes.sprite().wrap(mbs.getBuffer(RenderType.translucent()));
+                        TextureAtlasSprite sprite = attributes.sprite();
+                        if (sprite == null) {
+                            close(pose);
+                            return;
+                        }
+
+                        VertexConsumer fluidVC = sprite.wrap(mbs.getBuffer(RenderType.translucent()));
                         cauldronModel.fluid.render(pose, fluidVC, light, OverlayTexture.NO_OVERLAY, attributes.tint().getRed() / 255f, attributes.tint().getGreen() / 255f, attributes.tint().getBlue() / 255f, 1);
                     } else if (bucket instanceof BucketsAccess access) {
                         Optional<BlockState> optional = access.getBlockState();
@@ -90,6 +101,10 @@ public class CauldronFeature<T extends LivingEntity, M extends EntityModel<T>> {
                 }
             }
         }
+        close(pose);
+    }
+
+    private static void close(PoseStack pose) {
         pose.popPose();
     }
 

@@ -32,6 +32,9 @@ public class CauldronInventory {
       }
 
       public static Item add(ItemStack cauldron, Item bucket) {
+            if (bucket.equals(Items.BUCKET))
+                  return null;
+
             int amount = 0;
             BucketsAccess access = null;
             if (bucket instanceof BucketsAccess item) {
@@ -175,6 +178,9 @@ public class CauldronInventory {
 
       public static ItemStack quickInsert(ItemStack backStack, ItemStack stack, Level level) {
             Item bucket = stack.getItem();
+            if (bucket.equals(Items.BUCKET))
+                  return ItemStack.EMPTY;
+
             BucketsAccess access = null;
             BucketLikeAccess bucketLikeAccess = null;
             if (bucket instanceof BlockItem blockItem && blockItem.getBlock() instanceof BucketLikeAccess blockAccess)
