@@ -31,30 +31,20 @@ public abstract class ExperienceOrbMixin extends Entity {
       @Shadow private int value;
 
       @Inject(method = "repairPlayerItems", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD,
-                  at = @At(value = "INVOKE", target = "Ljava/util/Map$Entry;getValue()Ljava/lang/Object;"))
+                  at = @At(value = "HEAD", target = "Ljava/util/Map$Entry;getValue()Ljava/lang/Object;"))
       private void repairBackSlotWithArmor(Player player, int xp, CallbackInfoReturnable<Integer> cir) {
             ItemStack backStack = BackData.get(player).getStack();
             if (backStack.isDamaged()) {
-                  int i = 1;
+                  int i = 0;
                   for (ItemStack itemStack : player.getInventory().armor) {
                         if (!itemStack.isEmpty())
                               i++;
                   }
 
-                  if (level().getRandom().nextInt(i) == 0) {
+                  if (i == 0 || level().getRandom().nextInt(i) == 0) {
                         int returnInt = beans_Backpacks_2(player, xp, backStack);
                         cir.setReturnValue(returnInt);
                   }
-            }
-      }
-
-      @Inject(method = "repairPlayerItems", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD,
-                  at = @At(value = "RETURN", ordinal = 1))
-      private void repairBackSlot(Player player, int xp, CallbackInfoReturnable<Integer> cir) {
-            ItemStack backStack = BackData.get(player).getStack();
-            if (backStack.isDamaged()) {
-                  int returnInt = beans_Backpacks_2(player, xp, backStack);
-                  cir.setReturnValue(returnInt);
             }
       }
 
