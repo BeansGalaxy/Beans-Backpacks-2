@@ -1,3 +1,18 @@
+<h1 align="center">Developer Note 8/19/24</h1>
+
+I'm not dead! It's been 3 months since any activity on this project but rest assured I've still been working on this mod. I see comments and feedback being left here on GitHub and on CurseForge which shows your interest in this mod and how much you want to see another update so you can play with your favorite mods. I hear you. 
+
+I orignally started on a 1.21 version which began as a simple update, then became a re-write, and now is completly different than the current version. A big part of the mod was the leverage you could get with data-packs and in 1.21 it is **much more** customizable which I am excited to show you after I get it to a stable state. I am taking all of the feedback I've gotten from the mod so far to build upon what I orignally planned it to be.
+
+Beans Backpacks was my first attempt at modding and coding which has been a success. Although issues with compatibility and critical bugs plauge the current version, I have learnt so much and I'm glad you're enjoying my block game mod. I do not plan to quit development. I see the feedback you've left me and the amount of interest you have for this mod is amazing, outstanding, pretty cool, ect... For the time being I don't have the time in the day to work on this mod like I used to. Hopefully I'll get the 1.21 version out for all of you to try soon but I'll be this busy until November, after I'll have more time to focus on this project.
+
+Thanks for your outgoing support for this project. <br>
+&nbsp;&nbsp;-Beans
+
+---------------------------------------------------
+
+<br>
+
 <h1 align="center">Introducing Bean's Backpacks! </h1>
 
 <h3> FYI <img align="right" src="assets/images/back_slot.gif" alt="Back Slot" style="margin:10px"> </h3>
