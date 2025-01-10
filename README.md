@@ -1,3 +1,16 @@
+<h1 align="center">Developer Note 1/10/25</h1>
+
+Still breathing! (can you believe it?) This version of the mod has been offically cancelled, but 1.20.1 support is not completely over. It might take some jerry-rigging to back port this mod but I beleive it can be done. Some features might be changed or removed. I plan to release a few other mods before starting any backporting though to expirement with aspects of the code other than the inventory or data-management. 
+
+You might be asking, "Backport what?" And to that I've been consistantly releasing updates to [Beans-Backpacks-3 for 1.21.](https://modrinth.com/mod/beans-backpacks-3) While it's still in beta I plan to keep it on Modrinth since most of my traffic is through forge and their interface for uploading mods is faster imo. Once we are out of beta, however, I'll start uploading the mod on Forge. 
+
+Check the 1.21 version out! I've re-thought a lot of features which either felt incomplete or did not fit with the mod. I also added a lot of new features like new bundle types, complex inventory controls, and upgrade-like system for the backpacks. It's truely a completely new mod which takes full advantage of [Data Components](https://minecraft.wiki/w/Data_component_format) added in 1.20.5, this completely broke the 1.20.1 version which is sad to see a lot of my favorite mods taking their time to update to 1.21, but, it allows for much more complex data being moved much easier which powers this mod. 
+
+Thanks agian for your outgoing support for this project. :)) <br>
+&nbsp;&nbsp;-Beans
+
+<br>
+
 <h1 align="center">Developer Note 8/19/24</h1>
 
 I'm not dead! It's been 3 months since any activity on this project but rest assured I've still been working on this mod. I see comments and feedback being left here on GitHub and on CurseForge which shows your interest in this mod and how much you want to see another update so you can play with your favorite mods. I hear you. 
@@ -9,9 +22,9 @@ Beans Backpacks was my first attempt at modding and coding which has been a succ
 Thanks for your outgoing support for this project. <br>
 &nbsp;&nbsp;-Beans
 
----------------------------------------------------
-
 <br>
+
+---------------------------------------------------
 
 <h1 align="center">Introducing Bean's Backpacks! </h1>
 
